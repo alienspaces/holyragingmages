@@ -1,6 +1,8 @@
 # Holy Raging Mages
 
-## Setup
+This is a game.
+
+## Overview
 
 You are a mage with:
 
@@ -24,5 +26,27 @@ You can:
 * Fight monsters for average items and little money
 * Fight other mages for better items and better money
 * Decide how you want to fight (this is kind of important)
+
+## Technical
+
+Server
+
+* Separate domain oriented services written in Go
+* Deployed to GCE/GKE
+* Account creation with oauth/third party provders only
+
+Client
+
+* Terminal client written in Go
+* Android application built with Flutter
+
+
+
+
+
+
+
+
+
 
 COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com
