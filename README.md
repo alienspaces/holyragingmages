@@ -21,6 +21,6 @@ You can:
 * Replace your familliar with another familliar (sometimes they die or are just not very good as a pet)
 * Improve your strength, dexterity and intelligence (lets you learn cooler spells and use more powerful items)
 * Get more money $$
-* Decide how you want to fight
+* Decide how you want to fight (this is kind of important)
 
 COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com
