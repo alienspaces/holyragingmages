@@ -14,7 +14,7 @@ You are in this situation where you have to keep fighting monsters and other mag
 
 You can:
 
-* Learn new spells
+* Learn new spells (they don't come free)
 * Replace spells with other spells (because you can only have five)
 * Collect or buy new items (collect off the dead or buy with your money $$)
 * Replace items with other items (because you can only have five)
