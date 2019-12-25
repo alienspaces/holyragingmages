@@ -35,6 +35,14 @@ Server
 * Deployed to GCE/GKE
 * Account creation with OAuth/third party providers only
 
+```plantuml
+[Public API] ..> [Entity]
+[Public API] ..> [Item]
+[Public API] ..> [Spell]
+[Entity] ..> [Item]
+[Entity] ..> [Spell]
+```
+
 Client
 
 * Terminal client written in Go
