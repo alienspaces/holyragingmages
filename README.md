@@ -33,20 +33,13 @@ Server
 
 * Separate domain oriented services written in Go
 * Deployed to GCE/GKE
-* Account creation with oauth/third party provders only
+* Account creation with OAuth/third party providers only
 
 Client
 
 * Terminal client written in Go
 * Android application built with Flutter
 
-
-
-
-
-
-
-
-
+## License
 
 COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com
