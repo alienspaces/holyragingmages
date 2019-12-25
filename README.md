@@ -36,6 +36,7 @@ Server
 * Account creation with OAuth/third party providers only
 
 ```plantuml
+left to right direction
 [Public API] ..> [Entity]
 [Public API] ..> [Item]
 [Public API] ..> [Spell]
