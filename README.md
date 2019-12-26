@@ -52,8 +52,10 @@ left to right direction
 
 Client
 
-* Terminal client written in Go
-* Android application built with Flutter
+* Terminal client
+  * Go
+* Android application
+  * Flutter
 
 ## License
 
