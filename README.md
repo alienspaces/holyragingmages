@@ -37,11 +37,19 @@ Server
 
 ```plantuml
 left to right direction
-[Public API] ..> [Entity]
+[Public API] ..> [Mage]
 [Public API] ..> [Item]
 [Public API] ..> [Spell]
-[Entity] ..> [Item]
-[Entity] ..> [Spell]
+[Public API] ..> [Fight]
+[Public API] ..> [Tactic]
+[Mage] ..> [Item]
+[Mage] ..> [Spell]
+[Mage] ..> [Tactic]
+[Fight] ..> [Mage]
+[Fight] ..> [Spell]
+[Fight] ..> [Item]
+[Tactic] ..> [Spell]
+[Tactic] ..> [Item]
 ```
 
 Client
