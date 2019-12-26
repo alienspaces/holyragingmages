@@ -31,8 +31,10 @@ You can:
 
 Server
 
-* Separate domain oriented services written in Go
-* Deployed to GCE/GKE
+* Separate domain oriented services
+  * Go
+  * Postgres 
+  * K8s
 * Account creation with OAuth/third party providers only
 
 ```plantuml
