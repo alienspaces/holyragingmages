@@ -45,8 +45,7 @@ left to right direction
 [Fight] ..> [Mage]
 [Fight] ..> [Spell]
 [Fight] ..> [Item]
-[Tactic] ..> [Spell]
-[Tactic] ..> [Item]
+[Fight] ..> [Tactic]
 ```
 
 Client
