@@ -7,5 +7,3 @@ go build -o template ./cmd/
 
 echo "Run on :8080"
 ./template -port=8080
-
-
