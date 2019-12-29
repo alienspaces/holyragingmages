@@ -14,7 +14,11 @@ type ServiceHandler struct{}
 
 // Template -
 func (ServiceHandler) Template(req Request) (Response, error) {
-	return Response{}, nil
+
+	// TODO: implement all support HTTP methods
+	return Response{
+		Test: req.Test,
+	}, nil
 }
 
 // ErrEmpty is returned when input string is empty

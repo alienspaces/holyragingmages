@@ -23,13 +23,14 @@ func LoggingMiddleware(logger log.Logger) ServiceMiddleware {
 	}
 }
 
-// Uppercase -
-func (mw loggingMiddleware) Template(req Request) (output Response, err error) {
+// Template -
+func (mw loggingMiddleware) Template(req Request) (resp Response, err error) {
+
 	defer func(begin time.Time) {
 		mw.logger.Log(
 			"method", "template",
-			"input", req,
-			"output", output,
+			"input", req.Test,
+			"output", resp.Test,
 			"err", err,
 			"took", time.Since(begin),
 		)

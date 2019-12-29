@@ -12,25 +12,27 @@ import (
 
 // Request -
 type Request struct {
+	Test string `json:"test"`
 }
 
 // Response -
 type Response struct {
-	Err string `json:"err,omitempty"` // errors don't JSON-marshal, so we use a string
+	Test string `json:"test"`
+	Err  string `json:"err,omitempty"` // errors don't JSON-marshal, so we use a string
 }
 
 // MakeTemplateEndpoint -
 func MakeTemplateEndpoint(svc Service) endpoint.Endpoint {
 
-	return func(_ context.Context, request interface{}) (interface{}, error) {
-		req := request.(Request)
-		resp, err := svc.Template(req)
+	return func(_ context.Context, input interface{}) (output interface{}, err error) {
+		req := input.(Request)
+		output, err = svc.Template(req)
 		if err != nil {
 			return Response{
 				Err: err.Error(),
 			}, nil
 		}
-		return resp, nil
+		return output, nil
 	}
 }
 
