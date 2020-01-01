@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+
+function usage {
+    echo "generate [service] [ModuleName]"
+    echo
+}
+
+function generate_service {
+
+    service=$1
+
+    # lower case service name
+    SERVICE_LC=$(echo "$service" | tr '[:upper:]' '[:lower:]')
+
+    echo "Generating service ${service}"
+
+    if [ -z "$service" ]; then
+        echo "Missing service name, cannot create new service"
+        usage
+        exit 1
+    fi
+
+    # create service directory
+    mkdir ./service/${SERVICE_LC}
+
+    # build directories
+    mkdir ./service/${SERVICE_LC}/build
+    mkdir ./service/${SERVICE_LC}/build/ci
+    mkdir ./service/${SERVICE_LC}/build/package
+
+    # deploy directories
+    mkdir ./service/${SERVICE_LC}/deploy
+
+    # source directories
+    mkdir ./service/${SERVICE_LC}/cmd
+    mkdir ./service/${SERVICE_LC}/internal
+    mkdir ./service/${SERVICE_LC}/internal/cmd
+    mkdir ./service/${SERVICE_LC}/internal/model
+    mkdir ./service/${SERVICE_LC}/internal/repo
+    mkdir ./service/${SERVICE_LC}/internal/service
+
+    # copy template
+    SERVICE_FILENAME=./service/${SERVICE_LC}/${SERVICE_LC}.go
+    SERVICE_TEST_FILENAME=./internal/cmd/api/service/${SERVICE_LC}/${SERVICE_LC}_test.go
+
+    cp ./internal/cmd/api/service/template/template.go $SERVICE_FILENAME
+    cp ./internal/cmd/api/service/template/template_test.go $SERVICE_TEST_FILENAME
+
+    # replace template names
+    sed -i "" "s/template/$SERVICE_LC/g" $SERVICE_FILENAME
+    sed -i "" "s/template/$SERVICE_LC/g" $SERVICE_TEST_FILENAME
+
+    # replace template names
+    sed -i "" "s/Template/$service/g" $SERVICE_FILENAME
+    sed -i "" "s/Template/$service/g" $SERVICE_TEST_FILENAME
+}
+
+function generate_repo {
+
+    REPO=$1
+
+    if [ -z "$REPO" ]; then
+        echo "Missing repo name, cannot create new repo"
+        usage
+        exit 1
+    fi
+
+    echo "Generating repo ${REPO}"
+
+    # lower case repo name
+    REPO_LC=$(echo "$REPO" | tr '[:upper:]' '[:lower:]')
+
+    # create repo directory
+    mkdir ./internal/repo/${REPO_LC}
+
+    # copy template
+    REPO_FILENAME=./internal/repo/${REPO_LC}/${REPO_LC}.go
+    REPO_STATEMENTS_FILENAME=./internal/repo/${REPO_LC}/statements.go
+    REPO_RECORD_FILENAME=./internal/types/record/${REPO_LC}.go
+    REPO_TEST_FILENAME=./internal/repo/${REPO_LC}/${REPO_LC}_test.go
+    REPO_MOCK_FILENAME=./internal/repo/${REPO_LC}/mock.go
+    REPO_MOCK_TEST_FILENAME=./internal/repo/${REPO_LC}/mock_test.go
+
+    cp ./internal/repo/template/template.go $REPO_FILENAME
+    cp ./internal/repo/template/statements.go $REPO_STATEMENTS_FILENAME
+    cp ./internal/types/record/template.go $REPO_RECORD_FILENAME
+    cp ./internal/repo/template/template_test.go $REPO_TEST_FILENAME
+    cp ./internal/repo/template/mock.go $REPO_MOCK_FILENAME
+    cp ./internal/repo/template/mock_test.go $REPO_MOCK_TEST_FILENAME
+
+    echo "Repo filename            : ${REPO_FILENAME}"
+    echo "Repo statements filename : ${REPO_STATEMENTS_FILENAME}"
+    echo "Repo record filename     : ${REPO_RECORD_FILENAME}"
+    echo "Repo test filename       : ${REPO_TEST_FILENAME}"
+    echo "Repo mock filename       : ${REPO_MOCK_FILENAME}"
+    echo "Repo mock test filename  : ${REPO_MOCK_TEST_FILENAME}"
+
+    # replace template names
+    sed -i "" "s/template/$REPO_LC/g" $REPO_FILENAME
+    sed -i "" "s/template/$REPO_LC/g" $REPO_STATEMENTS_FILENAME
+    sed -i "" "s/template/$REPO_LC/g" $REPO_RECORD_FILENAME
+    sed -i "" "s/template/$REPO_LC/g" $REPO_TEST_FILENAME
+    sed -i "" "s/template/$REPO_LC/g" $REPO_MOCK_FILENAME
+    sed -i "" "s/template/$REPO_LC/g" $REPO_MOCK_TEST_FILENAME
+
+    # replace template names
+    sed -i "" "s/Template/$REPO/g" $REPO_FILENAME
+    sed -i "" "s/Template/$REPO/g" $REPO_STATEMENTS_FILENAME
+    sed -i "" "s/Template/$REPO/g" $REPO_RECORD_FILENAME
+    sed -i "" "s/Template/$REPO/g" $REPO_TEST_FILENAME
+    sed -i "" "s/Template/$REPO/g" $REPO_MOCK_FILENAME
+    sed -i "" "s/Template/$REPO/g" $REPO_MOCK_TEST_FILENAME
+}
+
+# command (repo, service)
+COMMAND=$1
+
+if [ -z "$COMMAND" ]; then
+    echo "Missing command, cannot generate"
+    usage
+    exit 1
+fi
+
+if [[ "$2" == *'/'* ]]; then
+    echo "Generator does not support nesting directories, cannot generate"
+    usage
+    exit 1
+fi
+
+# generate repo
+if [ "$COMMAND" == "repo" ]; then
+    generate_repo $2
+    exit $?
+fi
+
+# generate service
+if [ "$COMMAND" == "service" ]; then
+    generate_service $2
+    exit $?
+fi
+
+

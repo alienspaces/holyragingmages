@@ -27,8 +27,7 @@ func NewDatabase(l Logger, c Config) (*sqlx.DB, error) {
 
 	if dt == "postgres" {
 		l.Printf("Using postgres")
-		db, err := newPostgresDB(l, c)
-		return db, err
+		return newPostgresDB(l, c)
 	}
 
 	return nil, fmt.Errorf("Unsuported database type %s", dt)

@@ -1,5 +1,27 @@
 #!/usr/bin/env bash
 
-curl localhost:8080/templates
+source ${BASH_SOURCE%/*}/start-services || status=$?
 
-for s in foo bar baz ; do curl -d"{\"test\":\"$s\"}" localhost:8080/templates ; done
+if [ $status -ne 0 ]; then
+    echo "Failed start-services" >&2
+    exit $status
+fi
+
+
+# required for all environments
+MODULES=( \
+    'common/database' \
+    'common/env' \
+    'common/logger' \
+    'common/model' \
+    'common/repository' \
+    'common/service' \
+);
+
+for MODULE in ${MODULES[@]}; do
+
+    cd $MODULE
+    go test -v -count 1 .
+    cd -
+
+done

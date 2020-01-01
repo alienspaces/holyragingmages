@@ -1,13 +1,13 @@
 package database
 
 import (
+	"log"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/env"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
 )
 
 func TestNewDatabase(t *testing.T) {
@@ -16,23 +16,24 @@ func TestNewDatabase(t *testing.T) {
 	e, err := env.NewEnv([]env.Item{}, false)
 	assert.Nil(t, err, "Env initialized without error")
 
-	envVars := map[string]string{
-		// logger
-		"APP_LOG_LEVEL": "debug",
+	envVars := []string{
 		// database
-		"APP_DB_HOST":     "postgres",
-		"APP_DB_PORT":     "5432",
-		"APP_DB_NAME":     "test",
-		"APP_DB_USER":     "test_user",
-		"APP_DB_PASSWORD": "test_user_password",
+		"APP_DB_HOST",
+		"APP_DB_PORT",
+		"APP_DB_NAME",
+		"APP_DB_USER",
+		"APP_DB_PASSWORD",
 	}
-	for key, val := range envVars {
-		assert.NoError(t, os.Setenv(key, val), "Set environment value")
+	for _, key := range envVars {
+		assert.NoError(t, e.Add(env.Item{
+			Key:      key,
+			Required: true,
+		}), "Add environment item")
 	}
 
-	// logger
-	l, err := logger.NewLogger(e)
-	assert.NotNil(t, l, "Logger initialized without error")
+	l := log.New(os.Stdout,
+		"DEBUG: ",
+		log.Ldate|log.Ltime|log.Lshortfile)
 
 	// database
 	db, err := NewDatabase(l, e)

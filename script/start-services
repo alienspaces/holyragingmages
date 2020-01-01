@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+GO_VERSION=go1.13.3
+if [ $(command -v gvm) ]; then
+    source  ~/.gvm/scripts/gvm
+    echo "Using ${GO_VERSION}"
+    gvm use $GO_VERSION
+fi
+
+# environment
+cp .env.test .env
+status=0
+source ${BASH_SOURCE%/*}/environment || status=$?
+
+if [ $status -ne 0 ]; then
+    echo "Failed including environment" >&2
+    exit $status
+fi
+
+# retry
+source ${BASH_SOURCE%/*}/retry || status=$?
+
+if [ $status -ne 0 ]; then
+    echo "Failed including retry" >&2
+    exit $status
+fi
+
+# stop services
+source ${BASH_SOURCE%/*}/stop-services || status=$?
+
+if [ $status -ne 0 ]; then
+    echo "Failed stopping services" >&2
+    exit $status
+fi
+
+# start database
+echo "=> Starting database";
+docker run --name holyragingmages-shared \
+  -e POSTGRES_USER=$APP_DB_USER \
+  -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
+  -e POSTGRES_DB=$APP_DB_NAME \
+  -p ${APP_DB_PORT}:5432 -d \
+  $APP_DB_IMAGE || status=$?
+
+if [ $status -ne 0 ]; then
+    echo "Failed starting database" >&2
+    exit $status
+fi
+
+export PGPASSWORD=$APP_DB_PASSWORD
+retry_cmd psql --host=$APP_DB_HOST \
+     --port=$APP_DB_PORT \
+	 --username=$APP_DB_USER \
+     --command="SELECT now();" \
+     $APP_DB_NAME
+
+echo "=> Database running on ${APP_DB_HOST}:${APP_DB_PORT}"

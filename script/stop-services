@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# stop database
+echo "=> Stopping database";
+docker ps -a | grep holyragingmages-shared | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
+
