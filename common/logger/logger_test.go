@@ -27,8 +27,8 @@ func TestLogger(t *testing.T) {
 	assert.NoError(t, err, "NewLogger returns without error")
 	assert.NotNil(t, l, "NewLogger is not nil")
 
-	l.Debug().Msg("Test debug")
-	l.Info().Msg("Test info")
-	l.Warn().Msg("Test warn")
-	l.Error().Msg("Test error")
+	l.Debug("Test debug")
+	l.Info("Test info")
+	l.Warn("Test warn")
+	l.Error("Test error")
 }
