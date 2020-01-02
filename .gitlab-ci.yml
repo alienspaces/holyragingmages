@@ -8,7 +8,7 @@ test:
     - apk update
     - apk add openrc --no-cache
     - apk add docker --no-cache
-    - service docker start
+    - service docker status
     - apk add postgresql-client --no-cache
   script:
     - ./script/test
