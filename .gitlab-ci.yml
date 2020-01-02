@@ -3,5 +3,11 @@ stages:
 
 test:
   stage: test
+  image: golang:1.13.5-alpine3.11
+  before_script:
+    - apk update
+    - apk add docker
+    - service docker start
+    - apk add postgresql-client
   script:
     - ./script/test
