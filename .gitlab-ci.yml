@@ -1,14 +1,18 @@
 stages:
   - test
 
+services:
+  - postgres:10.4-alpine
+
+variables:
+  POSTGRES_DB: holyragingmages-shared
+  POSTGRES_USER: holyragingmages-user
+  POSTGRES_PASSWORD: holyragingmages-pass
+
 test:
   stage: test
   image: golang:1.13.5-alpine3.11
   before_script:
-    - apk update
-    - apk add openrc --no-cache
-    - apk add docker --no-cache
-    - service docker status
     - apk add postgresql-client --no-cache
   script:
     - ./script/test

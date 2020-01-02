@@ -35,7 +35,7 @@ fi
 
 # start database
 echo "=> Starting database";
-docker run --name holyragingmages-shared \
+docker run --hostname postgres --name holyragingmages-shared \
   -e POSTGRES_USER=$APP_DB_USER \
   -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
   -e POSTGRES_DB=$APP_DB_NAME \
