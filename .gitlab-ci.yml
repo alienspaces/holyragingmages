@@ -13,6 +13,7 @@ test:
   stage: test
   image: golang:1.13.5-alpine3.11
   before_script:
+    - apk add bash --no-cache
     - apk add postgresql-client --no-cache
   script:
     - ./script/test
