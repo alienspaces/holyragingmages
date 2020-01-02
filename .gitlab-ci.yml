@@ -6,8 +6,9 @@ test:
   image: golang:1.13.5-alpine3.11
   before_script:
     - apk update
-    - apk add docker
+    - apk add openrc --no-cache
+    - apk add docker --no-cache
     - service docker start
-    - apk add postgresql-client
+    - apk add postgresql-client --no-cache
   script:
     - ./script/test
