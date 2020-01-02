@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-source ${BASH_SOURCE%/*}/start-services || status=$?
-
-if [ $status -ne 0 ]; then
-    echo "Failed start-services" >&2
-    exit $status
-fi
-
-
 # required for all environments
 MODULES=( \
     'common/database' \

@@ -34,13 +34,13 @@ if [ $status -ne 0 ]; then
 fi
 
 # start database
-echo "=> Starting database";
+echo "=> Starting database"
 docker run --hostname postgres --name holyragingmages-shared \
   -e POSTGRES_USER=$APP_DB_USER \
   -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
   -e POSTGRES_DB=$APP_DB_NAME \
   -p ${APP_DB_PORT}:5432 -d \
-  $APP_DB_IMAGE || status=$?
+  postgres:10.4-alpine || status=$?
 
 if [ $status -ne 0 ]; then
     echo "Failed starting database" >&2
