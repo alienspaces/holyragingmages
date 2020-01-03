@@ -1,22 +1,5 @@
 #!/usr/bin/env bash
 
-GO_VERSION=go1.13.3
-if [ $(command -v gvm) ]; then
-    source  ~/.gvm/scripts/gvm
-    echo "Using ${GO_VERSION}"
-    gvm use $GO_VERSION
-fi
-
-# environment
-cp .env.test .env
-status=0
-source ${BASH_SOURCE%/*}/environment || status=$?
-
-if [ $status -ne 0 ]; then
-    echo "Failed including environment" >&2
-    exit $status
-fi
-
 # retry
 source ${BASH_SOURCE%/*}/retry || status=$?
 
