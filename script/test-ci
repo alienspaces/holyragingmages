@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# environment
+cp .env.test .env
+status=0
+source ${BASH_SOURCE%/*}/environment || status=$?
+
+if [ $status -ne 0 ]; then
+    echo "Failed including environment" >&2
+    exit $status
+fi
+
 # required for all environments
 MODULES=( \
     'common/database' \

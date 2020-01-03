@@ -18,6 +18,4 @@ test:
     - apk add gcc --no-cache
     - apk add postgresql-client --no-cache
   script:
-    - cp .env.test .env
-    - source ./script/environment
-    - ./script/test
+    - ./script/test-ci
