@@ -30,15 +30,11 @@ function verify_env {
             continue
         fi
 
-        if [ "$APP_ENV" == "development" ]; then
-            echo "=> (env) ${ENV_VAR_NAME} => ${!ENV_VAR_NAME}"
+        # masked
+        if [[ "${ENV_VAR_NAME}" = *"PASSWORD" ]] || [[ "${ENV_VAR_NAME}" = *"KEY" ]]; then
+            echo "=> (env) ${ENV_VAR_NAME} => ********"
         else
-            # masked
-            if [[ "${ENV_VAR_NAME}" = *"PASSWORD" ]] || [[ "${ENV_VAR_NAME}" = *"KEY" ]]; then
-                echo "=> (env) ${ENV_VAR_NAME} => ********"
-            else
-                echo "=> (env) ${ENV_VAR_NAME} => ${!ENV_VAR_NAME}"
-            fi
+            echo "=> (env) ${ENV_VAR_NAME} => ${!ENV_VAR_NAME}"
         fi
     done
 

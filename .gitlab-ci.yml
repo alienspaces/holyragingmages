@@ -19,5 +19,5 @@ test:
     - apk add postgresql-client --no-cache
   script:
     - cp .env.test .env
-    - ./script/environment
+    - source ./script/environment
     - ./script/test
