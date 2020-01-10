@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+MODULES=( \
+    'common/database' \
+    'common/env' \
+    'common/logger' \
+    'common/model' \
+    'common/repository' \
+    'common/service' \
+);
+
+for MODULE in ${MODULES[@]}; do
+
+    cd $MODULE
+    go test -v -count 1 . || exit $?
+    cd -
+
+done
