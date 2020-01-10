@@ -7,28 +7,31 @@ if [ $(command -v gvm) ]; then
     gvm use $GO_VERSION
 fi
 
-# environment
 cp .env.test .env
 status=0
 
+# environment
 source ${BASH_SOURCE%/*}/environment || status=$?
 if [ $status -ne 0 ]; then
     echo "Failed including environment" >&2
     exit $status
 fi
 
+# start services
 source ${BASH_SOURCE%/*}/start-services || status=$?
 if [ $status -ne 0 ]; then
     echo "Failed start-services" >&2
     exit $status
 fi
 
+# test
 source ${BASH_SOURCE%/*}/test || status=$?
 if [ $status -ne 0 ]; then
     echo "Failed test" >&2
     exit $status
 fi
 
+# stop services
 source ${BASH_SOURCE%/*}/stop-services || status=$?
 if [ $status -ne 0 ]; then
     echo "Failed stop-services" >&2

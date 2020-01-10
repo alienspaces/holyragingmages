@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Establishes and validates required environment
+# establish and validate required environment
 function verify_env {
     echo "=> (env) Verifying environment"
 
@@ -64,4 +64,3 @@ fi
 
 # verify environment
 verify_env
-

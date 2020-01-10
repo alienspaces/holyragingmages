@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 
+status=0
+
+# environment
+source ${BASH_SOURCE%/*}/environment || status=$?
+if [ $status -ne 0 ]; then
+    echo "Failed including environment" >&2
+    exit $status
+fi
+
 # retry
 source ${BASH_SOURCE%/*}/retry || status=$?
-
 if [ $status -ne 0 ]; then
     echo "Failed including retry" >&2
     exit $status
@@ -10,7 +18,6 @@ fi
 
 # stop services
 source ${BASH_SOURCE%/*}/stop-services || status=$?
-
 if [ $status -ne 0 ]; then
     echo "Failed stopping services" >&2
     exit $status
