@@ -36,7 +36,7 @@ func TestNewDatabase(t *testing.T) {
 		log.Ldate|log.Ltime|log.Lshortfile)
 
 	// database
-	db, err := NewDatabase(l, e)
+	db, err := NewDatabase(e, l)
 	if assert.Nil(t, err, "Database initialized without error") {
 		assert.NotNil(t, db, "Database connected")
 	}

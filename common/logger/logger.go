@@ -72,6 +72,11 @@ func (l *Logger) Init(c Config) error {
 	return nil
 }
 
+// Printf -
+func (l *Logger) Printf(format string, args ...interface{}) {
+	l.log.Printf(format, args...)
+}
+
 // Level -
 func (l *Logger) Level(level Level) {
 	if lvl, ok := levelMap[level]; ok {

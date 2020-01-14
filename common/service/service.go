@@ -4,15 +4,14 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Database -
-type Database interface {
-	GetConnection() *sqlx.DB
-	CloseConnection()
-	BeginTrx() *sqlx.Tx
+// Storer -
+type Storer interface {
+	GetDb() (*sqlx.DB, error)
+	GetTx() (*sqlx.Tx, error)
 }
 
-// Config -
-type Config interface {
+// Configurer -
+type Configurer interface {
 	Get(key string) string
 }
 
@@ -21,32 +20,46 @@ type Logger interface {
 	Printf(format string, v ...interface{})
 }
 
-// Container -
-type Container struct {
-	Database Database
-	Logger   Logger
-	Config   Config
+// Runner -
+type Runner interface {
+	Configuration() []string
+	Run(c Configurer, l Logger, s Storer, args map[string]interface{}) error
 }
 
-// NewContainer -
-func NewContainer(c Config, l Logger, d Database) (*Container, error) {
+// Service -
+type Service struct {
+	Storer     Storer
+	Logger     Logger
+	Configurer Configurer
+	Runner     Runner
+}
 
-	container := Container{
-		Config:   c,
-		Logger:   l,
-		Database: d,
+// NewService -
+func NewService(c Configurer, l Logger, s Storer, r Runner) (*Service, error) {
+
+	svc := Service{
+		Configurer: c,
+		Logger:     l,
+		Storer:     s,
+		Runner:     r,
 	}
 
-	err := container.Init()
+	err := svc.Init()
 	if err != nil {
 		return nil, err
 	}
 
-	return &container, nil
+	return &svc, nil
 }
 
 // Init -
-func (c *Container) Init() error {
+func (c *Service) Init() error {
+
+	return nil
+}
+
+// Run -
+func (c *Service) Run() error {
 
 	return nil
 }
