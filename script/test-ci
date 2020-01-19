@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cp .env.test .env
+cp .env.ci .env
 status=0
 
 # environment

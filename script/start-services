@@ -25,16 +25,31 @@ fi
 
 # start database
 echo "=> Starting database"
-docker run --hostname postgres --name holyragingmages-shared \
-  -e POSTGRES_USER=$APP_DB_USER \
-  -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
-  -e POSTGRES_DB=$APP_DB_NAME \
-  -p ${APP_DB_PORT}:5432 -d \
-  postgres:10.4-alpine || status=$?
+if [ $APP_DB_SERVICE = "docker" ]; then
+    echo "=> Starting database docker service"
 
-if [ $status -ne 0 ]; then
-    echo "Failed starting database" >&2
-    exit $status
+    docker run --hostname postgres --name holyragingmages-shared \
+    -e POSTGRES_USER=$APP_DB_USER \
+    -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
+    -e POSTGRES_DB=$APP_DB_NAME \
+    -p ${APP_DB_PORT}:5432 -d \
+    postgres:10.4-alpine || status=$?
+
+    if [ $status -ne 0 ]; then
+        echo "Failed starting database" >&2
+        exit $status
+    fi
+else
+    echo "=> Starting database local service"
+
+    sudo service postgresql start
+    sudo -u postgres createuser $APP_DB_USER
+    sudo -u postgres createdb $APP_DB_NAME
+    sudo -u postgres \
+        psql -c "grant all privileges on database $APP_DB_NAME to $APP_DB_USER;"
+    sudo -u postgres \
+        psql -c "alter user $APP_DB_USER with password '$APP_DB_PASSWORD';"
+
 fi
 
 export PGPASSWORD=$APP_DB_PASSWORD

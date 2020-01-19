@@ -13,11 +13,12 @@ function verify_env {
     ENV_VARS=( \
 
         # database
+		'APP_DB_SERVICE' \
 		'APP_DB_HOST' \
 		'APP_DB_NAME' \
 		'APP_DB_PORT' \
 		'APP_DB_USER' \
-		'APP_DB_PASSWORD' \
+#		'APP_DB_PASSWORD' \
     );
 
     # verify

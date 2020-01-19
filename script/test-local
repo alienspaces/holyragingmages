@@ -7,7 +7,7 @@ if [ $(command -v gvm) ]; then
     gvm use $GO_VERSION
 fi
 
-cp .env.test .env
+cp .env.local .env
 status=0
 
 # environment
