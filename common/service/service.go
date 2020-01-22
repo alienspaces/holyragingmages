@@ -22,8 +22,8 @@ type Logger interface {
 
 // Runner -
 type Runner interface {
-	Configuration() []string
-	Run(c Configurer, l Logger, s Storer, args map[string]interface{}) error
+	Init(c Configurer, l Logger, s Storer) error
+	Run(args map[string]interface{}) error
 }
 
 // Service -
@@ -44,7 +44,7 @@ func NewService(c Configurer, l Logger, s Storer, r Runner) (*Service, error) {
 		Runner:     r,
 	}
 
-	err := svc.Init()
+	err := svc.init()
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +53,11 @@ func NewService(c Configurer, l Logger, s Storer, r Runner) (*Service, error) {
 }
 
 // Init -
-func (c *Service) Init() error {
-
-	return nil
+func (svc *Service) init() error {
+	return svc.Runner.Init(svc.Configurer, svc.Logger, svc.Storer)
 }
 
 // Run -
-func (c *Service) Run() error {
-
-	return nil
+func (svc *Service) Run(args map[string]interface{}) error {
+	return svc.Runner.Run(args)
 }
