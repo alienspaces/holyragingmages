@@ -40,7 +40,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	s.Run()
+	args := make(map[string]interface{})
+
+	s.Run(args)
 
 	os.Exit(1)
 }

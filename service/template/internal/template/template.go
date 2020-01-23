@@ -5,17 +5,14 @@ import (
 )
 
 // Runner -
-type Runner struct{}
-
-// Run -
-func (r *Runner) Run(c service.Configurer, l service.Logger, d service.Storer, args map[string]interface{}) error {
-
-	l.Printf("** Running **")
-
-	return nil
+type Runner struct {
+	service.APIRunner
 }
 
-// Configuration -
-func (r *Runner) Configuration() []string {
+// Run -
+func (r *Runner) Run(args map[string]interface{}) error {
+
+	r.Log.Printf("** Running **")
+
 	return nil
 }

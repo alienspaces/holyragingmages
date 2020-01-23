@@ -3,6 +3,7 @@ module gitlab.com/alienspaces/holyragingmages/service/template
 go 1.13
 
 require (
+	github.com/stretchr/testify v1.4.0
 	gitlab.com/alienspaces/holyragingmages/common/database v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/env v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/logger v1.0.0
