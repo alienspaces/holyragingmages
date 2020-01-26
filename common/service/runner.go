@@ -29,7 +29,7 @@ func (r *APIRunner) Init(c Configurer, l Logger, s Storer) error {
 // Run -
 func (r *APIRunner) Run(args map[string]interface{}) error {
 
-	r.Log.Printf("** Running **")
+	r.Log.Printf("** Run **")
 
 	handler, err := r.Handler()
 	if err != nil {
@@ -43,16 +43,40 @@ func (r *APIRunner) Run(args map[string]interface{}) error {
 // Handler -
 func (r *APIRunner) Handler() (http.Handler, error) {
 
-	router := httprouter.New()
-	router.GET("/", r.IndexGet)
+	r.Log.Printf("** Handler **")
+
+	router, err := r.Router()
+	if err != nil {
+		r.Log.Printf("Failed router >%v<", err)
+		return nil, err
+	}
 
 	return router, nil
 }
 
-// IndexGet -
-func (r *APIRunner) IndexGet(resp http.ResponseWriter, req *http.Request, ps httprouter.Params) {
-	//
-	r.Log.Printf("IndexGet - Dum dum")
+// Router -
+func (r *APIRunner) Router() (http.Handler, error) {
 
-	fmt.Fprint(resp, "Welcome!\n")
+	r.Log.Printf("** Router **")
+
+	return r.DefaultRouter()
+}
+
+// DefaultRouter -
+func (r *APIRunner) DefaultRouter() (http.Handler, error) {
+
+	r.Log.Printf("** DefaultRouter **")
+
+	router := httprouter.New()
+	router.GET("/", r.DefaultHandler)
+
+	return router, nil
+}
+
+// DefaultHandler -
+func (r *APIRunner) DefaultHandler(resp http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+
+	r.Log.Printf("** DefaultHandler **")
+
+	fmt.Fprint(resp, "Default\n")
 }

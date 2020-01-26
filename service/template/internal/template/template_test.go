@@ -30,9 +30,5 @@ func TestTemplate(t *testing.T) {
 	r := Runner{}
 
 	err = r.Init(e, l, d)
-	if assert.NoError(t, err, "Init returns without error") {
-		args := make(map[string]interface{})
-		err = r.Run(args)
-		assert.NoError(t, err, "Run returns without error")
-	}
+	assert.NoError(t, err, "Init returns without error")
 }
