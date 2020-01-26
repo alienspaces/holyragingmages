@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -20,17 +21,27 @@ func (r *APIRunner) Init(c Configurer, l Logger, s Storer) error {
 	r.Log = l
 	r.Store = s
 
+	r.Log.Printf("** Initialised **")
+
 	return nil
 }
 
 // Run -
 func (r *APIRunner) Run(args map[string]interface{}) error {
 
-	return nil
+	r.Log.Printf("** Running **")
+
+	handler, err := r.Handler()
+	if err != nil {
+		r.Log.Printf("Failed handler >%v<", err)
+		return err
+	}
+
+	return http.ListenAndServe(":8080", handler)
 }
 
-// InitRoutes -
-func (r *APIRunner) InitRoutes(h http.Handler) (http.Handler, error) {
+// Handler -
+func (r *APIRunner) Handler() (http.Handler, error) {
 
 	router := httprouter.New()
 	router.GET("/", r.IndexGet)
@@ -41,4 +52,7 @@ func (r *APIRunner) InitRoutes(h http.Handler) (http.Handler, error) {
 // IndexGet -
 func (r *APIRunner) IndexGet(resp http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	//
+	r.Log.Printf("IndexGet - Dum dum")
+
+	fmt.Fprint(resp, "Welcome!\n")
 }

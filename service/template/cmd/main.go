@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	e, err := env.NewEnv(nil, true)
+	e, err := env.NewEnv(nil, false)
 	if err != nil {
 		fmt.Printf("Failed new env >%v<", err)
 		os.Exit(0)
