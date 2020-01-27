@@ -7,8 +7,8 @@ if [ $(command -v gvm) ]; then
     gvm use $GO_VERSION
 fi
 
-# copy locaL env
-cp .env.local .env
+# copy docker env
+cp .env.docker .env
 status=0
 
 # environment
