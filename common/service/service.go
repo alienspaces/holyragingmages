@@ -20,28 +20,28 @@ type Logger interface {
 	Printf(format string, v ...interface{})
 }
 
-// Runner -
-type Runner interface {
+// Runnerer -
+type Runnerer interface {
 	Init(c Configurer, l Logger, s Storer) error
 	Run(args map[string]interface{}) error
 }
 
 // Service -
 type Service struct {
-	Storer     Storer
-	Logger     Logger
-	Configurer Configurer
-	Runner     Runner
+	Store  Storer
+	Log    Logger
+	Config Configurer
+	Runner Runnerer
 }
 
 // NewService -
-func NewService(c Configurer, l Logger, s Storer, r Runner) (*Service, error) {
+func NewService(c Configurer, l Logger, s Storer, r Runnerer) (*Service, error) {
 
 	svc := Service{
-		Configurer: c,
-		Logger:     l,
-		Storer:     s,
-		Runner:     r,
+		Config: c,
+		Log:    l,
+		Store:  s,
+		Runner: r,
 	}
 
 	err := svc.init()
@@ -54,10 +54,14 @@ func NewService(c Configurer, l Logger, s Storer, r Runner) (*Service, error) {
 
 // Init -
 func (svc *Service) init() error {
-	return svc.Runner.Init(svc.Configurer, svc.Logger, svc.Storer)
+
+	// TODO: exception handling and alerting
+	return svc.Runner.Init(svc.Config, svc.Log, svc.Store)
 }
 
 // Run -
 func (svc *Service) Run(args map[string]interface{}) error {
+
+	// TODO: exception handling and alerting
 	return svc.Runner.Run(args)
 }

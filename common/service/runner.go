@@ -7,76 +7,110 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// APIRunner -
-type APIRunner struct {
+// Runner - implements the runnerer interface
+type Runner struct {
 	Store  Storer
 	Log    Logger
 	Config Configurer
 }
 
-// Init -
-func (r *APIRunner) Init(c Configurer, l Logger, s Storer) error {
+// ensure we continue to comply with the Runnerer interface
+var runner Runnerer = &Runner{}
 
-	r.Config = c
-	r.Log = l
-	r.Store = s
+// Init - override to perform custom initialization
+func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
 
-	r.Log.Printf("** Initialised **")
+	rnr.Config = c
+	rnr.Log = l
+	rnr.Store = s
+
+	rnr.Log.Printf("** Initialised **")
 
 	return nil
 }
 
-// Run -
-func (r *APIRunner) Run(args map[string]interface{}) error {
+// Run - override to perform custom running
+func (rnr *Runner) Run(args map[string]interface{}) error {
 
-	r.Log.Printf("** Run **")
+	rnr.Log.Printf("** Run **")
 
-	handler, err := r.Handler()
+	// default handler
+	router, err := rnr.defaultRouter()
 	if err != nil {
-		r.Log.Printf("Failed handler >%v<", err)
+		rnr.Log.Printf("Failed default router >%v<", err)
 		return err
 	}
 
-	return http.ListenAndServe(":8080", handler)
+	return http.ListenAndServe(":8080", router)
 }
 
-// Handler -
-func (r *APIRunner) Handler() (http.Handler, error) {
+// Router - override to implement custom routing
+func (rnr *Runner) Router(router *httprouter.Router) error {
 
-	r.Log.Printf("** Handler **")
+	rnr.Log.Printf("** Router **")
 
-	router, err := r.Router()
+	return nil
+}
+
+// defaultRouter - implements default routes based on runner configuration options
+func (rnr *Runner) defaultRouter() (*httprouter.Router, error) {
+
+	rnr.Log.Printf("** DefaultRouter **")
+
+	// default routes
+	router := httprouter.New()
+	router.GET("/", rnr.defaultMiddleware(rnr.defaultHandler))
+
+	// service defined routes
+	err := rnr.Router(router)
 	if err != nil {
-		r.Log.Printf("Failed router >%v<", err)
+		rnr.Log.Printf("Failed router >%v<", err)
 		return nil, err
 	}
 
 	return router, nil
 }
 
-// Router -
-func (r *APIRunner) Router() (http.Handler, error) {
+// defaultMiddleware - implements middlewares based on runner configuration
+func (rnr *Runner) defaultMiddleware(h httprouter.Handle) httprouter.Handle {
 
-	r.Log.Printf("** Router **")
+	rnr.Log.Printf("** DefaultMiddleware **")
 
-	return r.DefaultRouter()
+	h, _ = rnr.BasicAuth(h)
+
+	return h
 }
 
-// DefaultRouter -
-func (r *APIRunner) DefaultRouter() (http.Handler, error) {
+// defaultHandler -
+func (rnr *Runner) defaultHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
-	r.Log.Printf("** DefaultRouter **")
+	rnr.Log.Printf("** DefaultHandler **")
 
-	router := httprouter.New()
-	router.GET("/", r.DefaultHandler)
-
-	return router, nil
+	fmt.Fprint(w, "Default\n")
 }
 
-// DefaultHandler -
-func (r *APIRunner) DefaultHandler(resp http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+// BasicAuth -
+func (rnr *Runner) BasicAuth(h httprouter.Handle) (httprouter.Handle, error) {
 
-	r.Log.Printf("** DefaultHandler **")
+	// TODO: complete basic authorization implementation
+	isAuthorized := func(user, password string) bool {
+		return true
+	}
 
-	fmt.Fprint(resp, "Default\n")
+	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
+		// Get the Basic Authentication credentials
+		user, password, hasAuth := r.BasicAuth()
+
+		if hasAuth && isAuthorized(user, password) {
+			// delegate request
+			h(w, r, ps)
+		} else {
+			// unauthorized
+			w.Header().Set("WWW-Authenticate", "Basic realm=Restricted")
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		}
+	}
+
+	return handle, nil
 }

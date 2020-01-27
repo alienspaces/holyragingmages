@@ -6,5 +6,5 @@ import (
 
 // Runner -
 type Runner struct {
-	service.APIRunner
+	service.Runner
 }
