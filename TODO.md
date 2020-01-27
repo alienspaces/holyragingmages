@@ -2,4 +2,9 @@
 
 ## TODO
 
-* Complete template service
+* Template service
+  * Handler
+  * Model
+  * Repository
+* Mage service
+  * Etc ..

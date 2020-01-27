@@ -99,7 +99,7 @@ func (rnr *Runner) BasicAuth(h httprouter.Handle) (httprouter.Handle, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
-		// Get the Basic Authentication credentials
+		// get basic auth credentials
 		user, password, hasAuth := r.BasicAuth()
 
 		if hasAuth && isAuthorized(user, password) {
