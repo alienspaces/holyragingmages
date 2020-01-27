@@ -32,9 +32,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	r := template.Runner{}
+	r := template.NewRunner()
 
-	s, err := service.NewService(e, l, d, &r)
+	s, err := service.NewService(e, l, d, r)
 	if err != nil {
 		fmt.Printf("Failed new service >%v<", err)
 		os.Exit(0)
