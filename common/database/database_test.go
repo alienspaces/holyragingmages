@@ -7,16 +7,16 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"gitlab.com/alienspaces/holyragingmages/common/env"
+	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
 func TestNewDatabase(t *testing.T) {
 
-	// environment
-	e, err := env.NewEnv([]env.Item{}, false)
-	assert.Nil(t, err, "Env initialized without error")
+	// config
+	e, err := config.NewConfig([]config.Item{}, false)
+	assert.Nil(t, err, "Config initialized without error")
 
-	envVars := []string{
+	configVars := []string{
 		// database
 		"APP_DB_HOST",
 		"APP_DB_PORT",
@@ -24,11 +24,11 @@ func TestNewDatabase(t *testing.T) {
 		"APP_DB_USER",
 		"APP_DB_PASSWORD",
 	}
-	for _, key := range envVars {
-		assert.NoError(t, e.Add(env.Item{
+	for _, key := range configVars {
+		assert.NoError(t, e.Add(config.Item{
 			Key:      key,
 			Required: true,
-		}), "Add environment item")
+		}), "Add configironment item")
 	}
 
 	l := log.New(os.Stdout,

@@ -1,4 +1,4 @@
-module gitlab.com/alienspaces/holyragingmages/common/env
+module gitlab.com/alienspaces/holyragingmages/common/config
 
 go 1.13
 

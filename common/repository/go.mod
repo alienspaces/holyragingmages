@@ -10,7 +10,7 @@ require (
 )
 
 replace (
+	gitlab.com/alienspaces/holyragingmages/common/config => ../../common/config
 	gitlab.com/alienspaces/holyragingmages/common/database => ../../common/database
-	gitlab.com/alienspaces/holyragingmages/common/env => ../../common/env
 	gitlab.com/alienspaces/holyragingmages/common/logger => ../../common/logger
 )

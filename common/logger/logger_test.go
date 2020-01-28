@@ -5,15 +5,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"gitlab.com/alienspaces/holyragingmages/common/env"
+	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
 func TestLogger(t *testing.T) {
 
 	// environment
-	e, err := env.NewEnv([]env.Item{}, false)
-	assert.Nil(t, err, "Env initialized without error")
+	e, err := config.NewConfig([]config.Item{}, false)
+	assert.Nil(t, err, "Config initialized without error")
 
 	envVars := map[string]string{
 		// logger

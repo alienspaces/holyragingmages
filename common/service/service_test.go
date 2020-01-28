@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"gitlab.com/alienspaces/holyragingmages/common/config"
 	"gitlab.com/alienspaces/holyragingmages/common/database"
-	"gitlab.com/alienspaces/holyragingmages/common/env"
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
 )
 
@@ -33,24 +33,24 @@ func (r *TestRunner) Run(args map[string]interface{}) error {
 
 func TestNewService(t *testing.T) {
 
-	e, err := env.NewEnv(nil, false)
+	c, err := config.NewConfig(nil, false)
 	if err != nil {
-		t.Fatalf("Failed new env >%v<", err)
+		t.Fatalf("Failed new config >%v<", err)
 	}
 
-	l, err := logger.NewLogger(e)
+	l, err := logger.NewLogger(c)
 	if err != nil {
 		t.Fatalf("Failed new logger >%v<", err)
 	}
 
-	d, err := database.NewDatabase(e, l)
+	d, err := database.NewDatabase(c, l)
 	if err != nil {
 		t.Fatalf("Failed new database >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	ts, err := NewService(e, l, d, &tr)
+	ts, err := NewService(c, l, d, &tr)
 	if assert.NoError(t, err, "NewService returns without error") {
 		assert.NotNil(t, ts, "Test service is not nil")
 	}

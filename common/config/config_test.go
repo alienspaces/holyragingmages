@@ -1,4 +1,4 @@
-package env
+package config
 
 import (
 	"os"
@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewEnv(t *testing.T) {
+func TestNewConfig(t *testing.T) {
 
 	tests := map[string]struct {
 		dotEnv  bool
 		items   []Item
 		wantErr bool
 	}{
-		"NewEnv with items": {
+		"NewConfig with items": {
 			dotEnv: false,
 			items: []Item{
 				Item{
@@ -24,12 +24,12 @@ func TestNewEnv(t *testing.T) {
 			},
 			wantErr: false,
 		},
-		"NewEnv without items": {
+		"NewConfig without items": {
 			dotEnv:  false,
 			items:   nil,
 			wantErr: false,
 		},
-		"NewEnv without dot env": {
+		"NewConfig without dot env": {
 			dotEnv:  true,
 			items:   nil,
 			wantErr: true,
@@ -40,14 +40,14 @@ func TestNewEnv(t *testing.T) {
 
 		t.Logf("Running test >%s<", tcName)
 
-		e, err := NewEnv(tc.items, tc.dotEnv)
+		e, err := NewConfig(tc.items, tc.dotEnv)
 		if tc.wantErr {
-			if assert.Error(t, err, "NewEnv returns with error") {
+			if assert.Error(t, err, "NewConfig returns with error") {
 				continue
 			}
 		}
-		if assert.NoError(t, err, "NewEnv returns without error") {
-			assert.NotNil(t, e, "NewEnv returns environment object")
+		if assert.NoError(t, err, "NewConfig returns without error") {
+			assert.NotNil(t, e, "NewConfig returns environment object")
 		}
 	}
 }
@@ -86,9 +86,9 @@ func TestGet(t *testing.T) {
 
 		t.Logf("Running test >%s<", tcName)
 
-		e, err := NewEnv(tc.items, false)
+		e, err := NewConfig(tc.items, false)
 		if tc.wantErr {
-			if assert.Error(t, err, "NewEnv returns with error") {
+			if assert.Error(t, err, "NewConfig returns with error") {
 				continue
 			}
 		}

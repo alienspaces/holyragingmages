@@ -1,5 +1,5 @@
-// Package env provides methods for managing environment variables
-package env
+// Package config provides methods for managing configuration
+package config
 
 import (
 	"fmt"
@@ -14,29 +14,29 @@ type Item struct {
 	Required bool
 }
 
-// Env defines a container of items and corresponding values
-type Env struct {
+// Config defines a container of items and corresponding values
+type Config struct {
 	Items  []*Item
 	Values map[string]string
 }
 
-// NewEnv creates a new environment object
-func NewEnv(items []Item, dotEnv bool) (*Env, error) {
+// NewConfig creates a new environment object
+func NewConfig(items []Item, dotEnv bool) (*Config, error) {
 
-	e := Env{
+	e := Config{
 		Values: make(map[string]string),
 	}
 
 	err := e.Init(items, dotEnv)
 	if err != nil {
-		return nil, fmt.Errorf("NewEnv failed init >%v<", err)
+		return nil, fmt.Errorf("NewConfig failed init >%v<", err)
 	}
 
 	return &e, nil
 }
 
 // Init initialises and checks environment values
-func (e *Env) Init(items []Item, dotEnv bool) (err error) {
+func (e *Config) Init(items []Item, dotEnv bool) (err error) {
 
 	dir := os.Getenv("APP_HOME")
 	if dir == "" {
@@ -61,8 +61,8 @@ func (e *Env) Init(items []Item, dotEnv bool) (err error) {
 	return nil
 }
 
-// Get returns an environment item value
-func (e *Env) Get(key string) (value string) {
+// Get returns a config item value
+func (e *Config) Get(key string) (value string) {
 
 	for _, item := range e.Items {
 		if item.Key == key {
@@ -74,8 +74,8 @@ func (e *Env) Get(key string) (value string) {
 	return ""
 }
 
-// Set an environment item value
-func (e *Env) Set(key string, value string) {
+// Set a config item value
+func (e *Config) Set(key string, value string) {
 
 	for _, item := range e.Items {
 		if item.Key == key {
@@ -85,8 +85,8 @@ func (e *Env) Set(key string, value string) {
 	}
 }
 
-// Add will add a new environment item
-func (e *Env) Add(item Item) (err error) {
+// Add will add a new config item
+func (e *Config) Add(item Item) (err error) {
 
 	e.Items = append(e.Items, &item)
 
@@ -104,7 +104,7 @@ func (e *Env) Add(item Item) (err error) {
 }
 
 // Verify checks whether the provided items have values set
-func (e *Env) Verify(items []Item) (err error) {
+func (e *Config) Verify(items []Item) (err error) {
 
 	for _, item := range items {
 		err = e.checkItem(&item)
@@ -116,8 +116,8 @@ func (e *Env) Verify(items []Item) (err error) {
 	return nil
 }
 
-// sourceItem - sources and sets an environment item value
-func (e *Env) sourceItem(item *Item) error {
+// sourceItem - sources and sets a config item value
+func (e *Config) sourceItem(item *Item) error {
 
 	value := os.Getenv(item.Key)
 	e.Set(item.Key, value)
@@ -125,8 +125,8 @@ func (e *Env) sourceItem(item *Item) error {
 	return nil
 }
 
-// checkItem - checks an environment item
-func (e *Env) checkItem(item *Item) error {
+// checkItem - checks a config item
+func (e *Config) checkItem(item *Item) error {
 
 	if item.Required && e.Values[item.Key] == "" {
 		return fmt.Errorf("Failed checking env value >%s<", item.Key)
