@@ -8,8 +8,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/env"
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
-
-	"gitlab.com/alienspaces/holyragingmages/service/template/internal/template"
+	"gitlab.com/alienspaces/holyragingmages/service/template/internal/runner"
 )
 
 func main() {
@@ -32,7 +31,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	r := template.NewRunner()
+	r := runner.NewRunner()
 
 	s, err := service.NewService(e, l, d, r)
 	if err != nil {

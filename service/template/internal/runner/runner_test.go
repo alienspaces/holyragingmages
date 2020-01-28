@@ -1,4 +1,4 @@
-package template
+package runner
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
 )
 
-func TestTemplate(t *testing.T) {
+func TestRunner(t *testing.T) {
 
 	e, err := env.NewEnv(nil, false)
 	if err != nil {

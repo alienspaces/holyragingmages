@@ -40,6 +40,7 @@ github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJy
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 gitlab.com/alienspaces/holyragingmages v0.0.0-20200127225859-4fef04879429 h1:7UX3FG8GCXudBMH/bMcs7uNB34LIYRlZap3kTLhM8uI=
 gitlab.com/alienspaces/holyragingmages v0.0.0-20200127225859-4fef04879429/go.mod h1:2eeCfATesLk+drd57+bwIUx06PVR/v9k++Ku5txxigw=
+gitlab.com/alienspaces/holyragingmages v0.0.0-20200128115115-199bd4e58f16 h1:IzTz9X9jNpmWHLw5COacrm5+kwsHq36GD+rcmg1Iwy0=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/net v0.0.0-20190603091049-60506f45cf65/go.mod h1:HSz+uSET+XFnRR8LxR5pz3Of3rY3CfYBVs4xY44aLks=
 golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
