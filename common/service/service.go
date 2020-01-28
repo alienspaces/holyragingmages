@@ -20,8 +20,8 @@ type Logger interface {
 	Printf(format string, v ...interface{})
 }
 
-// Runnerer -
-type Runnerer interface {
+// Runnable -
+type Runnable interface {
 	Init(c Configurer, l Logger, s Storer) error
 	Run(args map[string]interface{}) error
 }
@@ -31,11 +31,11 @@ type Service struct {
 	Store  Storer
 	Log    Logger
 	Config Configurer
-	Runner Runnerer
+	Runner Runnable
 }
 
 // NewService -
-func NewService(c Configurer, l Logger, s Storer, r Runnerer) (*Service, error) {
+func NewService(c Configurer, l Logger, s Storer, r Runnable) (*Service, error) {
 
 	svc := Service{
 		Config: c,

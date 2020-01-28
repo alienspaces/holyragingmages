@@ -20,7 +20,7 @@ type Runner struct {
 }
 
 // ensure we continue to comply with the Runnerer interface
-var runner Runnerer = &Runner{}
+var runner Runnable = &Runner{}
 
 // Init - override to perform custom initialization
 func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
