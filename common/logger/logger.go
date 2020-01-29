@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -85,22 +86,25 @@ func (l *Logger) Level(level Level) {
 }
 
 // Debug -
-func (l *Logger) Debug(msg string) {
+func (l *Logger) Debug(msg string, args ...interface{}) {
+	msg = fmt.Sprintf(msg, args)
 	l.log.Debug(msg)
 }
 
 // Info -
-func (l *Logger) Info(msg string) {
+func (l *Logger) Info(msg string, args ...interface{}) {
+	msg = fmt.Sprintf(msg, args)
 	l.log.Info(msg)
 }
 
 // Warn -
-func (l *Logger) Warn(msg string) {
+func (l *Logger) Warn(msg string, args ...interface{}) {
+	msg = fmt.Sprintf(msg, args)
 	l.log.Warn(msg)
 }
 
 // Error -
-func (l *Logger) Error(msg string) {
-	// NOTE: equivalent to error log level
+func (l *Logger) Error(msg string, args ...interface{}) {
+	msg = fmt.Sprintf(msg, args)
 	l.log.Error(msg)
 }

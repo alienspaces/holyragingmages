@@ -8,7 +8,10 @@ import (
 
 // Logger -
 type Logger interface {
-	Printf(format string, v ...interface{})
+	Debug(msg string, args ...interface{})
+	Info(msg string, args ...interface{})
+	Warn(msg string, args ...interface{})
+	Error(msg string, args ...interface{})
 }
 
 // Model -
@@ -22,7 +25,7 @@ func (m *Model) Init(tx *sqlx.Tx) (err error) {
 
 	// tx required
 	if tx == nil {
-		m.Log.Printf("Failed init, tx is required")
+		m.Log.Warn("Failed init, tx is required")
 		return fmt.Errorf("Failed init, tx is required")
 	}
 

@@ -25,7 +25,7 @@ func NewModel(l model.Logger, tx *sqlx.Tx) (m *Model, err error) {
 	if tx != nil {
 		err = m.Init(tx)
 		if err != nil {
-			m.Log.Printf("Failed model init >%v<", err)
+			m.Log.Warn("Failed model init >%v<", err)
 			return nil, err
 		}
 	}

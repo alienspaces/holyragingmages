@@ -41,6 +41,7 @@ func (r *Repository) NewRecordArray() []*record.Template {
 func (r *Repository) GetOne(id string, forUpdate bool) (*record.Template, error) {
 	rec := r.NewRecord()
 	if err := r.GetOneRec(id, rec); err != nil {
+		r.Log.Warn("Failed statement execution >%v<", err)
 		return nil, err
 	}
 	return rec, nil
@@ -56,7 +57,7 @@ func (r *Repository) GetMany(
 
 	rows, err := r.GetManyRecs(params, paramOperators)
 	if err != nil {
-		r.Log.Printf("Failed querying row >%v<", err)
+		r.Log.Warn("Failed statement execution >%v<", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -65,13 +66,13 @@ func (r *Repository) GetMany(
 		rec := r.NewRecord()
 		err := rows.StructScan(rec)
 		if err != nil {
-			r.Log.Printf("Failed executing struct scan >%v<", err)
+			r.Log.Warn("Failed executing struct scan >%v<", err)
 			return nil, err
 		}
 		recs = append(recs, rec)
 	}
 
-	r.Log.Printf("Fetched >%d< records", len(recs))
+	r.Log.Warn("Fetched >%d< records", len(recs))
 
 	return recs, nil
 }
@@ -87,7 +88,7 @@ func (r *Repository) Create(rec *record.Template) error {
 	err := r.CreateRec(rec)
 	if err != nil {
 		rec.CreatedAt = ""
-		r.Log.Printf("Failed statement execution >%v<", err)
+		r.Log.Warn("Failed statement execution >%v<", err)
 		return err
 	}
 
@@ -103,7 +104,7 @@ func (r *Repository) UpdateOne(rec *record.Template) error {
 	err := r.UpdateOneRec(rec)
 	if err != nil {
 		rec.UpdatedAt = origUpdatedAt
-		r.Log.Printf("Failed statement execution >%v<", err)
+		r.Log.Warn("Failed statement execution >%v<", err)
 		return err
 	}
 

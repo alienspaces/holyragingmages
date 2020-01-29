@@ -10,7 +10,10 @@ import (
 
 // Logger -
 type Logger interface {
-	Printf(format string, v ...interface{})
+	Debug(msg string, args ...interface{})
+	Info(msg string, args ...interface{})
+	Warn(msg string, args ...interface{})
+	Error(msg string, args ...interface{})
 }
 
 // Repository -
@@ -37,7 +40,7 @@ type RecordParam struct {
 // Init -
 func (r *Repository) Init(tx *sqlx.Tx) error {
 
-	r.Log.Printf("Initialising repo")
+	r.Log.Info("Initialising repo")
 
 	if r.Tx == nil {
 		return errors.New("Tx is nil, cannot initialise")
@@ -60,20 +63,20 @@ func (r *Repository) GetOneRec(recordID string, rec interface{}) error {
 	// stmt
 	stmt := p.GetOneStmt(r)
 
-	r.Log.Printf("Get record ID >%s<", recordID)
+	r.Log.Info("Get record ID >%s<", recordID)
 
 	err := stmt.QueryRowx(recordID).StructScan(rec)
 	if err != nil {
-		r.Log.Printf("Failed executing query >%v<", err)
-		r.Log.Printf("SQL: >%s<", p.GetOneSQL(r))
-		r.Log.Printf("recordID: >%v<", recordID)
+		r.Log.Warn("Failed executing query >%v<", err)
+		r.Log.Warn("SQL: >%s<", p.GetOneSQL(r))
+		r.Log.Warn("recordID: >%v<", recordID)
 
 		rec = nil
 
 		return err
 	}
 
-	r.Log.Printf("Record fetched")
+	r.Log.Info("Record fetched")
 
 	return nil
 }
@@ -95,16 +98,16 @@ func (r *Repository) GetManyRecs(
 	// params
 	querySQL, queryParams, err := r.sqlFromParamsAndOperator(querySQL, params, operators)
 	if err != nil {
-		r.Log.Printf("Failed generating query >%v<", err)
+		r.Log.Info("Failed generating query >%v<", err)
 		return nil, err
 	}
 
-	r.Log.Printf("Query >%s<", querySQL)
-	r.Log.Printf("Parameters >%+v<", queryParams)
+	r.Log.Info("Query >%s<", querySQL)
+	r.Log.Info("Parameters >%+v<", queryParams)
 
 	rows, err = tx.NamedQuery(querySQL, queryParams)
 	if err != nil {
-		r.Log.Printf("Failed querying row >%v<", err)
+		r.Log.Warn("Failed querying row >%v<", err)
 		return nil, err
 	}
 
@@ -122,7 +125,7 @@ func (r *Repository) CreateRec(rec interface{}) error {
 
 	err := stmt.QueryRowx(rec).StructScan(rec)
 	if err != nil {
-		r.Log.Printf("Failed executing create >%v<", err)
+		r.Log.Warn("Failed executing create >%v<", err)
 		return err
 	}
 
@@ -140,7 +143,7 @@ func (r *Repository) UpdateOneRec(rec interface{}) error {
 
 	err := stmt.QueryRowx(rec).StructScan(rec)
 	if err != nil {
-		r.Log.Printf("Failed executing update >%v<", err)
+		r.Log.Warn("Failed executing update >%v<", err)
 		return err
 	}
 
@@ -167,14 +170,14 @@ func (r *Repository) deleteOneRec(recordID string) error {
 
 	res, err := stmt.Exec(params)
 	if err != nil {
-		r.Log.Printf("Failed executing delete >%v<", err)
+		r.Log.Warn("Failed executing delete >%v<", err)
 		return err
 	}
 
 	// rows affected
 	raf, err := res.RowsAffected()
 	if err != nil {
-		r.Log.Printf("Failed executing rows affected >%v<", err)
+		r.Log.Warn("Failed executing rows affected >%v<", err)
 		return err
 	}
 
@@ -183,7 +186,7 @@ func (r *Repository) deleteOneRec(recordID string) error {
 		return fmt.Errorf("Expecting to delete exactly one row but deleted >%d<", raf)
 	}
 
-	r.Log.Printf("Deleted >%d< records", raf)
+	r.Log.Info("Deleted >%d< records", raf)
 
 	return nil
 }
@@ -207,14 +210,14 @@ func (r *Repository) removeOneRec(recordID string) error {
 
 	res, err := stmt.Exec(params)
 	if err != nil {
-		r.Log.Printf("Failed executing remove >%v<", err)
+		r.Log.Warn("Failed executing remove >%v<", err)
 		return err
 	}
 
 	// rows affected
 	raf, err := res.RowsAffected()
 	if err != nil {
-		r.Log.Printf("Failed executing rows affected >%v<", err)
+		r.Log.Warn("Failed executing rows affected >%v<", err)
 		return err
 	}
 
@@ -223,7 +226,7 @@ func (r *Repository) removeOneRec(recordID string) error {
 		return fmt.Errorf("Expecting to remove exactly one row but removed >%d<", raf)
 	}
 
-	r.Log.Printf("Removed >%d< records", raf)
+	r.Log.Info("Removed >%d< records", raf)
 
 	return nil
 }

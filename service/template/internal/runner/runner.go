@@ -29,7 +29,7 @@ func NewRunner() *Runner {
 // Router -
 func (rnr *Runner) Router(r *httprouter.Router) error {
 
-	rnr.Log.Printf("** Template Router **")
+	rnr.Log.Info("** Template Router **")
 
 	r.GET("/template", rnr.DefaultMiddleware(rnr.Handler))
 
@@ -39,7 +39,7 @@ func (rnr *Runner) Router(r *httprouter.Router) error {
 // Middleware -
 func (rnr *Runner) Middleware(h httprouter.Handle) httprouter.Handle {
 
-	rnr.Log.Printf("** Template Middleware **")
+	rnr.Log.Info("** Template Middleware **")
 
 	return h
 }
@@ -47,7 +47,7 @@ func (rnr *Runner) Middleware(h httprouter.Handle) httprouter.Handle {
 // Handler -
 func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
-	rnr.Log.Printf("** Template Handler **")
+	rnr.Log.Info("** Template Handler **")
 
 	fmt.Fprint(w, "Okie Dokie!\n")
 }

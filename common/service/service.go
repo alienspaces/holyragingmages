@@ -17,7 +17,10 @@ type Configurer interface {
 
 // Logger -
 type Logger interface {
-	Printf(format string, v ...interface{})
+	Debug(msg string, args ...interface{})
+	Info(msg string, args ...interface{})
+	Warn(msg string, args ...interface{})
+	Error(msg string, args ...interface{})
 }
 
 // Runnable -

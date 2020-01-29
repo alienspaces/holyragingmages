@@ -18,7 +18,7 @@ type TestRunner struct {
 
 func (r *TestRunner) Init(c Configurer, l Logger, s Storer) error {
 	if r.InitFunc == nil {
-		l.Printf("InitFunc is nil")
+		l.Info("InitFunc is nil")
 		return nil
 	}
 	return r.InitFunc()

@@ -29,7 +29,7 @@ func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
 	rnr.Log = l
 	rnr.Store = s
 
-	rnr.Log.Printf("** Initialised **")
+	rnr.Log.Info("** Initialised **")
 
 	// router
 	if rnr.RouterFunc == nil {
@@ -47,12 +47,12 @@ func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
 // Run - override to perform custom running
 func (rnr *Runner) Run(args map[string]interface{}) error {
 
-	rnr.Log.Printf("** Run **")
+	rnr.Log.Debug("** Run **")
 
 	// default handler
 	router, err := rnr.DefaultRouter()
 	if err != nil {
-		rnr.Log.Printf("Failed default router >%v<", err)
+		rnr.Log.Warn("Failed default router >%v<", err)
 		return err
 	}
 
@@ -62,7 +62,7 @@ func (rnr *Runner) Run(args map[string]interface{}) error {
 // Router - set RouterFunc to set up custom routes
 func (rnr *Runner) Router(router *httprouter.Router) error {
 
-	rnr.Log.Printf("** Router **")
+	rnr.Log.Info("** Router **")
 
 	return nil
 }
@@ -70,7 +70,7 @@ func (rnr *Runner) Router(router *httprouter.Router) error {
 // Middleware - set MiddlewareFunc to set up custom middleware
 func (rnr *Runner) Middleware(h httprouter.Handle) httprouter.Handle {
 
-	rnr.Log.Printf("** Middleware **")
+	rnr.Log.Info("** Middleware **")
 
 	return h
 }
@@ -78,7 +78,7 @@ func (rnr *Runner) Middleware(h httprouter.Handle) httprouter.Handle {
 // Handler - set HandlerFunc to set up custom handler
 func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
-	rnr.Log.Printf("** Handler **")
+	rnr.Log.Info("** Handler **")
 
 	fmt.Fprint(w, "Ok!\n")
 }
@@ -86,7 +86,7 @@ func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.
 // DefaultRouter - implements default routes based on runner configuration options
 func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 
-	rnr.Log.Printf("** DefaultRouter **")
+	rnr.Log.Info("** DefaultRouter **")
 
 	// default routes
 	r := httprouter.New()
@@ -95,7 +95,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 	// service defined routes
 	err := rnr.RouterFunc(r)
 	if err != nil {
-		rnr.Log.Printf("Failed router >%v<", err)
+		rnr.Log.Warn("Failed router >%v<", err)
 		return nil, err
 	}
 
@@ -105,7 +105,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 // DefaultMiddleware - implements middlewares based on runner configuration
 func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) httprouter.Handle {
 
-	rnr.Log.Printf("** DefaultMiddleware **")
+	rnr.Log.Info("** DefaultMiddleware **")
 
 	h, _ = rnr.BasicAuth(h)
 

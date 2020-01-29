@@ -75,14 +75,14 @@ func (p *Preparer) Prepare(m Preparable) error {
 		return nil
 	}
 
-	p.Log.Printf("Preparing statements >%s<", m.TableName())
+	p.Log.Info("Preparing statements >%s<", m.TableName())
 
 	// get by id
 	query := m.GetOneSQL()
 
 	getOneStmt, err := p.Tx.Preparex(query)
 	if err != nil {
-		p.Log.Printf("Error preparing GetOneSQL statement >%v<", err)
+		p.Log.Warn("Error preparing GetOneSQL statement >%v<", err)
 		return err
 	}
 
@@ -94,7 +94,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	getManyStmt, err := p.Tx.PrepareNamed(m.GetManySQL())
 	if err != nil {
-		p.Log.Printf("Error preparing GetManySQL statement >%v<", err)
+		p.Log.Warn("Error preparing GetManySQL statement >%v<", err)
 		return err
 	}
 
@@ -106,7 +106,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	createStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {
-		p.Log.Printf("Error preparing CreateSQL statement >%v<", err)
+		p.Log.Warn("Error preparing CreateSQL statement >%v<", err)
 		return err
 	}
 
@@ -118,7 +118,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	updateOneStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {
-		p.Log.Printf("Error preparing UpdateOneSQL statement >%v<", err)
+		p.Log.Warn("Error preparing UpdateOneSQL statement >%v<", err)
 		return err
 	}
 
@@ -130,7 +130,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	updateManyStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {
-		p.Log.Printf("Error preparing UpdateManySQL statement >%v<", err)
+		p.Log.Warn("Error preparing UpdateManySQL statement >%v<", err)
 		return err
 	}
 
@@ -142,7 +142,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	deleteStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {
-		p.Log.Printf("Error preparing DeleteSQL statement >%v<", err)
+		p.Log.Warn("Error preparing DeleteSQL statement >%v<", err)
 		return err
 	}
 
@@ -154,7 +154,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	deleteManyStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {
-		p.Log.Printf("Error preparing DeleteManySQL statement >%v<", err)
+		p.Log.Warn("Error preparing DeleteManySQL statement >%v<", err)
 		return err
 	}
 
@@ -166,7 +166,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	removeStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {
-		p.Log.Printf("Error preparing RemoveSQL statement >%v<", err)
+		p.Log.Warn("Error preparing RemoveSQL statement >%v<", err)
 		return err
 	}
 
@@ -178,7 +178,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 
 	removeManyStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {
-		p.Log.Printf("Error preparing RemoveManySQL statement >%v<", err)
+		p.Log.Warn("Error preparing RemoveManySQL statement >%v<", err)
 		return err
 	}
 
