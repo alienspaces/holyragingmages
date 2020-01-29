@@ -5,6 +5,17 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+
+	"gitlab.com/alienspaces/holyragingmages/common/service/middleware"
+)
+
+const (
+	// ConfigKeyValidateSchemaLocation - Directory location of JSON schema's
+	ConfigKeyValidateSchemaLocation string = "validateSchemaLocation"
+	// ConfigKeyValidateMainSchema - Main schema that can include reference schema's
+	ConfigKeyValidateMainSchema string = "validateMainSchema"
+	// ConfigKeyValidateReferenceSchemas - Schema referenced from the main schema
+	ConfigKeyValidateReferenceSchemas string = "validateReferenceSchemas"
 )
 
 // Runner - implements the runnerer interface
@@ -107,34 +118,28 @@ func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) httprouter.Handle {
 
 	rnr.Log.Info("** DefaultMiddleware **")
 
-	h, _ = rnr.BasicAuth(h)
+	// h, _ = middleware.BasicAuth(h)
+
+	// request body data
+	h, _ = middleware.Data(h)
+
+	// TODO: decide whether or not to bake configuration into
+	// type Runner or use config as below..
+
+	// JSON schema validatation
+	schemaLoc := rnr.Config.Get(ConfigKeyValidateSchemaLocation)
+	mainSchema := rnr.Config.Get(ConfigKeyValidateMainSchema)
+	referenceSchemas := rnr.Config.Get(ConfigKeyValidateReferenceSchemas)
+
+	if schemaLoc != "" && mainSchema != "" {
+		h, _ = middleware.SchemaValidate(
+			h,
+			schemaLoc,
+			mainSchema,
+			referenceSchemas,
+		)
+	}
 
 	// service defined routes
 	return rnr.MiddlewareFunc(h)
-}
-
-// BasicAuth -
-func (rnr *Runner) BasicAuth(h httprouter.Handle) (httprouter.Handle, error) {
-
-	// TODO: complete basic authorization implementation
-	isAuthorized := func(user, password string) bool {
-		return true
-	}
-
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
-		// get basic auth credentials
-		user, password, hasAuth := r.BasicAuth()
-
-		if hasAuth && isAuthorized(user, password) {
-			// delegate request
-			h(w, r, ps)
-		} else {
-			// unauthorized
-			w.Header().Set("WWW-Authenticate", "Basic realm=Restricted")
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		}
-	}
-
-	return handle, nil
 }
