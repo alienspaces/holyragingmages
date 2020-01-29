@@ -4,12 +4,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Storer -
-type Storer interface {
-	GetDb() (*sqlx.DB, error)
-	GetTx() (*sqlx.Tx, error)
-}
-
 // Configurer -
 type Configurer interface {
 	Get(key string) string
@@ -21,6 +15,12 @@ type Logger interface {
 	Info(msg string, args ...interface{})
 	Warn(msg string, args ...interface{})
 	Error(msg string, args ...interface{})
+}
+
+// Storer -
+type Storer interface {
+	GetDb() (*sqlx.DB, error)
+	GetTx() (*sqlx.Tx, error)
 }
 
 // Runnable -

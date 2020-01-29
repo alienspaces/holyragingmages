@@ -1,4 +1,4 @@
-package middleware
+package service
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ const (
 )
 
 // Data -
-func Data(h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) Data(h httprouter.Handle) (httprouter.Handle, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 

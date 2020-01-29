@@ -31,7 +31,7 @@ func (rnr *Runner) Router(r *httprouter.Router) error {
 
 	rnr.Log.Info("** Template Router **")
 
-	r.GET("/template", rnr.DefaultMiddleware(rnr.Handler))
+	r.GET("/templates", rnr.DefaultMiddleware(rnr.Handler))
 
 	return nil
 }

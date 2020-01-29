@@ -1,4 +1,4 @@
-package middleware
+package service
 
 import (
 	"fmt"
@@ -8,8 +8,20 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-// SchemaValidate -
-func SchemaValidate(h httprouter.Handle, schemaLoc, mainSchema string, refSchemas ...string) (httprouter.Handle, error) {
+// Validate -
+func (rnr *Runner) Validate(h httprouter.Handle) (httprouter.Handle, error) {
+
+	// JSON schema validatation
+	if rnr.MiddlewareConfig.ValidateSchemaLocation == "" || rnr.MiddlewareConfig.ValidateMainSchema == "" {
+		rnr.Log.Info("Missing validate schema location or validate main schema, not validating request body")
+		return h, nil
+	}
+
+	schemaLoc := rnr.MiddlewareConfig.ValidateSchemaLocation
+	mainSchema := rnr.MiddlewareConfig.ValidateMainSchema
+	refSchemas := rnr.MiddlewareConfig.ValidateReferenceSchemas
+
+	rnr.Log.Info("Validating request body with schema %/%", schemaLoc, mainSchema)
 
 	// load and validate the schema
 	sl := gojsonschema.NewSchemaLoader()
@@ -67,15 +79,6 @@ func SchemaValidate(h httprouter.Handle, schemaLoc, mainSchema string, refSchema
 		// delegate request
 		h(w, r, ps)
 	}
-
-	// schemaLoc := fmt.Sprintf("file:///%s/internal/services/schema/definitions", e.Get("APP_HOME"))
-
-	// r := &Schema{
-	// 	Env:              e,
-	// 	Logger:           l.With().Str("package", PackageName).Logger(),
-	// 	schemaDirectory:  schemaLoc,
-	// 	schemaDefinition: sd,
-	// }
 
 	return handle, nil
 }

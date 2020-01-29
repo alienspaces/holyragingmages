@@ -10,7 +10,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
 )
 
-// TestRunner -
+// TestRunner - allow Init and Run functions to be defined by tests
 type TestRunner struct {
 	InitFunc func() error
 	RunFunc  func() error
@@ -31,26 +31,36 @@ func (r *TestRunner) Run(args map[string]interface{}) error {
 	return r.RunFunc()
 }
 
-func TestNewService(t *testing.T) {
-
+// NewDefaultDependencies -
+func NewDefaultDependencies() (Configurer, Logger, Storer, error) {
 	c, err := config.NewConfig(nil, false)
 	if err != nil {
-		t.Fatalf("Failed new config >%v<", err)
+		return nil, nil, nil, err
 	}
 
 	l, err := logger.NewLogger(c)
 	if err != nil {
-		t.Fatalf("Failed new logger >%v<", err)
+		return nil, nil, nil, err
 	}
 
 	d, err := database.NewDatabase(c, l)
 	if err != nil {
-		t.Fatalf("Failed new database >%v<", err)
+		return nil, nil, nil, err
+	}
+
+	return c, l, d, nil
+}
+
+func TestNewService(t *testing.T) {
+
+	c, l, s, err := NewDefaultDependencies()
+	if err != nil {
+		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	ts, err := NewService(c, l, d, &tr)
+	ts, err := NewService(c, l, s, &tr)
 	if assert.NoError(t, err, "NewService returns without error") {
 		assert.NotNil(t, ts, "Test service is not nil")
 	}

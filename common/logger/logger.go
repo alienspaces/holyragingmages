@@ -87,24 +87,32 @@ func (l *Logger) Level(level Level) {
 
 // Debug -
 func (l *Logger) Debug(msg string, args ...interface{}) {
-	msg = fmt.Sprintf(msg, args)
+	if len(args) > 0 {
+		msg = fmt.Sprintf(msg, args)
+	}
 	l.log.Debug(msg)
 }
 
 // Info -
 func (l *Logger) Info(msg string, args ...interface{}) {
-	msg = fmt.Sprintf(msg, args)
+	if len(args) > 0 {
+		msg = fmt.Sprintf(msg, args)
+	}
 	l.log.Info(msg)
 }
 
 // Warn -
 func (l *Logger) Warn(msg string, args ...interface{}) {
-	msg = fmt.Sprintf(msg, args)
+	if len(args) > 0 {
+		msg = fmt.Sprintf(msg, args)
+	}
 	l.log.Warn(msg)
 }
 
 // Error -
 func (l *Logger) Error(msg string, args ...interface{}) {
-	msg = fmt.Sprintf(msg, args)
+	if len(args) > 0 {
+		msg = fmt.Sprintf(msg, args)
+	}
 	l.log.Error(msg)
 }

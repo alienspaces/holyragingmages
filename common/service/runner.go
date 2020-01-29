@@ -5,8 +5,6 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-
-	"gitlab.com/alienspaces/holyragingmages/common/service/middleware"
 )
 
 const (
@@ -24,10 +22,21 @@ type Runner struct {
 	Log    Logger
 	Config Configurer
 
+	// middleware configuration
+	MiddlewareConfig MiddlewareConfig
+
 	// composable functions
 	RouterFunc     func(router *httprouter.Router) error
 	MiddlewareFunc func(h httprouter.Handle) httprouter.Handle
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
+}
+
+// MiddlewareConfig - configuration for default middleware
+type MiddlewareConfig struct {
+	AuthType                 string
+	ValidateSchemaLocation   string
+	ValidateMainSchema       string
+	ValidateReferenceSchemas []string
 }
 
 // ensure we continue to comply with the Runnerer interface
@@ -40,7 +49,7 @@ func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
 	rnr.Log = l
 	rnr.Store = s
 
-	rnr.Log.Info("** Initialised **")
+	rnr.Log.Info("** Initialise **")
 
 	// router
 	if rnr.RouterFunc == nil {
@@ -118,27 +127,16 @@ func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) httprouter.Handle {
 
 	rnr.Log.Info("** DefaultMiddleware **")
 
-	// h, _ = middleware.BasicAuth(h)
+	// TODO: replace basic auth with whatever actual auth
+	// mechanism is decided to be used
+
+	// h, _ = rnr.BasicAuth(h)
 
 	// request body data
-	h, _ = middleware.Data(h)
+	h, _ = rnr.Data(h)
 
-	// TODO: decide whether or not to bake configuration into
-	// type Runner or use config as below..
-
-	// JSON schema validatation
-	schemaLoc := rnr.Config.Get(ConfigKeyValidateSchemaLocation)
-	mainSchema := rnr.Config.Get(ConfigKeyValidateMainSchema)
-	referenceSchemas := rnr.Config.Get(ConfigKeyValidateReferenceSchemas)
-
-	if schemaLoc != "" && mainSchema != "" {
-		h, _ = middleware.SchemaValidate(
-			h,
-			schemaLoc,
-			mainSchema,
-			referenceSchemas,
-		)
-	}
+	// validate
+	h, _ = rnr.Validate(h)
 
 	// service defined routes
 	return rnr.MiddlewareFunc(h)
