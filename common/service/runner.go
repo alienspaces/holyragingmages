@@ -36,10 +36,11 @@ type Runner struct {
 
 // MiddlewareConfig - configuration for global default middleware
 type MiddlewareConfig struct {
-	AuthType                 string
+	AuthenType               string
+	AuthzType                string
 	ValidateSchemaLocation   string
-	ValidateMainSchema       string
-	ValidateReferenceSchemas []string
+	ValidateSchemaMain       string
+	ValidateSchemaReferences []string
 }
 
 // HandlerConfig - configuration for routes, handlers and middleware
@@ -153,8 +154,13 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 			r.PATCH(hc.Path, h)
 		case http.MethodDelete:
 			r.DELETE(hc.Path, h)
+		case http.MethodOptions:
+			r.OPTIONS(hc.Path, h)
+		case http.MethodHead:
+			r.HEAD(hc.Path, h)
 		default:
-			//
+			rnr.Log.Warn("Router HTTP method >%s< not supported", hc.Method)
+			return nil, fmt.Errorf("Router HTTP method >%s< not supported", hc.Method)
 		}
 	}
 
@@ -173,22 +179,31 @@ func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) (httprouter.Handle, er
 
 	rnr.Log.Info("** DefaultMiddleware **")
 
-	// TODO: replace basic auth with whatever actual auth
-	// mechanism is decided to be used
-
-	// h, _ = rnr.BasicAuth(h)
-
-	// request body data
-	h, err := rnr.Data(h)
+	// authen
+	h, err := rnr.Authen(h)
 	if err != nil {
-		rnr.Log.Warn("Failed data middleware >%v<", err)
+		rnr.Log.Warn("Failed adding authen middleware >%v<", err)
 		return nil, err
 	}
 
-	// validate
+	// authz
+	h, err = rnr.Authz(h)
+	if err != nil {
+		rnr.Log.Warn("Failed adding authz middleware >%v<", err)
+		return nil, err
+	}
+
+	// request body data
+	h, err = rnr.Data(h)
+	if err != nil {
+		rnr.Log.Warn("Failed adding data middleware >%v<", err)
+		return nil, err
+	}
+
+	// validate body data
 	h, err = rnr.Validate(h)
 	if err != nil {
-		rnr.Log.Warn("Failed validate middleware >%v<", err)
+		rnr.Log.Warn("Failed adding validate middleware >%v<", err)
 		return nil, err
 	}
 

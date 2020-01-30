@@ -12,34 +12,37 @@ import (
 func (rnr *Runner) Validate(h httprouter.Handle) (httprouter.Handle, error) {
 
 	// JSON schema validatation
-	if rnr.MiddlewareConfig.ValidateSchemaLocation == "" || rnr.MiddlewareConfig.ValidateMainSchema == "" {
+	if rnr.MiddlewareConfig.ValidateSchemaLocation == "" || rnr.MiddlewareConfig.ValidateSchemaMain == "" {
 		rnr.Log.Info("Missing validate schema location or validate main schema, not validating request body")
 		return h, nil
 	}
 
 	schemaLoc := rnr.MiddlewareConfig.ValidateSchemaLocation
-	mainSchema := rnr.MiddlewareConfig.ValidateMainSchema
-	refSchemas := rnr.MiddlewareConfig.ValidateReferenceSchemas
+	schema := rnr.MiddlewareConfig.ValidateSchemaMain
+	schemaReferences := rnr.MiddlewareConfig.ValidateSchemaReferences
 
-	rnr.Log.Info("Validating request body with schema %/%", schemaLoc, mainSchema)
+	rnr.Log.Info("Validating request body with schema %/%", schemaLoc, schema)
 
 	// load and validate the schema
 	sl := gojsonschema.NewSchemaLoader()
 	sl.Validate = true
 
 	// first load any referenced schemas
-	for _, schemaName := range refSchemas {
+	for _, schemaName := range schemaReferences {
+		rnr.Log.Info("Adding schema reference %/%", schemaLoc, schemaName)
 		loader := gojsonschema.NewReferenceLoader(fmt.Sprintf("%s/%s", schemaLoc, schemaName))
 		err := sl.AddSchemas(loader)
 		if err != nil {
+			rnr.Log.Warn("Failed adding schema reference >%v<", err)
 			return nil, err
 		}
 	}
 
 	// then load and compile the main schema (which references the other schemas)
-	loader := gojsonschema.NewReferenceLoader(fmt.Sprintf("%s/%s", schemaLoc, mainSchema))
+	loader := gojsonschema.NewReferenceLoader(fmt.Sprintf("%s/%s", schemaLoc, schema))
 	sd, err := sl.Compile(loader)
 	if err != nil {
+		rnr.Log.Warn("Failed compiling schema's >%v<", err)
 		return nil, err
 	}
 
@@ -63,6 +66,7 @@ func (rnr *Runner) Validate(h httprouter.Handle) (httprouter.Handle, error) {
 		// validate the data
 		result, err := sd.Validate(dataLoader)
 		if err != nil {
+			rnr.Log.Warn("Failed validate >%v<", err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -71,6 +75,7 @@ func (rnr *Runner) Validate(h httprouter.Handle) (httprouter.Handle, error) {
 			errStr := ""
 			for _, e := range result.Errors() {
 				errStr = fmt.Sprintf("%s, %s", errStr, e)
+				rnr.Log.Warn("Invalid data >%s<", e)
 			}
 			http.Error(w, errStr, http.StatusBadRequest)
 			return
