@@ -46,7 +46,7 @@ func (rnr *Runner) Validate(h httprouter.Handle) (httprouter.Handle, error) {
 	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 		// data from context
-		data := r.Context().Value(ContextDataKey)
+		data := r.Context().Value(ContextKeyData)
 
 		// load the data
 		var dataLoader gojsonschema.JSONLoader

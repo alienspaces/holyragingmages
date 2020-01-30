@@ -22,8 +22,11 @@ type Runner struct {
 	Log    Logger
 	Config Configurer
 
-	// middleware configuration
+	// configuration for global default middleware
 	MiddlewareConfig MiddlewareConfig
+
+	// configuration for routes, handlers and middleware
+	HandlerConfig []HandlerConfig
 
 	// composable functions
 	RouterFunc     func(router *httprouter.Router) error
@@ -31,12 +34,20 @@ type Runner struct {
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 }
 
-// MiddlewareConfig - configuration for default middleware
+// MiddlewareConfig - configuration for global default middleware
 type MiddlewareConfig struct {
 	AuthType                 string
 	ValidateSchemaLocation   string
 	ValidateMainSchema       string
 	ValidateReferenceSchemas []string
+}
+
+// HandlerConfig - configuration for routes, handlers and middleware
+type HandlerConfig struct {
+	Method           string
+	Path             string
+	HandlerFunc      func(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
+	MiddlewareConfig MiddlewareConfig
 }
 
 // ensure we continue to comply with the Runnerer interface

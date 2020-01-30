@@ -12,8 +12,8 @@ import (
 type ContextData string
 
 const (
-	// ContextDataKey - context key for request body data
-	ContextDataKey ContextData = "data"
+	// ContextKeyData - context key for request body data
+	ContextKeyData ContextData = "data"
 )
 
 // Data -
@@ -27,7 +27,7 @@ func (rnr *Runner) Data(h httprouter.Handle) (httprouter.Handle, error) {
 		data := buf.String()
 
 		// Add data to context
-		ctx := context.WithValue(r.Context(), ContextDataKey, data)
+		ctx := context.WithValue(r.Context(), ContextKeyData, data)
 
 		// delegate request
 		h(w, r.WithContext(ctx), ps)

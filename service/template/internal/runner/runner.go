@@ -31,12 +31,20 @@ func (rnr *Runner) Router(r *httprouter.Router) error {
 
 	rnr.Log.Info("** Template Router **")
 
-	handle, err := rnr.DefaultMiddleware(rnr.Handler)
+	handle, err := rnr.DefaultMiddleware(rnr.GetTemplatesHandler)
 	if err != nil {
 		rnr.Log.Warn("Handler failed >%v<", err)
 		return err
 	}
 	r.GET("/templates", handle)
+	r.GET("/templates/:id", handle)
+
+	handle, err = rnr.DefaultMiddleware(rnr.PostTemplatesHandler)
+	if err != nil {
+		rnr.Log.Warn("Handler failed >%v<", err)
+		return err
+	}
+	r.POST("/templates", handle)
 
 	return nil
 }
@@ -52,7 +60,25 @@ func (rnr *Runner) Middleware(h httprouter.Handle) (httprouter.Handle, error) {
 // Handler -
 func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
-	rnr.Log.Info("** Template Handler **")
+	rnr.Log.Info("** Template handler **")
 
-	fmt.Fprint(w, "Okie Dokie!\n")
+	fmt.Fprint(w, "Hello from template!\n")
+}
+
+// GetTemplatesHandler -
+func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+
+	rnr.Log.Info("** Get templates handler ** params >%v<", params)
+
+	fmt.Fprint(w, "Hello from GET templates handler!\n", params)
+}
+
+// PostTemplatesHandler -
+func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+
+	data := r.Context().Value(service.ContextKeyData)
+
+	rnr.Log.Info("** Post templates handler ** params >%v< data >%v<", params, data)
+
+	fmt.Fprint(w, "Hello from Post templates handler!\n", params, "\n", data)
 }
