@@ -31,17 +31,22 @@ func (rnr *Runner) Router(r *httprouter.Router) error {
 
 	rnr.Log.Info("** Template Router **")
 
-	r.GET("/templates", rnr.DefaultMiddleware(rnr.Handler))
+	handle, err := rnr.DefaultMiddleware(rnr.Handler)
+	if err != nil {
+		rnr.Log.Warn("Handler failed >%v<", err)
+		return err
+	}
+	r.GET("/templates", handle)
 
 	return nil
 }
 
 // Middleware -
-func (rnr *Runner) Middleware(h httprouter.Handle) httprouter.Handle {
+func (rnr *Runner) Middleware(h httprouter.Handle) (httprouter.Handle, error) {
 
 	rnr.Log.Info("** Template Middleware **")
 
-	return h
+	return h, nil
 }
 
 // Handler -
