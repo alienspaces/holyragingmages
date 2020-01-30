@@ -23,6 +23,27 @@ func NewRunner() *Runner {
 	r.MiddlewareFunc = r.Middleware
 	r.HandlerFunc = r.Handler
 
+	r.HandlerConfig = []service.HandlerConfig{
+		{
+			Method:           http.MethodGet,
+			Path:             "/templates",
+			HandlerFunc:      r.GetTemplatesHandler,
+			MiddlewareConfig: service.MiddlewareConfig{},
+		},
+		{
+			Method:           http.MethodGet,
+			Path:             "/templates/:id",
+			HandlerFunc:      r.GetTemplatesHandler,
+			MiddlewareConfig: service.MiddlewareConfig{},
+		},
+		{
+			Method:           http.MethodPost,
+			Path:             "/templates",
+			HandlerFunc:      r.PostTemplatesHandler,
+			MiddlewareConfig: service.MiddlewareConfig{},
+		},
+	}
+
 	return &r
 }
 
@@ -30,21 +51,6 @@ func NewRunner() *Runner {
 func (rnr *Runner) Router(r *httprouter.Router) error {
 
 	rnr.Log.Info("** Template Router **")
-
-	handle, err := rnr.DefaultMiddleware(rnr.GetTemplatesHandler)
-	if err != nil {
-		rnr.Log.Warn("Handler failed >%v<", err)
-		return err
-	}
-	r.GET("/templates", handle)
-	r.GET("/templates/:id", handle)
-
-	handle, err = rnr.DefaultMiddleware(rnr.PostTemplatesHandler)
-	if err != nil {
-		rnr.Log.Warn("Handler failed >%v<", err)
-		return err
-	}
-	r.POST("/templates", handle)
 
 	return nil
 }

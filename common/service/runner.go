@@ -133,8 +133,30 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 		rnr.Log.Warn("Failed default middleware >%v<", err)
 		return nil, err
 	}
-
 	r.GET("/", h)
+
+	// register configured routes
+	for _, hc := range rnr.HandlerConfig {
+		h, err := rnr.DefaultMiddleware(hc.HandlerFunc)
+		if err != nil {
+			rnr.Log.Warn("Failed registering handler >%v<", err)
+			return nil, err
+		}
+		switch hc.Method {
+		case http.MethodGet:
+			r.GET(hc.Path, h)
+		case http.MethodPost:
+			r.POST(hc.Path, h)
+		case http.MethodPut:
+			r.PUT(hc.Path, h)
+		case http.MethodPatch:
+			r.PATCH(hc.Path, h)
+		case http.MethodDelete:
+			r.DELETE(hc.Path, h)
+		default:
+			//
+		}
+	}
 
 	// service defined routes
 	err = rnr.RouterFunc(r)
