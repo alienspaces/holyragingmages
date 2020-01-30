@@ -12,27 +12,28 @@ import (
 
 // TestRunner - allow Init and Run functions to be defined by tests
 type TestRunner struct {
-	InitFunc func() error
-	RunFunc  func() error
+	Runner
+	InitFunc func(c Configurer, l Logger, s Storer) error
+	RunFunc  func(args map[string]interface{}) error
 }
 
-func (r *TestRunner) Init(c Configurer, l Logger, s Storer) error {
-	if r.InitFunc == nil {
-		l.Info("InitFunc is nil")
-		return nil
+func (rnr *TestRunner) Init(c Configurer, l Logger, s Storer) error {
+	if rnr.InitFunc == nil {
+		return rnr.Runner.Init(c, l, s)
 	}
-	return r.InitFunc()
+	return rnr.InitFunc(c, l, s)
 }
 
-func (r *TestRunner) Run(args map[string]interface{}) error {
-	if r.RunFunc == nil {
-		return nil
+func (rnr *TestRunner) Run(args map[string]interface{}) error {
+	if rnr.RunFunc == nil {
+		return rnr.Runner.Run(args)
 	}
-	return r.RunFunc()
+	return rnr.RunFunc(args)
 }
 
 // NewDefaultDependencies -
 func NewDefaultDependencies() (Configurer, Logger, Storer, error) {
+
 	c, err := config.NewConfig(nil, false)
 	if err != nil {
 		return nil, nil, nil, err

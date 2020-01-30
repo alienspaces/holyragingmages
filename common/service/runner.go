@@ -27,7 +27,7 @@ type Runner struct {
 
 	// composable functions
 	RouterFunc     func(router *httprouter.Router) error
-	MiddlewareFunc func(h httprouter.Handle) httprouter.Handle
+	MiddlewareFunc func(h httprouter.Handle) (httprouter.Handle, error)
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 }
 
@@ -56,6 +56,11 @@ func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
 		rnr.RouterFunc = rnr.Router
 	}
 
+	// middleware
+	if rnr.MiddlewareFunc == nil {
+		rnr.MiddlewareFunc = rnr.Middleware
+	}
+
 	// handler
 	if rnr.HandlerFunc == nil {
 		rnr.HandlerFunc = rnr.Handler
@@ -79,7 +84,7 @@ func (rnr *Runner) Run(args map[string]interface{}) error {
 	return http.ListenAndServe(":8080", router)
 }
 
-// Router - set RouterFunc to set up custom routes
+// Router - default RouterFunc, override this function for custom routes
 func (rnr *Runner) Router(router *httprouter.Router) error {
 
 	rnr.Log.Info("** Router **")
@@ -87,15 +92,15 @@ func (rnr *Runner) Router(router *httprouter.Router) error {
 	return nil
 }
 
-// Middleware - set MiddlewareFunc to set up custom middleware
-func (rnr *Runner) Middleware(h httprouter.Handle) httprouter.Handle {
+// Middleware - default MiddlewareFunc, override this function for custom middleware
+func (rnr *Runner) Middleware(h httprouter.Handle) (httprouter.Handle, error) {
 
 	rnr.Log.Info("** Middleware **")
 
-	return h
+	return h, nil
 }
 
-// Handler - set HandlerFunc to set up custom handler
+// Handler - default HandlerFunc, override this function for custom handler
 func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	rnr.Log.Info("** Handler **")
@@ -110,10 +115,18 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 
 	// default routes
 	r := httprouter.New()
-	r.GET("/", rnr.DefaultMiddleware(rnr.HandlerFunc))
+
+	// default index handler
+	h, err := rnr.DefaultMiddleware(rnr.HandlerFunc)
+	if err != nil {
+		rnr.Log.Warn("Failed default middleware >%v<", err)
+		return nil, err
+	}
+
+	r.GET("/", h)
 
 	// service defined routes
-	err := rnr.RouterFunc(r)
+	err = rnr.RouterFunc(r)
 	if err != nil {
 		rnr.Log.Warn("Failed router >%v<", err)
 		return nil, err
@@ -123,7 +136,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 }
 
 // DefaultMiddleware - implements middlewares based on runner configuration
-func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) httprouter.Handle {
+func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) (httprouter.Handle, error) {
 
 	rnr.Log.Info("** DefaultMiddleware **")
 
@@ -133,10 +146,18 @@ func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) httprouter.Handle {
 	// h, _ = rnr.BasicAuth(h)
 
 	// request body data
-	h, _ = rnr.Data(h)
+	h, err := rnr.Data(h)
+	if err != nil {
+		rnr.Log.Warn("Failed data middleware >%v<", err)
+		return nil, err
+	}
 
 	// validate
-	h, _ = rnr.Validate(h)
+	h, err = rnr.Validate(h)
+	if err != nil {
+		rnr.Log.Warn("Failed validate middleware >%v<", err)
+		return nil, err
+	}
 
 	// service defined routes
 	return rnr.MiddlewareFunc(h)
