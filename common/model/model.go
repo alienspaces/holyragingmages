@@ -20,6 +20,14 @@ type Model struct {
 	Tx  *sqlx.Tx
 }
 
+// NewModel -
+func NewModel() (*Model, error) {
+
+	m := Model{}
+
+	return &m, nil
+}
+
 // Init -
 func (m *Model) Init(tx *sqlx.Tx) (err error) {
 
@@ -28,6 +36,8 @@ func (m *Model) Init(tx *sqlx.Tx) (err error) {
 		m.Log.Warn("Failed init, tx is required")
 		return fmt.Errorf("Failed init, tx is required")
 	}
+
+	m.Tx = tx
 
 	return nil
 }

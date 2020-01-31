@@ -25,7 +25,7 @@ type Storer interface {
 
 // Runnable -
 type Runnable interface {
-	Init(c Configurer, l Logger, s Storer) error
+	Init(c Configurer, l Logger, s Storer, m Modeller) error
 	Run(args map[string]interface{}) error
 }
 
@@ -40,16 +40,18 @@ type Service struct {
 	Log    Logger
 	Config Configurer
 	Runner Runnable
+	Model  Modeller
 }
 
 // NewService -
-func NewService(c Configurer, l Logger, s Storer, r Runnable) (*Service, error) {
+func NewService(c Configurer, l Logger, s Storer, m Modeller, r Runnable) (*Service, error) {
 
 	svc := Service{
 		Config: c,
 		Log:    l,
 		Store:  s,
 		Runner: r,
+		Model:  m,
 	}
 
 	err := svc.init()
@@ -64,7 +66,7 @@ func NewService(c Configurer, l Logger, s Storer, r Runnable) (*Service, error) 
 func (svc *Service) init() error {
 
 	// TODO: exception handling and alerting
-	return svc.Runner.Init(svc.Config, svc.Log, svc.Store)
+	return svc.Runner.Init(svc.Config, svc.Log, svc.Store, svc.Model)
 }
 
 // Run -

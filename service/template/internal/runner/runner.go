@@ -14,6 +14,9 @@ type Runner struct {
 	service.Runner
 }
 
+// ensure we comply with the Runnerer interface
+var _ service.Runnable = &Runner{}
+
 // NewRunner -
 func NewRunner() *Runner {
 

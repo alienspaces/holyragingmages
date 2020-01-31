@@ -49,15 +49,16 @@ type HandlerConfig struct {
 	MiddlewareConfig MiddlewareConfig
 }
 
-// ensure we continue to comply with the Runnerer interface
-var runner Runnable = &Runner{}
+// ensure we comply with the Runnerer interface
+var _ Runnable = &Runner{}
 
 // Init - override to perform custom initialization
-func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
+func (rnr *Runner) Init(c Configurer, l Logger, s Storer, m Modeller) error {
 
 	rnr.Config = c
 	rnr.Log = l
 	rnr.Store = s
+	rnr.Model = m
 
 	rnr.Log.Info("** Initialise **")
 
