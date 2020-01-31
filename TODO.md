@@ -2,12 +2,13 @@
 
 ## TODO
 
-* Common
-  * Model
-    * Initialization
+* Common model
+  * Initialization
     * Repositories
-* Template service
+* Template model
   * Standard functions
   * Integrate into runner
+* Template database migrations
+* Service to service communications
 * Mage service
-  * Etc ..
+* Other services

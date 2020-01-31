@@ -17,9 +17,9 @@ You are in this situation where you have to keep fighting monsters and other mag
 You can:
 
 * Learn new spells (they don't come free)
-* Replace spells with other spells (because you can only have five)
+* Replace spells with other spells (because you can only have three)
 * Collect or buy new items (collect off the dead or buy with your money $$)
-* Replace items with other items (because you can only have five)
+* Replace items with other items (because you can only have three)
 * Replace your familliar with another familliar (sometimes they die or are just not very good as a pet)
 * Improve your strength, dexterity and intelligence (lets you learn cooler spells and use more powerful items)
 * Get more money $$
@@ -53,7 +53,7 @@ Server
 
 * Separate domain oriented services
   * Go
-  * Postgres 
+  * Postgres
   * K8s
 * Account creation with OAuth/third party providers only
 
