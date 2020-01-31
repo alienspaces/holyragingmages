@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"gitlab.com/alienspaces/holyragingmages/common/service"
+	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 )
 
 // Runner -
@@ -25,6 +26,7 @@ func NewRunner() *Runner {
 	r.RouterFunc = r.Router
 	r.MiddlewareFunc = r.Middleware
 	r.HandlerFunc = r.Handler
+	r.ModelFunc = r.Model
 
 	r.HandlerConfig = []service.HandlerConfig{
 		{
@@ -77,15 +79,29 @@ func (rnr *Runner) Router(r *httprouter.Router) error {
 }
 
 // Middleware -
-func (rnr *Runner) Middleware(h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) Middleware(h service.Handle) (service.Handle, error) {
 
 	rnr.Log.Info("** Template Middleware **")
 
 	return h, nil
 }
 
-// Handler -
-func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+// Model -
+func (rnr *Runner) Model(c service.Configurer, l service.Logger, s service.Storer) (service.Modeller, error) {
+
+	rnr.Log.Info("** Template Model **")
+
+	m, err := model.NewModel(c, l, s)
+	if err != nil {
+		rnr.Log.Warn("Failed new model >%v<", err)
+		return nil, err
+	}
+
+	return m, nil
+}
+
+// Handler - default handler
+func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
 
 	rnr.Log.Info("** Template handler **")
 
@@ -93,29 +109,29 @@ func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.
 }
 
 // GetTemplatesHandler -
-func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
 
-	rnr.Log.Info("** Get templates handler ** params >%v<", params)
+	rnr.Log.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
 
-	fmt.Fprint(w, "Hello from GET templates handler!\n", params)
+	fmt.Fprint(w, "Hello from GET templates handler!\n", p)
 }
 
 // PostTemplatesHandler -
-func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
 
 	data := r.Context().Value(service.ContextKeyData)
 
-	rnr.Log.Info("** Post templates handler ** params >%v< data >%v<", params, data)
+	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v< data >%v<", p, m, data)
 
-	fmt.Fprint(w, "Hello from Post templates handler!\n", params, "\n", data)
+	fmt.Fprint(w, "Hello from Post templates handler!\n", p, "\n", data)
 }
 
 // PutTemplatesHandler -
-func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
 
 	data := r.Context().Value(service.ContextKeyData)
 
-	rnr.Log.Info("** Put templates handler ** params >%v< data >%v<", params, data)
+	rnr.Log.Info("** Put templates handler ** p >%#v< m >#%v< data >%v<", p, m, data)
 
-	fmt.Fprint(w, "Hello from Put templates handler!\n", params, "\n", data)
+	fmt.Fprint(w, "Hello from Put templates handler!\n", p, "\n", data)
 }

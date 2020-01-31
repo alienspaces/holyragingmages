@@ -7,12 +7,12 @@ import (
 )
 
 // Authen -
-func (rnr *Runner) Authen(h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) Authen(h Handle) (Handle, error) {
 
 	// TODO: implement authentication via configuration
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, m Modeller) {
 		rnr.Log.Info("** Authen ** TODO: Authen unimplemented")
-		h(w, r, ps)
+		h(w, r, ps, m)
 	}
 
 	return handle, nil

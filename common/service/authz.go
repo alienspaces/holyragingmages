@@ -7,12 +7,12 @@ import (
 )
 
 // Authz -
-func (rnr *Runner) Authz(h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) Authz(h Handle) (Handle, error) {
 
 	// TODO: implement authorization via configuration
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller) {
 		rnr.Log.Info("** Authz ** TODO: Authz unimplemented")
-		h(w, r, ps)
+		h(w, r, p, m)
 	}
 
 	return handle, nil

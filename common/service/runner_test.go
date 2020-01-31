@@ -11,34 +11,34 @@ import (
 
 func TestRunnerInit(t *testing.T) {
 
-	c, l, s, m, err := NewDefaultDependencies()
+	c, l, s, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	err = tr.Init(c, l, s, m)
+	err = tr.Init(c, l, s)
 	if assert.NoError(t, err, "Runner Init returns without error") {
 		// test init override with failure
-		tr.InitFunc = func(c Configurer, l Logger, s Storer, m Modeller) error {
+		tr.InitFunc = func(c Configurer, l Logger, s Storer) error {
 			return errors.New("Init failed")
 		}
-		err = tr.Init(c, l, s, m)
+		err = tr.Init(c, l, s)
 		assert.Error(t, err, "Runner Init returns with error")
 	}
 }
 
 func TestRunnerRouter(t *testing.T) {
 
-	c, l, s, m, err := NewDefaultDependencies()
+	c, l, s, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	err = tr.Init(c, l, s, m)
+	err = tr.Init(c, l, s)
 	if assert.NoError(t, err, "Runner Init returns without error") {
 
 		// test default routes
@@ -96,14 +96,14 @@ func TestRunnerRouter(t *testing.T) {
 
 func TestRunnerMiddleware(t *testing.T) {
 
-	c, l, s, m, err := NewDefaultDependencies()
+	c, l, s, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	err = tr.Init(c, l, s, m)
+	err = tr.Init(c, l, s)
 	if assert.NoError(t, err, "Runner Init returns without error") {
 
 		// test default middleware
@@ -115,7 +115,7 @@ func TestRunnerMiddleware(t *testing.T) {
 		}
 
 		// test custom middleware
-		tr.MiddlewareFunc = func(h httprouter.Handle) (httprouter.Handle, error) {
+		tr.MiddlewareFunc = func(h Handle) (Handle, error) {
 			return nil, errors.New("Failed middleware")
 		}
 

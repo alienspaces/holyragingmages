@@ -1,12 +1,19 @@
 package service
 
 import (
+	"net/http"
+
 	"github.com/jmoiron/sqlx"
+	"github.com/julienschmidt/httprouter"
+
+	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
 // Configurer -
 type Configurer interface {
 	Get(key string) string
+	Set(key string, value string)
+	Add(item config.Item) (err error)
 }
 
 // Logger -
@@ -19,13 +26,14 @@ type Logger interface {
 
 // Storer -
 type Storer interface {
+	Init() error
 	GetDb() (*sqlx.DB, error)
 	GetTx() (*sqlx.Tx, error)
 }
 
 // Runnable -
 type Runnable interface {
-	Init(c Configurer, l Logger, s Storer, m Modeller) error
+	Init(c Configurer, l Logger, s Storer) error
 	Run(args map[string]interface{}) error
 }
 
@@ -34,27 +42,29 @@ type Modeller interface {
 	Init(tx *sqlx.Tx) (err error)
 }
 
+// Handle - custom service handle
+type Handle func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller)
+
 // Service -
 type Service struct {
 	Store  Storer
 	Log    Logger
 	Config Configurer
 	Runner Runnable
-	Model  Modeller
 }
 
 // NewService -
-func NewService(c Configurer, l Logger, s Storer, m Modeller, r Runnable) (*Service, error) {
+func NewService(c Configurer, l Logger, s Storer, r Runnable) (*Service, error) {
 
 	svc := Service{
 		Config: c,
 		Log:    l,
 		Store:  s,
 		Runner: r,
-		Model:  m,
 	}
 
-	err := svc.init()
+	// TODO: exception handling and alerting
+	err := svc.Init()
 	if err != nil {
 		return nil, err
 	}
@@ -63,15 +73,18 @@ func NewService(c Configurer, l Logger, s Storer, m Modeller, r Runnable) (*Serv
 }
 
 // Init -
-func (svc *Service) init() error {
+func (svc *Service) Init() error {
 
-	// TODO: exception handling and alerting
-	return svc.Runner.Init(svc.Config, svc.Log, svc.Store, svc.Model)
+	err := svc.Store.Init()
+	if err != nil {
+		return err
+	}
+
+	return svc.Runner.Init(svc.Config, svc.Log, svc.Store)
 }
 
 // Run -
 func (svc *Service) Run(args map[string]interface{}) error {
 
-	// TODO: exception handling and alerting
 	return svc.Runner.Run(args)
 }

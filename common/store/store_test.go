@@ -1,20 +1,21 @@
 package store
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
 )
 
 func TestNewStore(t *testing.T) {
 
 	// config
 	c, err := config.NewConfig([]config.Item{}, false)
-	assert.Nil(t, err, "Config initialized without error")
+	if err != nil {
+		t.Fatalf("Failed new config >%v<", err)
+	}
 
 	configVars := []string{
 		// database
@@ -31,9 +32,10 @@ func TestNewStore(t *testing.T) {
 		}), "Add configironment item")
 	}
 
-	l := log.New(os.Stdout,
-		"DEBUG: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
+	l, err := logger.NewLogger(c)
+	if err != nil {
+		t.Fatalf("Failed new logger >%v<", err)
+	}
 
 	// database
 	s, err := NewStore(c, l)

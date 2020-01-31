@@ -2,6 +2,7 @@ package model
 
 import (
 	"gitlab.com/alienspaces/holyragingmages/common/model"
+	"gitlab.com/alienspaces/holyragingmages/common/service"
 )
 
 // Model -
@@ -10,9 +11,9 @@ type Model struct {
 }
 
 // NewModel -
-func NewModel(c model.Configurer, l model.Logger, s model.Storer) (m *Model, err error) {
+func NewModel(c service.Configurer, l service.Logger, s service.Storer) (*Model, error) {
 
-	m = &Model{
+	m := &Model{
 		model.Model{
 			Config: c,
 			Log:    l,

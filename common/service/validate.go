@@ -12,7 +12,7 @@ import (
 var schemaCache map[string]map[string]*gojsonschema.Schema
 
 // Validate -
-func (rnr *Runner) Validate(path string, h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 
 	rnr.Log.Info("** Validate ** loading schemas")
 
@@ -27,7 +27,7 @@ func (rnr *Runner) Validate(path string, h httprouter.Handle) (httprouter.Handle
 		}
 	}
 
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, m Modeller) {
 
 		rnr.Log.Info("** Validate ** request URI >%s< method >%s<", r.RequestURI, r.Method)
 
@@ -37,7 +37,7 @@ func (rnr *Runner) Validate(path string, h httprouter.Handle) (httprouter.Handle
 			rnr.Log.Info("Not validating URI >%s< method >%s<", r.RequestURI, r.Method)
 
 			// delegate request
-			h(w, r, ps)
+			h(w, r, ps, m)
 			return
 		}
 
@@ -83,7 +83,7 @@ func (rnr *Runner) Validate(path string, h httprouter.Handle) (httprouter.Handle
 		}
 
 		// delegate request
-		h(w, r, ps)
+		h(w, r, ps, m)
 	}
 
 	return handle, nil

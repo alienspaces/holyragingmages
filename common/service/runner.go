@@ -21,15 +21,15 @@ type Runner struct {
 	Store  Storer
 	Log    Logger
 	Config Configurer
-	Model  Modeller
 
 	// configuration for routes, handlers and middleware
 	HandlerConfig []HandlerConfig
 
 	// composable functions
 	RouterFunc     func(router *httprouter.Router) error
-	MiddlewareFunc func(h httprouter.Handle) (httprouter.Handle, error)
-	HandlerFunc    func(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
+	MiddlewareFunc func(h Handle) (Handle, error)
+	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller)
+	ModelFunc      func(c Configurer, l Logger, s Storer) (Modeller, error)
 }
 
 // MiddlewareConfig - configuration for global default middleware
@@ -45,7 +45,7 @@ type MiddlewareConfig struct {
 type HandlerConfig struct {
 	Method           string
 	Path             string
-	HandlerFunc      func(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
+	HandlerFunc      func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller)
 	MiddlewareConfig MiddlewareConfig
 }
 
@@ -53,12 +53,11 @@ type HandlerConfig struct {
 var _ Runnable = &Runner{}
 
 // Init - override to perform custom initialization
-func (rnr *Runner) Init(c Configurer, l Logger, s Storer, m Modeller) error {
+func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
 
 	rnr.Config = c
 	rnr.Log = l
 	rnr.Store = s
-	rnr.Model = m
 
 	rnr.Log.Info("** Initialise **")
 
@@ -104,15 +103,23 @@ func (rnr *Runner) Router(router *httprouter.Router) error {
 }
 
 // Middleware - default MiddlewareFunc, override this function for custom middleware
-func (rnr *Runner) Middleware(h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) Middleware(h Handle) (Handle, error) {
 
 	rnr.Log.Info("** Middleware **")
 
 	return h, nil
 }
 
+// Model - default ModelFunc, override this function for custom model
+func (rnr *Runner) Model(c Configurer, l Logger, s Storer) (Modeller, error) {
+
+	rnr.Log.Info("** Model **")
+
+	return nil, nil
+}
+
 // Handler - default HandlerFunc, override this function for custom handler
-func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller) {
 
 	rnr.Log.Info("** Handler **")
 
@@ -174,12 +181,19 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 }
 
 // DefaultMiddleware - implements middlewares based on runner configuration
-func (rnr *Runner) DefaultMiddleware(path string, h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, error) {
 
 	rnr.Log.Info("** DefaultMiddleware **")
 
+	// tx
+	h, err := rnr.Tx(h)
+	if err != nil {
+		rnr.Log.Warn("Failed adding tx middleware >%v<", err)
+		return nil, err
+	}
+
 	// validate body data
-	h, err := rnr.Validate(path, h)
+	h, err = rnr.Validate(path, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding validate middleware >%v<", err)
 		return nil, err
@@ -207,5 +221,17 @@ func (rnr *Runner) DefaultMiddleware(path string, h httprouter.Handle) (httprout
 	}
 
 	// service defined routes
-	return rnr.MiddlewareFunc(h)
+	h, err = rnr.MiddlewareFunc(h)
+	if err != nil {
+		rnr.Log.Warn("Failed middleware >%v<", err)
+		return nil, err
+	}
+
+	// wrap everything in a httprouter Handler
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		// delegate
+		h(w, r, p, nil)
+	}
+
+	return handle, nil
 }

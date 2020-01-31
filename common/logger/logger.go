@@ -5,16 +5,21 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
+
+	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
-// Config -
-type Config interface {
+// Configurer -
+type Configurer interface {
 	Get(key string) string
+	Set(key string, value string)
+	Add(item config.Item) (err error)
 }
 
 // Logger -
 type Logger struct {
-	log *logrus.Logger
+	log    *logrus.Logger
+	Config Configurer
 }
 
 // Level -
@@ -43,13 +48,14 @@ var levelMap = map[Level]logrus.Level{
 }
 
 // NewLogger returns a logger
-func NewLogger(c Config) (*Logger, error) {
+func NewLogger(c Configurer) (*Logger, error) {
 
 	l := Logger{
-		log: logrus.New(),
+		log:    logrus.New(),
+		Config: c,
 	}
 
-	err := l.Init(c)
+	err := l.Init()
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +64,7 @@ func NewLogger(c Config) (*Logger, error) {
 }
 
 // Init initializes logger
-func (l *Logger) Init(c Config) error {
+func (l *Logger) Init() error {
 
 	// Create a new instance of the logger. You can have any number of instances.
 	l.log.SetFormatter(&logrus.JSONFormatter{})

@@ -18,11 +18,11 @@ func newPostgresDB(c Configurer, l Logger) (*sqlx.DB, error) {
 
 	cs := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable", dbUser, dbPass, dbName, dbHost, dbPort)
 
-	l.Printf("Connect string %s", cs)
+	l.Info("Connect string %s", cs)
 
 	d, err := sqlx.Connect("postgres", cs)
 	if err != nil {
-		l.Printf("Failed to db connect >%v<", err)
+		l.Warn("Failed to db connect >%v<", err)
 		return nil, err
 	}
 
