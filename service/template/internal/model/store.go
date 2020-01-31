@@ -1,4 +1,4 @@
-package template
+package model
 
 import (
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"

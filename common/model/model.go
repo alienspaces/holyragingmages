@@ -6,6 +6,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Configurer -
+type Configurer interface {
+	Get(key string) string
+}
+
 // Logger -
 type Logger interface {
 	Debug(msg string, args ...interface{})
@@ -14,18 +19,30 @@ type Logger interface {
 	Error(msg string, args ...interface{})
 }
 
-// Model -
-type Model struct {
-	Log Logger
-	Tx  *sqlx.Tx
+// Storer -
+type Storer interface {
+	GetDb() (*sqlx.DB, error)
+	GetTx() (*sqlx.Tx, error)
 }
 
-// NewModel -
-func NewModel() (*Model, error) {
+// Model -
+type Model struct {
+	Config Configurer
+	Log    Logger
+	Store  Storer
+	Tx     *sqlx.Tx
+}
 
-	m := Model{}
+// NewModel - intended for testing only, maybe move into test files..
+func NewModel(c Configurer, l Logger, s Storer) (m *Model, err error) {
 
-	return &m, nil
+	m = &Model{
+		Config: c,
+		Log:    l,
+		Store:  s,
+	}
+
+	return m, nil
 }
 
 // Init -

@@ -48,6 +48,7 @@ gitlab.com/alienspaces/holyragingmages v0.0.0-20200127225859-4fef04879429 h1:7UX
 gitlab.com/alienspaces/holyragingmages v0.0.0-20200127225859-4fef04879429/go.mod h1:2eeCfATesLk+drd57+bwIUx06PVR/v9k++Ku5txxigw=
 gitlab.com/alienspaces/holyragingmages v0.0.0-20200128115115-199bd4e58f16 h1:IzTz9X9jNpmWHLw5COacrm5+kwsHq36GD+rcmg1Iwy0=
 gitlab.com/alienspaces/holyragingmages v0.0.0-20200131023802-7469544d52b8 h1:T2Ywgwj5SUry+mSMSM0SsB95sbavdPV7m8ogHZ19AV0=
+gitlab.com/alienspaces/holyragingmages v0.0.0-20200131050627-2076ce9d0f2e h1:GFbOIHqwyclcglEPp+eDrZhsUn45N5BrcuA9FIb1CUg=
 gitlab.com/alienspaces/holyragingmages/common/database v0.0.0-20200131023802-7469544d52b8 h1:XmkM4eeHynDHUSPEsOAoxnCbGmhHN796Z7SbtR7bHHg=
 gitlab.com/alienspaces/holyragingmages/common/database v0.0.0-20200131023802-7469544d52b8/go.mod h1:w/yMRiKPTreWUqtgTp0s8QuARHqmh/Pl5wd8q8d295o=
 gitlab.com/alienspaces/holyragingmages/common/env v0.0.0-20200128202053-19b68cc811c8 h1:c1ecmoWKqcyXNyq6D6kzH5wTYtoDCqUlHfl8KjS8M8U=

@@ -8,6 +8,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
 	"gitlab.com/alienspaces/holyragingmages/common/store"
+	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/runner"
 )
 
@@ -31,9 +32,15 @@ func main() {
 		os.Exit(0)
 	}
 
+	m, err := model.NewModel(c, l, s)
+	if err != nil {
+		fmt.Printf("Failed new model >%v<", err)
+		os.Exit(0)
+	}
+
 	r := runner.NewRunner()
 
-	svc, err := service.NewService(c, l, s, r)
+	svc, err := service.NewService(c, l, s, m, r)
 	if err != nil {
 		fmt.Printf("Failed new service >%v<", err)
 		os.Exit(0)

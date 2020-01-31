@@ -50,7 +50,7 @@ func NewDefaultDependencies() (Configurer, Logger, Storer, Modeller, error) {
 		return nil, nil, nil, nil, err
 	}
 
-	m, err := model.NewModel()
+	m, err := model.NewModel(c, l, s)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
