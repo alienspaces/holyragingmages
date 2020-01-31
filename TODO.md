@@ -2,9 +2,12 @@
 
 ## TODO
 
-* Template service
-  * Handler
+* Common
   * Model
-  * Repository
+    * Initialization
+    * Repositories
+* Template service
+  * Standard functions
+  * Integrate into runner
 * Mage service
   * Etc ..
