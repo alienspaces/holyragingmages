@@ -19,6 +19,24 @@ func main() {
 		os.Exit(0)
 	}
 
+	configVars := []string{
+		// logger
+		"APP_LOG_LEVEL",
+		// database
+		"APP_DB_HOST",
+		"APP_DB_PORT",
+		"APP_DB_NAME",
+		"APP_DB_USER",
+		"APP_DB_PASSWORD",
+	}
+	for _, key := range configVars {
+		err := c.Add(key, true)
+		if err != nil {
+			fmt.Printf("Failed adding config item >%v<", err)
+			os.Exit(0)
+		}
+	}
+
 	l, err := logger.NewLogger(c)
 	if err != nil {
 		fmt.Printf("Failed new logger >%v<", err)

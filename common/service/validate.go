@@ -129,7 +129,6 @@ func (rnr *Runner) validateLoadSchemas(hc HandlerConfig) error {
 	}
 
 	if schemaCache == nil {
-		rnr.Log.Warn("Building schema cache")
 		schemaCache = map[string]map[string]*gojsonschema.Schema{}
 	}
 	if schemaCache[hc.Path] == nil {

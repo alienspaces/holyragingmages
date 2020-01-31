@@ -39,6 +39,23 @@ func NewDefaultDependencies() (Configurer, Logger, Storer, error) {
 		return nil, nil, nil, err
 	}
 
+	configVars := []string{
+		// logger
+		"APP_LOG_LEVEL",
+		// database
+		"APP_DB_HOST",
+		"APP_DB_PORT",
+		"APP_DB_NAME",
+		"APP_DB_USER",
+		"APP_DB_PASSWORD",
+	}
+	for _, key := range configVars {
+		err = c.Add(key, true)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
+
 	l, err := logger.NewLogger(c)
 	if err != nil {
 		return nil, nil, nil, err

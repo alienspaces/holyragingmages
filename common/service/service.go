@@ -5,15 +5,13 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
-
-	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
 // Configurer -
 type Configurer interface {
 	Get(key string) string
 	Set(key string, value string)
-	Add(item config.Item) (err error)
+	Add(key string, required bool) (err error)
 }
 
 // Logger -

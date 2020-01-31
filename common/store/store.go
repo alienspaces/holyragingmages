@@ -4,14 +4,13 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
 // Configurer -
 type Configurer interface {
 	Get(key string) string
 	Set(key string, value string)
-	Add(item config.Item) (err error)
+	Add(key string, required bool) (err error)
 }
 
 // Logger -
@@ -56,25 +55,6 @@ func NewStore(c Configurer, l Logger) (*Store, error) {
 // Init - initialize store
 func (s *Store) Init() error {
 
-	configVars := []string{
-		// database
-		"APP_DB_HOST",
-		"APP_DB_PORT",
-		"APP_DB_NAME",
-		"APP_DB_USER",
-		"APP_DB_PASSWORD",
-	}
-	for _, key := range configVars {
-		err := s.Config.Add(config.Item{
-			Key:      key,
-			Required: true,
-		})
-		if err != nil {
-			s.Log.Warn("Failed adding config item >%v<", err)
-			return err
-		}
-	}
-
 	c, err := s.GetDb()
 	if err != nil {
 		s.Log.Warn("Failed getting DB connection >%v<", err)
@@ -90,7 +70,7 @@ func (s *Store) Init() error {
 func (s *Store) GetDb() (*sqlx.DB, error) {
 	if s.Database == DBPostgres {
 		s.Log.Info("Connecting to postgres")
-		return newPostgresDB(s.Config, s.Log)
+		return getPostgresDB(s.Config, s.Log)
 	}
 	return nil, fmt.Errorf("Unsupported database")
 }

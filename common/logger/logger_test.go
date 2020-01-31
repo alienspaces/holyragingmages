@@ -10,8 +10,8 @@ import (
 
 func TestLogger(t *testing.T) {
 
-	// environment
-	e, err := config.NewConfig([]config.Item{}, false)
+	// config
+	c, err := config.NewConfig([]config.Item{}, false)
 	assert.Nil(t, err, "Config initialized without error")
 
 	envVars := map[string]string{
@@ -22,7 +22,7 @@ func TestLogger(t *testing.T) {
 		assert.NoError(t, os.Setenv(key, val), "Set environment value")
 	}
 
-	l, err := NewLogger(e)
+	l, err := NewLogger(c)
 	assert.NoError(t, err, "NewLogger returns without error")
 	assert.NotNil(t, l, "NewLogger is not nil")
 

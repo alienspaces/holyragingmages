@@ -26,10 +26,7 @@ func TestNewStore(t *testing.T) {
 		"APP_DB_PASSWORD",
 	}
 	for _, key := range configVars {
-		assert.NoError(t, c.Add(config.Item{
-			Key:      key,
-			Required: true,
-		}), "Add configironment item")
+		assert.NoError(t, c.Add(key, true), "Add config item")
 	}
 
 	l, err := logger.NewLogger(c)

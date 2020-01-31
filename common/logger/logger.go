@@ -5,15 +5,13 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
-
-	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
 // Configurer -
 type Configurer interface {
 	Get(key string) string
 	Set(key string, value string)
-	Add(item config.Item) (err error)
+	Add(key string, required bool) (err error)
 }
 
 // Logger -
@@ -66,15 +64,26 @@ func NewLogger(c Configurer) (*Logger, error) {
 // Init initializes logger
 func (l *Logger) Init() error {
 
-	// Create a new instance of the logger. You can have any number of instances.
+	// create a new instance of the logger
 	l.log.SetFormatter(&logrus.JSONFormatter{})
 
-	// Output to stdout instead of the default stderr
-	// Can be any io.Writer, see below for File example
+	// output to stdout instead of the default stderr
 	l.log.SetOutput(os.Stdout)
 
-	// Only log the warning severity or above.
-	l.log.SetLevel(DebugLevel)
+	// log level
+	configLevel := l.Config.Get("APP_LOG_LEVEL")
+	switch configLevel {
+	case "debug", "Debug", "DEBUG":
+		l.log.SetLevel(DebugLevel)
+	case "info", "Info", "INFO":
+		l.log.SetLevel(InfoLevel)
+	case "warn", "Warn", "WARN":
+		l.log.SetLevel(WarnLevel)
+	case "error", "Error", "ERROR":
+		l.log.SetLevel(ErrorLevel)
+	default:
+		l.log.SetLevel(DebugLevel)
+	}
 
 	return nil
 }

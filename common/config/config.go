@@ -44,7 +44,7 @@ func (e *Config) Init(items []Item, dotEnv bool) (err error) {
 		dir, err = os.Getwd()
 		os.Setenv("APP_HOME", dir)
 	}
-	err = e.Add(Item{Key: "APP_HOME"})
+	err = e.Add("APP_HOME", true)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (e *Config) Init(items []Item, dotEnv bool) (err error) {
 	}
 
 	for _, item := range items {
-		err = e.Add(item)
+		err = e.Add(item.Key, item.Required)
 		if err != nil {
 			return err
 		}
@@ -92,7 +92,12 @@ func (e *Config) Set(key string, value string) {
 }
 
 // Add will add a new config item
-func (e *Config) Add(item Item) (err error) {
+func (e *Config) Add(key string, required bool) (err error) {
+
+	item := Item{
+		Key:      key,
+		Required: required,
+	}
 
 	e.Items = append(e.Items, &item)
 
