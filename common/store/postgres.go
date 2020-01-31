@@ -1,4 +1,4 @@
-package database
+package store
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 )
 
 // newPostgresDB -
-func newPostgresDB(l Logger, c Config) (*sqlx.DB, error) {
+func newPostgresDB(c Configurer, l Logger) (*sqlx.DB, error) {
 
 	dbHost := c.Get("APP_DB_HOST")
 	dbPort := c.Get("APP_DB_PORT")

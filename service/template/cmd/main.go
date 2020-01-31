@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
-	"gitlab.com/alienspaces/holyragingmages/common/database"
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
+	"gitlab.com/alienspaces/holyragingmages/common/store"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/runner"
 )
 
@@ -25,15 +25,15 @@ func main() {
 		os.Exit(0)
 	}
 
-	d, err := database.NewDatabase(c, l)
+	s, err := store.NewStore(c, l)
 	if err != nil {
-		fmt.Printf("Failed new database >%v<", err)
+		fmt.Printf("Failed new store >%v<", err)
 		os.Exit(0)
 	}
 
 	r := runner.NewRunner()
 
-	s, err := service.NewService(c, l, d, r)
+	svc, err := service.NewService(c, l, s, r)
 	if err != nil {
 		fmt.Printf("Failed new service >%v<", err)
 		os.Exit(0)
@@ -41,7 +41,7 @@ func main() {
 
 	args := make(map[string]interface{})
 
-	s.Run(args)
+	svc.Run(args)
 
 	os.Exit(1)
 }

@@ -1,4 +1,4 @@
-package database
+package store
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Config -
-type Config interface {
+// Configurer -
+type Configurer interface {
 	Get(key string) string
 }
 
@@ -24,12 +24,12 @@ const (
 // Store -
 type Store struct {
 	Logger   Logger
-	Config   Config
+	Config   Configurer
 	Database string
 }
 
-// NewDatabase - Establishes a new database connection
-func NewDatabase(c Config, l Logger) (*Store, error) {
+// NewStore -
+func NewStore(c Configurer, l Logger) (*Store, error) {
 
 	dt := c.Get("APP_DATABASE")
 	if dt == "" {
@@ -46,11 +46,17 @@ func NewDatabase(c Config, l Logger) (*Store, error) {
 	return &s, nil
 }
 
+// Init - initialize store
+func (s *Store) Init() error {
+
+	return nil
+}
+
 // GetDb -
 func (s *Store) GetDb() (*sqlx.DB, error) {
 	if s.Database == DBPostgres {
 		s.Logger.Printf("Connecting to postgres")
-		return newPostgresDB(s.Logger, s.Config)
+		return newPostgresDB(s.Config, s.Logger)
 	}
 	return nil, fmt.Errorf("Unsupported database")
 }

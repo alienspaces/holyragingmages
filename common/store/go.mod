@@ -1,4 +1,4 @@
-module gitlab.com/alienspaces/holyragingmages/common/database
+module gitlab.com/alienspaces/holyragingmages/common/store
 
 go 1.13
 

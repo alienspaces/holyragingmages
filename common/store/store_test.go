@@ -1,4 +1,4 @@
-package database
+package store
 
 import (
 	"log"
@@ -10,10 +10,10 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 
-func TestNewDatabase(t *testing.T) {
+func TestNewStore(t *testing.T) {
 
 	// config
-	e, err := config.NewConfig([]config.Item{}, false)
+	c, err := config.NewConfig([]config.Item{}, false)
 	assert.Nil(t, err, "Config initialized without error")
 
 	configVars := []string{
@@ -25,7 +25,7 @@ func TestNewDatabase(t *testing.T) {
 		"APP_DB_PASSWORD",
 	}
 	for _, key := range configVars {
-		assert.NoError(t, e.Add(config.Item{
+		assert.NoError(t, c.Add(config.Item{
 			Key:      key,
 			Required: true,
 		}), "Add configironment item")
@@ -36,8 +36,8 @@ func TestNewDatabase(t *testing.T) {
 		log.Ldate|log.Ltime|log.Lshortfile)
 
 	// database
-	db, err := NewDatabase(e, l)
-	if assert.Nil(t, err, "Database initialized without error") {
-		assert.NotNil(t, db, "Database connected")
+	s, err := NewStore(c, l)
+	if assert.Nil(t, err, "NewStore returns without error") {
+		assert.NotNil(t, s, "NewStore returns a store")
 	}
 }

@@ -21,6 +21,7 @@ type Runner struct {
 	Store  Storer
 	Log    Logger
 	Config Configurer
+	Model  Modeller
 
 	// configuration for routes, handlers and middleware
 	HandlerConfig []HandlerConfig

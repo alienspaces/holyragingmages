@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
-	"gitlab.com/alienspaces/holyragingmages/common/database"
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/store"
 )
 
 func TestRunner(t *testing.T) {
@@ -22,13 +22,13 @@ func TestRunner(t *testing.T) {
 		t.Fatalf("Failed new env >%v<", err)
 	}
 
-	d, err := database.NewDatabase(c, l)
+	s, err := store.NewStore(c, l)
 	if err != nil {
 		t.Fatalf("Failed new env >%v<", err)
 	}
 
 	r := Runner{}
 
-	err = r.Init(c, l, d)
+	err = r.Init(c, l, s)
 	assert.NoError(t, err, "Init returns without error")
 }

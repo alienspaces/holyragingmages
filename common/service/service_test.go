@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
-	"gitlab.com/alienspaces/holyragingmages/common/database"
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/store"
 )
 
 // TestRunner - allow Init and Run functions to be defined by tests
@@ -44,12 +44,12 @@ func NewDefaultDependencies() (Configurer, Logger, Storer, error) {
 		return nil, nil, nil, err
 	}
 
-	d, err := database.NewDatabase(c, l)
+	s, err := store.NewStore(c, l)
 	if err != nil {
 		return nil, nil, nil, err
 	}
 
-	return c, l, d, nil
+	return c, l, s, nil
 }
 
 func TestNewService(t *testing.T) {

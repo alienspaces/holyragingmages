@@ -29,6 +29,11 @@ type Runnable interface {
 	Run(args map[string]interface{}) error
 }
 
+// Modeller -
+type Modeller interface {
+	Init(tx *sqlx.Tx) (err error)
+}
+
 // Service -
 type Service struct {
 	Store  Storer
