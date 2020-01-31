@@ -59,7 +59,7 @@ func TestRunnerRouter(t *testing.T) {
 
 		// test custom routes
 		tr.RouterFunc = func(router *httprouter.Router) error {
-			h, err := tr.DefaultMiddleware(tr.HandlerFunc)
+			h, err := tr.DefaultMiddleware("/custom", tr.HandlerFunc)
 			if err != nil {
 				return err
 			}
@@ -107,7 +107,7 @@ func TestRunnerMiddleware(t *testing.T) {
 	if assert.NoError(t, err, "Runner Init returns without error") {
 
 		// test default middleware
-		handle, err := tr.DefaultMiddleware(tr.HandlerFunc)
+		handle, err := tr.DefaultMiddleware("/", tr.HandlerFunc)
 		if assert.NoError(t, err, "DefaultMiddleware returns without error") {
 			if assert.NotNil(t, handle, "DefaultMiddleware returns a handle") {
 				t.Logf("Have handle >%#v<", handle)
@@ -119,7 +119,7 @@ func TestRunnerMiddleware(t *testing.T) {
 			return nil, errors.New("Failed middleware")
 		}
 
-		handle, err = tr.DefaultMiddleware(tr.HandlerFunc)
+		handle, err = tr.DefaultMiddleware("/", tr.HandlerFunc)
 		if assert.Error(t, err, "DefaultMiddleware returns with error") {
 			assert.Nil(t, handle, "DefaultMiddleware returns nil")
 		}

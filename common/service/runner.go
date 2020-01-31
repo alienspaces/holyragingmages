@@ -22,9 +22,6 @@ type Runner struct {
 	Log    Logger
 	Config Configurer
 
-	// configuration for global default middleware
-	MiddlewareConfig MiddlewareConfig
-
 	// configuration for routes, handlers and middleware
 	HandlerConfig []HandlerConfig
 
@@ -129,7 +126,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 	r := httprouter.New()
 
 	// default index handler
-	h, err := rnr.DefaultMiddleware(rnr.HandlerFunc)
+	h, err := rnr.DefaultMiddleware("/", rnr.HandlerFunc)
 	if err != nil {
 		rnr.Log.Warn("Failed default middleware >%v<", err)
 		return nil, err
@@ -138,7 +135,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 
 	// register configured routes
 	for _, hc := range rnr.HandlerConfig {
-		h, err := rnr.DefaultMiddleware(hc.HandlerFunc)
+		h, err := rnr.DefaultMiddleware(hc.Path, hc.HandlerFunc)
 		if err != nil {
 			rnr.Log.Warn("Failed registering handler >%v<", err)
 			return nil, err
@@ -175,21 +172,14 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 }
 
 // DefaultMiddleware - implements middlewares based on runner configuration
-func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) (httprouter.Handle, error) {
+func (rnr *Runner) DefaultMiddleware(path string, h httprouter.Handle) (httprouter.Handle, error) {
 
 	rnr.Log.Info("** DefaultMiddleware **")
 
-	// authen
-	h, err := rnr.Authen(h)
+	// validate body data
+	h, err := rnr.Validate(path, h)
 	if err != nil {
-		rnr.Log.Warn("Failed adding authen middleware >%v<", err)
-		return nil, err
-	}
-
-	// authz
-	h, err = rnr.Authz(h)
-	if err != nil {
-		rnr.Log.Warn("Failed adding authz middleware >%v<", err)
+		rnr.Log.Warn("Failed adding validate middleware >%v<", err)
 		return nil, err
 	}
 
@@ -200,10 +190,17 @@ func (rnr *Runner) DefaultMiddleware(h httprouter.Handle) (httprouter.Handle, er
 		return nil, err
 	}
 
-	// validate body data
-	h, err = rnr.Validate(h)
+	// authz
+	h, err = rnr.Authz(h)
 	if err != nil {
-		rnr.Log.Warn("Failed adding validate middleware >%v<", err)
+		rnr.Log.Warn("Failed adding authz middleware >%v<", err)
+		return nil, err
+	}
+
+	// authen
+	h, err = rnr.Authen(h)
+	if err != nil {
+		rnr.Log.Warn("Failed adding authen middleware >%v<", err)
 		return nil, err
 	}
 

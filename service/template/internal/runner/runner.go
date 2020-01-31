@@ -37,10 +37,28 @@ func NewRunner() *Runner {
 			MiddlewareConfig: service.MiddlewareConfig{},
 		},
 		{
-			Method:           http.MethodPost,
-			Path:             "/templates",
-			HandlerFunc:      r.PostTemplatesHandler,
-			MiddlewareConfig: service.MiddlewareConfig{},
+			Method:      http.MethodPost,
+			Path:        "/templates",
+			HandlerFunc: r.PostTemplatesHandler,
+			MiddlewareConfig: service.MiddlewareConfig{
+				ValidateSchemaLocation: "schema",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
+		},
+		{
+			Method:      http.MethodPut,
+			Path:        "/templates/:id",
+			HandlerFunc: r.PutTemplatesHandler,
+			MiddlewareConfig: service.MiddlewareConfig{
+				ValidateSchemaLocation: "schema",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
 		},
 	}
 
@@ -87,4 +105,14 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 	rnr.Log.Info("** Post templates handler ** params >%v< data >%v<", params, data)
 
 	fmt.Fprint(w, "Hello from Post templates handler!\n", params, "\n", data)
+}
+
+// PutTemplatesHandler -
+func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+
+	data := r.Context().Value(service.ContextKeyData)
+
+	rnr.Log.Info("** Put templates handler ** params >%v< data >%v<", params, data)
+
+	fmt.Fprint(w, "Hello from Put templates handler!\n", params, "\n", data)
 }

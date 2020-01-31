@@ -38,9 +38,15 @@ func NewConfig(items []Item, dotEnv bool) (*Config, error) {
 // Init initialises and checks environment values
 func (e *Config) Init(items []Item, dotEnv bool) (err error) {
 
+	// app home
 	dir := os.Getenv("APP_HOME")
 	if dir == "" {
 		dir, err = os.Getwd()
+		os.Setenv("APP_HOME", dir)
+	}
+	err = e.Add(Item{Key: "APP_HOME"})
+	if err != nil {
+		return err
 	}
 
 	if dotEnv {
