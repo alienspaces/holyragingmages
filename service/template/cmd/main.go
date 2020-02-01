@@ -59,7 +59,11 @@ func main() {
 
 	args := make(map[string]interface{})
 
-	svc.Run(args)
+	err = svc.Run(args)
+	if err != nil {
+		fmt.Printf("Failed service run >%v<", err)
+		os.Exit(0)
+	}
 
 	os.Exit(1)
 }

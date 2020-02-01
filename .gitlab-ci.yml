@@ -1,5 +1,6 @@
 stages:
   - test
+  - build
 
 services:
   - postgres:10.4-alpine
@@ -19,3 +20,7 @@ test:
     - apk add postgresql-client --no-cache
   script:
     - ./script/test-ci
+
+# add module ci.ymls
+include:
+  - local: '/service/template/gitlab-ci.yml'
