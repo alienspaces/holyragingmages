@@ -1,15 +1,14 @@
 
 build-template:
   stage: build
-  image: docker:19.03.5
+  image: google/cloud-sdk
   services:
-    - docker:19.03.5-dind
+    - docker:dind
   script:
-    - docker version
-    - echo "CI_REGISTRY       $CI_REGISTRY"
-    - echo "CI_REGISTRY_IMAGE $CI_REGISTRY_IMAGE"
-    - echo "CI_COMMIT_TAG     $CI_COMMIT_TAG"
-    - pwd
+    - echo "$GCLOUD_SERVICE_ACCOUNT_KEY" > gcloud-service-key.json # Google Cloud service accounts
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud config set project gke_eng-braid-266903
+    - gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
     # - docker build -t $CI_REGISTRY_IMAGE:latest .
     # # push only for tags
     # - "[[ -z $CI_BUILD_TAG ]] && exit 0"
