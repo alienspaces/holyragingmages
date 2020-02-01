@@ -21,6 +21,6 @@ test:
   script:
     - ./script/test-ci
 
-# add module ci.ymls
+# add service gitlab-ci.yml configurations
 include:
-  - local: '/service/template/gitlab-ci.yml'
+  - local: '/service/template/build/gitlab-ci.yml'
