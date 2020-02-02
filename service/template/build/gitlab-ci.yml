@@ -21,3 +21,12 @@ build-template:
     - docker tag holyragingmages/template gcr.io/eng-braid-266903/holyragingmages/template:latest
     - docker push gcr.io/eng-braid-266903/holyragingmages/template:latest
 
+deploy-template:
+  stage: deploy
+  image: google/cloud-sdk
+  script:
+    - echo "$GCLOUD_SERVICE_ACCOUNT_KEY" > gcloud-service-key.json # Google Cloud service accounts
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
+    - kubectl get all
+

@@ -1,6 +1,7 @@
 stages:
   # - test
-  - build
+  # - build
+  - deploy
 
 # test:
 #   stage: test
