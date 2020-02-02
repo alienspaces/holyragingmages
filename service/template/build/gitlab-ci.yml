@@ -2,6 +2,8 @@
 build-template:
   stage: build
   image: google/cloud-sdk
+  services:
+    - docker:19.03.5-dind
   script:
     - echo "$GCLOUD_SERVICE_ACCOUNT_KEY" > gcloud-service-key.json # Google Cloud service accounts
     - gcloud auth activate-service-account --key-file gcloud-service-key.json
@@ -11,6 +13,7 @@ build-template:
     - gcloud projects list
     - gcloud config set project eng-braid-266903
     - gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
+    - export DOCKER_HOST=tcp://localhost:2375
     - which docker
     - docker build -f ./service/template/build/Dockerfile -t holyragingmages/template .
     - gcloud auth configure-docker
