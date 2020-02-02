@@ -12,11 +12,10 @@ build-template:
     - gcloud config set project eng-braid-266903
     - gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
     - which docker
-    # - docker build -t $CI_REGISTRY_IMAGE:latest .
-    # # push only for tags
-    # - "[[ -z $CI_BUILD_TAG ]] && exit 0"
-    # - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:$CI_BUILD_TAG
-    # - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-    # - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_TAG
+    - cd service/template
+    - docker build -f build/Dockerfile -t holyragingmages/template
+    - gcloud auth configure-docker
+    - docker tag holyragingmages/template gcr.io/eng-braid-266903/holyragingmages/template:latest
+    - docker push gcr.io/eng-braid-266903/holyragingmages/template:latest
   tags:
     - docker
