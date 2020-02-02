@@ -1,18 +1,21 @@
+image: docker:19.03.5
+
+services:
+  - docker:19.03.5-dind
+
 stages:
   - test
   - build
 
-services:
-  - postgres:10.4-alpine
-
-variables:
-  POSTGRES_DB: holyragingmages-shared
-  POSTGRES_USER: holyragingmages-user
-  POSTGRES_PASSWORD: holyragingmages-pass
-
 test:
   stage: test
   image: golang:1.13.5-alpine3.11
+  variables:
+    POSTGRES_DB: holyragingmages-shared
+    POSTGRES_USER: holyragingmages-user
+    POSTGRES_PASSWORD: holyragingmages-pass
+  services:
+    - postgres:10.4-alpine
   before_script:
     - apk add bash --no-cache
     - apk add libc-dev --no-cache
