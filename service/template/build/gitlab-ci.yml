@@ -3,7 +3,7 @@ build-template:
   stage: build
   image: google/cloud-sdk
   services:
-    - gitlab/dind
+    - docker:dind
   script:
     # - docker run -ti  google/cloud-sdk:latest gcloud version
     # - echo "$GCLOUD_SERVICE_ACCOUNT_KEY" > gcloud-service-key.json # Google Cloud service accounts
