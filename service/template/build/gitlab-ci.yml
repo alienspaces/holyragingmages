@@ -9,15 +9,10 @@
 #   script:
 #     - echo "$GCLOUD_SERVICE_ACCOUNT_KEY" > gcloud-service-key.json # Google Cloud service accounts
 #     - gcloud auth activate-service-account --key-file gcloud-service-key.json
-#     - echo "Auth list"
-#     - gcloud auth list
-#     - echo "Project list"
-#     - gcloud projects list
 #     - gcloud config set project eng-braid-266903
 #     - gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
-#     - which docker
-#     - docker build -f ./service/template/build/Dockerfile -t holyragingmages/template .
 #     - gcloud auth configure-docker gcr.io --quiet
+#     - docker build -f ./service/template/build/Dockerfile -t holyragingmages/template .
 #     - docker tag holyragingmages/template gcr.io/eng-braid-266903/holyragingmages/template:latest
 #     - docker push gcr.io/eng-braid-266903/holyragingmages/template:latest
 
@@ -27,6 +22,7 @@ deploy-template:
   script:
     - echo "$GCLOUD_SERVICE_ACCOUNT_KEY" > gcloud-service-key.json # Google Cloud service accounts
     - gcloud auth activate-service-account --key-file gcloud-service-key.json
+    - gcloud config set project eng-braid-266903
     - gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
     - kubectl get all
 
