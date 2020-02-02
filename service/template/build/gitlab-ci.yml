@@ -12,8 +12,7 @@ build-template:
     - gcloud config set project eng-braid-266903
     - gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
     - which docker
-    - cd service/template
-    - docker build -f build/Dockerfile -t holyragingmages/template
+    - docker build -f ./service/template/build/Dockerfile -t holyragingmages/template .
     - gcloud auth configure-docker
     - docker tag holyragingmages/template gcr.io/eng-braid-266903/holyragingmages/template:latest
     - docker push gcr.io/eng-braid-266903/holyragingmages/template:latest

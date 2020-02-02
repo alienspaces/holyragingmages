@@ -4,10 +4,11 @@ COMMAND=$1
 
 echo "=> (entrypoint) Command ${COMMAND}"
 
-if [ "$COMMAND" == "run" ]; then
+if [ -z "$COMMAND" ]; then
 
     # run
     echo "=> (entrypoint) Executing run command"
+    hrm-template
 
 else
 
