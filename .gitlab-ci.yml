@@ -1,23 +1,23 @@
 stages:
-  - test
+  # - test
   - build
 
-test:
-  stage: test
-  image: golang:1.13.5-alpine3.11
-  variables:
-    POSTGRES_DB: holyragingmages-shared
-    POSTGRES_USER: holyragingmages-user
-    POSTGRES_PASSWORD: holyragingmages-pass
-  services:
-    - postgres:10.4-alpine
-  before_script:
-    - apk add bash --no-cache
-    - apk add libc-dev --no-cache
-    - apk add gcc --no-cache
-    - apk add postgresql-client --no-cache
-  script:
-    - ./script/test-ci
+# test:
+#   stage: test
+#   image: golang:1.13.5-alpine3.11
+#   variables:
+#     POSTGRES_DB: holyragingmages-shared
+#     POSTGRES_USER: holyragingmages-user
+#     POSTGRES_PASSWORD: holyragingmages-pass
+#   services:
+#     - postgres:10.4-alpine
+#   before_script:
+#     - apk add bash --no-cache
+#     - apk add libc-dev --no-cache
+#     - apk add gcc --no-cache
+#     - apk add postgresql-client --no-cache
+#   script:
+#     - ./script/test-ci
 
 # add service gitlab-ci.yml configurations
 include:
