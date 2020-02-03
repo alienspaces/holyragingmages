@@ -3,18 +3,10 @@
 # deploy all services that have been modified
 
 # replace-env
-source ${BASH_SOURCE%/*}/replace-env || status=$?
-if [ $status -ne 0 ]; then
-    echo "Failed including replace-env" >&2
-    exit $status
-fi
+source ${BASH_SOURCE%/*}/replace-env || exit $?
 
 # retry
-source ${BASH_SOURCE%/*}/retry || status=$?
-if [ $status -ne 0 ]; then
-    echo "Failed including retry" >&2
-    exit $status
-fi
+source ${BASH_SOURCE%/*}/retry || exit $?
 
 # google cloud service account key
 if ! [ -z "$GC_SERVICE_ACCOUNT_KEY" ]; then
@@ -34,6 +26,19 @@ if [ -z "$PREV_COMMIT" ]; then
     PREV_COMMIT=$(git rev-parse HEAD^)
 fi
 
+# deploy configmap if anything changed in common top level config or modules
+CHANGED=$(git diff $PREV_COMMIT --name-only ./common .gitlab-ci.yml  ./build ./script/deploy ./script/build)
+if ! [ -z "$CHANGED" ]; then
+
+    if [ -f "./build/kubernetes/configmap.yml" ]; then
+        # replace environment variable placeholders
+        replace-env "./build/kubernetes/configmap.yml"
+        # apply configmap
+        echo "Applying .build/kubernetes/configmap.yml"
+        kubectl apply -f "./build/kubernetes/configmap.yml"
+    fi
+fi
+
 # service directory list
 shopt -s dotglob
 shopt -s nullglob
@@ -46,10 +51,10 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
     SERVICE_DIR="./service/$SERVICE_NAME"
     echo "$SERVICE_DIR";
 
-    # build if anything changed in common
+    # deploy service if anything changed in common top level config or modules
     CHANGED=$(git diff $PREV_COMMIT --name-only ./common .gitlab-ci.yml  ./build ./script/deploy ./script/build)
     if [ -z "$CHANGED" ]; then
-        # build if anything changed in the service
+        # deploy service if anything changed in the specific service
         CHANGED=$(git diff $PREV_COMMIT --name-only -- $SERVICE_DIR)
     fi
     if [ -z "$CHANGED" ]; then
@@ -66,18 +71,31 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         echo "Deploying $SERVICE_NAME image $APP_IMAGE"
 
         # replace environment variable placeholders
-        for var in $(compgen -e | grep "^APP_" | sort)
-        do
-            # masked
-            if [[ "${var}" = *"PASS" ]] || [[ "${var}" = *"KEY" ]]; then
-                echo "=> (environment) ${var} => ********"
-            else
-                echo "=> (environment) ${var} => ${!var}"
-            fi
+        replace-env "$SERVICE_DIR/build/kubernetes/*.yml"
 
-            replace-env "$SERVICE_DIR/build/kubernetes/*.yml"
-            # sed -i -e "s#{${var}}#${!var}#g" "$SERVICE_DIR/build/kubernetes/*.yml"
+        # apply deployment
+        if [ -f "$SERVICE_DIR/build/kubernetes/deployment.yml" ]; then
+            echo "Applying $SERVICE_DIR/build/kubernetes/deployment.yml"
+            kubectl apply -f "$SERVICE_DIR/build/kubernetes/deployment.yml"
+        fi
 
-        done
+        # apply service
+        if [ -f "$SERVICE_DIR/build/kubernetes/service.yml" ]; then
+            echo "Applying $SERVICE_DIR/build/kubernetes/service.yml"
+            kubectl apply -f "$SERVICE_DIR/build/kubernetes/service.yml"
+        fi
     fi
 done
+
+# deploy ingress if anything changed in common top level config or modules
+CHANGED=$(git diff $PREV_COMMIT --name-only ./common .gitlab-ci.yml  ./build ./script/deploy ./script/build)
+if ! [ -z "$CHANGED" ]; then
+
+    if [ -f "./build/kubernetes/ingress.yml" ]; then
+        # replace environment variable placeholders
+        replace-env "./build/kubernetes/ingress.yml"
+        # apply ingress
+        echo "Applying .build/kubernetes/ingress.yml"
+        kubectl apply -f "./build/kubernetes/ingress.yml"
+    fi
+fi
