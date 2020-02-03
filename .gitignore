@@ -1,4 +1,5 @@
 .env
+note/*
+**/*.yml-e
 
 service/template/template
-note/*

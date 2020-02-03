@@ -35,7 +35,7 @@ if ! [ -z "$CHANGED" ]; then
         replace-env "./build/kubernetes/configmap.yml"
         # apply configmap
         echo "Applying .build/kubernetes/configmap.yml"
-        kubectl apply -f "./build/kubernetes/configmap.yml"
+        kubectl apply -f "./build/kubernetes/configmap.yml" || exit $?
     fi
 fi
 
@@ -66,7 +66,7 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     if [ -d "$SERVICE_DIR/build/kubernetes" ]; then
 
-        APP_IMAGE="gcr.io/eng-braid-266903/holyragingmages/$SERVICE_NAME:latest"
+        export APP_IMAGE="gcr.io/eng-braid-266903/holyragingmages/$SERVICE_NAME:latest"
 
         echo "Deploying $SERVICE_NAME image $APP_IMAGE"
 
@@ -76,13 +76,13 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         # apply deployment
         if [ -f "$SERVICE_DIR/build/kubernetes/deployment.yml" ]; then
             echo "Applying $SERVICE_DIR/build/kubernetes/deployment.yml"
-            kubectl apply -f "$SERVICE_DIR/build/kubernetes/deployment.yml"
+            kubectl apply -f "$SERVICE_DIR/build/kubernetes/deployment.yml" || exit $?
         fi
 
         # apply service
         if [ -f "$SERVICE_DIR/build/kubernetes/service.yml" ]; then
             echo "Applying $SERVICE_DIR/build/kubernetes/service.yml"
-            kubectl apply -f "$SERVICE_DIR/build/kubernetes/service.yml"
+            kubectl apply -f "$SERVICE_DIR/build/kubernetes/service.yml" || exit $?
         fi
     fi
 done
@@ -96,6 +96,6 @@ if ! [ -z "$CHANGED" ]; then
         replace-env "./build/kubernetes/ingress.yml"
         # apply ingress
         echo "Applying .build/kubernetes/ingress.yml"
-        kubectl apply -f "./build/kubernetes/ingress.yml"
+        kubectl apply -f "./build/kubernetes/ingress.yml" || exit $?
     fi
 fi

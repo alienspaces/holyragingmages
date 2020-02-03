@@ -3,9 +3,7 @@ kind: ConfigMap
 metadata:
   name: hrm-template-configmap
 data:
-		# logger
 		APP_LOG_LEVEL: {APP_LOG_LEVEL}
-		# database
 		APP_DB_HOST: {APP_DB_HOST}
 		APP_DB_PORT: {APP_DB_PORT}
 		APP_DB_NAME: {APP_DB_NAME}
