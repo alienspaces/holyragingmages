@@ -2,10 +2,28 @@
 
 # deploy all services that have been modified
 
+# replace-env
+source ${BASH_SOURCE%/*}/replace-env || status=$?
+if [ $status -ne 0 ]; then
+    echo "Failed including replace-env" >&2
+    exit $status
+fi
+
+# retry
+source ${BASH_SOURCE%/*}/retry || status=$?
+if [ $status -ne 0 ]; then
+    echo "Failed including retry" >&2
+    exit $status
+fi
+
 # google cloud service account key
 if ! [ -z "$GC_SERVICE_ACCOUNT_KEY" ]; then
     echo "$GC_SERVICE_ACCOUNT_KEY" > gc-service-account-key.json # Google Cloud service accounts
 fi
+
+gcloud auth activate-service-account --key-file gc-service-account-key.json || exit $?
+gcloud config set project $GC_PROJECT_ID
+gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
 
 # previous latest commit present on a branch before a merge
 # request. Only populated when there is a merge request
@@ -29,7 +47,7 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
     echo "$SERVICE_DIR";
 
     # build if anything changed in common
-    CHANGED=$(git diff $PREV_COMMIT --name-only ./common)
+    CHANGED=$(git diff $PREV_COMMIT --name-only ./common .gitlab-ci.yml  ./build ./script/deploy ./script/build)
     if [ -z "$CHANGED" ]; then
         # build if anything changed in the service
         CHANGED=$(git diff $PREV_COMMIT --name-only -- $SERVICE_DIR)
@@ -43,13 +61,23 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     if [ -d "$SERVICE_DIR/build/kubernetes" ]; then
 
-        echo "Deploying $SERVICE_NAME"
+        APP_IMAGE="gcr.io/eng-braid-266903/holyragingmages/$SERVICE_NAME:latest"
 
-        gcloud auth activate-service-account --key-file gc-service-account-key.json || exit $?
-        gcloud config set project $GC_PROJECT_ID
-        gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
-        kubectl get all
+        echo "Deploying $SERVICE_NAME image $APP_IMAGE"
+
+        # replace environment variable placeholders
+        for var in $(compgen -e | grep "^APP_" | sort)
+        do
+            # masked
+            if [[ "${var}" = *"PASS" ]] || [[ "${var}" = *"KEY" ]]; then
+                echo "=> (environment) ${var} => ********"
+            else
+                echo "=> (environment) ${var} => ${!var}"
+            fi
+
+            replace-env "$SERVICE_DIR/build/kubernetes/*.yml"
+            # sed -i -e "s#{${var}}#${!var}#g" "$SERVICE_DIR/build/kubernetes/*.yml"
+
+        done
     fi
-
 done
-

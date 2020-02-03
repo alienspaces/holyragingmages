@@ -26,7 +26,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
         - name: hrm-template-container
-          image: {APP_IMAGE}
+          image: blah
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
