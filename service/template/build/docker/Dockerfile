@@ -15,11 +15,7 @@ WORKDIR $APP_HOME
 COPY . .
 
 # build API server
-RUN pwd
-RUN ls -la
 WORKDIR $APP_HOME/service/template
-RUN pwd
-RUN ls -la
 RUN go build -o /go/bin/hrm-template ./cmd/
 
 # final image
@@ -30,7 +26,10 @@ RUN apk update \
     && apk add bash
 
 COPY --from=builder /go/bin/hrm-template /go/bin
-COPY --from=builder /holyragingmages/service/template/build/entrypoint.sh .
+COPY --from=builder /holyragingmages/service/template/build/docker/entrypoint.sh .
+
+RUN pwd
+RUN ls -la
 
 # entrypoint
 ENTRYPOINT [ "./entrypoint.sh" ]

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hrm-template-deployment
+spec:
+  selector:
+    matchLabels:
+      app: hrm-template
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: hrm-template
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - hrm-template
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: hrm-template-container
+          image: { image }
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "0.05"
+            limits:
+              memory: "250Mi"
+              cpu: "0.25"
+          envFrom:
+            - configMapRef:
+                name: hrm-template-configmap
+          ports:
+            - containerPort: 8080

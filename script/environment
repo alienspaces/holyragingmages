@@ -18,7 +18,7 @@ function verify_env {
 		'APP_DB_NAME' \
 		'APP_DB_PORT' \
 		'APP_DB_USER' \
-#		'APP_DB_PASSWORD' \
+		'APP_DB_PASSWORD' \
     );
 
     # verify

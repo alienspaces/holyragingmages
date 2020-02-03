@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo "$GCLOUD_SERVICE_ACCOUNT_KEY" > gcloud-service-key.json # Google Cloud service accounts
+gcloud auth activate-service-account --key-file gcloud-service-key.json
+gcloud config set project eng-braid-266903
+gcloud container clusters get-credentials alienspaces-cluster-1 --zone australia-southeast1-a
+

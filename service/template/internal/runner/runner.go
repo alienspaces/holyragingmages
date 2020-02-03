@@ -31,19 +31,19 @@ func NewRunner() *Runner {
 	r.HandlerConfig = []service.HandlerConfig{
 		{
 			Method:           http.MethodGet,
-			Path:             "/templates",
+			Path:             "/api/templates",
 			HandlerFunc:      r.GetTemplatesHandler,
 			MiddlewareConfig: service.MiddlewareConfig{},
 		},
 		{
 			Method:           http.MethodGet,
-			Path:             "/templates/:id",
+			Path:             "/api/templates/:id",
 			HandlerFunc:      r.GetTemplatesHandler,
 			MiddlewareConfig: service.MiddlewareConfig{},
 		},
 		{
 			Method:      http.MethodPost,
-			Path:        "/templates",
+			Path:        "/api/templates",
 			HandlerFunc: r.PostTemplatesHandler,
 			MiddlewareConfig: service.MiddlewareConfig{
 				ValidateSchemaLocation: "schema",
@@ -55,7 +55,7 @@ func NewRunner() *Runner {
 		},
 		{
 			Method:      http.MethodPut,
-			Path:        "/templates/:id",
+			Path:        "/api/templates/:id",
 			HandlerFunc: r.PutTemplatesHandler,
 			MiddlewareConfig: service.MiddlewareConfig{
 				ValidateSchemaLocation: "schema",
