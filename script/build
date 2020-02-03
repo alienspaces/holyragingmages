@@ -24,8 +24,10 @@ SERVICE_NAMES=(*)
 cd -
 
 for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
+
     SERVICE_DIR="./service/$SERVICE_NAME"
     echo "$SERVICE_DIR";
+
     # build if anything changed in common
     CHANGED=$(git diff $PREV_COMMIT --name-only ./common)
     if [ -z "$CHANGED" ]; then
@@ -41,13 +43,14 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     if [ -f "$SERVICE_DIR/build/docker/Dockerfile" ]; then
 
+        echo "Building $SERVICE_NAME"
+
         gcloud auth activate-service-account --key-file gc-service-account-key.json || exit $?
         gcloud config set project $GC_PROJECT_ID
         gcloud auth configure-docker gcr.io --quiet
         docker build -f "$SERVICE_DIR/build/docker/Dockerfile" -t "holyragingmages/$SERVICE_NAME" .
         docker tag "holyragingmages/$SERVICE_NAME" "gcr.io/eng-braid-266903/holyragingmages/$SERVICE_NAME:latest"
         docker push "gcr.io/eng-braid-266903/holyragingmages/$SERVICE_NAME:latest"
-
     fi
 
 done
