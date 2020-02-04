@@ -28,7 +28,7 @@ fi
 
 # deploy configmap if anything changed in common top level config or modules
 CHANGED=$(git diff $PREV_COMMIT --name-only ./common .gitlab-ci.yml  ./build ./script/deploy ./script/build)
-if ! [ -z "$CHANGED" ]; then
+if [ -n "$CHANGED" ]; then
 
     if [ -f "./build/kubernetes/configmap.yml" ]; then
         # replace environment variable placeholders
@@ -90,7 +90,7 @@ done
 
 # deploy ingress if anything changed in common top level config or modules
 CHANGED=$(git diff $PREV_COMMIT --name-only ./common .gitlab-ci.yml  ./build ./script/deploy ./script/build)
-if ! [ -z "$CHANGED" ]; then
+if [ -n "$CHANGED" ]; then
 
     if [ -f "./build/kubernetes/ingress.yml" ]; then
         # replace environment variable placeholders
