@@ -32,7 +32,8 @@ if ! [ -z "$CHANGED" ]; then
 
     if [ -f "./build/kubernetes/configmap.yml" ]; then
         # replace environment variable placeholders
-        replace-env "./build/kubernetes/configmap.yml"
+        replace-env ./build/kubernetes/configmap.yml
+        cat ./build/kubernetes/configmap.yml
         # apply configmap
         echo "Applying .build/kubernetes/configmap.yml"
         kubectl apply -f "./build/kubernetes/configmap.yml" || exit $?
@@ -71,7 +72,7 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         echo "Deploying $SERVICE_NAME image $APP_IMAGE"
 
         # replace environment variable placeholders
-        replace-env "$SERVICE_DIR/build/kubernetes/*.yml"
+        replace-env $SERVICE_DIR/build/kubernetes/*.yml
 
         # apply deployment
         if [ -f "$SERVICE_DIR/build/kubernetes/deployment.yml" ]; then
@@ -93,7 +94,7 @@ if ! [ -z "$CHANGED" ]; then
 
     if [ -f "./build/kubernetes/ingress.yml" ]; then
         # replace environment variable placeholders
-        replace-env "./build/kubernetes/ingress.yml"
+        replace-env ./build/kubernetes/ingress.yml
         # apply ingress
         echo "Applying .build/kubernetes/ingress.yml"
         kubectl apply -f "./build/kubernetes/ingress.yml" || exit $?
