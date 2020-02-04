@@ -18,3 +18,4 @@ spec:
   - hosts:
       - holymagingmages.com
     secretName: hrm-cert
+
