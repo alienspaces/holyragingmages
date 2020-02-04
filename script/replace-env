@@ -17,7 +17,11 @@ function replace-env {
         sed -i -e "s#{${var}}#${!var}#g" $1
 
         # remove backup files
-        rm -f $1/*-e
+        if [ -d $1 ]; then
+            rm -f $1/*-e
+        else
+            rm -f $1*-e
+        fi
     done
 }
 

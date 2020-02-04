@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: hrm-template-configmap
+  namespace: default
 data:
 		APP_LOG_LEVEL: {APP_LOG_LEVEL}
 		APP_DB_HOST: {APP_DB_HOST}
