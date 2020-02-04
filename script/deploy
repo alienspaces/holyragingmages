@@ -9,7 +9,7 @@ source ${BASH_SOURCE%/*}/replace-env || exit $?
 source ${BASH_SOURCE%/*}/retry || exit $?
 
 # google cloud service account key
-if ! [ -z "$GC_SERVICE_ACCOUNT_KEY" ]; then
+if [ -n "$GC_SERVICE_ACCOUNT_KEY" ]; then
     echo "$GC_SERVICE_ACCOUNT_KEY" > gc-service-account-key.json # Google Cloud service accounts
 fi
 

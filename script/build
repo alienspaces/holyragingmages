@@ -3,7 +3,7 @@
 # build all services that have been modified
 
 # google cloud service account key
-if ! [ -z "$GC_SERVICE_ACCOUNT_KEY" ]; then
+if [ -n "$GC_SERVICE_ACCOUNT_KEY" ]; then
     echo "$GC_SERVICE_ACCOUNT_KEY" > gc-service-account-key.json # Google Cloud service accounts
 fi
 
@@ -29,7 +29,7 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
     echo "$SERVICE_DIR";
 
     # build if anything changed in common
-    CHANGED=$(git diff $PREV_COMMIT --name-only ./common)
+    CHANGED=$(git diff $PREV_COMMIT --name-only ./common .gitlab-ci.yml  ./build ./script/deploy ./script/build)
     if [ -z "$CHANGED" ]; then
         # build if anything changed in the service
         CHANGED=$(git diff $PREV_COMMIT --name-only -- $SERVICE_DIR)
