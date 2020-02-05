@@ -29,9 +29,15 @@ build-all:
     DOCKER_HOST: tcp://docker:2375
   script:
     - ./script/build
+  only:
+    refs:
+      - master
 
 deploy-all:
   stage: deploy
   image: google/cloud-sdk
   script:
     - ./script/deploy
+  only:
+    refs:
+      - master

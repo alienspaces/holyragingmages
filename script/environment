@@ -46,9 +46,14 @@ function verify_env {
 }
 
 # environment
-if [ -f ".env" ]; then
-    echo "=> (env) Sourcing .env"
-    source .env
+DOTFILE_PATH="."
+if [ -n "$1" ]; then
+    DOTFILE_PATH="$1"
+fi
+
+if [ -f "$DOTFILE_PATH/.env" ]; then
+    echo "=> (env) Sourcing $DOTFILE_PATH/.env"
+    source $DOTFILE_PATH/.env
 fi
 
 # go present?

@@ -43,9 +43,9 @@ You can:
 
 ## Spells and Items
 
-  * Items and spells can have combination effects (use this type of spell and then this spell results in this added effect)
-  * Items can have limited doses or charges (potions and wands)
-  * Spells can have cool down timers (must wait a certain number of turns before you can use the spell again)
+* Items and spells can have combination effects (use this type of spell and then this spell results in this added effect)
+* Items can have limited doses or charges (potions and wands)
+* Spells can have cool down timers (must wait a certain number of turns before you can use the spell again)
 
 ## Technical
 

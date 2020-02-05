@@ -2,13 +2,27 @@
 
 ## TODO
 
+### Now
+
+* Databases
+  * Separate database per service
+  * Migrations per service
+* Template `repository`
+  * Unit tests
+
+### Next
+
+* Script `generate`
 * Common model
   * Initialization
     * Repositories
-* Template model
+* Template `model`
   * Standard functions
   * Integrate into runner
-* Template database migrations
 * Service to service communications
 * Mage service
 * Other services
+
+## License
+
+COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com

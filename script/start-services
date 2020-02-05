@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-status=0
-
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
@@ -21,12 +19,8 @@ if [ $APP_DB_SERVICE = "docker" ]; then
     -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
     -e POSTGRES_DB=$APP_DB_NAME \
     -p ${APP_DB_PORT}:5432 -d \
-    postgres:10.4-alpine || status=$?
+    postgres:10.4-alpine || exit $?
 
-    if [ $status -ne 0 ]; then
-        echo "Failed starting database" >&2
-        exit $status
-    fi
 else
     echo "=> Starting database local service"
 
@@ -48,3 +42,9 @@ retry_cmd psql --host=$APP_DB_HOST \
      $APP_DB_NAME
 
 echo "=> Database running on ${APP_DB_HOST}:${APP_DB_PORT}"
+
+# holyragingmages=# CREATE USER "holyragingmages-template-user" WITH PASSWORD 'holyragingmages-template-pass';
+# holyragingmages=# CREATE DATABASE "holyragingmages-template" OWNER "holyragingmages-template-user";
+# export PGPASSWORD="holyragingmages-template-pass"
+# psql --host=$APP_DB_HOST --port=$APP_DB_PORT  --username="holyragingmages-template-user" holyragingmages-template
+

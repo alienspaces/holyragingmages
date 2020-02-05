@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+GO_VERSION=go1.13.3
+if [ $(command -v gvm) ]; then
+    source  ~/.gvm/scripts/gvm
+    echo "Using ${GO_VERSION}"
+    gvm use $GO_VERSION
+fi
+
+# golang migrate
+go get -u -d github.com/golang-migrate/migrate/cmd/migrate github.com/lib/pq github.com/hashicorp/go-multierror
+go build -tags 'postgres' -o $GOPATH/bin/migrate github.com/golang-migrate/migrate/cmd/migrate
+
+if [ -z "$2" ]
+then
+    echo "ERROR: specify service name and a description"
+    echo "Example: ./script/db-migrate-create template create_template_objects"
+    exit 1
+fi
+
+migrate create -ext sql -dir ./service/$1/migration $2
+
+
