@@ -20,6 +20,9 @@ func main() {
 	}
 
 	configVars := []string{
+		// general
+		"APP_ENV",
+		"APP_PORT",
 		// logger
 		"APP_LOG_LEVEL",
 		// database

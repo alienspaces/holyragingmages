@@ -78,8 +78,6 @@ function generate_repo {
     REPO_STATEMENTS_FILENAME=./internal/repo/${REPO_LC}/statements.go
     REPO_RECORD_FILENAME=./internal/types/record/${REPO_LC}.go
     REPO_TEST_FILENAME=./internal/repo/${REPO_LC}/${REPO_LC}_test.go
-    REPO_MOCK_FILENAME=./internal/repo/${REPO_LC}/mock.go
-    REPO_MOCK_TEST_FILENAME=./internal/repo/${REPO_LC}/mock_test.go
 
     cp ./internal/repo/template/template.go $REPO_FILENAME
     cp ./internal/repo/template/statements.go $REPO_STATEMENTS_FILENAME

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 # establish and validate required environment
+# USAGE: environment [optional path to .env]
+
 function verify_env {
     echo "=> (env) Verifying environment"
 
@@ -11,7 +13,6 @@ function verify_env {
 
     # required for all environments
     ENV_VARS=( \
-
         # database
 		'APP_DB_SERVICE' \
 		'APP_DB_HOST' \
@@ -50,6 +51,8 @@ DOTFILE_PATH="."
 if [ -n "$1" ]; then
     DOTFILE_PATH="$1"
 fi
+
+echo "=> (env) Checking $DOTFILE_PATH/.env"
 
 if [ -f "$DOTFILE_PATH/.env" ]; then
     echo "=> (env) Sourcing $DOTFILE_PATH/.env"

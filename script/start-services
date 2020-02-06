@@ -43,6 +43,36 @@ retry_cmd psql --host=$APP_DB_HOST \
 
 echo "=> Database running on ${APP_DB_HOST}:${APP_DB_PORT}"
 
+# service directory list
+shopt -s dotglob
+shopt -s nullglob
+cd ./service
+SERVICE_NAMES=(*)
+cd -
+
+for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
+
+    if [ -f "./service/$SERVICE_NAME/.env" ]; then
+
+        # load service specific environment
+        source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
+
+        echo "Creating database name $APP_DB_NAME owner $APP_DB_USER"
+
+        export PGPASSWORD=$APP_DB_PASSWORD
+        retry_cmd psql --host=$APP_DB_HOST \
+            --port=$APP_DB_PORT \
+            --username=$APP_DB_USER \
+            --command="CREATE DATABASE \"${APP_DB_NAME}\" OWNER \"${APP_DB_USER}\";"
+
+        retry_cmd psql --host=$APP_DB_HOST \
+            --port=$APP_DB_PORT \
+            --username=$APP_DB_USER \
+            --command="SELECT now();" \
+            $APP_DB_NAME
+    fi
+done
+
 # holyragingmages=# CREATE USER "holyragingmages-template-user" WITH PASSWORD 'holyragingmages-template-pass';
 # holyragingmages=# CREATE DATABASE "holyragingmages-template" OWNER "holyragingmages-template-user";
 # export PGPASSWORD="holyragingmages-template-pass"
