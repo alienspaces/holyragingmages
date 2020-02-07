@@ -3,9 +3,14 @@
 ## Prerequisites
 
 * Go 1.13
+  * [https://golang.org/](https://golang.org/)
 * gvm
+  * [https://github.com/moovweb/gvm](https://github.com/moovweb/gvm)
 * Docker
-* psql (postgres client)
+  * [https://docs.docker.com/install/](https://docs.docker.com/install/)
+* psql (Postgresql client)
+  * [https://www.postgresql.org/download/macosx/](https://www.postgresql.org/download/macosx/)
+  * [https://www.postgresql.org/download/linux/ubuntu/](https://www.postgresql.org/download/linux/ubuntu/)
 
 ## Database Migrations
 
@@ -20,7 +25,7 @@ Create new migration
 ./script/db-migrate-create [service [description]
 ```
 
-Migrate uo
+Migrate up
 
 ```bash
 ./script/db-migrate-up
@@ -32,10 +37,10 @@ Migrate down
 ./script/db-migrate-down
 ```
 
-## Test
+## Testing
 
-Test all services
+Test all packages
 
 ```bash
-./script/test-docker
+./script/test
 ```
