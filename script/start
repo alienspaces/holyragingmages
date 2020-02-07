@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# stop
+source ${BASH_SOURCE%/*}/stop || exit $?
+
+# start dependent services
+source ${BASH_SOURCE%/*}/start-services || exit $?
+
+# service directory list
+shopt -s dotglob
+shopt -s nullglob
+cd ./service
+SERVICE_NAMES=(*)
+cd -
+
+for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
+
+    if [ -f "./service/$SERVICE_NAME/.env" ]; then
+
+        # reset APP_PORT as each service should define
+        # a unique server port in their local env
+        export APP_PORT=""
+
+        # load service specific environment
+        source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
+
+        # build and run service
+        cd service/$SERVICE_NAME
+        rm -f $SERVICE_NAME
+        go build -o $SERVICE_NAME ./cmd/
+
+        echo "Running service $SERVICE_NAME"
+        ./$SERVICE_NAME&
+        cd -
+    fi
+done
+

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# service directory list
+shopt -s dotglob
+shopt -s nullglob
+cd ./service
+SERVICE_NAMES=(*)
+cd -
+
+for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
+
+    if [ -f "./service/$SERVICE_NAME/.env" ]; then
+
+        PID=$(pgrep $SERVICE_NAME)
+
+        if [ -n "$PID" ]; then
+            echo "Killing process $PID for $SERVICE_NAME"
+            kill $PID
+            sleep 2
+        fi
+    fi
+done
+
+# stop dependent services
+source ${BASH_SOURCE%/*}/stop-services || exit $?
+

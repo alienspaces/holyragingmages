@@ -54,6 +54,10 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     if [ -f "./service/$SERVICE_NAME/.env" ]; then
 
+        # reset APP_DB_NAME as each service should define
+        # a unique database name in their local env
+        export APP_DB_NAME=""
+
         # load service specific environment
         source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
 
@@ -72,9 +76,3 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
             $APP_DB_NAME
     fi
 done
-
-# holyragingmages=# CREATE USER "holyragingmages-template-user" WITH PASSWORD 'holyragingmages-template-pass';
-# holyragingmages=# CREATE DATABASE "holyragingmages-template" OWNER "holyragingmages-template-user";
-# export PGPASSWORD="holyragingmages-template-pass"
-# psql --host=$APP_DB_HOST --port=$APP_DB_PORT  --username="holyragingmages-template-user" holyragingmages-template
-

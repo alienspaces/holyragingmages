@@ -13,6 +13,8 @@ function verify_env {
 
     # required for all environments
     ENV_VARS=( \
+        # general
+        "APP_PORT" \
         # database
 		'APP_DB_SERVICE' \
 		'APP_DB_HOST' \

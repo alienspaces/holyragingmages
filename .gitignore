@@ -3,3 +3,9 @@ note/*
 **/*.yml-e
 
 service/template/template
+service/api/api
+service/fight/fight
+service/item/item
+service/mage/mage
+service/spell/spell
+service/tactic/tactic

@@ -4,8 +4,8 @@
 echo "=> Stopping database";
 if [ $APP_DB_SERVICE = "docker" ]; then
     echo "=> Stopping database docker service"
-    
-    docker ps -a | grep holyragingmages-shared | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
+
+    docker ps -a | grep holyragingmages | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
 
 else
     echo "=> Stopping database local service"

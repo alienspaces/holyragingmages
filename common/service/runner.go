@@ -91,7 +91,13 @@ func (rnr *Runner) Run(args map[string]interface{}) error {
 		return err
 	}
 
-	return http.ListenAndServe(":8080", router)
+	port := rnr.Config.Get("APP_PORT")
+	if port == "" {
+		rnr.Log.Warn("Missing APP_PORT, cannot start service")
+		return fmt.Errorf("Missing APP_PORT, cannot start service")
+	}
+
+	return http.ListenAndServe(fmt.Sprintf(":%s", port), router)
 }
 
 // Router - default RouterFunc, override this function for custom routes
