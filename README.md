@@ -27,7 +27,7 @@ You can:
 * Fight other mages for better items and better money
 * Decide how you want to fight (this is kind of important)
 
-## Mages and Familliars
+### Mages and Familliars
 
 * Strength
   * Health (for staying alive)
@@ -41,11 +41,29 @@ You can:
 * Experience Points (earned for winning, when you level up you can add points to strength, dexterity or intelligence)
 * Money (earned for winning)
 
-## Spells and Items
+### Spells and Items
 
 * Items and spells can have combination effects (use this type of spell and then this spell results in this added effect)
 * Items can have limited doses or charges (potions and wands)
 * Spells can have cool down timers (must wait a certain number of turns before you can use the spell again)
+
+## Start
+
+Start all services
+
+```bash
+./script/start
+```
+
+[http://localhost:8081/](http://localhost:8081/)
+
+## Stop
+
+Stop all services
+
+```bash
+./script/stop
+```
 
 ## Technical
 

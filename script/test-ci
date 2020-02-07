@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
+# copy ci env
 cp .env.ci .env
-status=0
 
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
 # test
-source ${BASH_SOURCE%/*}/test || exit $?
+source ${BASH_SOURCE%/*}/test-packages || exit $?

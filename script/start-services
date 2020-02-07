@@ -1,48 +1,5 @@
 #!/usr/bin/env bash
 
-# environment
-source ${BASH_SOURCE%/*}/environment || exit $?
-
-# retry
-source ${BASH_SOURCE%/*}/retry || exit $?
-
-# stop services
-source ${BASH_SOURCE%/*}/stop-services || exit $?
-
-# start database
-echo "=> Starting database"
-if [ $APP_DB_SERVICE = "docker" ]; then
-    echo "=> Starting database docker service"
-
-    docker run --hostname postgres --name holyragingmages-shared \
-    -e POSTGRES_USER=$APP_DB_USER \
-    -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
-    -e POSTGRES_DB=$APP_DB_NAME \
-    -p ${APP_DB_PORT}:5432 -d \
-    postgres:10.4-alpine || exit $?
-
-else
-    echo "=> Starting database local service"
-
-    sudo service postgresql start
-    sudo -u postgres createuser $APP_DB_USER
-    sudo -u postgres createdb $APP_DB_NAME
-    sudo -u postgres \
-        psql -c "grant all privileges on database $APP_DB_NAME to $APP_DB_USER;"
-    sudo -u postgres \
-        psql -c "alter user $APP_DB_USER with password '$APP_DB_PASSWORD';"
-
-fi
-
-export PGPASSWORD=$APP_DB_PASSWORD
-retry_cmd psql --host=$APP_DB_HOST \
-     --port=$APP_DB_PORT \
-	 --username=$APP_DB_USER \
-     --command="SELECT now();" \
-     $APP_DB_NAME
-
-echo "=> Database running on ${APP_DB_HOST}:${APP_DB_PORT}"
-
 # service directory list
 shopt -s dotglob
 shopt -s nullglob
@@ -54,25 +11,20 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     if [ -f "./service/$SERVICE_NAME/.env" ]; then
 
-        # reset APP_DB_NAME as each service should define
-        # a unique database name in their local env
-        export APP_DB_NAME=""
+        # reset APP_PORT as each service should define
+        # a unique server port in their local env
+        export APP_PORT=""
 
         # load service specific environment
         source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
 
-        echo "Creating database name $APP_DB_NAME owner $APP_DB_USER"
+        # build and run service
+        cd service/$SERVICE_NAME
+        rm -f $SERVICE_NAME
+        go build -o $SERVICE_NAME ./cmd/
 
-        export PGPASSWORD=$APP_DB_PASSWORD
-        retry_cmd psql --host=$APP_DB_HOST \
-            --port=$APP_DB_PORT \
-            --username=$APP_DB_USER \
-            --command="CREATE DATABASE \"${APP_DB_NAME}\" OWNER \"${APP_DB_USER}\";"
-
-        retry_cmd psql --host=$APP_DB_HOST \
-            --port=$APP_DB_PORT \
-            --username=$APP_DB_USER \
-            --command="SELECT now();" \
-            $APP_DB_NAME
+        echo "Running service $SERVICE_NAME"
+        ./$SERVICE_NAME&
+        cd -
     fi
 done

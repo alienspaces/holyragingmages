@@ -32,10 +32,10 @@ Migrate down
 ./script/db-migrate-down
 ```
 
-## Run
+## Test
 
-Run all services
+Test all services
 
 ```bash
-./script/run
+./script/test-docker
 ```

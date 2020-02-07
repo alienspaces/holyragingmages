@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 
-# stop database
-echo "=> Stopping database";
-if [ $APP_DB_SERVICE = "docker" ]; then
-    echo "=> Stopping database docker service"
+# service directory list
+shopt -s dotglob
+shopt -s nullglob
+cd ./service
+SERVICE_NAMES=(*)
+cd -
 
-    docker ps -a | grep holyragingmages | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
+for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
-else
-    echo "=> Stopping database local service"
+    if [ -f "./service/$SERVICE_NAME/.env" ]; then
 
-     sudo -u postgres dropdb holyragingmages
-     sudo -u postgres dropuser holyragingmages
-     sudo service postgresql stop
+        PID=$(pgrep $SERVICE_NAME)
 
-fi
+        if [ -n "$PID" ]; then
+            echo "Killing process $PID for $SERVICE_NAME"
+            kill $PID
+            sleep 2
+        fi
+    fi
+done
 

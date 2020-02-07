@@ -1,26 +1,17 @@
 #!/usr/bin/env bash
 
-# service directory list
-shopt -s dotglob
-shopt -s nullglob
-cd ./service
-SERVICE_NAMES=(*)
-cd -
+# copy development env
+cp .env.development .env
 
-for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
+# "docker" or "local"
+export APP_DB_SERVICE=docker
+if [ -n "$1" ]; then
+    export APP_DB_SERVICE=$1
+fi
 
-    if [ -f "./service/$SERVICE_NAME/.env" ]; then
+# stop
+source ${BASH_SOURCE%/*}/stop-services $1 || exit $?
 
-        PID=$(pgrep $SERVICE_NAME)
-
-        if [ -n "$PID" ]; then
-            echo "Killing process $PID for $SERVICE_NAME"
-            kill $PID
-            sleep 2
-        fi
-    fi
-done
-
-# stop dependent services
-source ${BASH_SOURCE%/*}/stop-services || exit $?
+# stop database
+source ${BASH_SOURCE%/*}/stop-database $1 || exit $?
 

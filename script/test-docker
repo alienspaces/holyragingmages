@@ -7,18 +7,11 @@ if [ $(command -v gvm) ]; then
     gvm use $GO_VERSION
 fi
 
-# copy docker env
-cp .env.docker .env
-status=0
-
-# environment
-source ${BASH_SOURCE%/*}/environment || exit $?
-
-# start services
-source ${BASH_SOURCE%/*}/start-services || exit $?
+# start database
+source ${BASH_SOURCE%/*}/start-database "docker" || exit $?
 
 # test
-source ${BASH_SOURCE%/*}/test || exit $?
+source ${BASH_SOURCE%/*}/test-packages || exit $?
 
 # stop services
-source ${BASH_SOURCE%/*}/stop-services || exit $?
+source ${BASH_SOURCE%/*}/stop-database "docker" || exit $?

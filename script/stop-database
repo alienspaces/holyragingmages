@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# "docker" or "local"
+export APP_DB_SERVICE=docker
+if [ -n "$1" ]; then
+    export APP_DB_SERVICE=$1
+    shift
+fi
+
+# environment
+source ${BASH_SOURCE%/*}/environment || exit $?
+
+# retry
+source ${BASH_SOURCE%/*}/retry || exit $?
+
+# stop database
+echo "=> Stopping database";
+
+if [ $APP_DB_SERVICE = "docker" ]; then
+
+    echo "=> Stopping database docker service"
+
+    docker ps -a | grep holyragingmages | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
+
+else
+
+    echo "=> Stopping database local service"
+
+    sudo -u postgres dropdb holyragingmages
+    sudo -u postgres dropuser holyragingmages
+    sudo service postgresql stop
+fi
+
