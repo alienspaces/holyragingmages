@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
 

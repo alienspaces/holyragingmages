@@ -20,8 +20,8 @@ type Preparable interface {
 	RemoveManySQL() string
 }
 
-// Preparer - Methods for preparing and fetching repo statements
-type Preparer struct {
+// Prepare - Methods for preparing and fetching repo statements
+type Prepare struct {
 	Log Logger
 	Tx  *sqlx.Tx
 }
@@ -52,10 +52,10 @@ var prepared = make(map[string]bool)
 // mutex
 var mutex = &sync.Mutex{}
 
-// NewPreparer -
-func NewPreparer(l Logger, tx *sqlx.Tx) (*Preparer, error) {
+// NewPrepare -
+func NewPrepare(l Logger, tx *sqlx.Tx) (*Prepare, error) {
 
-	p := Preparer{
+	p := Prepare{
 		Log: l,
 		Tx:  tx,
 	}
@@ -64,7 +64,7 @@ func NewPreparer(l Logger, tx *sqlx.Tx) (*Preparer, error) {
 }
 
 // Prepare - Prepares all repo SQL statements for faster execution
-func (p *Preparer) Prepare(m Preparable) error {
+func (p *Prepare) Prepare(m Preparable) error {
 
 	// lock/unlock
 	mutex.Lock()
@@ -191,7 +191,7 @@ func (p *Preparer) Prepare(m Preparable) error {
 }
 
 // GetOneStmt -
-func (p *Preparer) GetOneStmt(m Preparable) *sqlx.Stmt {
+func (p *Prepare) GetOneStmt(m Preparable) *sqlx.Stmt {
 
 	stmt := getOneStmtList[m.TableName()]
 
@@ -199,7 +199,7 @@ func (p *Preparer) GetOneStmt(m Preparable) *sqlx.Stmt {
 }
 
 // GetManyStmt -
-func (p *Preparer) GetManyStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) GetManyStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := getManyStmtList[m.TableName()]
 
@@ -207,7 +207,7 @@ func (p *Preparer) GetManyStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // CreateStmt -
-func (p *Preparer) CreateStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) CreateStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := createStmtList[m.TableName()]
 
@@ -215,7 +215,7 @@ func (p *Preparer) CreateStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // UpdateOneStmt -
-func (p *Preparer) UpdateOneStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) UpdateOneStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := updateOneStmtList[m.TableName()]
 
@@ -223,7 +223,7 @@ func (p *Preparer) UpdateOneStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // UpdateManyStmt -
-func (p *Preparer) UpdateManyStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) UpdateManyStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := updateManyStmtList[m.TableName()]
 
@@ -231,7 +231,7 @@ func (p *Preparer) UpdateManyStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // DeleteOneStmt -
-func (p *Preparer) DeleteOneStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) DeleteOneStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := deleteOneStmtList[m.TableName()]
 
@@ -239,7 +239,7 @@ func (p *Preparer) DeleteOneStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // DeleteManyStmt -
-func (p *Preparer) DeleteManyStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) DeleteManyStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := deleteManyStmtList[m.TableName()]
 
@@ -247,7 +247,7 @@ func (p *Preparer) DeleteManyStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // RemoveOneStmt -
-func (p *Preparer) RemoveOneStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) RemoveOneStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := removeOneStmtList[m.TableName()]
 
@@ -255,7 +255,7 @@ func (p *Preparer) RemoveOneStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // RemoveManyStmt -
-func (p *Preparer) RemoveManyStmt(m Preparable) *sqlx.NamedStmt {
+func (p *Prepare) RemoveManyStmt(m Preparable) *sqlx.NamedStmt {
 
 	stmt := removeManyStmtList[m.TableName()]
 
@@ -263,7 +263,7 @@ func (p *Preparer) RemoveManyStmt(m Preparable) *sqlx.NamedStmt {
 }
 
 // GetOneSQL -
-func (p *Preparer) GetOneSQL(m Preparable) string {
+func (p *Prepare) GetOneSQL(m Preparable) string {
 
 	query := getOneSQLList[m.TableName()]
 
@@ -271,7 +271,7 @@ func (p *Preparer) GetOneSQL(m Preparable) string {
 }
 
 // GetManySQL -
-func (p *Preparer) GetManySQL(m Preparable) string {
+func (p *Prepare) GetManySQL(m Preparable) string {
 
 	query := getManySQLList[m.TableName()]
 
@@ -279,7 +279,7 @@ func (p *Preparer) GetManySQL(m Preparable) string {
 }
 
 // CreateSQL -
-func (p *Preparer) CreateSQL(m Preparable) string {
+func (p *Prepare) CreateSQL(m Preparable) string {
 
 	query := createSQLList[m.TableName()]
 
@@ -287,7 +287,7 @@ func (p *Preparer) CreateSQL(m Preparable) string {
 }
 
 // UpdateOneSQL -
-func (p *Preparer) UpdateOneSQL(m Preparable) string {
+func (p *Prepare) UpdateOneSQL(m Preparable) string {
 
 	query := updateOneSQLList[m.TableName()]
 
@@ -295,7 +295,7 @@ func (p *Preparer) UpdateOneSQL(m Preparable) string {
 }
 
 // UpdateManySQL -
-func (p *Preparer) UpdateManySQL(m Preparable) string {
+func (p *Prepare) UpdateManySQL(m Preparable) string {
 
 	query := updateManySQLList[m.TableName()]
 
@@ -303,7 +303,7 @@ func (p *Preparer) UpdateManySQL(m Preparable) string {
 }
 
 // DeleteOneSQL -
-func (p *Preparer) DeleteOneSQL(m Preparable) string {
+func (p *Prepare) DeleteOneSQL(m Preparable) string {
 
 	query := deleteOneSQLList[m.TableName()]
 
@@ -311,7 +311,7 @@ func (p *Preparer) DeleteOneSQL(m Preparable) string {
 }
 
 // DeleteManySQL -
-func (p *Preparer) DeleteManySQL(m Preparable) string {
+func (p *Prepare) DeleteManySQL(m Preparable) string {
 
 	query := deleteManySQLList[m.TableName()]
 
@@ -319,7 +319,7 @@ func (p *Preparer) DeleteManySQL(m Preparable) string {
 }
 
 // RemoveOneSQL -
-func (p *Preparer) RemoveOneSQL(m Preparable) string {
+func (p *Prepare) RemoveOneSQL(m Preparable) string {
 
 	query := removeOneSQLList[m.TableName()]
 
@@ -327,7 +327,7 @@ func (p *Preparer) RemoveOneSQL(m Preparable) string {
 }
 
 // RemoveManySQL -
-func (p *Preparer) RemoveManySQL(m Preparable) string {
+func (p *Prepare) RemoveManySQL(m Preparable) string {
 
 	query := removeManySQLList[m.TableName()]
 

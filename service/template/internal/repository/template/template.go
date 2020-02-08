@@ -13,18 +13,23 @@ type Repository struct {
 }
 
 // NewRepo - returns an implementation of a Repo
-func NewRepo(l repository.Logger, tx *sqlx.Tx) (*Repository, error) {
+func NewRepo(l repository.Logger, p repository.Preparer, tx *sqlx.Tx) (*Repository, error) {
 
 	r := &Repository{
 		repository.Repository{
-			Tx:  tx,
-			Log: l,
+			Log:     l,
+			Prepare: p,
+			Tx:      tx,
 		},
 	}
 
-	err := r.Init(tx)
+	err := r.Init(p, tx)
+	if err != nil {
+		l.Warn("Failed new repository >%v<", err)
+		return nil, err
+	}
 
-	return r, err
+	return r, nil
 }
 
 // NewRecord -
@@ -77,15 +82,15 @@ func (r *Repository) GetMany(
 	return recs, nil
 }
 
-// Create -
-func (r *Repository) Create(rec *record.Template) error {
+// CreateOne -
+func (r *Repository) CreateOne(rec *record.Template) error {
 
 	if rec.ID == "" {
 		rec.ID = repository.NewRecordID()
 	}
 	rec.CreatedAt = repository.NewCreatedAt()
 
-	err := r.CreateRec(rec)
+	err := r.CreateOneRec(rec)
 	if err != nil {
 		rec.CreatedAt = ""
 		r.Log.Warn("Failed statement execution >%v<", err)
@@ -138,7 +143,7 @@ func (r *Repository) CreateTestRecord() (*record.Template, error) {
 
 	rec := r.NewRecord()
 
-	err := r.Create(rec)
+	err := r.CreateOne(rec)
 
 	return rec, err
 }

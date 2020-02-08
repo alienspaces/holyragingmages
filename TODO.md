@@ -4,9 +4,6 @@
 
 ### Now
 
-* Databases
-  * Separate database per service
-  * Migrations per service
 * Template `repository`
   * Unit tests
 

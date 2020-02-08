@@ -16,12 +16,35 @@ type Logger interface {
 	Error(msg string, args ...interface{})
 }
 
+// Preparer -
+type Preparer interface {
+	Prepare(m Preparable) error
+	GetOneStmt(m Preparable) *sqlx.Stmt
+	GetManyStmt(m Preparable) *sqlx.NamedStmt
+	CreateStmt(m Preparable) *sqlx.NamedStmt
+	UpdateOneStmt(m Preparable) *sqlx.NamedStmt
+	UpdateManyStmt(m Preparable) *sqlx.NamedStmt
+	DeleteOneStmt(m Preparable) *sqlx.NamedStmt
+	DeleteManyStmt(m Preparable) *sqlx.NamedStmt
+	RemoveOneStmt(m Preparable) *sqlx.NamedStmt
+	RemoveManyStmt(m Preparable) *sqlx.NamedStmt
+	GetOneSQL(m Preparable) string
+	GetManySQL(m Preparable) string
+	CreateSQL(m Preparable) string
+	UpdateOneSQL(m Preparable) string
+	UpdateManySQL(m Preparable) string
+	DeleteOneSQL(m Preparable) string
+	DeleteManySQL(m Preparable) string
+	RemoveOneSQL(m Preparable) string
+	RemoveManySQL(m Preparable) string
+}
+
 // Repository -
 type Repository struct {
 	Config       Config
 	Log          Logger
 	Tx           *sqlx.Tx
-	Preparer     *Preparer
+	Prepare      Preparer
 	RecordParams map[string]*RecordParam
 }
 
@@ -38,12 +61,24 @@ type RecordParam struct {
 }
 
 // Init -
-func (r *Repository) Init(tx *sqlx.Tx) error {
+func (r *Repository) Init(p Preparer, tx *sqlx.Tx) error {
 
 	r.Log.Info("Initialising repo")
 
+	if p != nil {
+		r.Prepare = p
+	}
+
+	if tx != nil {
+		r.Tx = tx
+	}
+
 	if r.Tx == nil {
 		return errors.New("Tx is nil, cannot initialise")
+	}
+
+	if r.Prepare == nil {
+		return errors.New("Prepare is nil, cannot initialise")
 	}
 
 	return nil
@@ -58,7 +93,7 @@ func (r *Repository) TableName() string {
 func (r *Repository) GetOneRec(recordID string, rec interface{}) error {
 
 	// preparer
-	p := r.Preparer
+	p := r.Prepare
 
 	// stmt
 	stmt := p.GetOneStmt(r)
@@ -87,7 +122,7 @@ func (r *Repository) GetManyRecs(
 	operators map[string]string) (rows *sqlx.Rows, err error) {
 
 	// preparer
-	p := r.Preparer
+	p := r.Prepare
 
 	// stmt
 	querySQL := p.GetManySQL(r)
@@ -114,11 +149,11 @@ func (r *Repository) GetManyRecs(
 	return rows, nil
 }
 
-// CreateRec -
-func (r *Repository) CreateRec(rec interface{}) error {
+// CreateOneRec -
+func (r *Repository) CreateOneRec(rec interface{}) error {
 
 	// preparer
-	p := r.Preparer
+	p := r.Prepare
 
 	// stmt
 	stmt := p.CreateStmt(r)
@@ -136,7 +171,7 @@ func (r *Repository) CreateRec(rec interface{}) error {
 func (r *Repository) UpdateOneRec(rec interface{}) error {
 
 	// preparer
-	p := r.Preparer
+	p := r.Prepare
 
 	// stmt
 	stmt := p.UpdateOneStmt(r)
@@ -163,7 +198,7 @@ func (r *Repository) deleteOneRec(recordID string) error {
 	}
 
 	// preparer
-	p := r.Preparer
+	p := r.Prepare
 
 	// stmt
 	stmt := p.DeleteOneStmt(r)
@@ -199,7 +234,7 @@ func (r *Repository) RemoveOne(id string) error {
 func (r *Repository) removeOneRec(recordID string) error {
 
 	// preparer
-	p := r.Preparer
+	p := r.Prepare
 
 	// stmt
 	stmt := p.RemoveOneStmt(r)
