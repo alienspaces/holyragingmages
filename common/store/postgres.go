@@ -5,10 +5,13 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // blank import intended
+
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
 )
 
 // getPostgresDB -
-func getPostgresDB(c Configurer, l Logger) (*sqlx.DB, error) {
+func getPostgresDB(c configurer.Configurer, l logger.Logger) (*sqlx.DB, error) {
 
 	dbHost := c.Get("APP_DB_HOST")
 	dbPort := c.Get("APP_DB_PORT")

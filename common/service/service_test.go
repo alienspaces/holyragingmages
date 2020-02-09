@@ -6,18 +6,21 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/log"
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/store"
+	"gitlab.com/alienspaces/holyragingmages/common/storer"
 )
 
 // TestRunner - allow Init and Run functions to be defined by tests
 type TestRunner struct {
 	Runner
-	InitFunc func(c Configurer, l Logger, s Storer) error
+	InitFunc func(c configurer.Configurer, l logger.Logger, s storer.Storer) error
 	RunFunc  func(args map[string]interface{}) error
 }
 
-func (rnr *TestRunner) Init(c Configurer, l Logger, s Storer) error {
+func (rnr *TestRunner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer) error {
 	if rnr.InitFunc == nil {
 		return rnr.Runner.Init(c, l, s)
 	}
@@ -32,7 +35,7 @@ func (rnr *TestRunner) Run(args map[string]interface{}) error {
 }
 
 // NewDefaultDependencies -
-func NewDefaultDependencies() (Configurer, Logger, Storer, error) {
+func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Storer, error) {
 
 	c, err := config.NewConfig(nil, false)
 	if err != nil {
@@ -56,7 +59,7 @@ func NewDefaultDependencies() (Configurer, Logger, Storer, error) {
 		}
 	}
 
-	l, err := logger.NewLogger(c)
+	l, err := log.NewLogger(c)
 	if err != nil {
 		return nil, nil, nil, err
 	}

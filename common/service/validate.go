@@ -6,6 +6,8 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/xeipuuv/gojsonschema"
+
+	"gitlab.com/alienspaces/holyragingmages/common/modeller"
 )
 
 // schemaCache - path, method, schema
@@ -27,7 +29,7 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 		}
 	}
 
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, m Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, m modeller.Modeller) {
 
 		rnr.Log.Info("** Validate ** request URI >%s< method >%s<", r.RequestURI, r.Method)
 

@@ -7,6 +7,9 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/assert"
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/storer"
 )
 
 func TestRunnerInit(t *testing.T) {
@@ -21,7 +24,7 @@ func TestRunnerInit(t *testing.T) {
 	err = tr.Init(c, l, s)
 	if assert.NoError(t, err, "Runner Init returns without error") {
 		// test init override with failure
-		tr.InitFunc = func(c Configurer, l Logger, s Storer) error {
+		tr.InitFunc = func(c configurer.Configurer, l logger.Logger, s storer.Storer) error {
 			return errors.New("Init failed")
 		}
 		err = tr.Init(c, l, s)

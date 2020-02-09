@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/log"
 )
 
 func TestNewStore(t *testing.T) {
@@ -29,7 +29,7 @@ func TestNewStore(t *testing.T) {
 		assert.NoError(t, c.Add(key, true), "Add config item")
 	}
 
-	l, err := logger.NewLogger(c)
+	l, err := log.NewLogger(c)
 	if err != nil {
 		t.Fatalf("Failed new logger >%v<", err)
 	}

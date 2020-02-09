@@ -4,9 +4,17 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/prepare"
+	"gitlab.com/alienspaces/holyragingmages/common/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/runnable"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
+	"gitlab.com/alienspaces/holyragingmages/common/storer"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 )
 
@@ -16,7 +24,7 @@ type Runner struct {
 }
 
 // ensure we comply with the Runnerer interface
-var _ service.Runnable = &Runner{}
+var _ runnable.Runnable = &Runner{}
 
 // NewRunner -
 func NewRunner() *Runner {
@@ -86,8 +94,22 @@ func (rnr *Runner) Middleware(h service.Handle) (service.Handle, error) {
 	return h, nil
 }
 
+// Preparer -
+func (rnr *Runner) Preparer(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error) {
+
+	rnr.Log.Info("** Template Model **")
+
+	p, err := prepare.NewPrepare(l, tx)
+	if err != nil {
+		rnr.Log.Warn("Failed new preparer >%v<", err)
+		return nil, err
+	}
+
+	return p, nil
+}
+
 // Model -
-func (rnr *Runner) Model(c service.Configurer, l service.Logger, s service.Storer) (service.Modeller, error) {
+func (rnr *Runner) Model(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
 
 	rnr.Log.Info("** Template Model **")
 
@@ -101,7 +123,7 @@ func (rnr *Runner) Model(c service.Configurer, l service.Logger, s service.Store
 }
 
 // Handler - default handler
-func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
+func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
 	rnr.Log.Info("** Template handler **")
 
@@ -109,7 +131,7 @@ func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.
 }
 
 // GetTemplatesHandler -
-func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
+func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
 	rnr.Log.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
 
@@ -117,7 +139,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 }
 
 // PostTemplatesHandler -
-func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
+func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
 	data := r.Context().Value(service.ContextKeyData)
 
@@ -127,7 +149,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 }
 
 // PutTemplatesHandler -
-func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m service.Modeller) {
+func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
 	data := r.Context().Value(service.ContextKeyData)
 

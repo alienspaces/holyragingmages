@@ -6,45 +6,17 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/preparer"
 )
-
-// Logger -
-type Logger interface {
-	Debug(msg string, args ...interface{})
-	Info(msg string, args ...interface{})
-	Warn(msg string, args ...interface{})
-	Error(msg string, args ...interface{})
-}
-
-// Preparer -
-type Preparer interface {
-	Prepare(m Preparable) error
-	GetOneStmt(m Preparable) *sqlx.Stmt
-	GetManyStmt(m Preparable) *sqlx.NamedStmt
-	CreateStmt(m Preparable) *sqlx.NamedStmt
-	UpdateOneStmt(m Preparable) *sqlx.NamedStmt
-	UpdateManyStmt(m Preparable) *sqlx.NamedStmt
-	DeleteOneStmt(m Preparable) *sqlx.NamedStmt
-	DeleteManyStmt(m Preparable) *sqlx.NamedStmt
-	RemoveOneStmt(m Preparable) *sqlx.NamedStmt
-	RemoveManyStmt(m Preparable) *sqlx.NamedStmt
-	GetOneSQL(m Preparable) string
-	GetManySQL(m Preparable) string
-	CreateSQL(m Preparable) string
-	UpdateOneSQL(m Preparable) string
-	UpdateManySQL(m Preparable) string
-	DeleteOneSQL(m Preparable) string
-	DeleteManySQL(m Preparable) string
-	RemoveOneSQL(m Preparable) string
-	RemoveManySQL(m Preparable) string
-}
 
 // Repository -
 type Repository struct {
 	Config       Config
-	Log          Logger
+	Log          logger.Logger
 	Tx           *sqlx.Tx
-	Prepare      Preparer
+	Prepare      preparer.Preparer
 	RecordParams map[string]*RecordParam
 }
 
@@ -61,7 +33,7 @@ type RecordParam struct {
 }
 
 // Init -
-func (r *Repository) Init(p Preparer, tx *sqlx.Tx) error {
+func (r *Repository) Init(p preparer.Preparer, tx *sqlx.Tx) error {
 
 	r.Log.Info("Initialising repo")
 
@@ -117,9 +89,7 @@ func (r *Repository) GetOneRec(recordID string, rec interface{}) error {
 }
 
 // GetManyRecs -
-func (r *Repository) GetManyRecs(
-	params map[string]interface{},
-	operators map[string]string) (rows *sqlx.Rows, err error) {
+func (r *Repository) GetManyRecs(params map[string]interface{}, operators map[string]string) (rows *sqlx.Rows, err error) {
 
 	// preparer
 	p := r.Prepare

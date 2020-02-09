@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/log"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
 	"gitlab.com/alienspaces/holyragingmages/common/store"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/runner"
@@ -40,7 +40,7 @@ func main() {
 		}
 	}
 
-	l, err := logger.NewLogger(c)
+	l, err := log.NewLogger(c)
 	if err != nil {
 		fmt.Printf("Failed new logger >%v<", err)
 		os.Exit(0)

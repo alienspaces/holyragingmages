@@ -4,39 +4,33 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/storer"
 )
 
-// Configurer -
-type Configurer interface {
-	Get(key string) string
-	Set(key string, value string)
-	Add(key string, required bool) (err error)
-}
-
-// Logger -
-type Logger interface {
-	Debug(msg string, args ...interface{})
-	Info(msg string, args ...interface{})
-	Warn(msg string, args ...interface{})
-	Error(msg string, args ...interface{})
-}
-
-// Storer -
-type Storer interface {
-	GetDb() (*sqlx.DB, error)
-	GetTx() (*sqlx.Tx, error)
+// Repositor -
+type Repositor interface {
+	Init(p preparer.Preparer, tx *sqlx.Tx) error
+	TableName() string
 }
 
 // Model -
 type Model struct {
-	Config Configurer
-	Log    Logger
-	Store  Storer
-	Tx     *sqlx.Tx
+	Config       configurer.Configurer
+	Log          logger.Logger
+	Store        storer.Storer
+	Repositories map[string]Repositor
+	Tx           *sqlx.Tx
+
+	// composable functions
+	RepositoriesFunc func(p preparer.Preparer, tx *sqlx.Tx) ([]Repositor, error)
 }
 
 // NewModel - intended for testing only, maybe move into test files..
-func NewModel(c Configurer, l Logger, s Storer) (m *Model, err error) {
+func NewModel(c configurer.Configurer, l logger.Logger, s storer.Storer) (m *Model, err error) {
 
 	m = &Model{
 		Config: c,
@@ -48,7 +42,7 @@ func NewModel(c Configurer, l Logger, s Storer) (m *Model, err error) {
 }
 
 // Init -
-func (m *Model) Init(tx *sqlx.Tx) (err error) {
+func (m *Model) Init(p preparer.Preparer, tx *sqlx.Tx) (err error) {
 
 	// tx required
 	if tx == nil {
@@ -56,7 +50,33 @@ func (m *Model) Init(tx *sqlx.Tx) (err error) {
 		return fmt.Errorf("Failed init, tx is required")
 	}
 
+	if m.RepositoriesFunc == nil {
+		m.RepositoriesFunc = m.NewRepositories
+	}
+
+	// assign database tx for possible custom SQL execution
+	// in model functions
 	m.Tx = tx
 
+	// repositories
+	repositories, err := m.RepositoriesFunc(p, tx)
+	if err != nil {
+		m.Log.Warn("Failed repositories func >%v<", err)
+		return err
+	}
+
+	m.Repositories = make(map[string]Repositor)
+	for _, r := range repositories {
+		m.Repositories[r.TableName()] = r
+	}
+
 	return nil
+}
+
+// NewRepositories - default RepositoriesFunc, override this function for custom repositories
+func (m *Model) NewRepositories(p preparer.Preparer, tx *sqlx.Tx) ([]Repositor, error) {
+
+	m.Log.Info("** Repositories **")
+
+	return nil, nil
 }

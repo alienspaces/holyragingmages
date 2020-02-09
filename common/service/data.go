@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+
+	"gitlab.com/alienspaces/holyragingmages/common/modeller"
 )
 
 // ContextData - data type for data context  key
@@ -19,7 +21,7 @@ const (
 // Data -
 func (rnr *Runner) Data(h Handle) (Handle, error) {
 
-	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
 		rnr.Log.Warn("** Data ** request URI >%s< method >%s<", r.RequestURI, r.Method)
 

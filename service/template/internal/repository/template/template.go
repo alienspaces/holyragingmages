@@ -3,6 +3,8 @@ package template
 import (
 	"github.com/jmoiron/sqlx"
 
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/repository"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
@@ -12,8 +14,8 @@ type Repository struct {
 	repository.Repository
 }
 
-// NewRepo - returns an implementation of a Repo
-func NewRepo(l repository.Logger, p repository.Preparer, tx *sqlx.Tx) (*Repository, error) {
+// NewRepository - returns an implementation of a Repo
+func NewRepository(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) (*Repository, error) {
 
 	r := &Repository{
 		repository.Repository{

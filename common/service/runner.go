@@ -4,7 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
+
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/runnable"
+	"gitlab.com/alienspaces/holyragingmages/common/storer"
 )
 
 const (
@@ -18,9 +26,9 @@ const (
 
 // Runner - implements the runnerer interface
 type Runner struct {
-	Store  Storer
-	Log    Logger
-	Config Configurer
+	Store  storer.Storer
+	Log    logger.Logger
+	Config configurer.Configurer
 
 	// configuration for routes, handlers and middleware
 	HandlerConfig []HandlerConfig
@@ -28,8 +36,9 @@ type Runner struct {
 	// composable functions
 	RouterFunc     func(router *httprouter.Router) error
 	MiddlewareFunc func(h Handle) (Handle, error)
-	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller)
-	ModelFunc      func(c Configurer, l Logger, s Storer) (Modeller, error)
+	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
+	PreparerFunc   func(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error)
+	ModelFunc      func(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error)
 }
 
 // MiddlewareConfig - configuration for global default middleware
@@ -45,15 +54,15 @@ type MiddlewareConfig struct {
 type HandlerConfig struct {
 	Method           string
 	Path             string
-	HandlerFunc      func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller)
+	HandlerFunc      func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
 	MiddlewareConfig MiddlewareConfig
 }
 
 // ensure we comply with the Runnerer interface
-var _ Runnable = &Runner{}
+var _ runnable.Runnable = &Runner{}
 
 // Init - override to perform custom initialization
-func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
+func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer) error {
 
 	rnr.Config = c
 	rnr.Log = l
@@ -74,6 +83,16 @@ func (rnr *Runner) Init(c Configurer, l Logger, s Storer) error {
 	// handler
 	if rnr.HandlerFunc == nil {
 		rnr.HandlerFunc = rnr.Handler
+	}
+
+	// preparer
+	if rnr.PreparerFunc == nil {
+		rnr.PreparerFunc = rnr.Prepare
+	}
+
+	// model
+	if rnr.ModelFunc == nil {
+		rnr.ModelFunc = rnr.Model
 	}
 
 	return nil
@@ -116,8 +135,16 @@ func (rnr *Runner) Middleware(h Handle) (Handle, error) {
 	return h, nil
 }
 
+// Prepare - default preparer.PreparerFunc, override this function for custom model
+func (rnr *Runner) Prepare(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error) {
+
+	rnr.Log.Info("** Prepare **")
+
+	return nil, nil
+}
+
 // Model - default ModelFunc, override this function for custom model
-func (rnr *Runner) Model(c Configurer, l Logger, s Storer) (Modeller, error) {
+func (rnr *Runner) Model(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
 
 	rnr.Log.Info("** Model **")
 
@@ -125,7 +152,7 @@ func (rnr *Runner) Model(c Configurer, l Logger, s Storer) (Modeller, error) {
 }
 
 // Handler - default HandlerFunc, override this function for custom handler
-func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m Modeller) {
+func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
 	rnr.Log.Info("** Handler **")
 

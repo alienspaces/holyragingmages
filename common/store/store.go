@@ -4,22 +4,10 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/logger"
 )
-
-// Configurer -
-type Configurer interface {
-	Get(key string) string
-	Set(key string, value string)
-	Add(key string, required bool) (err error)
-}
-
-// Logger -
-type Logger interface {
-	Debug(msg string, args ...interface{})
-	Info(msg string, args ...interface{})
-	Warn(msg string, args ...interface{})
-	Error(msg string, args ...interface{})
-}
 
 const (
 	// DBPostgres -
@@ -28,14 +16,14 @@ const (
 
 // Store -
 type Store struct {
-	Log        Logger
-	Config     Configurer
+	Log        logger.Logger
+	Config     configurer.Configurer
 	Database   string
 	Connection *sqlx.DB
 }
 
 // NewStore -
-func NewStore(c Configurer, l Logger) (*Store, error) {
+func NewStore(c configurer.Configurer, l logger.Logger) (*Store, error) {
 
 	dt := c.Get("APP_DATABASE")
 	if dt == "" {

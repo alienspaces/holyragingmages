@@ -6,20 +6,22 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
+	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/log"
 	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/service"
 	"gitlab.com/alienspaces/holyragingmages/common/store"
+	"gitlab.com/alienspaces/holyragingmages/common/storer"
 )
 
 // NewDefaultDependencies -
-func NewDefaultDependencies() (service.Configurer, service.Logger, service.Storer, error) {
+func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Storer, error) {
 
 	c, err := config.NewConfig(nil, false)
 	if err != nil {
 		return nil, nil, nil, err
 	}
 
-	l, err := logger.NewLogger(c)
+	l, err := log.NewLogger(c)
 	if err != nil {
 		return nil, nil, nil, err
 	}
