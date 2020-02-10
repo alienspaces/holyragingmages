@@ -5,11 +5,11 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/modeller"
-	"gitlab.com/alienspaces/holyragingmages/common/runnable"
-	"gitlab.com/alienspaces/holyragingmages/common/storer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
+	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
 
 // Handle - custom service handle

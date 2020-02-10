@@ -3,7 +3,7 @@ package preparer
 import (
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/common/preparable"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparable"
 )
 
 // Preparer -

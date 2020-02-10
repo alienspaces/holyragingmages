@@ -4,7 +4,19 @@ dir="common"
 for f in "$dir"/*; do
     echo "Testing => $f"
     cd $f
-    go test -v -count 1 ./... || exit $?
+    if [ -f "go.mod" ]; then
+        go test -v -count 1 ./ || exit $?
+    fi
+    cd -
+done
+
+dir="common/type"
+for f in "$dir"/*; do
+    echo "Testing => $f"
+    cd $f
+    if [ -f "go.mod" ]; then
+        go test -v -count 1 ./ || exit $?
+    fi
     cd -
 done
 
@@ -12,6 +24,8 @@ dir="service"
 for f in "$dir"/*; do
     echo "Testing => $f"
     cd $f
-    go test -v -count 1 ./... || exit $?
+    if [ -f "go.mod" ]; then
+        go test -v -count 1 ./... || exit $?
+    fi
     cd -
 done

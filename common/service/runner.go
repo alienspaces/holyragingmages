@@ -7,12 +7,12 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/modeller"
-	"gitlab.com/alienspaces/holyragingmages/common/preparer"
-	"gitlab.com/alienspaces/holyragingmages/common/runnable"
-	"gitlab.com/alienspaces/holyragingmages/common/storer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
+	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
 
 const (
@@ -40,6 +40,8 @@ type Runner struct {
 	PreparerFunc   func(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error)
 	ModelFunc      func(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error)
 }
+
+var _ runnable.Runnable = &Runner{}
 
 // MiddlewareConfig - configuration for global default middleware
 type MiddlewareConfig struct {

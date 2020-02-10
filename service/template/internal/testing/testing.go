@@ -2,6 +2,7 @@ package testing
 
 import (
 	"github.com/jmoiron/sqlx"
+
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
 

@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 )
 
 // Item defines a valid environment variable and whether it is required
@@ -19,6 +21,8 @@ type Config struct {
 	Items  []*Item
 	Values map[string]string
 }
+
+var _ configurer.Configurer = &Config{}
 
 // NewConfig creates a new environment object
 func NewConfig(items []Item, dotEnv bool) (*Config, error) {

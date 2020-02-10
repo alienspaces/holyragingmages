@@ -7,9 +7,10 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/storer"
+
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
 
 func TestRunnerInit(t *testing.T) {

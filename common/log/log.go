@@ -6,11 +6,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 )
 
-// Logger -
-type Logger struct {
+// Log -
+type Log struct {
 	log    *logrus.Logger
 	Config configurer.Configurer
 }
@@ -41,9 +41,9 @@ var levelMap = map[Level]logrus.Level{
 }
 
 // NewLogger returns a logger
-func NewLogger(c configurer.Configurer) (*Logger, error) {
+func NewLogger(c configurer.Configurer) (*Log, error) {
 
-	l := Logger{
+	l := Log{
 		log:    logrus.New(),
 		Config: c,
 	}
@@ -57,7 +57,7 @@ func NewLogger(c configurer.Configurer) (*Logger, error) {
 }
 
 // Init initializes logger
-func (l *Logger) Init() error {
+func (l *Log) Init() error {
 
 	// create a new instance of the logger
 	l.log.SetFormatter(&logrus.JSONFormatter{})
@@ -84,19 +84,19 @@ func (l *Logger) Init() error {
 }
 
 // Printf -
-func (l *Logger) Printf(format string, args ...interface{}) {
+func (l *Log) Printf(format string, args ...interface{}) {
 	l.log.Printf(format, args...)
 }
 
 // Level -
-func (l *Logger) Level(level Level) {
+func (l *Log) Level(level Level) {
 	if lvl, ok := levelMap[level]; ok {
 		l.log.SetLevel(lvl)
 	}
 }
 
 // Debug -
-func (l *Logger) Debug(msg string, args ...interface{}) {
+func (l *Log) Debug(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}
@@ -104,7 +104,7 @@ func (l *Logger) Debug(msg string, args ...interface{}) {
 }
 
 // Info -
-func (l *Logger) Info(msg string, args ...interface{}) {
+func (l *Log) Info(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}
@@ -112,7 +112,7 @@ func (l *Logger) Info(msg string, args ...interface{}) {
 }
 
 // Warn -
-func (l *Logger) Warn(msg string, args ...interface{}) {
+func (l *Log) Warn(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}
@@ -120,7 +120,7 @@ func (l *Logger) Warn(msg string, args ...interface{}) {
 }
 
 // Error -
-func (l *Logger) Error(msg string, args ...interface{}) {
+func (l *Log) Error(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}

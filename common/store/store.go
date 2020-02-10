@@ -5,8 +5,8 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 )
 
 const (

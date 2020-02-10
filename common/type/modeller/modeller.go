@@ -3,7 +3,7 @@ package modeller
 import (
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/common/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 )
 
 // Modeller -

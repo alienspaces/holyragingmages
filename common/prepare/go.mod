@@ -4,13 +4,13 @@ go 1.13
 
 require (
 	github.com/jmoiron/sqlx v1.2.0
-
-	gitlab.com/alienspaces/holyragingmages/common/logger v1.0.0
-	gitlab.com/alienspaces/holyragingmages/common/preparable v1.0.0
-	google.golang.org/appengine v1.6.5 // indirect
+	gitlab.com/alienspaces/holyragingmages/common/type/logger v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/type/preparable v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/type/preparer v1.0.0
 )
 
 replace (
-	gitlab.com/alienspaces/holyragingmages/common/logger => ../../common/logger
-	gitlab.com/alienspaces/holyragingmages/common/preparable => ../../common/preparable
+	gitlab.com/alienspaces/holyragingmages/common/type/logger => ../../common/type/logger
+	gitlab.com/alienspaces/holyragingmages/common/type/preparable => ../../common/type/preparable
+	gitlab.com/alienspaces/holyragingmages/common/type/preparer => ../../common/type/preparer
 )

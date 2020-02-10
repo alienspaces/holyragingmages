@@ -3,9 +3,9 @@ package template
 import (
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/repository"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
 

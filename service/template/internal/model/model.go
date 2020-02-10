@@ -3,11 +3,12 @@ package model
 import (
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/model"
-	"gitlab.com/alienspaces/holyragingmages/common/preparer"
-	"gitlab.com/alienspaces/holyragingmages/common/storer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
+	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/repository/template"
 )
 
@@ -31,9 +32,9 @@ func NewModel(c configurer.Configurer, l logger.Logger, s storer.Storer) (*Model
 }
 
 // NewRepositories - Custom repositories for this model
-func (m *Model) NewRepositories(p preparer.Preparer, tx *sqlx.Tx) ([]model.Repositor, error) {
+func (m *Model) NewRepositories(p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error) {
 
-	repositoryList := []model.Repositor{}
+	repositoryList := []repositor.Repositor{}
 
 	tr, err := template.NewRepository(m.Log, p, tx)
 	if err != nil {

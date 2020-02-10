@@ -5,8 +5,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/preparable"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparable"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 )
 
 // Prepare - Methods for preparing and fetching repo statements
@@ -14,6 +15,8 @@ type Prepare struct {
 	Log logger.Logger
 	Tx  *sqlx.Tx
 }
+
+var _ preparer.Preparer = &Prepare{}
 
 var getOneSQLList = make(map[string]string)
 var getManySQLList = make(map[string]string)

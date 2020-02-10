@@ -7,8 +7,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
 )
 
 // Repository -
@@ -19,6 +20,8 @@ type Repository struct {
 	Prepare      preparer.Preparer
 	RecordParams map[string]*RecordParam
 }
+
+var _ repositor.Repositor = &Repository{}
 
 // Config -
 type Config struct {

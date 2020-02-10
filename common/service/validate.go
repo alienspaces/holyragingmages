@@ -7,7 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/xeipuuv/gojsonschema"
 
-	"gitlab.com/alienspaces/holyragingmages/common/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 )
 
 // schemaCache - path, method, schema

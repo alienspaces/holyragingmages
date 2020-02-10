@@ -7,7 +7,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/common/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 )
 
 // ContextData - data type for data context  key

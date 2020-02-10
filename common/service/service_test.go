@@ -6,11 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/log"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/store"
-	"gitlab.com/alienspaces/holyragingmages/common/storer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
 
 // TestRunner - allow Init and Run functions to be defined by tests

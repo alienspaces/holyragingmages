@@ -7,14 +7,14 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/common/configurer"
-	"gitlab.com/alienspaces/holyragingmages/common/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/modeller"
 	"gitlab.com/alienspaces/holyragingmages/common/prepare"
-	"gitlab.com/alienspaces/holyragingmages/common/preparer"
-	"gitlab.com/alienspaces/holyragingmages/common/runnable"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
-	"gitlab.com/alienspaces/holyragingmages/common/storer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
+	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 )
 
