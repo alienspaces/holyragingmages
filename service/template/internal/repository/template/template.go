@@ -141,11 +141,7 @@ RETURNING *
 }
 
 // CreateTestRecord - creates a record for testing
-func (r *Repository) CreateTestRecord() (*record.Template, error) {
+func (r *Repository) CreateTestRecord(rec *record.Template) error {
 
-	rec := r.NewRecord()
-
-	err := r.CreateOne(rec)
-
-	return rec, err
+	return r.CreateOne(rec)
 }

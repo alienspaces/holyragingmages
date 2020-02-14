@@ -4,7 +4,7 @@
 
 ### Now
 
-* Template `repository`
+* `./service/template/internal/repository`
   * Unit tests
 
 ### Next
