@@ -1,5 +1,8 @@
 package test
 
+// NOTE: repository tests are run is the public space so we are
+// able to use common setup and teardown tooling for all repositories
+
 import (
 	"testing"
 
