@@ -19,6 +19,7 @@ source ${BASH_SOURCE%/*}/stop-database $APP_DB_SERVICE || exit $?
 # start database
 echo "=> Starting database"
 if [ $APP_DB_SERVICE = "docker" ]; then
+
     echo "=> Starting database docker service"
 
     docker run --hostname postgres --name holyragingmages-shared \
@@ -29,6 +30,7 @@ if [ $APP_DB_SERVICE = "docker" ]; then
     postgres:10.4-alpine || exit $?
 
 elif [ $APP_DB_SERVICE = "local" ]; then
+
     echo "=> Starting database local service"
 
     sudo service postgresql start

@@ -22,7 +22,7 @@ if [ $APP_DB_SERVICE = "docker" ]; then
 
     docker ps -a | grep holyragingmages | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
 
-else
+elif [ $APP_DB_SERVICE = "local" ]; then
 
     echo "=> Stopping database local service"
 
