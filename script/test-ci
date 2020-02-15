@@ -6,6 +6,9 @@ cp .env.ci .env
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
+# start database
+source ${BASH_SOURCE%/*}/start-database || exit $?
+
 # migrate database
 source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 

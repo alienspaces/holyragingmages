@@ -28,7 +28,7 @@ if [ $APP_DB_SERVICE = "docker" ]; then
     -p ${APP_DB_PORT}:5432 -d \
     postgres:10.4-alpine || exit $?
 
-else
+elif [ $APP_DB_SERVICE = "local" ]; then
     echo "=> Starting database local service"
 
     sudo service postgresql start
