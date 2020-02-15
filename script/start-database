@@ -18,6 +18,7 @@ source ${BASH_SOURCE%/*}/stop-database $APP_DB_SERVICE || exit $?
 
 # start database
 echo "=> Starting database"
+
 if [ $APP_DB_SERVICE = "docker" ]; then
 
     echo "=> Starting database docker service"
@@ -43,11 +44,12 @@ elif [ $APP_DB_SERVICE = "local" ]; then
 
 fi
 
+# pgcrypto for uuids
 export PGPASSWORD=$APP_DB_PASSWORD
 retry_cmd psql --host=$APP_DB_HOST \
      --port=$APP_DB_PORT \
 	 --username=$APP_DB_USER \
-     --command="SELECT now();" \
+     --command="CREATE EXTENSION pgcrypto;" \
      $APP_DB_NAME
 
 echo "=> Database running on ${APP_DB_HOST}:${APP_DB_PORT}"
@@ -60,6 +62,17 @@ SERVICE_NAMES=(*)
 cd -
 
 for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
+
+    # service specific .env
+    if [ $APP_DB_SERVICE = "ci" ]; then
+        if [ -f "./service/$SERVICE_NAME/.env.ci" ]; then
+            cp "./service/$SERVICE_NAME/.env.ci" "./service/$SERVICE_NAME/.env"
+        fi
+    else
+        if [ -f "./service/$SERVICE_NAME/.env.development" ]; then
+            cp "./service/$SERVICE_NAME/.env.development" "./service/$SERVICE_NAME/.env"
+        fi
+    fi
 
     if [ -f "./service/$SERVICE_NAME/.env" ]; then
 
@@ -78,10 +91,11 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
             --username=$APP_DB_USER \
             --command="CREATE DATABASE \"${APP_DB_NAME}\" OWNER \"${APP_DB_USER}\";"
 
+        # pgcrypto for uuids
         retry_cmd psql --host=$APP_DB_HOST \
             --port=$APP_DB_PORT \
             --username=$APP_DB_USER \
-            --command="SELECT now();" \
+            --command="CREATE EXTENSION pgcrypto;" \
             $APP_DB_NAME
     fi
 done
