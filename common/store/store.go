@@ -68,7 +68,7 @@ func (s *Store) GetTx() (*sqlx.Tx, error) {
 
 	if s.Connection == nil {
 		s.Log.Warn("Not connected")
-		return nil, fmt.Errorf("Not connection")
+		return nil, fmt.Errorf("Not Not connected")
 	}
 
 	return s.Connection.Beginx()

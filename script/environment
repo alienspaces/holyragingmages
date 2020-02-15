@@ -6,17 +6,12 @@
 function verify_env {
     echo "=> (env) Verifying environment"
 
-    if [ -z "${APP_ENV}" ]; then
-        echo "=> (env) Missing APP_ENV, cannot continue"
-        exit 1
-    fi
-
     # required for all environments
     ENV_VARS=( \
         # general
+        "APP_ENV" \
         "APP_PORT" \
         # database
-		'APP_DB_SERVICE' \
 		'APP_DB_HOST' \
 		'APP_DB_NAME' \
 		'APP_DB_PORT' \

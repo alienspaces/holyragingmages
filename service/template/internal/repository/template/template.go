@@ -9,6 +9,11 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
 
+const (
+	// RepositoryTableName - underlying database table name used for configuration
+	RepositoryTableName string = "template"
+)
+
 // Repository -
 type Repository struct {
 	repository.Repository
@@ -22,6 +27,11 @@ func NewRepository(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) (*Reposito
 			Log:     l,
 			Prepare: p,
 			Tx:      tx,
+
+			// Config
+			Config: repository.Config{
+				TableName: RepositoryTableName,
+			},
 		},
 	}
 

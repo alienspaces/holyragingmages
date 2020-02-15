@@ -198,8 +198,8 @@ func (p *Prepare) GetManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 	return p.Tx.NamedStmt(stmt)
 }
 
-// CreateStmt -
-func (p *Prepare) CreateStmt(m preparable.Preparable) *sqlx.NamedStmt {
+// CreateOneStmt -
+func (p *Prepare) CreateOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := createStmtList[m.TableName()]
 

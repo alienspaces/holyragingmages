@@ -56,6 +56,13 @@ func (r *Repository) Init(p preparer.Preparer, tx *sqlx.Tx) error {
 		return errors.New("Prepare is nil, cannot initialise")
 	}
 
+	// prepare
+	err := p.Prepare(r)
+	if err != nil {
+		r.Log.Warn("Failed preparing repository >%v<", err)
+		return err
+	}
+
 	return nil
 }
 
@@ -129,7 +136,7 @@ func (r *Repository) CreateOneRec(rec interface{}) error {
 	p := r.Prepare
 
 	// stmt
-	stmt := p.CreateStmt(r)
+	stmt := p.CreateOneStmt(r)
 
 	err := stmt.QueryRowx(rec).StructScan(rec)
 	if err != nil {

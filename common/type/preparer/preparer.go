@@ -11,7 +11,7 @@ type Preparer interface {
 	Prepare(m preparable.Preparable) error
 	GetOneStmt(m preparable.Preparable) *sqlx.Stmt
 	GetManyStmt(m preparable.Preparable) *sqlx.NamedStmt
-	CreateStmt(m preparable.Preparable) *sqlx.NamedStmt
+	CreateOneStmt(m preparable.Preparable) *sqlx.NamedStmt
 	UpdateOneStmt(m preparable.Preparable) *sqlx.NamedStmt
 	UpdateManyStmt(m preparable.Preparable) *sqlx.NamedStmt
 	DeleteOneStmt(m preparable.Preparable) *sqlx.NamedStmt

@@ -11,6 +11,9 @@ fi
 go get -u -d github.com/golang-migrate/migrate/cmd/migrate github.com/lib/pq github.com/hashicorp/go-multierror
 go build -tags 'postgres' -o $GOPATH/bin/migrate github.com/golang-migrate/migrate/cmd/migrate
 
+# environment
+source ${BASH_SOURCE%/*}/environment || exit $?
+
 # service directory list
 shopt -s dotglob
 shopt -s nullglob
@@ -20,18 +23,18 @@ cd -
 
 for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
-    # load service specific environment
-    source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
-
-    URL="postgres://$APP_DB_USER:$APP_DB_PASSWORD@$APP_DB_HOST:$APP_DB_PORT/$APP_DB_NAME?sslmode=disable"
-
-    echo "=> Migrate URL $URL"
-
     # run migrations
-    migrate \
-    -path ./service/$SERVICE_NAME/migration \
-    -database $URL up
+    if [ -d "./service/$SERVICE_NAME/migration" ]; then
 
+        # load service specific environment
+        source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
+
+        URL="postgres://$APP_DB_USER:$APP_DB_PASSWORD@$APP_DB_HOST:$APP_DB_PORT/$APP_DB_NAME?sslmode=disable"
+
+        echo "=> Migrate PATH     ./service/$SERVICE_NAME/migration"
+
+        migrate -verbose -path "./service/$SERVICE_NAME/migration" -database "$URL" -- up
+    fi
 done
 
 

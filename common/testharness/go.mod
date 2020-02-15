@@ -22,7 +22,8 @@ require (
 	gitlab.com/alienspaces/holyragingmages/common/type/repositor v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/runnable v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/storer v1.0.0
-	gitlab.com/alienspaces/holyragingmages/service/template v0.0.0-00010101000000-000000000000
+
+	gitlab.com/alienspaces/holyragingmages/service/template v1.0.0
 )
 
 replace (
@@ -33,6 +34,8 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/common/repository => ../../common/repository
 	gitlab.com/alienspaces/holyragingmages/common/service => ../../common/service
 	gitlab.com/alienspaces/holyragingmages/common/store => ../../common/store
+	gitlab.com/alienspaces/holyragingmages/common/testharness => ../../common/testharness
+
 	gitlab.com/alienspaces/holyragingmages/common/type/configurer => ../../common/type/configurer
 	gitlab.com/alienspaces/holyragingmages/common/type/logger => ../../common/type/logger
 	gitlab.com/alienspaces/holyragingmages/common/type/modeller => ../../common/type/modeller
@@ -41,5 +44,6 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/common/type/repositor => ../../common/type/repositor
 	gitlab.com/alienspaces/holyragingmages/common/type/runnable => ../../common/type/runnable
 	gitlab.com/alienspaces/holyragingmages/common/type/storer => ../../common/type/storer
+
 	gitlab.com/alienspaces/holyragingmages/service/template => ../../service/template
 )

@@ -22,10 +22,13 @@ type TestHarness struct {
 	Store        storer.Storer
 	Log          logger.Logger
 	Config       configurer.Configurer
-	Repositories []repositor.Repositor
+	Repositories map[string]repositor.Repositor
 
 	// composable functions
 	RepositoriesFunc func(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error)
+
+	// private
+	tx *sqlx.Tx
 }
 
 // NewTestHarness -
@@ -71,9 +74,23 @@ func NewTestHarness(r RepositoriesFunc) (t *TestHarness, err error) {
 }
 
 // Setup -
-func (t *TestHarness) Setup(tx *sqlx.Tx) error {
+func (t *TestHarness) Setup() error {
 
-	p, err := prepare.NewPrepare(t.Log, tx)
+	err := t.Store.Init()
+	if err != nil {
+		t.Log.Warn("Failed store init >%v<", err)
+		return err
+	}
+
+	tx, err := t.Store.GetTx()
+	if err != nil {
+		t.Log.Warn("Failed getting database tx >%v<", err)
+		return err
+	}
+
+	t.tx = tx
+
+	p, err := prepare.NewPrepare(t.Log, t.tx)
 	if err != nil {
 		t.Log.Warn("Failed new preparer >%v<", err)
 		return err
@@ -81,19 +98,43 @@ func (t *TestHarness) Setup(tx *sqlx.Tx) error {
 
 	t.Log.Info("Preparer ready >%v<", p)
 
-	repositories, err := t.RepositoriesFunc(t.Log, p, tx)
+	repositories, err := t.RepositoriesFunc(t.Log, p, t.tx)
 	if err != nil {
 		t.Log.Warn("Failed repositories >%v<", err)
 		return err
 	}
 
-	t.Repositories = repositories
+	t.Repositories = make(map[string]repositor.Repositor)
+	for _, r := range repositories {
+		err := r.Init(p, t.tx)
+		if err != nil {
+			t.Log.Warn("Failed initialising repository >%s< >%v<", r.TableName(), err)
+			return err
+		}
+		t.Repositories[r.TableName()] = r
+	}
 
 	return nil
 }
 
 // Teardown -
-func (t *TestHarness) Teardown(tx *sqlx.Tx) error {
+func (t *TestHarness) Teardown() error {
+
+	err := t.tx.Rollback()
+	if err != nil {
+		t.Log.Warn("Failed database tx rollback >%v<", err)
+		return err
+	}
 
 	return nil
+}
+
+// Tx -
+func (t *TestHarness) Tx() *sqlx.Tx {
+	return t.tx
+}
+
+// Repository -
+func (t *TestHarness) Repository(name string) interface{} {
+	return t.Repositories[name]
 }
