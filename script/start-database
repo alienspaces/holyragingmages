@@ -64,38 +64,34 @@ cd -
 for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     # service specific .env
-    if [ $APP_DB_SERVICE = "ci" ]; then
-        if [ -f "./service/$SERVICE_NAME/.env.ci" ]; then
-            cp "./service/$SERVICE_NAME/.env.ci" "./service/$SERVICE_NAME/.env"
-        fi
-    else
+    if [ $APP_DB_SERVICE = "docker" ] || [ $APP_DB_SERVICE = "local" ]; then
         if [ -f "./service/$SERVICE_NAME/.env.development" ]; then
             cp "./service/$SERVICE_NAME/.env.development" "./service/$SERVICE_NAME/.env"
         fi
-    fi
 
-    if [ -f "./service/$SERVICE_NAME/.env" ]; then
+        if [ -f "./service/$SERVICE_NAME/.env" ]; then
 
-        # reset APP_DB_NAME as each service should define
-        # a unique database name in their local env
-        export APP_DB_NAME=""
+            # reset APP_DB_NAME as each service should define
+            # a unique database name in their local env
+            export APP_DB_NAME=""
 
-        # load service specific environment
-        source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
+            # load service specific environment
+            source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
 
-        echo "Creating database name $APP_DB_NAME owner $APP_DB_USER"
+            echo "Creating database name $APP_DB_NAME owner $APP_DB_USER"
 
-        export PGPASSWORD=$APP_DB_PASSWORD
-        retry_cmd psql --host=$APP_DB_HOST \
-            --port=$APP_DB_PORT \
-            --username=$APP_DB_USER \
-            --command="CREATE DATABASE \"${APP_DB_NAME}\" OWNER \"${APP_DB_USER}\";"
+            export PGPASSWORD=$APP_DB_PASSWORD
+            retry_cmd psql --host=$APP_DB_HOST \
+                --port=$APP_DB_PORT \
+                --username=$APP_DB_USER \
+                --command="CREATE DATABASE \"${APP_DB_NAME}\" OWNER \"${APP_DB_USER}\";"
 
-        # pgcrypto for uuids
-        retry_cmd psql --host=$APP_DB_HOST \
-            --port=$APP_DB_PORT \
-            --username=$APP_DB_USER \
-            --command="CREATE EXTENSION pgcrypto;" \
-            $APP_DB_NAME
+            # pgcrypto for uuids
+            retry_cmd psql --host=$APP_DB_HOST \
+                --port=$APP_DB_PORT \
+                --username=$APP_DB_USER \
+                --command="CREATE EXTENSION pgcrypto;" \
+                $APP_DB_NAME
+        fi
     fi
 done
