@@ -10,6 +10,9 @@ fi
 # start database
 source ${BASH_SOURCE%/*}/start-database "local" || exit $?
 
+# migrate database
+source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
+
 # test
 source ${BASH_SOURCE%/*}/test-packages || exit $?
 

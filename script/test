@@ -13,8 +13,6 @@ source ${BASH_SOURCE%/*}/start-database "docker" || exit $?
 # migrate database
 source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 
-exit
-
 # test
 source ${BASH_SOURCE%/*}/test-packages || exit $?
 
