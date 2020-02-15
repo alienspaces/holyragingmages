@@ -16,6 +16,7 @@ test-all:
     - apk add bash --no-cache
     - apk add libc-dev --no-cache
     - apk add gcc --no-cache
+    - apk add git --no-cache
     - apk add postgresql-client --no-cache
   script:
     - ./script/test-ci
