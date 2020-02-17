@@ -2,6 +2,8 @@
 
 This is a game.
 
+[https://gitlab.com/alienspaces/holyragingmages](https://gitlab.com/alienspaces/holyragingmages)
+
 ## Overview
 
 You are a mage with:
