@@ -1,4 +1,4 @@
-package testharness
+package harness
 
 import (
 	"github.com/jmoiron/sqlx"
@@ -17,30 +17,36 @@ import (
 // RepositoriesFunc - callback function to return repositories
 type RepositoriesFunc func(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error)
 
-// TestHarness -
-type TestHarness struct {
+// Testing -
+type Testing struct {
 	Store        storer.Storer
 	Log          logger.Logger
 	Config       configurer.Configurer
 	Repositories map[string]repositor.Repositor
 
 	// composable functions
-	RepositoriesFunc func(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error)
+	RepositoriesFunc RepositoriesFunc
 
 	// private
 	tx *sqlx.Tx
 }
 
-// NewTestHarness -
-func NewTestHarness(r RepositoriesFunc) (t *TestHarness, err error) {
+// NewTesting -
+func NewTesting(r RepositoriesFunc) (t *Testing, err error) {
 
-	t = &TestHarness{
+	t = &Testing{
 		RepositoriesFunc: r,
 	}
 
+	return t, nil
+}
+
+// Setup -
+func (t *Testing) Setup() (err error) {
+
 	t.Config, err = config.NewConfig(nil, false)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	configVars := []string{
@@ -56,27 +62,21 @@ func NewTestHarness(r RepositoriesFunc) (t *TestHarness, err error) {
 	for _, key := range configVars {
 		err = t.Config.Add(key, true)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
 	t.Log, err = log.NewLogger(t.Config)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	t.Store, err = store.NewStore(t.Config, t.Log)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return t, nil
-}
-
-// Setup -
-func (t *TestHarness) Setup() error {
-
-	err := t.Store.Init()
+	err = t.Store.Init()
 	if err != nil {
 		t.Log.Warn("Failed store init >%v<", err)
 		return err
@@ -118,7 +118,7 @@ func (t *TestHarness) Setup() error {
 }
 
 // Teardown -
-func (t *TestHarness) Teardown() error {
+func (t *Testing) Teardown() error {
 
 	err := t.tx.Rollback()
 	if err != nil {
@@ -130,11 +130,11 @@ func (t *TestHarness) Teardown() error {
 }
 
 // Tx -
-func (t *TestHarness) Tx() *sqlx.Tx {
+func (t *Testing) Tx() *sqlx.Tx {
 	return t.tx
 }
 
 // Repository -
-func (t *TestHarness) Repository(name string) interface{} {
+func (t *Testing) Repository(name string) interface{} {
 	return t.Repositories[name]
 }

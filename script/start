@@ -9,6 +9,9 @@ source ${BASH_SOURCE%/*}/stop $1 || exit $?
 # start database
 source ${BASH_SOURCE%/*}/start-database $1 || exit $?
 
+# migrate database
+source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
+
 # start services
 source ${BASH_SOURCE%/*}/start-services $1 || exit $?
 

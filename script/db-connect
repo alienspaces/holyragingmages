@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Opens a psql session to the database specified in current APP environment
+
+status=0
+source ${BASH_SOURCE%/*}/environment || status=$?
+if [ $status -ne 0 ]; then
+    echo "Establishing environment error, cannot continue" >&2
+    exit $status
+fi
+
+export PGPASSWORD=$APP_DB_PASSWORD
+psql --host=$APP_DB_HOST \
+     --port=$APP_DB_PORT \
+     --username=$APP_DB_USER \
+     $APP_DB_NAME
