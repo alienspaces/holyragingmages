@@ -3,13 +3,17 @@
 GO_VERSION=go1.13.3
 if [ $(command -v gvm) ]; then
     source  ~/.gvm/scripts/gvm
-    echo "Using ${GO_VERSION}"
+    echo "=> Use ${GO_VERSION}"
     gvm use $GO_VERSION
 fi
 
 # golang migrate
-go get -u -d github.com/golang-migrate/migrate/cmd/migrate github.com/lib/pq github.com/hashicorp/go-multierror
-go build -tags 'postgres' -o $GOPATH/bin/migrate github.com/golang-migrate/migrate/cmd/migrate
+MIGRATE_PATH=$(which migrate)
+if [[ "$MIGRATE_PATH" != *"$GO_VERSION"* ]]; then
+    echo "=> Installing migrate"
+    go get -u -d github.com/golang-migrate/migrate/cmd/migrate github.com/lib/pq github.com/hashicorp/go-multierror
+    go build -tags 'postgres' -o $GOPATH/bin/migrate github.com/golang-migrate/migrate/cmd/migrate
+fi
 
 # service directory list
 shopt -s dotglob
