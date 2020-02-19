@@ -7,12 +7,19 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
+	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/repository/template"
 )
 
 // Testing -
 type Testing struct {
 	harness.Testing
+	Data *Data
+}
+
+// Data -
+type Data struct {
+	TemplateRecs []*record.Template
 }
 
 // NewTesting -
@@ -21,9 +28,26 @@ func NewTesting() (*Testing, error) {
 	// harness
 	h := Testing{}
 
-	h.RepositoriesFunc = newRepositories
+	h.RepositoriesFunc = h.CreateRepositories
+	h.DataFunc = h.CreateData
+	h.Data = &Data{}
 
 	return &h, nil
+}
+
+// CreateRepositories - Custom repositories
+func (t *Testing) CreateRepositories(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error) {
+
+	repositoryList := []repositor.Repositor{}
+
+	tr, err := template.NewRepository(l, p, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	repositoryList = append(repositoryList, tr)
+
+	return repositoryList, nil
 }
 
 // TemplateRepository -
@@ -37,17 +61,18 @@ func (t *Testing) TemplateRepository() *template.Repository {
 	return r.(*template.Repository)
 }
 
-// NewRepositories - Custom repositories for this model
-func newRepositories(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error) {
+// CreateData - Custom data
+func (t *Testing) CreateData() error {
 
-	repositoryList := []repositor.Repositor{}
-
-	tr, err := template.NewRepository(l, p, tx)
+	tr := t.TemplateRepository()
+	rec := tr.NewRecord()
+	err := tr.CreateTestRecord(rec)
 	if err != nil {
-		return nil, err
+		t.Log.Warn("Failed creating test template record >%v<", err)
+		return err
 	}
 
-	repositoryList = append(repositoryList, tr)
+	t.Data.TemplateRecs = append(t.Data.TemplateRecs, rec)
 
-	return repositoryList, nil
+	return nil
 }

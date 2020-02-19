@@ -17,6 +17,12 @@ import (
 // RepositoriesFunc - callback function to return repositories
 type RepositoriesFunc func(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error)
 
+// DataFunc - callback function that creates test data
+type DataFunc func() error
+
+// Data - contains test data
+type Data struct{}
+
 // Testing -
 type Testing struct {
 	Store        storer.Storer
@@ -24,8 +30,12 @@ type Testing struct {
 	Config       configurer.Configurer
 	Repositories map[string]repositor.Repositor
 
+	// Data
+	Data Data
+
 	// composable functions
 	RepositoriesFunc RepositoriesFunc
+	DataFunc         DataFunc
 
 	// private
 	tx *sqlx.Tx
@@ -112,6 +122,15 @@ func (t *Testing) Setup() (err error) {
 			return err
 		}
 		t.Repositories[r.TableName()] = r
+	}
+
+	// setup data
+	if t.DataFunc != nil {
+		err := t.DataFunc()
+		if err != nil {
+			t.Log.Warn("Failed data setup >%v<", err)
+			return err
+		}
 	}
 
 	return nil
