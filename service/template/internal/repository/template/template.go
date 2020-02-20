@@ -6,6 +6,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/repository"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
 
@@ -19,7 +20,9 @@ type Repository struct {
 	repository.Repository
 }
 
-// NewRepository - returns an implementation of a Repo
+var _ repositor.Repositor = &Repository{}
+
+// NewRepository -
 func NewRepository(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) (*Repository, error) {
 
 	r := &Repository{
@@ -35,9 +38,18 @@ func NewRepository(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) (*Reposito
 		},
 	}
 
+	l.Warn("** Template ** CreateOneSQL %s", r.CreateOneSQL())
+
 	err := r.Init(p, tx)
 	if err != nil {
 		l.Warn("Failed new repository >%v<", err)
+		return nil, err
+	}
+
+	// prepare
+	err = p.Prepare(r)
+	if err != nil {
+		l.Warn("Failed preparing repository >%v<", err)
 		return nil, err
 	}
 
@@ -128,30 +140,7 @@ func (r *Repository) UpdateOne(rec *record.Template) error {
 	return nil
 }
 
-// CreateSQL -
-func (r *Repository) CreateSQL() string {
-	return `
-INSERT INTO template
-   (id, created_at)
-VALUES
-   (:id, :created_at)
-RETURNING *
-`
-}
-
-// UpdateOneSQL -
-func (r *Repository) UpdateOneSQL() string {
-	return `
-UPDATE template SET
-   updated_at = :updated_at
-WHERE id 		   = :id
-AND   deleted_at IS NULL
-RETURNING *
-`
-}
-
 // CreateTestRecord - creates a record for testing
 func (r *Repository) CreateTestRecord(rec *record.Template) error {
-
 	return r.CreateOne(rec)
 }

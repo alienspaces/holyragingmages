@@ -106,32 +106,33 @@ func (t *Testing) Setup() (err error) {
 		return err
 	}
 
-	t.Log.Info("Preparer ready >%v<", p)
+	t.Log.Info("Preparer ready")
 
+	// repositories function is expected to create and return a list of repositors
 	repositories, err := t.RepositoriesFunc(t.Log, p, t.tx)
 	if err != nil {
-		t.Log.Warn("Failed repositories >%v<", err)
+		t.Log.Warn("Failed repositories function >%v<", err)
 		return err
 	}
 
 	t.Repositories = make(map[string]repositor.Repositor)
 	for _, r := range repositories {
-		err := r.Init(p, t.tx)
-		if err != nil {
-			t.Log.Warn("Failed initialising repository >%s< >%v<", r.TableName(), err)
-			return err
-		}
 		t.Repositories[r.TableName()] = r
 	}
 
-	// setup data
+	t.Log.Info("Repositories ready")
+
+	// data function is expected to create and manage its own store
 	if t.DataFunc != nil {
+		t.Log.Info("Creating test data")
 		err := t.DataFunc()
 		if err != nil {
-			t.Log.Warn("Failed data setup >%v<", err)
+			t.Log.Warn("Failed data function >%v<", err)
 			return err
 		}
 	}
+
+	t.Log.Info("Data ready")
 
 	return nil
 }

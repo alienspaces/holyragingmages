@@ -4,6 +4,10 @@
 
 ### Now
 
+* `./common/prepare`
+  * Change statment maps to being properties instead of global
+    as we are colliding when there are multiple database connections
+    and processes using this package
 * `./service/template/internal/repository`
   * Unit tests
 

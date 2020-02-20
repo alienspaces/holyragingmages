@@ -14,23 +14,23 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/repository/template"
 )
 
-func TestCreateRec(t *testing.T) {
+func TestCreateOne(t *testing.T) {
 
 	// harness
-	harness, err := harness.NewTesting()
+	h, err := harness.NewTesting()
 	if err != nil {
 		t.Fatalf("Failed new test harness >%v<", err)
 	}
 
-	err = harness.Setup()
+	err = h.Setup()
 	if err != nil {
 		t.Fatalf("Failed test harness setup >%v<", err)
 	}
 
-	defer harness.Teardown()
+	defer h.Teardown()
 
 	// repository
-	r := harness.TemplateRepository()
+	r := h.TemplateRepository()
 	if r == nil {
 		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
 	}
@@ -63,15 +63,72 @@ func TestCreateRec(t *testing.T) {
 
 		rec := tc.rec()
 
-		err = r.CreateTestRecord(rec)
+		err = r.CreateOne(rec)
 		if err != nil {
 			t.Fatalf("Failed creating record >%v<", err)
 		}
 		if tc.err == true {
-			assert.Error(t, err, "CreateTestRecord returns error")
+			assert.Error(t, err, "CreateOne returns error")
 			continue
 		}
-		assert.NoError(t, err, "CreateTestRecord returns without error")
-		assert.NotEmpty(t, rec.CreatedAt, "CreateTestRecord returns record with CreatedAt")
+		assert.NoError(t, err, "CreateOne returns without error")
+		assert.NotEmpty(t, rec.CreatedAt, "CreateOne returns record with CreatedAt")
+	}
+}
+
+func TestGetRec(t *testing.T) {
+
+	// harness
+	h, err := harness.NewTesting()
+	if err != nil {
+		t.Fatalf("Failed new test harness >%v<", err)
+	}
+
+	err = h.Setup()
+	if err != nil {
+		t.Fatalf("Failed test harness setup >%v<", err)
+	}
+
+	defer h.Teardown()
+
+	// repository
+	r := h.TemplateRepository()
+	if r == nil {
+		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
+	}
+
+	tests := []struct {
+		name string
+		id   func() string
+		err  bool
+	}{
+		{
+			name: "With ID",
+			id: func() string {
+				return h.Data.TemplateRecs[0].ID
+			},
+			err: false,
+		},
+		{
+			name: "Without ID",
+			id: func() string {
+				return ""
+			},
+			err: true,
+		},
+	}
+
+	for _, tc := range tests {
+
+		rec, err := r.GetOne(tc.id(), false)
+		if err != nil {
+			t.Fatalf("Failed getting record >%v<", err)
+		}
+		if tc.err == true {
+			assert.Error(t, err, "GetOne returns error")
+			continue
+		}
+		assert.NoError(t, err, "GetOne returns without error")
+		assert.NotEmpty(t, rec, "GetOne returns record")
 	}
 }

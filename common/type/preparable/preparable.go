@@ -5,7 +5,7 @@ type Preparable interface {
 	TableName() string
 	GetOneSQL() string
 	GetManySQL() string
-	CreateSQL() string
+	CreateOneSQL() string
 	UpdateOneSQL() string
 	UpdateManySQL() string
 	DeleteOneSQL() string

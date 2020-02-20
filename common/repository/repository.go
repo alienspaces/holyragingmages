@@ -38,7 +38,7 @@ type RecordParam struct {
 // Init -
 func (r *Repository) Init(p preparer.Preparer, tx *sqlx.Tx) error {
 
-	r.Log.Info("Initialising repo")
+	r.Log.Info("Initialising repository %s", r.TableName())
 
 	if p != nil {
 		r.Prepare = p
@@ -56,12 +56,7 @@ func (r *Repository) Init(p preparer.Preparer, tx *sqlx.Tx) error {
 		return errors.New("Prepare is nil, cannot initialise")
 	}
 
-	// prepare
-	err := p.Prepare(r)
-	if err != nil {
-		r.Log.Warn("Failed preparing repository >%v<", err)
-		return err
-	}
+	r.Log.Warn("** Repository ** CreateOneSQL %s", r.CreateOneSQL())
 
 	return nil
 }
@@ -256,31 +251,19 @@ func (r *Repository) GetManySQL() string {
 	return fmt.Sprintf("SELECT * FROM %s WHERE deleted_at IS NULL", r.TableName())
 }
 
-// CreateSQL -
-func (r *Repository) CreateSQL() string {
-	return `
-INSERT INTO template
-	(id, created_at)
-VALUES
-	(:id, :created_at)
-RETURNING *
-`
+// CreateOneSQL -
+func (r *Repository) CreateOneSQL() string {
+	return ""
 }
 
 // UpdateOneSQL -
 func (r *Repository) UpdateOneSQL() string {
-	return `
-UPDATE template SET
-	updated_at = :updated_at
-WHERE id 		   = :id
-AND   deleted_at IS NULL
-RETURNING *
-`
+	return ""
 }
 
 // UpdateManySQL -
 func (r *Repository) UpdateManySQL() string {
-	return ``
+	return ""
 }
 
 // DeleteOneSQL -
@@ -290,7 +273,7 @@ func (r *Repository) DeleteOneSQL() string {
 
 // DeleteManySQL -
 func (r *Repository) DeleteManySQL() string {
-	return ``
+	return ""
 }
 
 // RemoveOneSQL -

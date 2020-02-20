@@ -66,6 +66,9 @@ func (t *Testing) CreateData() error {
 
 	tr := t.TemplateRepository()
 	rec := tr.NewRecord()
+
+	t.Log.Warn("Test record >%#v<", rec)
+
 	err := tr.CreateTestRecord(rec)
 	if err != nil {
 		t.Log.Warn("Failed creating test template record >%v<", err)

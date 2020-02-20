@@ -8,6 +8,7 @@ require (
 	gitlab.com/alienspaces/holyragingmages/common/config v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/log v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/prepare v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/repository v0.0.0-00010101000000-000000000000 // indirect
 	gitlab.com/alienspaces/holyragingmages/common/store v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/configurer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/logger v1.0.0
