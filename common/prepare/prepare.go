@@ -14,6 +14,18 @@ import (
 type Prepare struct {
 	Log logger.Logger
 	Tx  *sqlx.Tx
+	// prepared
+	prepared map[string]bool
+	// statements
+	getOneStmtList     map[string]*sqlx.Stmt
+	getManyStmtList    map[string]*sqlx.NamedStmt
+	createStmtList     map[string]*sqlx.NamedStmt
+	updateOneStmtList  map[string]*sqlx.NamedStmt
+	updateManyStmtList map[string]*sqlx.NamedStmt
+	deleteOneStmtList  map[string]*sqlx.NamedStmt
+	deleteManyStmtList map[string]*sqlx.NamedStmt
+	removeOneStmtList  map[string]*sqlx.NamedStmt
+	removeManyStmtList map[string]*sqlx.NamedStmt
 }
 
 var _ preparer.Preparer = &Prepare{}
@@ -28,19 +40,6 @@ var deleteManySQLList = make(map[string]string)
 var removeOneSQLList = make(map[string]string)
 var removeManySQLList = make(map[string]string)
 
-var getOneStmtList = make(map[string]*sqlx.Stmt)
-var getManyStmtList = make(map[string]*sqlx.NamedStmt)
-var createStmtList = make(map[string]*sqlx.NamedStmt)
-var updateOneStmtList = make(map[string]*sqlx.NamedStmt)
-var updateManyStmtList = make(map[string]*sqlx.NamedStmt)
-var deleteOneStmtList = make(map[string]*sqlx.NamedStmt)
-var deleteManyStmtList = make(map[string]*sqlx.NamedStmt)
-var removeOneStmtList = make(map[string]*sqlx.NamedStmt)
-var removeManyStmtList = make(map[string]*sqlx.NamedStmt)
-
-// prepared
-var prepared = make(map[string]bool)
-
 // mutex
 var mutex = &sync.Mutex{}
 
@@ -50,6 +49,20 @@ func NewPrepare(l logger.Logger, tx *sqlx.Tx) (*Prepare, error) {
 	p := Prepare{
 		Log: l,
 		Tx:  tx,
+
+		// prepared
+		prepared: make(map[string]bool),
+
+		// statement lists
+		getOneStmtList:     make(map[string]*sqlx.Stmt),
+		getManyStmtList:    make(map[string]*sqlx.NamedStmt),
+		createStmtList:     make(map[string]*sqlx.NamedStmt),
+		updateOneStmtList:  make(map[string]*sqlx.NamedStmt),
+		updateManyStmtList: make(map[string]*sqlx.NamedStmt),
+		deleteOneStmtList:  make(map[string]*sqlx.NamedStmt),
+		deleteManyStmtList: make(map[string]*sqlx.NamedStmt),
+		removeOneStmtList:  make(map[string]*sqlx.NamedStmt),
+		removeManyStmtList: make(map[string]*sqlx.NamedStmt),
 	}
 
 	return &p, nil
@@ -63,7 +76,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	defer mutex.Unlock()
 
 	// already prepared
-	if _, ok := prepared[m.TableName()]; ok {
+	if _, ok := p.prepared[m.TableName()]; ok {
 		return nil
 	}
 
@@ -79,7 +92,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	getOneSQLList[m.TableName()] = query
-	getOneStmtList[m.TableName()] = getOneStmt
+	p.getOneStmtList[m.TableName()] = getOneStmt
 
 	// get many
 	query = m.GetManySQL()
@@ -91,7 +104,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	getManySQLList[m.TableName()] = query
-	getManyStmtList[m.TableName()] = getManyStmt
+	p.getManyStmtList[m.TableName()] = getManyStmt
 
 	// create
 	query = m.CreateOneSQL()
@@ -105,7 +118,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	createSQLList[m.TableName()] = query
-	createStmtList[m.TableName()] = createStmt
+	p.createStmtList[m.TableName()] = createStmt
 
 	// update
 	query = m.UpdateOneSQL()
@@ -117,7 +130,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	updateOneSQLList[m.TableName()] = query
-	updateOneStmtList[m.TableName()] = updateOneStmt
+	p.updateOneStmtList[m.TableName()] = updateOneStmt
 
 	// update many
 	query = m.UpdateManySQL()
@@ -129,7 +142,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	updateManySQLList[m.TableName()] = query
-	updateManyStmtList[m.TableName()] = updateManyStmt
+	p.updateManyStmtList[m.TableName()] = updateManyStmt
 
 	// delete
 	query = m.DeleteOneSQL()
@@ -141,7 +154,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	deleteOneSQLList[m.TableName()] = query
-	deleteOneStmtList[m.TableName()] = deleteStmt
+	p.deleteOneStmtList[m.TableName()] = deleteStmt
 
 	// delete many
 	query = m.DeleteManySQL()
@@ -153,7 +166,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	deleteManySQLList[m.TableName()] = query
-	deleteManyStmtList[m.TableName()] = deleteManyStmt
+	p.deleteManyStmtList[m.TableName()] = deleteManyStmt
 
 	// remove
 	query = m.RemoveOneSQL()
@@ -165,7 +178,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	removeOneSQLList[m.TableName()] = query
-	removeOneStmtList[m.TableName()] = removeStmt
+	p.removeOneStmtList[m.TableName()] = removeStmt
 
 	// remove many
 	query = m.RemoveManySQL()
@@ -177,9 +190,9 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	}
 
 	removeManySQLList[m.TableName()] = query
-	removeManyStmtList[m.TableName()] = removeManyStmt
+	p.removeManyStmtList[m.TableName()] = removeManyStmt
 
-	prepared[m.TableName()] = true
+	p.prepared[m.TableName()] = true
 
 	return nil
 }
@@ -187,7 +200,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 // GetOneStmt -
 func (p *Prepare) GetOneStmt(m preparable.Preparable) *sqlx.Stmt {
 
-	stmt := getOneStmtList[m.TableName()]
+	stmt := p.getOneStmtList[m.TableName()]
 
 	return p.Tx.Stmtx(stmt)
 }
@@ -195,7 +208,7 @@ func (p *Prepare) GetOneStmt(m preparable.Preparable) *sqlx.Stmt {
 // GetManyStmt -
 func (p *Prepare) GetManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := getManyStmtList[m.TableName()]
+	stmt := p.getManyStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }
@@ -203,7 +216,7 @@ func (p *Prepare) GetManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 // CreateOneStmt -
 func (p *Prepare) CreateOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := createStmtList[m.TableName()]
+	stmt := p.createStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }
@@ -211,7 +224,7 @@ func (p *Prepare) CreateOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 // UpdateOneStmt -
 func (p *Prepare) UpdateOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := updateOneStmtList[m.TableName()]
+	stmt := p.updateOneStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }
@@ -219,7 +232,7 @@ func (p *Prepare) UpdateOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 // UpdateManyStmt -
 func (p *Prepare) UpdateManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := updateManyStmtList[m.TableName()]
+	stmt := p.updateManyStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }
@@ -227,7 +240,7 @@ func (p *Prepare) UpdateManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 // DeleteOneStmt -
 func (p *Prepare) DeleteOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := deleteOneStmtList[m.TableName()]
+	stmt := p.deleteOneStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }
@@ -235,7 +248,7 @@ func (p *Prepare) DeleteOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 // DeleteManyStmt -
 func (p *Prepare) DeleteManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := deleteManyStmtList[m.TableName()]
+	stmt := p.deleteManyStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }
@@ -243,7 +256,7 @@ func (p *Prepare) DeleteManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 // RemoveOneStmt -
 func (p *Prepare) RemoveOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := removeOneStmtList[m.TableName()]
+	stmt := p.removeOneStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }
@@ -251,7 +264,7 @@ func (p *Prepare) RemoveOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 // RemoveManyStmt -
 func (p *Prepare) RemoveManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
-	stmt := removeManyStmtList[m.TableName()]
+	stmt := p.removeManyStmtList[m.TableName()]
 
 	return p.Tx.NamedStmt(stmt)
 }

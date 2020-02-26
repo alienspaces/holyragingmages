@@ -61,6 +61,8 @@ func TestCreateOne(t *testing.T) {
 
 	for _, tc := range tests {
 
+		t.Logf("Run test >%s<", tc.name)
+
 		rec := tc.rec()
 
 		err = r.CreateOne(rec)
@@ -120,10 +122,9 @@ func TestGetRec(t *testing.T) {
 
 	for _, tc := range tests {
 
+		t.Logf("Run test >%s<", tc.name)
+
 		rec, err := r.GetOne(tc.id(), false)
-		if err != nil {
-			t.Fatalf("Failed getting record >%v<", err)
-		}
 		if tc.err == true {
 			assert.Error(t, err, "GetOne returns error")
 			continue
