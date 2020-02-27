@@ -4,22 +4,16 @@
 
 ### Now
 
-* `./common/prepare`
-  * Change statment maps to being properties instead of global
-    as we are colliding when there are multiple database connections
-    and processes using this package
-* `./service/template/internal/repository`
-  * Unit tests
+* Template `model`
+  * Standard functions
+  * Integrate into runner handler functions
+* Common model
+  * Initialization
+    * Repositories
 
 ### Next
 
 * Script `generate`
-* Common model
-  * Initialization
-    * Repositories
-* Template `model`
-  * Standard functions
-  * Integrate into runner
 * Service to service communications
 * Mage service
 * Other services
