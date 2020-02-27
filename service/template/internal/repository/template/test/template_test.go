@@ -73,12 +73,13 @@ func TestCreateOne(t *testing.T) {
 			assert.Error(t, err, "CreateOne returns error")
 			continue
 		}
-		assert.NoError(t, err, "CreateOne returns without error")
-		assert.NotEmpty(t, rec.CreatedAt, "CreateOne returns record with CreatedAt")
+		if assert.NoError(t, err, "CreateOne returns without error") {
+			assert.NotEmpty(t, rec.CreatedAt, "CreateOne returns record with CreatedAt")
+		}
 	}
 }
 
-func TestGetRec(t *testing.T) {
+func TestGetOne(t *testing.T) {
 
 	// harness
 	h, err := harness.NewTesting()
@@ -129,7 +130,129 @@ func TestGetRec(t *testing.T) {
 			assert.Error(t, err, "GetOne returns error")
 			continue
 		}
-		assert.NoError(t, err, "GetOne returns without error")
-		assert.NotEmpty(t, rec, "GetOne returns record")
+		if assert.NoError(t, err, "GetOne returns without error") {
+			assert.NotEmpty(t, rec, "GetOne returns record")
+		}
+	}
+}
+
+func TestUpdateOne(t *testing.T) {
+
+	// harness
+	h, err := harness.NewTesting()
+	if err != nil {
+		t.Fatalf("Failed new test harness >%v<", err)
+	}
+
+	err = h.Setup()
+	if err != nil {
+		t.Fatalf("Failed test harness setup >%v<", err)
+	}
+
+	defer h.Teardown()
+
+	// repository
+	r := h.TemplateRepository()
+	if r == nil {
+		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
+	}
+
+	tests := []struct {
+		name string
+		rec  func() *record.Template
+		err  bool
+	}{
+		{
+			name: "With ID",
+			rec: func() *record.Template {
+				return h.Data.TemplateRecs[0]
+			},
+			err: false,
+		},
+		{
+			name: "Without ID",
+			rec: func() *record.Template {
+				rec := h.Data.TemplateRecs[0]
+				rec.ID = ""
+				return rec
+			},
+			err: true,
+		},
+	}
+
+	for _, tc := range tests {
+
+		t.Logf("Run test >%s<", tc.name)
+
+		rec := tc.rec()
+
+		err := r.UpdateOne(rec)
+		if tc.err == true {
+			assert.Error(t, err, "UpdateOne returns error")
+			continue
+		}
+		if assert.NoError(t, err, "UpdateOne returns without error") {
+			assert.NotEmpty(t, rec.UpdatedAt, "UpdateOne returns record with UpdatedAt")
+		}
+	}
+}
+
+func TestDeleteOne(t *testing.T) {
+
+	// harness
+	h, err := harness.NewTesting()
+	if err != nil {
+		t.Fatalf("Failed new test harness >%v<", err)
+	}
+
+	err = h.Setup()
+	if err != nil {
+		t.Fatalf("Failed test harness setup >%v<", err)
+	}
+
+	defer h.Teardown()
+
+	// repository
+	r := h.TemplateRepository()
+	if r == nil {
+		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
+	}
+
+	tests := []struct {
+		name string
+		id   func() string
+		err  bool
+	}{
+		{
+			name: "With ID",
+			id: func() string {
+				return h.Data.TemplateRecs[0].ID
+			},
+			err: false,
+		},
+		{
+			name: "Without ID",
+			id: func() string {
+				return ""
+			},
+			err: true,
+		},
+	}
+
+	for _, tc := range tests {
+
+		t.Logf("Run test >%s<", tc.name)
+
+		err := r.DeleteOne(tc.id())
+		if tc.err == true {
+			assert.Error(t, err, "DeleteOne returns error")
+			continue
+		}
+		if assert.NoError(t, err, "DeleteOne returns without error") {
+			rec, err := r.GetOne(tc.id(), false)
+			if assert.Error(t, err, "GetOne returns error") {
+				assert.Nil(t, rec, "GetOne does not return record")
+			}
+		}
 	}
 }
