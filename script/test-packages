@@ -35,12 +35,12 @@ for f in "$dir"/*; do
     echo "Testing => APP_HOME - ${APP_HOME}"
 
     if [ $APP_DB_SERVICE = "ci" ]; then
-        if [ -f ".env.ci"]; then
+        if [ -f ".env.ci" ]; then
             echo "Testing => Sourcing service .env.ci"
             source .env.ci
         fi
     else
-        if [ -f ".env.development"]; then
+        if [ -f ".env.development" ]; then
             echo "Testing => Sourcing service .env.development"
             source .env.development
         fi
