@@ -24,6 +24,12 @@ dir="service"
 for f in "$dir"/*; do
     echo "Testing => $f"
     cd $f
+    export APP_HOME=$(pwd)
+    echo "Testing => APP_HOME - ${APP_HOME}"
+    if [ -f ".env.ci" ]; then
+        echo "Testing => Sourcing service .env.ci"
+        source .env.ci
+    fi
     if [ -f "go.mod" ]; then
         go test -cover -count 1 ./... || exit $?
     fi

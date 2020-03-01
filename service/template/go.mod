@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/google/uuid v1.1.1
+	github.com/gorilla/mux v1.7.4
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/stretchr/testify v1.4.0
@@ -19,6 +20,7 @@ require (
 	gitlab.com/alienspaces/holyragingmages/common/type/configurer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/logger v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/modeller v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/type/payloader v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/preparer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/repositor v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/type/runnable v1.0.0
@@ -37,6 +39,7 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/common/type/configurer => ../../common/type/configurer
 	gitlab.com/alienspaces/holyragingmages/common/type/logger => ../../common/type/logger
 	gitlab.com/alienspaces/holyragingmages/common/type/modeller => ../../common/type/modeller
+	gitlab.com/alienspaces/holyragingmages/common/type/payloader => ../../common/type/payloader
 	gitlab.com/alienspaces/holyragingmages/common/type/preparable => ../../common/type/preparable
 	gitlab.com/alienspaces/holyragingmages/common/type/preparer => ../../common/type/preparer
 	gitlab.com/alienspaces/holyragingmages/common/type/repositor => ../../common/type/repositor

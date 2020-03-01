@@ -27,14 +27,15 @@ func (rnr *Runner) Data(h Handle) (Handle, error) {
 
 		// read body into a string
 		buf := new(bytes.Buffer)
-		bytes, err := buf.ReadFrom(r.Body)
-		if err != nil {
-			rnr.Log.Warn("Failed reading data buffer >%v<", err)
-			http.Error(w, "Server Error", http.StatusInternalServerError)
-			return
+		if r.Body != nil {
+			bytes, err := buf.ReadFrom(r.Body)
+			if err != nil {
+				rnr.Log.Warn("Failed reading data buffer >%v<", err)
+				http.Error(w, "Server Error", http.StatusInternalServerError)
+				return
+			}
+			rnr.Log.Info("Read >%d< bytes", bytes)
 		}
-
-		rnr.Log.Info("Read >%d< bytes", bytes)
 		data := buf.String()
 
 		// Add data to context

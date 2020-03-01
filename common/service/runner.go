@@ -10,6 +10,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
@@ -38,7 +39,8 @@ type Runner struct {
 	MiddlewareFunc func(h Handle) (Handle, error)
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
 	PreparerFunc   func(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error)
-	ModelFunc      func(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error)
+	ModellerFunc   func(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error)
+	PayloaderFunc  func() (payloader.Payloader, error)
 }
 
 var _ runnable.Runnable = &Runner{}
@@ -89,12 +91,17 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 
 	// preparer
 	if rnr.PreparerFunc == nil {
-		rnr.PreparerFunc = rnr.Prepare
+		rnr.PreparerFunc = rnr.Preparer
 	}
 
 	// model
-	if rnr.ModelFunc == nil {
-		rnr.ModelFunc = rnr.Model
+	if rnr.ModellerFunc == nil {
+		rnr.ModellerFunc = rnr.Modeller
+	}
+
+	// payloader
+	if rnr.PayloaderFunc == nil {
+		rnr.PayloaderFunc = rnr.Payloader
 	}
 
 	return nil
@@ -137,18 +144,26 @@ func (rnr *Runner) Middleware(h Handle) (Handle, error) {
 	return h, nil
 }
 
-// Prepare - default preparer.PreparerFunc, override this function for custom model
-func (rnr *Runner) Prepare(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error) {
+// Preparer - default preparer.PreparerFunc, override this function for custom model
+func (rnr *Runner) Preparer(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error) {
 
-	rnr.Log.Info("** Prepare **")
+	rnr.Log.Info("** Preparer **")
 
 	return nil, nil
 }
 
-// Model - default ModelFunc, override this function for custom model
-func (rnr *Runner) Model(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
+// Modeller - default ModellerFunc, override this function for custom model
+func (rnr *Runner) Modeller(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
 
-	rnr.Log.Info("** Model **")
+	rnr.Log.Info("** Modeller **")
+
+	return nil, nil
+}
+
+// Payloader - default PayloaderFunc, override this function for custom payload handling
+func (rnr *Runner) Payloader() (payloader.Payloader, error) {
+
+	rnr.Log.Info("** Payloader **")
 
 	return nil, nil
 }

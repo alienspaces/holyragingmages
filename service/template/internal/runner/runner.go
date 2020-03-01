@@ -12,6 +12,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
@@ -22,6 +23,12 @@ import (
 type Runner struct {
 	service.Runner
 }
+
+// Response -
+type Response struct{}
+
+// Request -
+type Request struct{}
 
 // ensure we comply with the Runnerer interface
 var _ runnable.Runnable = &Runner{}
@@ -34,7 +41,9 @@ func NewRunner() *Runner {
 	r.RouterFunc = r.Router
 	r.MiddlewareFunc = r.Middleware
 	r.HandlerFunc = r.Handler
-	r.ModelFunc = r.Model
+	r.ModellerFunc = r.Modeller
+	r.PreparerFunc = r.Preparer
+	r.PayloaderFunc = r.Payloader
 
 	r.HandlerConfig = []service.HandlerConfig{
 		{
@@ -108,8 +117,8 @@ func (rnr *Runner) Preparer(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, er
 	return p, nil
 }
 
-// Model -
-func (rnr *Runner) Model(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
+// Modeller -
+func (rnr *Runner) Modeller(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
 
 	rnr.Log.Info("** Template Model **")
 
@@ -120,6 +129,14 @@ func (rnr *Runner) Model(c configurer.Configurer, l logger.Logger, s storer.Stor
 	}
 
 	return m, nil
+}
+
+// Payloader -
+func (rnr *Runner) Payloader() (payloader.Payloader, error) {
+
+	rnr.Log.Info("** Payloader **")
+
+	return nil, nil
 }
 
 // Handler - default handler
