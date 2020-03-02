@@ -1,7 +1,9 @@
 package payloader
 
+import "net/http"
+
 // Payloader -
 type Payloader interface {
-	Request(jsonData string) (structData interface{}, err error)
-	Response(structData interface{}) (jsonData string, err error)
+	ReadRequest(r *http.Request, s interface{}) error
+	WriteResponse(w http.ResponseWriter, s interface{}) error
 }

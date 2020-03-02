@@ -13,6 +13,7 @@
 
 ### Next
 
+* Script `test-service $1`
 * Script `generate`
 * Service to service communications
 * Mage service

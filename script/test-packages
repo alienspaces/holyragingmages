@@ -46,7 +46,7 @@ for f in "$dir"/*; do
         fi
     fi
     if [ -f "go.mod" ]; then
-        go test -cover -count 1 ./... || exit $?
+        go test -v -cover -count 1 ./... || exit $?
     fi
     cd -
 done

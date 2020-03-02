@@ -1,12 +1,15 @@
 package runner
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 	"gitlab.com/alienspaces/holyragingmages/common/log"
@@ -82,27 +85,73 @@ func TestGetTemplatesHandler(t *testing.T) {
 	rnr := NewRunner()
 
 	err = rnr.Init(c, l, s)
-	if assert.NoError(t, err, "Init returns without error") {
+	require.NoError(t, err, "Init returns without error")
 
-		// handler
-		h, _ := rnr.DefaultMiddleware(rnr.HandlerConfig[0].Path, rnr.HandlerConfig[0].HandlerFunc)
+	// handler
+	h, _ := rnr.DefaultMiddleware(rnr.HandlerConfig[0].Path, rnr.HandlerConfig[0].HandlerFunc)
 
-		// router
-		rtr := httprouter.New()
-		rtr.GET(rnr.HandlerConfig[0].Path, h)
+	// router
+	rtr := httprouter.New()
+	rtr.GET(rnr.HandlerConfig[0].Path, h)
 
-		// request
-		r, _ := http.NewRequest(rnr.HandlerConfig[0].Method, rnr.HandlerConfig[0].Path, nil)
+	// request
+	r, err := http.NewRequest(rnr.HandlerConfig[0].Method, rnr.HandlerConfig[0].Path, nil)
+	require.NoError(t, err, "NewRequest returns without error")
 
-		// recorder
-		w := httptest.NewRecorder()
+	// recorder
+	w := httptest.NewRecorder()
 
-		// serve
-		rtr.ServeHTTP(w, r)
+	// serve
+	rtr.ServeHTTP(w, r)
 
-		// test status
-		if assert.Equal(t, http.StatusOK, w.Code, "Create response status code is OK") {
-			// TODO: check response
-		}
+	// test status
+	require.Equal(t, http.StatusOK, w.Code, "Create response status code is OK")
+}
+
+func TestPostTemplatesHandler(t *testing.T) {
+
+	c, l, s, err := NewDefaultDependencies()
+	if err != nil {
+		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
+
+	rnr := NewRunner()
+
+	err = rnr.Init(c, l, s)
+	require.NoError(t, err, "Init returns without error")
+
+	// handler
+	h, _ := rnr.DefaultMiddleware(rnr.HandlerConfig[2].Path, rnr.HandlerConfig[2].HandlerFunc)
+
+	// router
+	rtr := httprouter.New()
+	rtr.POST(rnr.HandlerConfig[2].Path, h)
+
+	// request
+	rd := Request{
+		Data: Data{
+			ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+		},
+	}
+	jd, err := json.Marshal(rd)
+	require.NoError(t, err, "Marshal returns without error")
+
+	req, err := http.NewRequest(rnr.HandlerConfig[2].Method, rnr.HandlerConfig[2].Path, bytes.NewBuffer(jd))
+	require.NoError(t, err, "NewRequest returns without error")
+
+	// recorder
+	rec := httptest.NewRecorder()
+
+	// serve
+	rtr.ServeHTTP(rec, req)
+
+	// test status
+	require.Equal(t, http.StatusOK, rec.Code, "Create response status code is OK")
+
+	res := Response{}
+	err = json.NewDecoder(rec.Body).Decode(&res)
+
+	require.NoError(t, err, "Decode returns without error")
+	require.NotNil(t, res.Data, "Data is not nil")
+	require.NotEmpty(t, res.Data.ID, "ID is not empty")
 }

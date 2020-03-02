@@ -13,6 +13,7 @@ require (
 	gitlab.com/alienspaces/holyragingmages/common/harness v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/log v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/model v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/payload v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/prepare v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/repository v1.0.0
 	gitlab.com/alienspaces/holyragingmages/common/service v1.0.0
@@ -32,6 +33,7 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/common/harness => ../../common/harness
 	gitlab.com/alienspaces/holyragingmages/common/log => ../../common/log
 	gitlab.com/alienspaces/holyragingmages/common/model => ../../common/model
+	gitlab.com/alienspaces/holyragingmages/common/payload => ../../common/payload
 	gitlab.com/alienspaces/holyragingmages/common/prepare => ../../common/prepare
 	gitlab.com/alienspaces/holyragingmages/common/repository => ../../common/repository
 	gitlab.com/alienspaces/holyragingmages/common/service => ../../common/service

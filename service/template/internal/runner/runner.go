@@ -7,6 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/common/payload"
 	"gitlab.com/alienspaces/holyragingmages/common/prepare"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
@@ -25,10 +26,24 @@ type Runner struct {
 }
 
 // Response -
-type Response struct{}
+type Response struct {
+	Data Data `json:"data"`
+}
+
+// CollectionResponse -
+type CollectionResponse struct {
+	Data []Data `json:"data"`
+}
 
 // Request -
-type Request struct{}
+type Request struct {
+	Data Data `json:"data"`
+}
+
+// Data -
+type Data struct {
+	ID string `json:"id"`
+}
 
 // ensure we comply with the Runnerer interface
 var _ runnable.Runnable = &Runner{}
@@ -132,11 +147,17 @@ func (rnr *Runner) Modeller(c configurer.Configurer, l logger.Logger, s storer.S
 }
 
 // Payloader -
-func (rnr *Runner) Payloader() (payloader.Payloader, error) {
+func (rnr *Runner) Payloader(l logger.Logger) (payloader.Payloader, error) {
 
 	rnr.Log.Info("** Payloader **")
 
-	return nil, nil
+	p, err := payload.NewPayload(l)
+	if err != nil {
+		rnr.Log.Warn("Failed new payloader >%v<", err)
+		return nil, err
+	}
+
+	return p, nil
 }
 
 // Handler - default handler
@@ -158,11 +179,33 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 // PostTemplatesHandler -
 func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-	data := r.Context().Value(service.ContextKeyData)
+	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
 
-	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v< data >%v<", p, m, data)
+	req := Request{}
+	if rnr.Payload == nil {
+		fmt.Fprint(w, "Payload is nil")
+		return
+	}
 
-	fmt.Fprint(w, "Hello from Post templates handler!\n", p, "\n", data)
+	err := rnr.Payload.ReadRequest(r, &req)
+	if err != nil {
+		rnr.Log.Warn("Failed reading request >%v<", err)
+		fmt.Fprint(w, "Failed reading request\n", err)
+		return
+	}
+
+	res := Response{
+		Data: Data{
+			ID: req.Data.ID,
+		},
+	}
+
+	err = rnr.Payload.WriteResponse(w, &res)
+	if err != nil {
+		rnr.Log.Warn("Failed writing response >%v<", err)
+		fmt.Fprint(w, "Failed writing response\n", err)
+		return
+	}
 }
 
 // PutTemplatesHandler -
