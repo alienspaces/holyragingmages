@@ -27,10 +27,9 @@ const (
 
 // Runner - implements the runnerer interface
 type Runner struct {
-	Store   storer.Storer
-	Log     logger.Logger
-	Config  configurer.Configurer
-	Payload payloader.Payloader
+	Store  storer.Storer
+	Log    logger.Logger
+	Config configurer.Configurer
 
 	// configuration for routes, handlers and middleware
 	HandlerConfig []HandlerConfig
@@ -41,7 +40,7 @@ type Runner struct {
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
 	PreparerFunc   func(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error)
 	ModellerFunc   func(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error)
-	PayloaderFunc  func(l logger.Logger) (payloader.Payloader, error)
+	PayloaderFunc  func() (payloader.Payloader, error)
 }
 
 var _ runnable.Runnable = &Runner{}
@@ -105,13 +104,6 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 		rnr.PayloaderFunc = rnr.Payloader
 	}
 
-	// payloader
-	p, err := rnr.PayloaderFunc(l)
-	if err != nil {
-		return err
-	}
-	rnr.Payload = p
-
 	return nil
 }
 
@@ -169,7 +161,7 @@ func (rnr *Runner) Modeller(c configurer.Configurer, l logger.Logger, s storer.S
 }
 
 // Payloader - default PayloaderFunc, override this function for custom payload handling
-func (rnr *Runner) Payloader(l logger.Logger) (payloader.Payloader, error) {
+func (rnr *Runner) Payloader() (payloader.Payloader, error) {
 
 	rnr.Log.Info("** Payloader **")
 
@@ -292,4 +284,30 @@ func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, 
 	}
 
 	return handle, nil
+}
+
+// ReadRequest -
+func (rnr *Runner) ReadRequest(r *http.Request, s interface{}) error {
+	p, err := rnr.PayloaderFunc()
+	if err != nil {
+		rnr.Log.Warn("Failed PayloaderFunc >%v<", err)
+		return err
+	}
+	if p == nil {
+		return fmt.Errorf("Payloader is nil, cannot read request")
+	}
+	return p.ReadRequest(r, s)
+}
+
+// WriteResponse -
+func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
+	p, err := rnr.PayloaderFunc()
+	if err != nil {
+		rnr.Log.Warn("Failed PayloaderFunc >%v<", err)
+		return err
+	}
+	if p == nil {
+		return fmt.Errorf("Payloader is nil, cannot write response")
+	}
+	return p.WriteResponse(w, s)
 }

@@ -6,23 +6,18 @@ import (
 	"strings"
 
 	"gitlab.com/alienspaces/holyragingmages/common/service"
-	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 )
 
 var _ payloader.Payloader = &Payload{}
 
 // Payload -
-type Payload struct {
-	Log logger.Logger
-}
+type Payload struct{}
 
 // NewPayload -
-func NewPayload(l logger.Logger) (*Payload, error) {
+func NewPayload() (*Payload, error) {
 
-	p := Payload{
-		Log: l,
-	}
+	p := Payload{}
 
 	return &p, nil
 }
@@ -42,6 +37,5 @@ func (p *Payload) ReadRequest(r *http.Request, s interface{}) error {
 
 // WriteResponse -
 func (p *Payload) WriteResponse(w http.ResponseWriter, s interface{}) error {
-
 	return json.NewEncoder(w).Encode(s)
 }

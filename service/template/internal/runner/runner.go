@@ -1,7 +1,6 @@
 package runner
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
@@ -27,7 +26,8 @@ type Runner struct {
 
 // Response -
 type Response struct {
-	Data Data `json:"data"`
+	Data  Data `json:"data"`
+	Error error
 }
 
 // CollectionResponse -
@@ -43,6 +43,11 @@ type Request struct {
 // Data -
 type Data struct {
 	ID string `json:"id"`
+}
+
+// Fault -
+type Fault struct {
+	Error error
 }
 
 // ensure we comply with the Runnerer interface
@@ -147,73 +152,15 @@ func (rnr *Runner) Modeller(c configurer.Configurer, l logger.Logger, s storer.S
 }
 
 // Payloader -
-func (rnr *Runner) Payloader(l logger.Logger) (payloader.Payloader, error) {
+func (rnr *Runner) Payloader() (payloader.Payloader, error) {
 
 	rnr.Log.Info("** Payloader **")
 
-	p, err := payload.NewPayload(l)
+	p, err := payload.NewPayload()
 	if err != nil {
 		rnr.Log.Warn("Failed new payloader >%v<", err)
 		return nil, err
 	}
 
 	return p, nil
-}
-
-// Handler - default handler
-func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
-
-	rnr.Log.Info("** Template handler **")
-
-	fmt.Fprint(w, "Hello from template!\n")
-}
-
-// GetTemplatesHandler -
-func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
-
-	rnr.Log.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
-
-	fmt.Fprint(w, "Hello from GET templates handler!\n", p)
-}
-
-// PostTemplatesHandler -
-func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
-
-	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
-
-	req := Request{}
-	if rnr.Payload == nil {
-		fmt.Fprint(w, "Payload is nil")
-		return
-	}
-
-	err := rnr.Payload.ReadRequest(r, &req)
-	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-		fmt.Fprint(w, "Failed reading request\n", err)
-		return
-	}
-
-	res := Response{
-		Data: Data{
-			ID: req.Data.ID,
-		},
-	}
-
-	err = rnr.Payload.WriteResponse(w, &res)
-	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
-		fmt.Fprint(w, "Failed writing response\n", err)
-		return
-	}
-}
-
-// PutTemplatesHandler -
-func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
-
-	data := r.Context().Value(service.ContextKeyData)
-
-	rnr.Log.Info("** Put templates handler ** p >%#v< m >#%v< data >%v<", p, m, data)
-
-	fmt.Fprint(w, "Hello from Put templates handler!\n", p, "\n", data)
 }
