@@ -29,6 +29,8 @@ func NewModel(c configurer.Configurer, l logger.Logger, s storer.Storer) (*Model
 		},
 	}
 
+	m.RepositoriesFunc = m.NewRepositories
+
 	return m, nil
 }
 
@@ -46,4 +48,16 @@ func (m *Model) NewRepositories(p preparer.Preparer, tx *sqlx.Tx) ([]repositor.R
 	repositoryList = append(repositoryList, tr)
 
 	return repositoryList, nil
+}
+
+// TemplateRepository -
+func (m *Model) TemplateRepository() *template.Repository {
+
+	r := m.Repositories[template.TableName]
+	if r == nil {
+		m.Log.Warn("Repository >%s< is nil", template.TableName)
+		return nil
+	}
+
+	return r.(*template.Repository)
 }

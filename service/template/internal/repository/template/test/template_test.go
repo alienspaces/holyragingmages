@@ -32,7 +32,7 @@ func TestCreateOne(t *testing.T) {
 	// repository
 	r := h.TemplateRepository()
 	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
+		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}
 
 	tests := []struct {
@@ -97,7 +97,7 @@ func TestGetOne(t *testing.T) {
 	// repository
 	r := h.TemplateRepository()
 	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
+		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}
 
 	tests := []struct {
@@ -154,7 +154,7 @@ func TestUpdateOne(t *testing.T) {
 	// repository
 	r := h.TemplateRepository()
 	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
+		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}
 
 	tests := []struct {
@@ -215,7 +215,7 @@ func TestDeleteOne(t *testing.T) {
 	// repository
 	r := h.TemplateRepository()
 	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.RepositoryTableName)
+		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}
 
 	tests := []struct {

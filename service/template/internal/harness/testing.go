@@ -7,6 +7,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
+
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/repository/template"
 )
@@ -53,7 +54,7 @@ func (t *Testing) CreateRepositories(l logger.Logger, p preparer.Preparer, tx *s
 // TemplateRepository -
 func (t *Testing) TemplateRepository() *template.Repository {
 
-	r := t.Repository(template.RepositoryTableName)
+	r := t.Repository(template.TableName)
 	if r == nil {
 		return nil
 	}

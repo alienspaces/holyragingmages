@@ -133,6 +133,7 @@ func TestPostTemplatesHandler(t *testing.T) {
 			ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 		},
 	}
+
 	jd, err := json.Marshal(rd)
 	require.NoError(t, err, "Marshal returns without error")
 
@@ -154,4 +155,5 @@ func TestPostTemplatesHandler(t *testing.T) {
 	require.NoError(t, err, "Decode returns without error")
 	require.NotNil(t, res.Data, "Data is not nil")
 	require.NotEmpty(t, res.Data.ID, "ID is not empty")
+	require.NotEmpty(t, res.Data.CreatedAt, "CreatedAt is not empty")
 }

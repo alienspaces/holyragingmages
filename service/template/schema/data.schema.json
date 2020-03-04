@@ -13,16 +13,16 @@
             "description": "Resource ID",
             "type": "string",
             "format": "uuid",
-            "example": "a87feca8-d6f0-4794-98c7-037b30219520",
-            "readOnly": true
+            "example": "a87feca8-d6f0-4794-98c7-037b30219520"
         },
         "created_at": {
-            "description": "",
+            "description": "Date/time the resource was created",
             "type": "string",
             "format": "date-time",
             "readOnly": true
         },
         "updated_at": {
+            "description": "Date/time the resource was last updated",
             "type": "string",
             "format": "date-time",
             "readOnly": true

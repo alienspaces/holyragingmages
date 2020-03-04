@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	// RepositoryTableName - underlying database table name used for configuration
-	RepositoryTableName string = "template"
+	// TableName - underlying database table name used for configuration
+	TableName string = "template"
 )
 
 // Repository -
@@ -33,7 +33,7 @@ func NewRepository(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) (*Reposito
 
 			// Config
 			Config: repository.Config{
-				TableName: RepositoryTableName,
+				TableName: TableName,
 			},
 		},
 	}
