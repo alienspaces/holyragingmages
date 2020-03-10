@@ -4,13 +4,8 @@
 
 ### Now
 
-* Template `model`
-  * Standard functions
-  * Integrate into runner handler functions
-* Common model
-  * Initialization
-    * Repositories
-      * Remove need for repositories to have their own database *Tx
+* Template handler table driven tests
+* Remove need for repositories to have their own database *Tx
 
 ### Next
 

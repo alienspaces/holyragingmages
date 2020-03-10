@@ -238,9 +238,49 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 // PutTemplatesHandler -
 func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-	data := r.Context().Value(service.ContextKeyData)
+	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
 
-	rnr.Log.Info("** Put templates handler ** p >%#v< m >#%v< data >%v<", p, m, data)
+	req := Request{}
 
-	fmt.Fprint(w, "Hello from Put templates handler!\n", p, "\n", data)
+	err := rnr.ReadRequest(r, &req)
+	if err != nil {
+		rnr.Log.Warn("Failed reading request >%v<", err)
+		fmt.Fprint(w, "Failed reading request\n", err)
+		return
+	}
+
+	rec := record.Template{}
+
+	// assign request properties
+	rec.ID = req.Data.ID
+
+	err = m.(*model.Model).UpdateTemplateRec(&rec)
+	if err != nil {
+		res := Response{
+			Error: err,
+		}
+		err = rnr.WriteResponse(w, &res)
+		if err != nil {
+			rnr.Log.Warn("Failed writing response >%v<", err)
+			fmt.Fprint(w, "Failed writing response\n", err)
+			return
+		}
+		return
+	}
+
+	// assign response properties
+	res := Response{
+		Data: Data{
+			ID:        rec.ID,
+			CreatedAt: rec.CreatedAt,
+			UpdatedAt: rec.UpdatedAt.String,
+		},
+	}
+
+	err = rnr.WriteResponse(w, &res)
+	if err != nil {
+		rnr.Log.Warn("Failed writing response >%v<", err)
+		fmt.Fprint(w, "Failed writing response\n", err)
+		return
+	}
 }

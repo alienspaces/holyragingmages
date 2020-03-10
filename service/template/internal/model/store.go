@@ -5,13 +5,23 @@ import (
 )
 
 // GetTemplateRecs -
-func (m *Model) GetTemplateRecs(params map[string]interface{}) ([]*record.Template, error) {
-	return nil, nil
+func (m *Model) GetTemplateRecs(params map[string]interface{}, operators map[string]string, forUpdate bool) ([]*record.Template, error) {
+
+	m.Log.Info("Getting template records params >%s<", params)
+
+	r := m.TemplateRepository()
+
+	return r.GetMany(params, operators, forUpdate)
 }
 
 // GetTemplateRec -
 func (m *Model) GetTemplateRec(recID string, forUpdate bool) (*record.Template, error) {
-	return nil, nil
+
+	m.Log.Info("Getting template rec ID >%s<", recID)
+
+	r := m.TemplateRepository()
+
+	return r.GetOne(recID, forUpdate)
 }
 
 // CreateTemplateRec -
@@ -21,15 +31,43 @@ func (m *Model) CreateTemplateRec(rec *record.Template) error {
 
 	r := m.TemplateRepository()
 
+	err := m.ValidateTemplateRec(rec)
+	if err != nil {
+		m.Log.Info("Failed model validation >%v<", err)
+		return err
+	}
+
 	return r.CreateOne(rec)
 }
 
 // UpdateTemplateRec -
 func (m *Model) UpdateTemplateRec(rec *record.Template) error {
-	return nil
+
+	m.Log.Info("Updating template rec >%v<", rec)
+
+	r := m.TemplateRepository()
+
+	err := m.ValidateTemplateRec(rec)
+	if err != nil {
+		m.Log.Info("Failed model validation >%v<", err)
+		return err
+	}
+
+	return r.UpdateOne(rec)
 }
 
 // DeleteTemplateRec -
 func (m *Model) DeleteTemplateRec(recID string) error {
-	return nil
+
+	m.Log.Info("Deleting template rec ID >%s<", recID)
+
+	r := m.TemplateRepository()
+
+	err := m.ValidateDeleteTemplateRec(recID)
+	if err != nil {
+		m.Log.Info("Failed model validation >%v<", err)
+		return err
+	}
+
+	return r.DeleteOne(recID)
 }
