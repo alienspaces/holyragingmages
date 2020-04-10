@@ -31,4 +31,18 @@ func TestLogger(t *testing.T) {
 	l.Info("Test level %s", "info")
 	l.Warn("Test level %s", "warn")
 	l.Error("Test level %s", "error")
+
+	l.Context("correlation-id", "abcdefg")
+
+	l.Debug("Test level %s", "debug")
+	l.Info("Test level %s", "info")
+	l.Warn("Test level %s", "warn")
+	l.Error("Test level %s", "error")
+
+	l.Context("correlation-id", "hijklmn")
+
+	l.Debug("Test level %s", "debug")
+	l.Info("Test level %s", "info")
+	l.Warn("Test level %s", "warn")
+	l.Error("Test level %s", "error")
 }

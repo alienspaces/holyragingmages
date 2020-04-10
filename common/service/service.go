@@ -56,6 +56,9 @@ func (svc *Service) Init() error {
 // Run -
 func (svc *Service) Run(args map[string]interface{}) error {
 
-	// TODO: alerting, retries
+	// TODO:
+	// - alerting on errors
+	// - retries on start up
+	// - reload  on config changes
 	return svc.Runner.Run(args)
 }

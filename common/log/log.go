@@ -11,8 +11,9 @@ import (
 
 // Log -
 type Log struct {
-	log    *logrus.Logger
-	Config configurer.Configurer
+	log        *logrus.Logger
+	contextLog *logrus.Entry
+	Config     configurer.Configurer
 }
 
 // Level -
@@ -80,6 +81,8 @@ func (l *Log) Init() error {
 		l.log.SetLevel(DebugLevel)
 	}
 
+	l.contextLog = l.log.WithFields(nil)
+
 	return nil
 }
 
@@ -95,12 +98,19 @@ func (l *Log) Level(level Level) {
 	}
 }
 
+// Context - set logging
+func (l *Log) Context(key, value string) {
+	l.contextLog = l.contextLog.WithFields(logrus.Fields{
+		key: value,
+	})
+}
+
 // Debug -
 func (l *Log) Debug(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}
-	l.log.Debug(msg)
+	l.contextLog.Debug(msg)
 }
 
 // Info -
@@ -108,7 +118,7 @@ func (l *Log) Info(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}
-	l.log.Info(msg)
+	l.contextLog.Info(msg)
 }
 
 // Warn -
@@ -116,7 +126,7 @@ func (l *Log) Warn(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}
-	l.log.Warn(msg)
+	l.contextLog.Warn(msg)
 }
 
 // Error -
@@ -124,5 +134,5 @@ func (l *Log) Error(msg string, args ...interface{}) {
 	if len(args) > 0 {
 		msg = fmt.Sprintf(msg, args...)
 	}
-	l.log.Error(msg)
+	l.contextLog.Error(msg)
 }

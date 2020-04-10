@@ -270,6 +270,13 @@ func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, 
 		return nil, err
 	}
 
+	// correlation
+	h, err = rnr.Correlation(h)
+	if err != nil {
+		rnr.Log.Warn("Failed adding correlation middleware >%v<", err)
+		return nil, err
+	}
+
 	// service defined routes
 	h, err = rnr.MiddlewareFunc(h)
 	if err != nil {
