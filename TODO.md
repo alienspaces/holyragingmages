@@ -4,11 +4,13 @@
 
 ### Now
 
-* Template handler table driven tests
-* Remove need for repositories to have their own database *Tx
+* Template handler table driven tests to make adding additional test cases easier
 
 ### Next
 
+* Common config constants so modules aren't free wheeling config "strings" all over the place
+* Remove need for repositories to have their own database *Tx
+  * Why did I write this ^^
 * Script `test-service $1`
   * Establish environment and run specific service tests
 * Script `generate`

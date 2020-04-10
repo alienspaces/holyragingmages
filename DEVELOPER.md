@@ -22,7 +22,7 @@ RUN go get -u -d github.com/golang-migrate/migrate/cmd/migrate github.com/lib/pq
 Create new migration
 
 ```bash
-./script/db-migrate-create [service [description]
+./script/db-migrate-create [service] [description]
 ```
 
 Migrate up
