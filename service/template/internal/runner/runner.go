@@ -182,7 +182,23 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	rnr.Log.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
 
-	fmt.Fprint(w, "Hello from GET templates handler!\n", p)
+	// TODO: complete implementation of GET request
+
+	// assign response properties
+	res := Response{
+		Data: Data{
+			ID:        "blah",
+			CreatedAt: "blah",
+			UpdatedAt: "blah",
+		},
+	}
+
+	err := rnr.WriteResponse(w, &res)
+	if err != nil {
+		rnr.Log.Warn("Failed writing response >%v<", err)
+		fmt.Fprint(w, "Failed writing response\n", err)
+		return
+	}
 }
 
 // PostTemplatesHandler -

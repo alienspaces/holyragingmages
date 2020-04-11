@@ -4,7 +4,10 @@
 
 ### Now
 
-* Template handler table driven tests to make adding additional test cases easier
+* Common HTTP server testing packaged with service module (if applicable)
+* Test data builder packaged with service module
+  * Complete template Get handler function
+  * Add GET and PUT HTTP server tests
 
 ### Next
 
@@ -14,8 +17,8 @@
 * Script `test-service $1`
   * Establish environment and run specific service tests
 * Script `generate`
-  * Generate
-* Service to service communications
+  * Generate a new service from the template service
+* Service to service communications (gRPC)
 * Mage service
 * Other services
 
