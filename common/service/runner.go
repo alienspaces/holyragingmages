@@ -1,9 +1,9 @@
 package service
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
 
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
@@ -26,9 +26,10 @@ const (
 
 // Runner - implements the runnerer interface
 type Runner struct {
-	Store  storer.Storer
-	Log    logger.Logger
-	Config configurer.Configurer
+	Config  configurer.Configurer
+	Log     logger.Logger
+	Store   storer.Storer
+	Prepare preparer.Preparer
 
 	// configuration for routes, handlers and middleware
 	HandlerConfig []HandlerConfig
@@ -37,8 +38,7 @@ type Runner struct {
 	RouterFunc     func(router *httprouter.Router) error
 	MiddlewareFunc func(h Handle) (Handle, error)
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
-	PreparerFunc   func(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error)
-	ModellerFunc   func(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error)
+	ModellerFunc   func() (modeller.Modeller, error)
 	PayloaderFunc  func() (payloader.Payloader, error)
 }
 
@@ -65,18 +65,37 @@ type HandlerConfig struct {
 var _ runnable.Runnable = &Runner{}
 
 // Init - override to perform custom initialization
-func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer) error {
+func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
 
 	rnr.Config = c
+	if rnr.Config == nil {
+		msg := "Configurer undefined, cannot init runner"
+		rnr.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
 	rnr.Log = l
+	if rnr.Log == nil {
+		msg := "Logger undefined, cannot init runner"
+		rnr.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
 	rnr.Store = s
+	if rnr.Store == nil {
+		msg := "Storer undefined, cannot init runner"
+		rnr.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
+	rnr.Prepare = p
+	if rnr.Prepare == nil {
+		msg := "Preparer undefined, cannot init runner"
+		rnr.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
 
 	rnr.Log.Info("** Initialise **")
-
-	// preparer
-	if rnr.PreparerFunc == nil {
-		rnr.PreparerFunc = rnr.Preparer
-	}
 
 	// model
 	if rnr.ModellerFunc == nil {
@@ -133,7 +152,7 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 }
 
 // Preparer - default preparer.PreparerFunc, override this function for custom model
-func (rnr *Runner) Preparer(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error) {
+func (rnr *Runner) Preparer() (preparer.Preparer, error) {
 
 	rnr.Log.Info("** Preparer **")
 
@@ -141,7 +160,7 @@ func (rnr *Runner) Preparer(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, er
 }
 
 // Modeller - default ModellerFunc, override this function for custom model
-func (rnr *Runner) Modeller(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
+func (rnr *Runner) Modeller() (modeller.Modeller, error) {
 
 	rnr.Log.Info("** Modeller **")
 

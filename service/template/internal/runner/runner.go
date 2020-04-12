@@ -4,19 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
 
 	"gitlab.com/alienspaces/holyragingmages/common/payload"
-	"gitlab.com/alienspaces/holyragingmages/common/prepare"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
-	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
-	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
-	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
-	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
@@ -66,7 +60,6 @@ func NewRunner() *Runner {
 	r.MiddlewareFunc = r.Middleware
 	r.HandlerFunc = r.Handler
 	r.ModellerFunc = r.Modeller
-	r.PreparerFunc = r.Preparer
 	r.PayloaderFunc = r.Payloader
 
 	r.HandlerConfig = []service.HandlerConfig{
@@ -127,26 +120,12 @@ func (rnr *Runner) Middleware(h service.Handle) (service.Handle, error) {
 	return h, nil
 }
 
-// Preparer -
-func (rnr *Runner) Preparer(l logger.Logger, tx *sqlx.Tx) (preparer.Preparer, error) {
-
-	rnr.Log.Info("** Template Model **")
-
-	p, err := prepare.NewPrepare(l, tx)
-	if err != nil {
-		rnr.Log.Warn("Failed new preparer >%v<", err)
-		return nil, err
-	}
-
-	return p, nil
-}
-
 // Modeller -
-func (rnr *Runner) Modeller(c configurer.Configurer, l logger.Logger, s storer.Storer) (modeller.Modeller, error) {
+func (rnr *Runner) Modeller() (modeller.Modeller, error) {
 
 	rnr.Log.Info("** Template Model **")
 
-	m, err := model.NewModel(c, l, s)
+	m, err := model.NewModel(rnr.Config, rnr.Log, rnr.Store)
 	if err != nil {
 		rnr.Log.Warn("Failed new model >%v<", err)
 		return nil, err

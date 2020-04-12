@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/harness"
+	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/repository/template"
 )
@@ -30,7 +31,7 @@ func TestCreateOne(t *testing.T) {
 	defer h.Teardown()
 
 	// repository
-	r := h.TemplateRepository()
+	r := h.Model.(*model.Model).TemplateRepository()
 	if r == nil {
 		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}
@@ -95,7 +96,7 @@ func TestGetOne(t *testing.T) {
 	defer h.Teardown()
 
 	// repository
-	r := h.TemplateRepository()
+	r := h.Model.(*model.Model).TemplateRepository()
 	if r == nil {
 		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}
@@ -152,7 +153,7 @@ func TestUpdateOne(t *testing.T) {
 	defer h.Teardown()
 
 	// repository
-	r := h.TemplateRepository()
+	r := h.Model.(*model.Model).TemplateRepository()
 	if r == nil {
 		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}
@@ -213,7 +214,7 @@ func TestDeleteOne(t *testing.T) {
 	defer h.Teardown()
 
 	// repository
-	r := h.TemplateRepository()
+	r := h.Model.(*model.Model).TemplateRepository()
 	if r == nil {
 		t.Fatalf("Repository >%s< is nil", template.TableName)
 	}

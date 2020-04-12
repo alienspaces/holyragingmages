@@ -9,6 +9,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/store"
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
@@ -17,35 +18,48 @@ import (
 // RepositoriesFunc - callback function to return repositories
 type RepositoriesFunc func(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error)
 
-// DataFunc - callback function that creates test data
-type DataFunc func() error
+// CreateDataFunc - callback function that creates test data
+type CreateDataFunc func() error
+
+// RemoveDataFunc - callback function that removes test data
+type RemoveDataFunc func() error
+
+// DataConfig - configuration for creating test data
+type DataConfig struct{}
 
 // Data - contains test data
 type Data struct{}
 
 // Testing -
 type Testing struct {
-	Store        storer.Storer
-	Log          logger.Logger
-	Config       configurer.Configurer
-	Repositories map[string]repositor.Repositor
+	Config  configurer.Configurer
+	Log     logger.Logger
+	Store   storer.Storer
+	Prepare preparer.Preparer
+	Model   modeller.Modeller
+
+	// Modeller function
+	ModellerFunc func() (modeller.Modeller, error)
+
+	// Composable functions
+	CreateDataFunc CreateDataFunc
+	RemoveDataFunc RemoveDataFunc
+
+	// DataConfig
+	DataConfig DataConfig
 
 	// Data
 	Data Data
 
-	// composable functions
-	RepositoriesFunc RepositoriesFunc
-	DataFunc         DataFunc
-
-	// private
+	// Private
 	tx *sqlx.Tx
 }
 
 // NewTesting -
-func NewTesting(r RepositoriesFunc) (t *Testing, err error) {
+func NewTesting(m modeller.Modeller) (t *Testing, err error) {
 
 	t = &Testing{
-		RepositoriesFunc: r,
+		Model: m,
 	}
 
 	return t, nil
@@ -54,6 +68,7 @@ func NewTesting(r RepositoriesFunc) (t *Testing, err error) {
 // Setup -
 func (t *Testing) Setup() (err error) {
 
+	// configurer
 	t.Config, err = config.NewConfig(nil, false)
 	if err != nil {
 		return err
@@ -76,11 +91,13 @@ func (t *Testing) Setup() (err error) {
 		}
 	}
 
+	// logger
 	t.Log, err = log.NewLogger(t.Config)
 	if err != nil {
 		return err
 	}
 
+	// storer
 	t.Store, err = store.NewStore(t.Config, t.Log)
 	if err != nil {
 		return err
@@ -88,7 +105,7 @@ func (t *Testing) Setup() (err error) {
 
 	err = t.Store.Init()
 	if err != nil {
-		t.Log.Warn("Failed store init >%v<", err)
+		t.Log.Warn("Failed storer init >%v<", err)
 		return err
 	}
 
@@ -100,32 +117,40 @@ func (t *Testing) Setup() (err error) {
 
 	t.tx = tx
 
-	p, err := prepare.NewPrepare(t.Log, t.tx)
+	// preparer
+	t.Prepare, err = prepare.NewPrepare(t.Log)
 	if err != nil {
 		t.Log.Warn("Failed new preparer >%v<", err)
 		return err
 	}
 
-	t.Log.Info("Preparer ready")
-
-	// repositories function is expected to create and return a list of repositors
-	repositories, err := t.RepositoriesFunc(t.Log, p, t.tx)
+	err = t.Prepare.Init(tx)
 	if err != nil {
-		t.Log.Warn("Failed repositories function >%v<", err)
+		t.Log.Warn("Failed preparer init >%v<", err)
 		return err
 	}
 
-	t.Repositories = make(map[string]repositor.Repositor)
-	for _, r := range repositories {
-		t.Repositories[r.TableName()] = r
+	t.Log.Info("Preparer ready")
+
+	// modeller
+	t.Model, err = t.ModellerFunc()
+	if err != nil {
+		t.Log.Warn("Failed new modeller >%v<", err)
+		return err
+	}
+
+	err = t.Model.Init(t.Prepare, tx)
+	if err != nil {
+		t.Log.Warn("Failed modeller init >%v<", err)
+		return err
 	}
 
 	t.Log.Info("Repositories ready")
 
 	// data function is expected to create and manage its own store
-	if t.DataFunc != nil {
+	if t.CreateDataFunc != nil {
 		t.Log.Info("Creating test data")
-		err := t.DataFunc()
+		err := t.CreateDataFunc()
 		if err != nil {
 			t.Log.Warn("Failed data function >%v<", err)
 			return err
@@ -152,9 +177,4 @@ func (t *Testing) Teardown() error {
 // Tx -
 func (t *Testing) Tx() *sqlx.Tx {
 	return t.tx
-}
-
-// Repository -
-func (t *Testing) Repository(name string) interface{} {
-	return t.Repositories[name]
 }

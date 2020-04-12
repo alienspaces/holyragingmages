@@ -8,6 +8,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
@@ -17,20 +18,22 @@ type Handle func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m 
 
 // Service -
 type Service struct {
-	Store  storer.Storer
-	Log    logger.Logger
-	Config configurer.Configurer
-	Runner runnable.Runnable
+	Config  configurer.Configurer
+	Log     logger.Logger
+	Store   storer.Storer
+	Prepare preparer.Preparer
+	Runner  runnable.Runnable
 }
 
 // NewService -
-func NewService(c configurer.Configurer, l logger.Logger, s storer.Storer, r runnable.Runnable) (*Service, error) {
+func NewService(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer, r runnable.Runnable) (*Service, error) {
 
 	svc := Service{
-		Config: c,
-		Log:    l,
-		Store:  s,
-		Runner: r,
+		Config:  c,
+		Log:     l,
+		Store:   s,
+		Prepare: p,
+		Runner:  r,
 	}
 
 	err := svc.Init()
@@ -50,7 +53,7 @@ func (svc *Service) Init() error {
 	}
 
 	// TODO: alerting, retries
-	return svc.Runner.Init(svc.Config, svc.Log, svc.Store)
+	return svc.Runner.Init(svc.Config, svc.Log, svc.Store, svc.Prepare)
 }
 
 // Run -

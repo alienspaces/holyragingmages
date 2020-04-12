@@ -1,6 +1,7 @@
 package prepare
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/jmoiron/sqlx"
@@ -44,11 +45,10 @@ var removeManySQLList = make(map[string]string)
 var mutex = &sync.Mutex{}
 
 // NewPrepare -
-func NewPrepare(l logger.Logger, tx *sqlx.Tx) (*Prepare, error) {
+func NewPrepare(l logger.Logger) (*Prepare, error) {
 
 	p := Prepare{
 		Log: l,
-		Tx:  tx,
 
 		// prepared
 		prepared: make(map[string]bool),
@@ -66,6 +66,20 @@ func NewPrepare(l logger.Logger, tx *sqlx.Tx) (*Prepare, error) {
 	}
 
 	return &p, nil
+}
+
+// Init - Initialise preparer with database tx
+func (p *Prepare) Init(tx *sqlx.Tx) error {
+
+	if tx == nil {
+		msg := "Database tx is nill, cannot init"
+		p.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
+	p.Tx = tx
+
+	return nil
 }
 
 // Prepare - Prepares all repo SQL statements for faster execution

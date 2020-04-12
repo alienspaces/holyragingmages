@@ -10,39 +10,40 @@ import (
 
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
 
 func TestRunnerInit(t *testing.T) {
 
-	c, l, s, err := NewDefaultDependencies()
+	c, l, s, p, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	err = tr.Init(c, l, s)
+	err = tr.Init(c, l, s, p)
 	if assert.NoError(t, err, "Runner Init returns without error") {
 		// test init override with failure
-		tr.InitFunc = func(c configurer.Configurer, l logger.Logger, s storer.Storer) error {
+		tr.InitFunc = func(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
 			return errors.New("Init failed")
 		}
-		err = tr.Init(c, l, s)
+		err = tr.Init(c, l, s, p)
 		assert.Error(t, err, "Runner Init returns with error")
 	}
 }
 
 func TestRunnerRouter(t *testing.T) {
 
-	c, l, s, err := NewDefaultDependencies()
+	c, l, s, p, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	err = tr.Init(c, l, s)
+	err = tr.Init(c, l, s, p)
 	if assert.NoError(t, err, "Runner Init returns without error") {
 
 		// test default routes
@@ -100,14 +101,14 @@ func TestRunnerRouter(t *testing.T) {
 
 func TestRunnerMiddleware(t *testing.T) {
 
-	c, l, s, err := NewDefaultDependencies()
+	c, l, s, p, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	tr := TestRunner{}
 
-	err = tr.Init(c, l, s)
+	err = tr.Init(c, l, s, p)
 	if assert.NoError(t, err, "Runner Init returns without error") {
 
 		// test default middleware

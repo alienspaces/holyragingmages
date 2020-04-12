@@ -8,24 +8,27 @@ import (
 	"testing"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 	"gitlab.com/alienspaces/holyragingmages/common/log"
+	"gitlab.com/alienspaces/holyragingmages/common/prepare"
 	"gitlab.com/alienspaces/holyragingmages/common/service"
 	"gitlab.com/alienspaces/holyragingmages/common/store"
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
+	"gitlab.com/alienspaces/holyragingmages/service/template/internal/harness"
 )
 
 // NewDefaultDependencies -
-func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Storer, error) {
+func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Storer, preparer.Preparer, error) {
 
+	// configurer
 	c, err := config.NewConfig(nil, false)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
 	configVars := []string{
@@ -41,44 +44,62 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Stor
 	for _, key := range configVars {
 		err = c.Add(key, true)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, nil, nil, err
 		}
 	}
 
+	// logger
 	l, err := log.NewLogger(c)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
+	// storer
 	s, err := store.NewStore(c, l)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
+	}
+
+	// preparer
+	p, err := prepare.NewPrepare(l)
+	if err != nil {
+		return nil, nil, nil, nil, err
 	}
 
 	err = s.Init()
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 
-	return c, l, s, nil
+	return c, l, s, p, nil
+}
+
+func NewTestHarness(rnr *Runner) (*harness.Testing, error) {
+
+	d, err := harness.NewTesting()
+	if err != nil {
+		return nil, err
+	}
+
+	return d, nil
 }
 
 func TestNewRunner(t *testing.T) {
 
-	c, l, s, err := NewDefaultDependencies()
+	c, l, s, p, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
 
 	r := NewRunner()
 
-	err = r.Init(c, l, s)
-	assert.NoError(t, err, "Init returns without error")
+	err = r.Init(c, l, s, p)
+	require.NoError(t, err, "Init returns without error")
 }
 
-func TestTemplatesHandler(t *testing.T) {
+func TestTemplateHandler(t *testing.T) {
 
-	c, l, s, err := NewDefaultDependencies()
+	c, l, s, p, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
@@ -125,8 +146,15 @@ func TestTemplatesHandler(t *testing.T) {
 
 		rnr := NewRunner()
 
-		err = rnr.Init(c, l, s)
-		require.NoError(t, err, "Init returns without error")
+		err = rnr.Init(c, l, s, p)
+		require.NoError(t, err, "Runner init returns without error")
+
+		// test harness
+		th, err := NewTestHarness(rnr)
+		require.NoError(t, err, "New test data returns without error")
+
+		err = th.Setup()
+		require.NoError(t, err, "Test data setup returns without error")
 
 		// config
 		cfg := tc.config(rnr)

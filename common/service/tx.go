@@ -22,16 +22,9 @@ func (rnr *Runner) Tx(h Handle) (Handle, error) {
 			return
 		}
 
-		// preparer
-		if rnr.PreparerFunc == nil {
-			rnr.Log.Warn("Runner PreparerFunc is nil")
-			http.Error(w, "Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		p, err := rnr.PreparerFunc(rnr.Log, tx)
+		err = rnr.Prepare.Init(tx)
 		if err != nil {
-			rnr.Log.Warn("Failed PreparerFunc >%v<", err)
+			rnr.Log.Warn("Failed init preparer >%v<", err)
 			http.Error(w, "Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -43,16 +36,16 @@ func (rnr *Runner) Tx(h Handle) (Handle, error) {
 			return
 		}
 
-		m, err := rnr.ModellerFunc(rnr.Config, rnr.Log, rnr.Store)
+		m, err := rnr.ModellerFunc()
 		if err != nil {
 			rnr.Log.Warn("Failed ModellerFunc >%v<", err)
 			http.Error(w, "Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		err = m.Init(p, tx)
+		err = m.Init(rnr.Prepare, tx)
 		if err != nil {
-			rnr.Log.Warn("Failed init model >%v<", err)
+			rnr.Log.Warn("Failed init modeller >%v<", err)
 			http.Error(w, "Server Error", http.StatusInternalServerError)
 			return
 		}

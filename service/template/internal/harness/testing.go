@@ -1,82 +1,92 @@
 package harness
 
 import (
-	"github.com/jmoiron/sqlx"
-
 	"gitlab.com/alienspaces/holyragingmages/common/harness"
-	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
-	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
+	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 
+	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
-	"gitlab.com/alienspaces/holyragingmages/service/template/internal/repository/template"
 )
 
 // Testing -
 type Testing struct {
 	harness.Testing
-	Data *Data
+	Data       *Data
+	DataConfig *DataConfig
+}
+
+// DataConfig -
+type DataConfig struct {
+	harness.DataConfig
+	TemplateConfig []TemplateConfig
+}
+
+// TemplateConfig -
+type TemplateConfig struct {
+	Count  int
+	Record *record.Template
 }
 
 // Data -
 type Data struct {
+	harness.Data
 	TemplateRecs []*record.Template
 }
 
 // NewTesting -
-func NewTesting() (*Testing, error) {
+func NewTesting() (t *Testing, err error) {
 
 	// harness
-	h := Testing{}
+	t = &Testing{}
 
-	h.RepositoriesFunc = h.CreateRepositories
-	h.DataFunc = h.CreateData
-	h.Data = &Data{}
+	// modeller
+	t.ModellerFunc = t.Modeller
 
-	return &h, nil
+	// data
+	t.CreateDataFunc = t.CreateData
+	t.RemoveDataFunc = t.RemoveData
+
+	t.Data = &Data{}
+
+	return t, nil
 }
 
-// CreateRepositories - Custom repositories
-func (t *Testing) CreateRepositories(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error) {
+// Modeller -
+func (t *Testing) Modeller() (modeller.Modeller, error) {
 
-	repositoryList := []repositor.Repositor{}
+	t.Log.Info("** Testing Model **")
 
-	tr, err := template.NewRepository(l, p, tx)
+	m, err := model.NewModel(t.Config, t.Log, t.Store)
 	if err != nil {
+		t.Log.Warn("Failed new model >%v<", err)
 		return nil, err
 	}
 
-	repositoryList = append(repositoryList, tr)
-
-	return repositoryList, nil
-}
-
-// TemplateRepository -
-func (t *Testing) TemplateRepository() *template.Repository {
-
-	r := t.Repository(template.TableName)
-	if r == nil {
-		return nil
-	}
-
-	return r.(*template.Repository)
+	return m, nil
 }
 
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	tr := t.TemplateRepository()
-	rec := tr.NewRecord()
+	r := t.Model.(*model.Model).TemplateRepository()
+
+	rec := r.NewRecord()
 
 	t.Log.Warn("Test record >%#v<", rec)
 
-	err := tr.CreateTestRecord(rec)
+	err := r.CreateTestRecord(rec)
 	if err != nil {
 		t.Log.Warn("Failed creating test template record >%v<", err)
 		return err
 	}
 
 	t.Data.TemplateRecs = append(t.Data.TemplateRecs, rec)
+
+	return nil
+}
+
+// RemoveData -
+func (t *Testing) RemoveData() error {
 
 	return nil
 }
