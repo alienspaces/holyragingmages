@@ -68,6 +68,8 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
+	// TODO: create records from on t.DataConfig
+
 	r := t.Model.(*model.Model).TemplateRepository()
 
 	rec := r.NewRecord()

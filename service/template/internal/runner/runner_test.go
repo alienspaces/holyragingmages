@@ -74,7 +74,7 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Stor
 	return c, l, s, p, nil
 }
 
-func NewTestHarness(rnr *Runner) (*harness.Testing, error) {
+func NewTestHarness() (*harness.Testing, error) {
 
 	d, err := harness.NewTesting()
 	if err != nil {
@@ -99,10 +99,15 @@ func TestNewRunner(t *testing.T) {
 
 func TestTemplateHandler(t *testing.T) {
 
+	// test dependencies
 	c, l, s, p, err := NewDefaultDependencies()
 	if err != nil {
 		t.Fatalf("Failed new default dependencies >%v<", err)
 	}
+
+	// test harness
+	th, err := NewTestHarness()
+	require.NoError(t, err, "New test data returns without error")
 
 	type TestCase struct {
 		name         string
@@ -148,10 +153,6 @@ func TestTemplateHandler(t *testing.T) {
 
 		err = rnr.Init(c, l, s, p)
 		require.NoError(t, err, "Runner init returns without error")
-
-		// test harness
-		th, err := NewTestHarness(rnr)
-		require.NoError(t, err, "New test data returns without error")
 
 		err = th.Setup()
 		require.NoError(t, err, "Test data setup returns without error")
