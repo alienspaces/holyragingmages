@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewConfig(t *testing.T) {
@@ -42,13 +42,11 @@ func TestNewConfig(t *testing.T) {
 
 		e, err := NewConfig(tc.items, tc.dotEnv)
 		if tc.wantErr {
-			if assert.Error(t, err, "NewConfig returns with error") {
-				continue
-			}
+			require.Error(t, err, "NewConfig returns with error")
+			continue
 		}
-		if assert.NoError(t, err, "NewConfig returns without error") {
-			assert.NotNil(t, e, "NewConfig returns environment object")
-		}
+		require.NoError(t, err, "NewConfig returns without error")
+		require.NotNil(t, e, "NewConfig returns environment object")
 	}
 }
 
@@ -88,13 +86,12 @@ func TestGet(t *testing.T) {
 
 		e, err := NewConfig(tc.items, false)
 		if tc.wantErr {
-			if assert.Error(t, err, "NewConfig returns with error") {
-				continue
-			}
+			require.Error(t, err, "NewConfig returns with error")
+			continue
 		}
 		for idx, item := range tc.items {
 			value := e.Get(item.Key)
-			assert.Equal(t, tc.wantValues[idx], value, "Get returns expected value")
+			require.Equal(t, tc.wantValues[idx], value, "Get returns expected value")
 		}
 	}
 }

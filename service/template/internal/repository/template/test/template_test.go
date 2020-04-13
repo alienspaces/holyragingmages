@@ -12,29 +12,22 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/harness"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
-	"gitlab.com/alienspaces/holyragingmages/service/template/internal/repository/template"
 )
 
 func TestCreateOne(t *testing.T) {
 
 	// harness
 	h, err := harness.NewTesting()
-	if err != nil {
-		t.Fatalf("Failed new test harness >%v<", err)
-	}
+	require.NoError(t, err, "NewTesting returns without error")
 
 	err = h.Setup()
-	if err != nil {
-		t.Fatalf("Failed test harness setup >%v<", err)
-	}
+	require.NoError(t, err, "Setup returns without error")
 
 	defer h.Teardown()
 
 	// repository
 	r := h.Model.(*model.Model).TemplateRepository()
-	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.TableName)
-	}
+	require.NotNil(t, r, "Repository is not nil")
 
 	tests := []struct {
 		name string
@@ -67,9 +60,6 @@ func TestCreateOne(t *testing.T) {
 		rec := tc.rec()
 
 		err = r.CreateOne(rec)
-		if err != nil {
-			t.Fatalf("Failed creating record >%v<", err)
-		}
 		if tc.err == true {
 			require.Error(t, err, "CreateOne returns error")
 			continue
@@ -83,22 +73,16 @@ func TestGetOne(t *testing.T) {
 
 	// harness
 	h, err := harness.NewTesting()
-	if err != nil {
-		t.Fatalf("Failed new test harness >%v<", err)
-	}
+	require.NoError(t, err, "NewTesting returns without error")
 
 	err = h.Setup()
-	if err != nil {
-		t.Fatalf("Failed test harness setup >%v<", err)
-	}
+	require.NoError(t, err, "Setup returns without error")
 
 	defer h.Teardown()
 
 	// repository
 	r := h.Model.(*model.Model).TemplateRepository()
-	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.TableName)
-	}
+	require.NotNil(t, r, "Repository is not nil")
 
 	tests := []struct {
 		name string
@@ -140,22 +124,16 @@ func TestUpdateOne(t *testing.T) {
 
 	// harness
 	h, err := harness.NewTesting()
-	if err != nil {
-		t.Fatalf("Failed new test harness >%v<", err)
-	}
+	require.NoError(t, err, "NewTesting returns without error")
 
 	err = h.Setup()
-	if err != nil {
-		t.Fatalf("Failed test harness setup >%v<", err)
-	}
+	require.NoError(t, err, "Setup returns without error")
 
 	defer h.Teardown()
 
 	// repository
 	r := h.Model.(*model.Model).TemplateRepository()
-	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.TableName)
-	}
+	require.NotNil(t, r, "Repository is not nil")
 
 	tests := []struct {
 		name string
@@ -200,22 +178,16 @@ func TestDeleteOne(t *testing.T) {
 
 	// harness
 	h, err := harness.NewTesting()
-	if err != nil {
-		t.Fatalf("Failed new test harness >%v<", err)
-	}
+	require.NoError(t, err, "NewTesting returns without error")
 
 	err = h.Setup()
-	if err != nil {
-		t.Fatalf("Failed test harness setup >%v<", err)
-	}
+	require.NoError(t, err, "Setup returns without error")
 
 	defer h.Teardown()
 
 	// repository
 	r := h.Model.(*model.Model).TemplateRepository()
-	if r == nil {
-		t.Fatalf("Repository >%s< is nil", template.TableName)
-	}
+	require.NotNil(t, r, "Repository is not nil")
 
 	tests := []struct {
 		name string

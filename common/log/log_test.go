@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 )
@@ -13,19 +13,19 @@ func TestLogger(t *testing.T) {
 
 	// config
 	c, err := config.NewConfig([]config.Item{}, false)
-	assert.Nil(t, err, "Config initialized without error")
+	require.Nil(t, err, "NewConfig returns without error")
 
 	envVars := map[string]string{
 		// logger
 		"APP_LOG_LEVEL": "debug",
 	}
 	for key, val := range envVars {
-		assert.NoError(t, os.Setenv(key, val), "Set environment value")
+		require.NoError(t, os.Setenv(key, val), "Set environment value")
 	}
 
 	l, err := NewLogger(c)
-	assert.NoError(t, err, "NewLogger returns without error")
-	assert.NotNil(t, l, "NewLogger is not nil")
+	require.NoError(t, err, "NewLogger returns without error")
+	require.NotNil(t, l, "NewLogger is not nil")
 
 	l.Debug("Test level >%s<", "debug")
 	l.Info("Test level >%s<", "info")

@@ -3,7 +3,7 @@ package store
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 	"gitlab.com/alienspaces/holyragingmages/common/log"
@@ -13,9 +13,7 @@ func TestNewStore(t *testing.T) {
 
 	// config
 	c, err := config.NewConfig([]config.Item{}, false)
-	if err != nil {
-		t.Fatalf("Failed new config >%v<", err)
-	}
+	require.NoError(t, err, "NewConfig returns without error")
 
 	configVars := []string{
 		// database
@@ -26,17 +24,14 @@ func TestNewStore(t *testing.T) {
 		"APP_DB_PASSWORD",
 	}
 	for _, key := range configVars {
-		assert.NoError(t, c.Add(key, true), "Add config item")
+		require.NoError(t, c.Add(key, true), "Add config item")
 	}
 
 	l, err := log.NewLogger(c)
-	if err != nil {
-		t.Fatalf("Failed new logger >%v<", err)
-	}
+	require.NoError(t, err, "NewLogger returns without error")
 
 	// database
 	s, err := NewStore(c, l)
-	if assert.Nil(t, err, "NewStore returns without error") {
-		assert.NotNil(t, s, "NewStore returns a store")
-	}
+	require.Nil(t, err, "NewStore returns without error")
+	require.NotNil(t, s, "NewStore returns a store")
 }
