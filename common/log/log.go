@@ -2,6 +2,7 @@ package log
 
 import (
 	"os"
+	"strings"
 
 	"github.com/rs/zerolog"
 
@@ -44,7 +45,6 @@ var levelMap = map[Level]zerolog.Level{
 func NewLogger(c configurer.Configurer) (*Log, error) {
 
 	l := Log{
-		log:    zerolog.New(os.Stdout).With().Timestamp().Logger(),
 		fields: make(map[string]interface{}),
 		Config: c,
 	}
@@ -60,16 +60,24 @@ func NewLogger(c configurer.Configurer) (*Log, error) {
 // Init initializes logger
 func (l *Log) Init() error {
 
-	// log level
+	// TODO: support different output writers primarily for testing purposes
+
+	// logger
+	l.log = zerolog.New(os.Stdout).With().Timestamp().Logger()
+
+	// logger level
 	configLevel := l.Config.Get("APP_LOG_LEVEL")
-	switch configLevel {
-	case "debug", "Debug", "DEBUG":
+
+	level := strings.ToLower(configLevel)
+
+	switch level {
+	case "debug":
 		l.log.Level(DebugLevel)
-	case "info", "Info", "INFO":
+	case "info":
 		l.log.Level(InfoLevel)
-	case "warn", "Warn", "WARN":
+	case "warn":
 		l.log.Level(WarnLevel)
-	case "error", "Error", "ERROR":
+	case "error":
 		l.log.Level(ErrorLevel)
 	default:
 		l.log.Level(DebugLevel)
