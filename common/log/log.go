@@ -1,19 +1,18 @@
 package log
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 )
 
 // Log -
 type Log struct {
-	log        *logrus.Logger
-	contextLog *logrus.Entry
-	Config     configurer.Configurer
+	log    zerolog.Logger
+	fields map[string]interface{}
+	Config configurer.Configurer
 }
 
 // Level -
@@ -30,22 +29,23 @@ const (
 	ErrorLevel = 2
 )
 
-var levelMap = map[Level]logrus.Level{
+var levelMap = map[Level]zerolog.Level{
 	// DebugLevel -
-	DebugLevel: logrus.DebugLevel,
+	DebugLevel: zerolog.DebugLevel,
 	// InfoLevel -
-	InfoLevel: logrus.InfoLevel,
+	InfoLevel: zerolog.InfoLevel,
 	// WarnLevel -
-	WarnLevel: logrus.WarnLevel,
+	WarnLevel: zerolog.WarnLevel,
 	// ErrorLevel -
-	ErrorLevel: logrus.ErrorLevel,
+	ErrorLevel: zerolog.ErrorLevel,
 }
 
 // NewLogger returns a logger
 func NewLogger(c configurer.Configurer) (*Log, error) {
 
 	l := Log{
-		log:    logrus.New(),
+		log:    zerolog.New(os.Stdout).With().Timestamp().Logger(),
+		fields: make(map[string]interface{}),
 		Config: c,
 	}
 
@@ -60,28 +60,20 @@ func NewLogger(c configurer.Configurer) (*Log, error) {
 // Init initializes logger
 func (l *Log) Init() error {
 
-	// create a new instance of the logger
-	l.log.SetFormatter(&logrus.JSONFormatter{})
-
-	// output to stdout instead of the default stderr
-	l.log.SetOutput(os.Stdout)
-
 	// log level
 	configLevel := l.Config.Get("APP_LOG_LEVEL")
 	switch configLevel {
 	case "debug", "Debug", "DEBUG":
-		l.log.SetLevel(DebugLevel)
+		l.log.Level(DebugLevel)
 	case "info", "Info", "INFO":
-		l.log.SetLevel(InfoLevel)
+		l.log.Level(InfoLevel)
 	case "warn", "Warn", "WARN":
-		l.log.SetLevel(WarnLevel)
+		l.log.Level(WarnLevel)
 	case "error", "Error", "ERROR":
-		l.log.SetLevel(ErrorLevel)
+		l.log.Level(ErrorLevel)
 	default:
-		l.log.SetLevel(DebugLevel)
+		l.log.Level(DebugLevel)
 	}
-
-	l.contextLog = l.log.WithFields(nil)
 
 	return nil
 }
@@ -94,45 +86,35 @@ func (l *Log) Printf(format string, args ...interface{}) {
 // Level -
 func (l *Log) Level(level Level) {
 	if lvl, ok := levelMap[level]; ok {
-		l.log.SetLevel(lvl)
+		l.log = l.log.Level(lvl)
 	}
 }
 
 // Context - set logging
 func (l *Log) Context(key, value string) {
-	l.contextLog = l.contextLog.WithFields(logrus.Fields{
-		key: value,
-	})
+	l.fields[key] = value
 }
 
 // Debug -
 func (l *Log) Debug(msg string, args ...interface{}) {
-	if len(args) > 0 {
-		msg = fmt.Sprintf(msg, args...)
-	}
-	l.contextLog.Debug(msg)
+	ctxLog := l.log.With().Fields(l.fields).Logger()
+	ctxLog.Debug().Msgf(msg, args...)
 }
 
 // Info -
 func (l *Log) Info(msg string, args ...interface{}) {
-	if len(args) > 0 {
-		msg = fmt.Sprintf(msg, args...)
-	}
-	l.contextLog.Info(msg)
+	ctxLog := l.log.With().Fields(l.fields).Logger()
+	ctxLog.Info().Msgf(msg, args...)
 }
 
 // Warn -
 func (l *Log) Warn(msg string, args ...interface{}) {
-	if len(args) > 0 {
-		msg = fmt.Sprintf(msg, args...)
-	}
-	l.contextLog.Warn(msg)
+	ctxLog := l.log.With().Fields(l.fields).Logger()
+	ctxLog.Warn().Msgf(msg, args...)
 }
 
 // Error -
 func (l *Log) Error(msg string, args ...interface{}) {
-	if len(args) > 0 {
-		msg = fmt.Sprintf(msg, args...)
-	}
-	l.contextLog.Error(msg)
+	ctxLog := l.log.With().Fields(l.fields).Logger()
+	ctxLog.Error().Msgf(msg, args...)
 }

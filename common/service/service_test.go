@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 	"gitlab.com/alienspaces/holyragingmages/common/log"
@@ -86,14 +86,11 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Stor
 func TestNewService(t *testing.T) {
 
 	c, l, s, p, err := NewDefaultDependencies()
-	if err != nil {
-		t.Fatalf("Failed new default dependencies >%v<", err)
-	}
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	tr := TestRunner{}
 
 	ts, err := NewService(c, l, s, p, &tr)
-	if assert.NoError(t, err, "NewService returns without error") {
-		assert.NotNil(t, ts, "Test service is not nil")
-	}
+	require.NoError(t, err, "NewService returns without error")
+	require.NotNil(t, ts, "Test service is not nil")
 }

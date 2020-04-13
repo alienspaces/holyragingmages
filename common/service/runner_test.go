@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
@@ -17,116 +17,101 @@ import (
 func TestRunnerInit(t *testing.T) {
 
 	c, l, s, p, err := NewDefaultDependencies()
-	if err != nil {
-		t.Fatalf("Failed new default dependencies >%v<", err)
-	}
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	tr := TestRunner{}
 
 	err = tr.Init(c, l, s, p)
-	if assert.NoError(t, err, "Runner Init returns without error") {
-		// test init override with failure
-		tr.InitFunc = func(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
-			return errors.New("Init failed")
-		}
-		err = tr.Init(c, l, s, p)
-		assert.Error(t, err, "Runner Init returns with error")
+	require.NoError(t, err, "Runner Init returns without error")
+
+	// test init override with failure
+	tr.InitFunc = func(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
+		return errors.New("Init failed")
 	}
+	err = tr.Init(c, l, s, p)
+	require.Error(t, err, "Runner Init returns with error")
 }
 
 func TestRunnerRouter(t *testing.T) {
 
 	c, l, s, p, err := NewDefaultDependencies()
-	if err != nil {
-		t.Fatalf("Failed new default dependencies >%v<", err)
-	}
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	tr := TestRunner{}
 
 	err = tr.Init(c, l, s, p)
-	if assert.NoError(t, err, "Runner Init returns without error") {
+	require.NoError(t, err, "Runner Init returns without error")
 
-		// test default routes
-		router, err := tr.DefaultRouter()
-		if assert.NoError(t, err, "DefaultRouter returns without error") {
-			if assert.NotNil(t, router, "DefaultRouter returns a router") {
+	// test default routes
+	router, err := tr.DefaultRouter()
+	require.NoError(t, err, "DefaultRouter returns without error")
+	require.NotNil(t, router, "DefaultRouter returns a router")
 
-				// test default configured routes
-				handle, params, redirect := router.Lookup(http.MethodGet, "/")
-				if assert.NotNil(t, handle, "Handle is not nil") {
-					t.Logf("Default route /")
-					t.Logf("Have handler >%#v<", handle)
-					t.Logf("Have params >%v<", params)
-					t.Logf("Have redirect >%t<", redirect)
-				}
-			}
+	// test default configured routes
+	handle, params, redirect := router.Lookup(http.MethodGet, "/")
+	require.NotNil(t, handle, "Handle is not nil")
+
+	t.Logf("Default route /")
+	t.Logf("Have handler >%#v<", handle)
+	t.Logf("Have params >%v<", params)
+	t.Logf("Have redirect >%t<", redirect)
+
+	// test custom routes
+	tr.RouterFunc = func(router *httprouter.Router) error {
+		h, err := tr.DefaultMiddleware("/custom", tr.HandlerFunc)
+		if err != nil {
+			return err
 		}
-
-		// test custom routes
-		tr.RouterFunc = func(router *httprouter.Router) error {
-			h, err := tr.DefaultMiddleware("/custom", tr.HandlerFunc)
-			if err != nil {
-				return err
-			}
-			router.GET("/custom", h)
-			return nil
-		}
-
-		router, err = tr.DefaultRouter()
-		if assert.NoError(t, err, "DefaultRouter returns without error") {
-			if assert.NotNil(t, router, "DefaultRouter returns a router") {
-
-				// test custom configured routes
-				handle, params, redirect := router.Lookup(http.MethodGet, "/custom")
-				if assert.NotNil(t, handle, "Handle is not nil") {
-					t.Logf("Custom route /custom")
-					t.Logf("Have handler >%#v<", handle)
-					t.Logf("Have params >%v<", params)
-					t.Logf("Have redirect >%t<", redirect)
-				}
-			}
-		}
-
-		// test custom routes error
-		tr.RouterFunc = func(router *httprouter.Router) error {
-			return errors.New("Failed router")
-		}
-
-		router, err = tr.DefaultRouter()
-		if assert.Error(t, err, "DefaultRouter returns with error") {
-			assert.Nil(t, router, "DefaultRouter returns nil")
-		}
+		router.GET("/custom", h)
+		return nil
 	}
+
+	router, err = tr.DefaultRouter()
+	require.NoError(t, err, "DefaultRouter returns without error")
+	require.NotNil(t, router, "DefaultRouter returns a router")
+
+	// test custom configured routes
+	handle, params, redirect = router.Lookup(http.MethodGet, "/custom")
+	require.NotNil(t, handle, "Handle is not nil")
+
+	t.Logf("Custom route /custom")
+	t.Logf("Have handler >%#v<", handle)
+	t.Logf("Have params >%v<", params)
+	t.Logf("Have redirect >%t<", redirect)
+
+	// test custom routes error
+	tr.RouterFunc = func(router *httprouter.Router) error {
+		return errors.New("Failed router")
+	}
+
+	router, err = tr.DefaultRouter()
+	require.Error(t, err, "DefaultRouter returns with error")
+	require.Nil(t, router, "DefaultRouter returns nil")
 }
 
 func TestRunnerMiddleware(t *testing.T) {
 
 	c, l, s, p, err := NewDefaultDependencies()
-	if err != nil {
-		t.Fatalf("Failed new default dependencies >%v<", err)
-	}
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	tr := TestRunner{}
 
 	err = tr.Init(c, l, s, p)
-	if assert.NoError(t, err, "Runner Init returns without error") {
+	require.NoError(t, err, "Runner Init returns without error")
 
-		// test default middleware
-		handle, err := tr.DefaultMiddleware("/", tr.HandlerFunc)
-		if assert.NoError(t, err, "DefaultMiddleware returns without error") {
-			if assert.NotNil(t, handle, "DefaultMiddleware returns a handle") {
-				t.Logf("Have handle >%#v<", handle)
-			}
-		}
+	// test default middleware
+	handle, err := tr.DefaultMiddleware("/", tr.HandlerFunc)
+	require.NoError(t, err, "DefaultMiddleware returns without error")
+	require.NotNil(t, handle, "DefaultMiddleware returns a handle")
 
-		// test custom middleware
-		tr.MiddlewareFunc = func(h Handle) (Handle, error) {
-			return nil, errors.New("Failed middleware")
-		}
+	t.Logf("Have handle >%#v<", handle)
 
-		handle, err = tr.DefaultMiddleware("/", tr.HandlerFunc)
-		if assert.Error(t, err, "DefaultMiddleware returns with error") {
-			assert.Nil(t, handle, "DefaultMiddleware returns nil")
-		}
+	// test custom middleware
+	tr.MiddlewareFunc = func(h Handle) (Handle, error) {
+		return nil, errors.New("Failed middleware")
 	}
+
+	handle, err = tr.DefaultMiddleware("/", tr.HandlerFunc)
+	require.Error(t, err, "DefaultMiddleware returns with error")
+	require.Nil(t, handle, "DefaultMiddleware returns nil")
 }

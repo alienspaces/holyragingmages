@@ -3,7 +3,6 @@ package harness
 import (
 	"gitlab.com/alienspaces/holyragingmages/common/harness"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
-
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
@@ -54,8 +53,6 @@ func NewTesting() (t *Testing, err error) {
 // Modeller -
 func (t *Testing) Modeller() (modeller.Modeller, error) {
 
-	t.Log.Info("** Testing Model **")
-
 	m, err := model.NewModel(t.Config, t.Log, t.Store)
 	if err != nil {
 		t.Log.Warn("Failed new model >%v<", err)
@@ -70,25 +67,23 @@ func (t *Testing) CreateData() error {
 
 	// TODO: create records from on t.DataConfig
 
-	r := t.Model.(*model.Model).TemplateRepository()
+	rec := record.Template{}
 
-	rec := r.NewRecord()
-
-	t.Log.Warn("Test record >%#v<", rec)
-
-	err := r.CreateTestRecord(rec)
+	err := t.Model.(*model.Model).CreateTemplateRec(&rec)
 	if err != nil {
-		t.Log.Warn("Failed creating test template record >%v<", err)
+		t.Log.Warn("Failed creating testing template record >%v<", err)
 		return err
 	}
 
-	t.Data.TemplateRecs = append(t.Data.TemplateRecs, rec)
+	t.Data.TemplateRecs = append(t.Data.TemplateRecs, &rec)
 
 	return nil
 }
 
 // RemoveData -
 func (t *Testing) RemoveData() error {
+
+	// TODO: remove records from on t.DataConfig
 
 	return nil
 }

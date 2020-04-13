@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/harness"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
@@ -71,12 +71,11 @@ func TestCreateOne(t *testing.T) {
 			t.Fatalf("Failed creating record >%v<", err)
 		}
 		if tc.err == true {
-			assert.Error(t, err, "CreateOne returns error")
+			require.Error(t, err, "CreateOne returns error")
 			continue
 		}
-		if assert.NoError(t, err, "CreateOne returns without error") {
-			assert.NotEmpty(t, rec.CreatedAt, "CreateOne returns record with CreatedAt")
-		}
+		require.NoError(t, err, "CreateOne returns without error")
+		require.NotEmpty(t, rec.CreatedAt, "CreateOne returns record with CreatedAt")
 	}
 }
 
@@ -128,12 +127,12 @@ func TestGetOne(t *testing.T) {
 
 		rec, err := r.GetOne(tc.id(), false)
 		if tc.err == true {
-			assert.Error(t, err, "GetOne returns error")
+			require.Error(t, err, "GetOne returns error")
 			continue
 		}
-		if assert.NoError(t, err, "GetOne returns without error") {
-			assert.NotEmpty(t, rec, "GetOne returns record")
-		}
+		require.NoError(t, err, "GetOne returns without error")
+		require.NotNil(t, rec, "GetOne returns record")
+		require.NotEmpty(t, rec.ID, "Record ID is not empty")
 	}
 }
 
@@ -189,12 +188,11 @@ func TestUpdateOne(t *testing.T) {
 
 		err := r.UpdateOne(rec)
 		if tc.err == true {
-			assert.Error(t, err, "UpdateOne returns error")
+			require.Error(t, err, "UpdateOne returns error")
 			continue
 		}
-		if assert.NoError(t, err, "UpdateOne returns without error") {
-			assert.NotEmpty(t, rec.UpdatedAt, "UpdateOne returns record with UpdatedAt")
-		}
+		require.NoError(t, err, "UpdateOne returns without error")
+		require.NotEmpty(t, rec.UpdatedAt, "UpdateOne returns record with UpdatedAt")
 	}
 }
 
@@ -246,14 +244,13 @@ func TestDeleteOne(t *testing.T) {
 
 		err := r.DeleteOne(tc.id())
 		if tc.err == true {
-			assert.Error(t, err, "DeleteOne returns error")
+			require.Error(t, err, "DeleteOne returns error")
 			continue
 		}
-		if assert.NoError(t, err, "DeleteOne returns without error") {
-			rec, err := r.GetOne(tc.id(), false)
-			if assert.Error(t, err, "GetOne returns error") {
-				assert.Nil(t, rec, "GetOne does not return record")
-			}
-		}
+		require.NoError(t, err, "DeleteOne returns without error")
+
+		rec, err := r.GetOne(tc.id(), false)
+		require.Error(t, err, "GetOne returns error")
+		require.Nil(t, rec, "GetOne does not return record")
 	}
 }
