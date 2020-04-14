@@ -169,11 +169,12 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 		rec, err := m.(*model.Model).GetTemplateRec(id, false)
 		if err != nil {
+			rnr.Log.Warn("Get template rec err >%v<", err)
 
 			// system error
 			res := rnr.ErrorSystem(err)
 
-			err = rnr.WriteResponse(w, &res)
+			err = rnr.WriteResponse(w, res)
 			if err != nil {
 				rnr.Log.Warn("Failed writing response >%v<", err)
 				return
@@ -183,11 +184,12 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 		// resource not found
 		if rec == nil {
+			rnr.Log.Warn("Get template rec nil")
 
 			// not found error
-			res := rnr.ErrorNotFound(err)
+			res := rnr.ErrorNotFound(fmt.Errorf("Resource with ID >%s< not found", id))
 
-			err = rnr.WriteResponse(w, &res)
+			err = rnr.WriteResponse(w, res)
 			if err != nil {
 				rnr.Log.Warn("Failed writing response >%v<", err)
 				return
@@ -207,7 +209,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 			// system error
 			res := rnr.ErrorSystem(err)
 
-			err = rnr.WriteResponse(w, &res)
+			err = rnr.WriteResponse(w, res)
 			if err != nil {
 				rnr.Log.Warn("Failed writing response >%v<", err)
 				return
@@ -230,7 +232,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		Data: data,
 	}
 
-	err = rnr.WriteResponse(w, &res)
+	err = rnr.WriteResponse(w, res)
 	if err != nil {
 		rnr.Log.Warn("Failed writing response >%v<", err)
 		return
@@ -251,7 +253,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 		// system error
 		res := rnr.ErrorSystem(err)
 
-		err = rnr.WriteResponse(w, &res)
+		err = rnr.WriteResponse(w, res)
 		if err != nil {
 			rnr.Log.Warn("Failed writing response >%v<", err)
 			return
@@ -269,7 +271,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 		// system error
 		res := rnr.ErrorSystem(err)
 
-		err = rnr.WriteResponse(w, &res)
+		err = rnr.WriteResponse(w, res)
 		if err != nil {
 			rnr.Log.Warn("Failed writing response >%v<", err)
 			return
@@ -288,7 +290,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 		},
 	}
 
-	err = rnr.WriteResponse(w, &res)
+	err = rnr.WriteResponse(w, res)
 	if err != nil {
 		rnr.Log.Warn("Failed writing response >%v<", err)
 		return
@@ -309,7 +311,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		// system error
 		res := rnr.ErrorSystem(err)
 
-		err = rnr.WriteResponse(w, &res)
+		err = rnr.WriteResponse(w, res)
 		if err != nil {
 			rnr.Log.Warn("Failed writing response >%v<", err)
 			return
@@ -327,7 +329,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		// system error
 		res := rnr.ErrorSystem(err)
 
-		err = rnr.WriteResponse(w, &res)
+		err = rnr.WriteResponse(w, res)
 		if err != nil {
 			rnr.Log.Warn("Failed writing response >%v<", err)
 			return
@@ -346,7 +348,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		},
 	}
 
-	err = rnr.WriteResponse(w, &res)
+	err = rnr.WriteResponse(w, res)
 	if err != nil {
 		rnr.Log.Warn("Failed writing response >%v<", err)
 		return

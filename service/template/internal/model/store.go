@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql"
+
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
 
@@ -21,7 +23,13 @@ func (m *Model) GetTemplateRec(recID string, forUpdate bool) (*record.Template, 
 
 	r := m.TemplateRepository()
 
-	return r.GetOne(recID, forUpdate)
+	rec, err := r.GetOne(recID, forUpdate)
+	if err == sql.ErrNoRows {
+		m.Log.Warn("No record found ID >%s<", recID)
+		return nil, nil
+	}
+
+	return rec, err
 }
 
 // CreateTemplateRec -

@@ -1,5 +1,7 @@
 package service
 
+import "fmt"
+
 // ErrorCode -
 const (
 	ErrorCodeSystem       string = "internal_error"
@@ -7,7 +9,7 @@ const (
 	ErrorCodeValidation   string = "validation_error"
 	ErrorDetailValidation string = "Request contains validation errors"
 	ErrorCodeNotFound     string = "not_found"
-	ErrorDetailNotFOund   string = "Requested resource could not be found"
+	ErrorDetailNotFound   string = "Requested resource could not be found"
 )
 
 // ErrorSystem -
@@ -15,6 +17,7 @@ func (rnr *Runner) ErrorSystem(err error) Response {
 
 	rnr.Log.Error("Error >%v<", err)
 
+	// NOTE: never expose actual system error details
 	return Response{
 		Error: ResponseError{
 			Code:   ErrorCodeSystem,
@@ -28,6 +31,10 @@ func (rnr *Runner) ErrorValidation(err error) Response {
 
 	rnr.Log.Error("Error >%v<", err)
 
+	if err == nil {
+		err = fmt.Errorf(ErrorDetailValidation)
+	}
+
 	return Response{
 		Error: ResponseError{
 			Code:   ErrorCodeValidation,
@@ -40,6 +47,10 @@ func (rnr *Runner) ErrorValidation(err error) Response {
 func (rnr *Runner) ErrorNotFound(err error) Response {
 
 	rnr.Log.Error("Error >%v<", err)
+
+	if err == nil {
+		err = fmt.Errorf(ErrorDetailNotFound)
+	}
 
 	return Response{
 		Error: ResponseError{

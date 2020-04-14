@@ -122,7 +122,7 @@ func TestTemplateHandler(t *testing.T) {
 
 	tests := []TestCase{
 		{
-			name: "GET - Get single resource",
+			name: "GET - Get existing resource",
 			config: func(rnr *Runner) service.HandlerConfig {
 				return rnr.HandlerConfig[1]
 			},
@@ -136,6 +136,22 @@ func TestTemplateHandler(t *testing.T) {
 				return nil
 			},
 			responseCode: http.StatusOK,
+		},
+		{
+			name: "GET - Get missing resource",
+			config: func(rnr *Runner) service.HandlerConfig {
+				return rnr.HandlerConfig[1]
+			},
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
+				}
+				return params
+			},
+			requestData: func(data *harness.Data) *Request {
+				return nil
+			},
+			responseCode: http.StatusNotFound,
 		},
 		{
 			name: "POST - Create basic resource",
@@ -167,6 +183,16 @@ func TestTemplateHandler(t *testing.T) {
 			},
 			responseCode: http.StatusOK,
 		},
+		{
+			name: "PUT - Missing data",
+			config: func(rnr *Runner) service.HandlerConfig {
+				return rnr.HandlerConfig[3]
+			},
+			requestData: func(data *harness.Data) *Request {
+				return nil
+			},
+			responseCode: http.StatusBadRequest,
+		},
 	}
 
 	for _, tc := range tests {
@@ -197,7 +223,6 @@ func TestTemplateHandler(t *testing.T) {
 
 			switch cfg.Method {
 			case http.MethodGet:
-				t.Logf("Get path >%s<", cfg.Path)
 				rtr.GET(cfg.Path, h)
 			case http.MethodPost:
 				rtr.POST(cfg.Path, h)

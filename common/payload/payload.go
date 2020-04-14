@@ -36,6 +36,13 @@ func (p *Payload) ReadRequest(r *http.Request, s interface{}) error {
 }
 
 // WriteResponse -
-func (p *Payload) WriteResponse(w http.ResponseWriter, s interface{}) error {
+func (p *Payload) WriteResponse(w http.ResponseWriter, status int, s interface{}) error {
+
+	// content type json
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	// status
+	w.WriteHeader(status)
+
 	return json.NewEncoder(w).Encode(s)
 }

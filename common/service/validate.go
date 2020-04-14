@@ -52,7 +52,8 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 		var dataLoader gojsonschema.JSONLoader
 		switch data.(type) {
 		case nil:
-			http.Error(w, "Data is nil", http.StatusBadRequest)
+			rnr.Log.Warn("Data is nil")
+			rnr.WriteResponse(w, rnr.ErrorSystem(fmt.Errorf("Data is nil")))
 			return
 		case string:
 			dataLoader = gojsonschema.NewStringLoader(data.(string))
@@ -64,7 +65,11 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 		result, err := s.Validate(dataLoader)
 		if err != nil {
 			rnr.Log.Warn("Failed validate >%v<", err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			if err.Error() == "EOF" {
+				rnr.WriteResponse(w, rnr.ErrorValidation(fmt.Errorf("Posted data is empty, check request content")))
+				return
+			}
+			rnr.WriteResponse(w, rnr.ErrorSystem(err))
 			return
 		}
 
@@ -78,7 +83,7 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 				}
 				errStr = fmt.Sprintf("%s, %s", errStr, e.String())
 			}
-			http.Error(w, errStr, http.StatusBadRequest)
+			rnr.WriteResponse(w, rnr.ErrorValidation(fmt.Errorf("%s", errStr)))
 			return
 		}
 

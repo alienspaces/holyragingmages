@@ -187,6 +187,7 @@ func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, 
 
 // ReadRequest -
 func (rnr *Runner) ReadRequest(r *http.Request, s interface{}) error {
+
 	p, err := rnr.PayloaderFunc()
 	if err != nil {
 		rnr.Log.Warn("Failed PayloaderFunc >%v<", err)
@@ -195,11 +196,13 @@ func (rnr *Runner) ReadRequest(r *http.Request, s interface{}) error {
 	if p == nil {
 		return fmt.Errorf("Payloader is nil, cannot read request")
 	}
+
 	return p.ReadRequest(r, s)
 }
 
 // WriteResponse -
 func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
+
 	p, err := rnr.PayloaderFunc()
 	if err != nil {
 		rnr.Log.Warn("Failed PayloaderFunc >%v<", err)
@@ -208,5 +211,41 @@ func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
 	if p == nil {
 		return fmt.Errorf("Payloader is nil, cannot write response")
 	}
-	return p.WriteResponse(w, s)
+
+	// determine response status
+	status := http.StatusOK
+
+	switch r := s.(type) {
+	case *Response:
+		rnr.Log.Warn("Payload type is a service response >%#v<", r)
+		if r.Error.Code != "" {
+			switch r.Error.Code {
+			case ErrorCodeNotFound:
+				status = http.StatusNotFound
+			case ErrorCodeValidation:
+				status = http.StatusBadRequest
+			case ErrorCodeSystem:
+				status = http.StatusInternalServerError
+			}
+		}
+	case Response:
+		rnr.Log.Warn("Payload type is a service response >%#v<", r)
+		if r.Error.Code != "" {
+			switch r.Error.Code {
+			case ErrorCodeNotFound:
+				status = http.StatusNotFound
+			case ErrorCodeValidation:
+				status = http.StatusBadRequest
+			case ErrorCodeSystem:
+				status = http.StatusInternalServerError
+			}
+		}
+	default:
+		rnr.Log.Warn("Payload type is not a service response >%#v<", r)
+		//
+	}
+
+	rnr.Log.Info("Write response status >%d<", status)
+
+	return p.WriteResponse(w, status, s)
 }
