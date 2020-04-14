@@ -38,8 +38,6 @@ func NewRepository(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) (*Reposito
 		},
 	}
 
-	l.Warn("** Template ** CreateOneSQL %s", r.CreateOneSQL())
-
 	err := r.Init(p, tx)
 	if err != nil {
 		l.Warn("Failed new repository >%v<", err)

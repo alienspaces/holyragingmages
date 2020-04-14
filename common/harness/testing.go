@@ -24,11 +24,11 @@ type CreateDataFunc func() error
 // RemoveDataFunc - callback function that removes test data
 type RemoveDataFunc func() error
 
-// DataConfig - configuration for creating test data
-type DataConfig struct{}
+// // DataConfig - configuration for creating test data
+// type DataConfig struct{}
 
-// Data - contains test data
-type Data struct{}
+// // Data - contains test data
+// type Data struct{}
 
 // Testing -
 type Testing struct {
@@ -38,6 +38,9 @@ type Testing struct {
 	Prepare preparer.Preparer
 	Model   modeller.Modeller
 
+	// Configuration
+	CommitData bool
+
 	// Modeller function
 	ModellerFunc func() (modeller.Modeller, error)
 
@@ -45,28 +48,20 @@ type Testing struct {
 	CreateDataFunc CreateDataFunc
 	RemoveDataFunc RemoveDataFunc
 
-	// DataConfig
-	DataConfig DataConfig
-
-	// Data
-	Data Data
-
 	// Private
 	tx *sqlx.Tx
 }
 
 // NewTesting -
-func NewTesting(m modeller.Modeller) (t *Testing, err error) {
+func NewTesting() (t *Testing, err error) {
 
-	t = &Testing{
-		Model: m,
-	}
+	t = &Testing{}
 
 	return t, nil
 }
 
-// Setup -
-func (t *Testing) Setup() (err error) {
+// Init -
+func (t *Testing) Init() (err error) {
 
 	// configurer
 	t.Config, err = config.NewConfig(nil, false)
@@ -109,24 +104,10 @@ func (t *Testing) Setup() (err error) {
 		return err
 	}
 
-	tx, err := t.Store.GetTx()
-	if err != nil {
-		t.Log.Warn("Failed getting database tx >%v<", err)
-		return err
-	}
-
-	t.tx = tx
-
 	// preparer
 	t.Prepare, err = prepare.NewPrepare(t.Log)
 	if err != nil {
 		t.Log.Warn("Failed new preparer >%v<", err)
-		return err
-	}
-
-	err = t.Prepare.Init(tx)
-	if err != nil {
-		t.Log.Warn("Failed preparer init >%v<", err)
 		return err
 	}
 
@@ -139,42 +120,124 @@ func (t *Testing) Setup() (err error) {
 		return err
 	}
 
+	t.Log.Info("Modeller ready")
+
+	return nil
+}
+
+// InitTx -
+func (t *Testing) InitTx(tx *sqlx.Tx) (err error) {
+
+	t.Log.Info("Initialising database tx")
+
+	// initialise our own database tx when none is provided
+	if tx == nil {
+		t.Log.Info("Starting database tx")
+
+		tx, err = t.Store.GetTx()
+		if err != nil {
+			t.Log.Warn("Failed getting database tx >%v<", err)
+			return err
+		}
+	}
+
+	err = t.Prepare.Init(tx)
+	if err != nil {
+		t.Log.Warn("Failed preparer init >%v<", err)
+		return err
+	}
+
 	err = t.Model.Init(t.Prepare, tx)
 	if err != nil {
 		t.Log.Warn("Failed modeller init >%v<", err)
 		return err
 	}
 
-	t.Log.Info("Repositories ready")
+	t.tx = tx
+
+	t.Log.Info("Database tx initialised")
+
+	return nil
+}
+
+// CommitTx -
+func (t *Testing) CommitTx() (err error) {
+	return t.tx.Commit()
+}
+
+// RollbackTx -
+func (t *Testing) RollbackTx() (err error) {
+	return t.tx.Rollback()
+}
+
+// Setup -
+func (t *Testing) Setup() (err error) {
+
+	// init
+	err = t.InitTx(nil)
+	if err != nil {
+		t.Log.Warn("Failed init >%v<", err)
+		return err
+	}
 
 	// data function is expected to create and manage its own store
 	if t.CreateDataFunc != nil {
 		t.Log.Info("Creating test data")
 		err := t.CreateDataFunc()
 		if err != nil {
-			t.Log.Warn("Failed data function >%v<", err)
+			t.Log.Warn("Failed creating data >%v<", err)
 			return err
 		}
 	}
 
-	t.Log.Info("Data ready")
+	// commit data when configured, otherwise we are leaving
+	// it up to tests to explicitly commit or rollback
+	if t.CommitData {
+		t.Log.Info("Committing database tx")
+		err = t.CommitTx()
+		if err != nil {
+			t.Log.Warn("Failed comitting data >%v<", err)
+			return err
+		}
+	}
+
+	t.Log.Info("Setup complete")
 
 	return nil
 }
 
 // Teardown -
-func (t *Testing) Teardown() error {
+func (t *Testing) Teardown() (err error) {
 
-	err := t.tx.Rollback()
+	// init
+	err = t.InitTx(nil)
 	if err != nil {
-		t.Log.Warn("Failed database tx rollback >%v<", err)
+		t.Log.Warn("Failed init >%v<", err)
 		return err
 	}
 
-	return nil
-}
+	// data function is expected to create and manage its own store
+	if t.RemoveDataFunc != nil {
+		t.Log.Info("Removing test data")
+		err := t.RemoveDataFunc()
+		if err != nil {
+			t.Log.Warn("Failed removing data >%v<", err)
+			return err
+		}
+	}
 
-// Tx -
-func (t *Testing) Tx() *sqlx.Tx {
-	return t.tx
+	// commit data when configured, otherwise we are leaving
+	// it up to tests to explicitly commit or rollback
+	if t.CommitData {
+		t.Log.Info("Committing database tx")
+		err = t.CommitTx()
+		if err != nil {
+			t.Log.Warn("Failed comitting data >%v<", err)
+			return err
+		}
+	}
+
+	t.Log.Info("Teardown complete")
+
+	return nil
 }

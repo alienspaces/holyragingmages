@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/julienschmidt/httprouter"
@@ -76,20 +77,24 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Stor
 
 func NewTestHarness() (*harness.Testing, error) {
 
-	d, err := harness.NewTesting()
+	// harness
+	config := harness.DataConfig{}
+
+	h, err := harness.NewTesting(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	// harness commit data
+	h.CommitData = true
+
+	return h, nil
 }
 
 func TestNewRunner(t *testing.T) {
 
 	c, l, s, p, err := NewDefaultDependencies()
-	if err != nil {
-		t.Fatalf("Failed new default dependencies >%v<", err)
-	}
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	r := NewRunner()
 
@@ -101,28 +106,33 @@ func TestTemplateHandler(t *testing.T) {
 
 	// test dependencies
 	c, l, s, p, err := NewDefaultDependencies()
-	if err != nil {
-		t.Fatalf("Failed new default dependencies >%v<", err)
-	}
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	// test harness
 	th, err := NewTestHarness()
 	require.NoError(t, err, "New test data returns without error")
 
 	type TestCase struct {
-		name         string
-		config       func(rnr *Runner) service.HandlerConfig
-		requestData  func() *Request
-		responseCode int
+		name          string
+		config        func(rnr *Runner) service.HandlerConfig
+		requestParams func(data *harness.Data) map[string]string
+		requestData   func(data *harness.Data) *Request
+		responseCode  int
 	}
 
 	tests := []TestCase{
 		{
-			name: "GET - Get basic resource",
+			name: "GET - Get single resource",
 			config: func(rnr *Runner) service.HandlerConfig {
-				return rnr.HandlerConfig[0]
+				return rnr.HandlerConfig[1]
 			},
-			requestData: func() *Request {
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":id": data.TemplateRecs[0].ID,
+				}
+				return params
+			},
+			requestData: func(data *harness.Data) *Request {
 				return nil
 			},
 			responseCode: http.StatusOK,
@@ -132,7 +142,7 @@ func TestTemplateHandler(t *testing.T) {
 			config: func(rnr *Runner) service.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
-			requestData: func() *Request {
+			requestData: func(data *harness.Data) *Request {
 				req := Request{
 					Data: Data{
 						ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
@@ -149,69 +159,90 @@ func TestTemplateHandler(t *testing.T) {
 
 		t.Logf("Running test >%s<", tc.name)
 
-		rnr := NewRunner()
+		func() {
+			rnr := NewRunner()
 
-		err = rnr.Init(c, l, s, p)
-		require.NoError(t, err, "Runner init returns without error")
+			err = rnr.Init(c, l, s, p)
+			require.NoError(t, err, "Runner init returns without error")
 
-		err = th.Setup()
-		require.NoError(t, err, "Test data setup returns without error")
+			err = th.Setup()
+			require.NoError(t, err, "Test data setup returns without error")
+			defer func() {
+				err = th.Teardown()
+				require.NoError(t, err, "Test data teardown returns without error")
+			}()
 
-		// config
-		cfg := tc.config(rnr)
+			// config
+			cfg := tc.config(rnr)
 
-		// handler
-		h, _ := rnr.DefaultMiddleware(cfg.Path, cfg.HandlerFunc)
+			// handler
+			h, _ := rnr.DefaultMiddleware(cfg.Path, cfg.HandlerFunc)
 
-		// router
-		rtr := httprouter.New()
+			// router
+			rtr := httprouter.New()
 
-		switch cfg.Method {
-		case http.MethodGet:
-			rtr.GET(cfg.Path, h)
-		case http.MethodPost:
-			rtr.POST(cfg.Path, h)
-		case http.MethodPut:
-			rtr.PUT(cfg.Path, h)
-		case http.MethodDelete:
-			rtr.DELETE(cfg.Path, h)
-		default:
-			//
-		}
+			switch cfg.Method {
+			case http.MethodGet:
+				t.Logf("Get path >%s<", cfg.Path)
+				rtr.GET(cfg.Path, h)
+			case http.MethodPost:
+				rtr.POST(cfg.Path, h)
+			case http.MethodPut:
+				rtr.PUT(cfg.Path, h)
+			case http.MethodDelete:
+				rtr.DELETE(cfg.Path, h)
+			default:
+				//
+			}
 
-		// request
-		rd := tc.requestData()
+			// request params
+			params := map[string]string{}
+			if tc.requestParams != nil {
+				params = tc.requestParams(th.Data)
+			}
 
-		var req *http.Request
+			requestPath := cfg.Path
+			for paramKey, paramValue := range params {
+				requestPath = strings.Replace(requestPath, paramKey, paramValue, 1)
+			}
 
-		if rd != nil {
-			jd, err := json.Marshal(rd)
-			require.NoError(t, err, "Marshal returns without error")
+			// request data
+			data := tc.requestData(th.Data)
 
-			req, err = http.NewRequest(cfg.Method, cfg.Path, bytes.NewBuffer(jd))
-			require.NoError(t, err, "NewRequest returns without error")
-		} else {
-			req, err = http.NewRequest(cfg.Method, cfg.Path, nil)
-			require.NoError(t, err, "NewRequest returns without error")
-		}
+			var req *http.Request
 
-		// recorder
-		rec := httptest.NewRecorder()
+			if data != nil {
+				jsonData, err := json.Marshal(data)
+				require.NoError(t, err, "Marshal returns without error")
 
-		// serve
-		rtr.ServeHTTP(rec, req)
+				req, err = http.NewRequest(cfg.Method, requestPath, bytes.NewBuffer(jsonData))
+				require.NoError(t, err, "NewRequest returns without error")
+			} else {
+				req, err = http.NewRequest(cfg.Method, requestPath, nil)
+				require.NoError(t, err, "NewRequest returns without error")
+			}
 
-		// test status
-		require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
+			// recorder
+			rec := httptest.NewRecorder()
 
-		res := Response{}
-		err = json.NewDecoder(rec.Body).Decode(&res)
+			// serve
+			rtr.ServeHTTP(rec, req)
 
-		require.NoError(t, err, "Decode returns without error")
-		require.NotNil(t, res.Data, "Data is not nil")
-		require.NotEmpty(t, res.Data.ID, "ID is not empty")
+			// test status
+			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
 
-		// TODO: test for a real date
-		require.NotEmpty(t, res.Data.CreatedAt, "CreatedAt is not empty")
+			res := Response{}
+			err = json.NewDecoder(rec.Body).Decode(&res)
+			require.NoError(t, err, "Decode returns without error")
+
+			// test data
+			if tc.responseCode == http.StatusOK {
+				require.NotEmpty(t, res.Data, "Data is not empty")
+				require.NotEmpty(t, res.Data[0].ID, "ID is not empty")
+
+				// TODO: test for a real date
+				require.NotEmpty(t, res.Data[0].CreatedAt, "CreatedAt is not empty")
+			}
+		}()
 	}
 }

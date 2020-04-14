@@ -12,9 +12,14 @@ import (
 func (rnr *Runner) Authen(h Handle) (Handle, error) {
 
 	// TODO: implement authentication via configuration
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, m modeller.Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+
 		rnr.Log.Info("** Authen ** TODO: Authen unimplemented")
-		h(w, r, ps, m)
+
+		// ALIEN:
+		rnr.Log.Info("** Authen ** params >%#v<", p)
+
+		h(w, r, p, m)
 	}
 
 	return handle, nil

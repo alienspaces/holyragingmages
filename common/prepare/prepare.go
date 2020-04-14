@@ -94,7 +94,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 		return nil
 	}
 
-	p.Log.Info("Preparing %s statements", m.TableName())
+	p.Log.Info("** Prepare ** table >%s< statements", m.TableName())
 
 	// get by id
 	query := m.GetOneSQL()
@@ -122,8 +122,6 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 
 	// create
 	query = m.CreateOneSQL()
-
-	p.Log.Info("CreateOneSQL %s", query)
 
 	createStmt, err := p.Tx.PrepareNamed(query)
 	if err != nil {

@@ -82,6 +82,10 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 
 	// register configured routes
 	for _, hc := range rnr.HandlerConfig {
+
+		// ALIEN:
+		rnr.Log.Info("** Router ** method >%s< path >%s<", hc.Method, hc.Path)
+
 		h, err := rnr.DefaultMiddleware(hc.Path, hc.HandlerFunc)
 		if err != nil {
 			rnr.Log.Warn("Failed registering handler >%v<", err)

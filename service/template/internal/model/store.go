@@ -71,3 +71,19 @@ func (m *Model) DeleteTemplateRec(recID string) error {
 
 	return r.DeleteOne(recID)
 }
+
+// RemoveTemplateRec -
+func (m *Model) RemoveTemplateRec(recID string) error {
+
+	m.Log.Info("Removing template rec ID >%s<", recID)
+
+	r := m.TemplateRepository()
+
+	err := m.ValidateDeleteTemplateRec(recID)
+	if err != nil {
+		m.Log.Info("Failed model validation >%v<", err)
+		return err
+	}
+
+	return r.RemoveOne(recID)
+}

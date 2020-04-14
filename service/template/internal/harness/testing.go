@@ -11,12 +11,11 @@ import (
 type Testing struct {
 	harness.Testing
 	Data       *Data
-	DataConfig *DataConfig
+	DataConfig DataConfig
 }
 
 // DataConfig -
 type DataConfig struct {
-	harness.DataConfig
 	TemplateConfig []TemplateConfig
 }
 
@@ -28,12 +27,11 @@ type TemplateConfig struct {
 
 // Data -
 type Data struct {
-	harness.Data
-	TemplateRecs []*record.Template
+	TemplateRecs []record.Template
 }
 
 // NewTesting -
-func NewTesting() (t *Testing, err error) {
+func NewTesting(config DataConfig) (t *Testing, err error) {
 
 	// harness
 	t = &Testing{}
@@ -45,7 +43,13 @@ func NewTesting() (t *Testing, err error) {
 	t.CreateDataFunc = t.CreateData
 	t.RemoveDataFunc = t.RemoveData
 
+	t.DataConfig = config
 	t.Data = &Data{}
+
+	err = t.Init()
+	if err != nil {
+		return nil, err
+	}
 
 	return t, nil
 }
@@ -65,8 +69,6 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	// TODO: create records from on t.DataConfig
-
 	rec := record.Template{}
 
 	err := t.Model.(*model.Model).CreateTemplateRec(&rec)
@@ -75,7 +77,7 @@ func (t *Testing) CreateData() error {
 		return err
 	}
 
-	t.Data.TemplateRecs = append(t.Data.TemplateRecs, &rec)
+	t.Data.TemplateRecs = append(t.Data.TemplateRecs, rec)
 
 	return nil
 }
@@ -83,7 +85,20 @@ func (t *Testing) CreateData() error {
 // RemoveData -
 func (t *Testing) RemoveData() error {
 
-	// TODO: remove records from on t.DataConfig
+TEMPLATE_RECS:
+	for {
+		if len(t.Data.TemplateRecs) == 0 {
+			break TEMPLATE_RECS
+		}
+		rec := record.Template{}
+		rec, t.Data.TemplateRecs = t.Data.TemplateRecs[0], t.Data.TemplateRecs[1:]
+
+		err := t.Model.(*model.Model).RemoveTemplateRec(rec.ID)
+		if err != nil {
+			t.Log.Warn("Failed removing template record >%v<", err)
+			return err
+		}
+	}
 
 	return nil
 }

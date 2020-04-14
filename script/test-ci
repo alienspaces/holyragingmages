@@ -12,5 +12,8 @@ source ${BASH_SOURCE%/*}/start-database "ci" || exit $?
 # migrate database
 source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 
-# test
-source ${BASH_SOURCE%/*}/test-packages "ci" || exit $?
+# test common
+source ${BASH_SOURCE%/*}/test-common "ci" || exit $?
+
+# test service
+source ${BASH_SOURCE%/*}/test-service "ci" || exit $?

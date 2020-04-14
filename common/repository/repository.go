@@ -56,8 +56,6 @@ func (r *Repository) Init(p preparer.Preparer, tx *sqlx.Tx) error {
 		return errors.New("Prepare is nil, cannot initialise")
 	}
 
-	r.Log.Warn("** Repository ** CreateOneSQL %s", r.CreateOneSQL())
-
 	return nil
 }
 

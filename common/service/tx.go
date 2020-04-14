@@ -11,7 +11,7 @@ import (
 // Tx -
 func (rnr *Runner) Tx(h Handle) (Handle, error) {
 
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, _ modeller.Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, _ modeller.Modeller) {
 
 		rnr.Log.Warn("** Tx ** beginning database transaction")
 
@@ -51,7 +51,7 @@ func (rnr *Runner) Tx(h Handle) (Handle, error) {
 		}
 
 		// delegate request
-		h(w, r, ps, m)
+		h(w, r, p, m)
 
 		rnr.Log.Warn("** Tx ** committing database transaction")
 

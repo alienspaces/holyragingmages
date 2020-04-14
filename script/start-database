@@ -17,11 +17,11 @@ source ${BASH_SOURCE%/*}/retry || exit $?
 source ${BASH_SOURCE%/*}/stop-database $APP_DB_SERVICE || exit $?
 
 # start database
-echo "=> Starting database"
+echo "=> Start database"
 
 if [ $APP_DB_SERVICE = "docker" ]; then
 
-    echo "=> Starting database docker service"
+    echo "=> Start database - docker service"
 
     docker run --hostname postgres --name holyragingmages-shared \
     -e POSTGRES_USER=$APP_DB_USER \
@@ -32,7 +32,7 @@ if [ $APP_DB_SERVICE = "docker" ]; then
 
 elif [ $APP_DB_SERVICE = "local" ]; then
 
-    echo "=> Starting database local service"
+    echo "=> Start database - local service"
 
     sudo service postgresql start
     sudo -u postgres createuser $APP_DB_USER
@@ -52,7 +52,7 @@ retry_cmd psql --host=$APP_DB_HOST \
      --command="CREATE EXTENSION pgcrypto;" \
      $APP_DB_NAME
 
-echo "=> Database running on ${APP_DB_HOST}:${APP_DB_PORT}"
+echo "=> Start database - running on ${APP_DB_HOST}:${APP_DB_PORT}"
 
 # service directory list
 shopt -s dotglob
@@ -78,7 +78,7 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
             # load service specific environment
             source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
 
-            echo "Creating database name $APP_DB_NAME owner $APP_DB_USER"
+            echo "=> Start database - creating database name $APP_DB_NAME owner $APP_DB_USER"
 
             export PGPASSWORD=$APP_DB_PASSWORD
             retry_cmd psql --host=$APP_DB_HOST \
