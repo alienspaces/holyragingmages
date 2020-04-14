@@ -11,24 +11,14 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
-	"gitlab.com/alienspaces/holyragingmages/common/type/repositor"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
-
-// RepositoriesFunc - callback function to return repositories
-type RepositoriesFunc func(l logger.Logger, p preparer.Preparer, tx *sqlx.Tx) ([]repositor.Repositor, error)
 
 // CreateDataFunc - callback function that creates test data
 type CreateDataFunc func() error
 
 // RemoveDataFunc - callback function that removes test data
 type RemoveDataFunc func() error
-
-// // DataConfig - configuration for creating test data
-// type DataConfig struct{}
-
-// // Data - contains test data
-// type Data struct{}
 
 // Testing -
 type Testing struct {
@@ -111,7 +101,7 @@ func (t *Testing) Init() (err error) {
 		return err
 	}
 
-	t.Log.Info("Preparer ready")
+	t.Log.Debug("Preparer ready")
 
 	// modeller
 	t.Model, err = t.ModellerFunc()
@@ -120,7 +110,7 @@ func (t *Testing) Init() (err error) {
 		return err
 	}
 
-	t.Log.Info("Modeller ready")
+	t.Log.Debug("Modeller ready")
 
 	return nil
 }
@@ -128,11 +118,11 @@ func (t *Testing) Init() (err error) {
 // InitTx -
 func (t *Testing) InitTx(tx *sqlx.Tx) (err error) {
 
-	t.Log.Info("Initialising database tx")
+	t.Log.Debug("Initialising database tx")
 
 	// initialise our own database tx when none is provided
 	if tx == nil {
-		t.Log.Info("Starting database tx")
+		t.Log.Debug("Starting database tx")
 
 		tx, err = t.Store.GetTx()
 		if err != nil {
@@ -155,7 +145,7 @@ func (t *Testing) InitTx(tx *sqlx.Tx) (err error) {
 
 	t.tx = tx
 
-	t.Log.Info("Database tx initialised")
+	t.Log.Debug("Database tx initialised")
 
 	return nil
 }
@@ -182,7 +172,7 @@ func (t *Testing) Setup() (err error) {
 
 	// data function is expected to create and manage its own store
 	if t.CreateDataFunc != nil {
-		t.Log.Info("Creating test data")
+		t.Log.Debug("Creating test data")
 		err := t.CreateDataFunc()
 		if err != nil {
 			t.Log.Warn("Failed creating data >%v<", err)
@@ -193,7 +183,7 @@ func (t *Testing) Setup() (err error) {
 	// commit data when configured, otherwise we are leaving
 	// it up to tests to explicitly commit or rollback
 	if t.CommitData {
-		t.Log.Info("Committing database tx")
+		t.Log.Debug("Committing database tx")
 		err = t.CommitTx()
 		if err != nil {
 			t.Log.Warn("Failed comitting data >%v<", err)
@@ -201,7 +191,7 @@ func (t *Testing) Setup() (err error) {
 		}
 	}
 
-	t.Log.Info("Setup complete")
+	t.Log.Debug("Setup complete")
 
 	return nil
 }
@@ -218,7 +208,7 @@ func (t *Testing) Teardown() (err error) {
 
 	// data function is expected to create and manage its own store
 	if t.RemoveDataFunc != nil {
-		t.Log.Info("Removing test data")
+		t.Log.Debug("Removing test data")
 		err := t.RemoveDataFunc()
 		if err != nil {
 			t.Log.Warn("Failed removing data >%v<", err)
@@ -229,7 +219,7 @@ func (t *Testing) Teardown() (err error) {
 	// commit data when configured, otherwise we are leaving
 	// it up to tests to explicitly commit or rollback
 	if t.CommitData {
-		t.Log.Info("Committing database tx")
+		t.Log.Debug("Committing database tx")
 		err = t.CommitTx()
 		if err != nil {
 			t.Log.Warn("Failed comitting data >%v<", err)
@@ -237,7 +227,7 @@ func (t *Testing) Teardown() (err error) {
 		}
 	}
 
-	t.Log.Info("Teardown complete")
+	t.Log.Debug("Teardown complete")
 
 	return nil
 }

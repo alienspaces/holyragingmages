@@ -13,7 +13,7 @@ func (rnr *Runner) Tx(h Handle) (Handle, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, _ modeller.Modeller) {
 
-		rnr.Log.Warn("** Tx ** beginning database transaction")
+		rnr.Log.Info("** Tx ** beginning database transaction")
 
 		tx, err := rnr.Store.GetTx()
 		if err != nil {
@@ -53,7 +53,7 @@ func (rnr *Runner) Tx(h Handle) (Handle, error) {
 		// delegate request
 		h(w, r, p, m)
 
-		rnr.Log.Warn("** Tx ** committing database transaction")
+		rnr.Log.Info("** Tx ** committing database transaction")
 
 		// TODO: Handle should return a possible error so we can
 		// determine whether we need to commit or rollback

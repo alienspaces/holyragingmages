@@ -152,7 +152,21 @@ func TestTemplateHandler(t *testing.T) {
 			},
 			responseCode: http.StatusOK,
 		},
-		// TODO: add PUT and DELETE tests
+		{
+			name: "PUT - Create basic resource",
+			config: func(rnr *Runner) service.HandlerConfig {
+				return rnr.HandlerConfig[3]
+			},
+			requestData: func(data *harness.Data) *Request {
+				req := Request{
+					Data: Data{
+						ID: data.TemplateRecs[0].ID,
+					},
+				}
+				return &req
+			},
+			responseCode: http.StatusOK,
+		},
 	}
 
 	for _, tc := range tests {

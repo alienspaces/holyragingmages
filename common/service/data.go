@@ -23,9 +23,6 @@ func (rnr *Runner) Data(h Handle) (Handle, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-		// ALIEN:
-		rnr.Log.Warn("** Data ** request URI >%s< method >%s< params >%#v<", r.RequestURI, r.Method, p)
-
 		// read body into a string
 		buf := new(bytes.Buffer)
 		if r.Body != nil {

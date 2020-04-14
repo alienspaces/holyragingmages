@@ -14,9 +14,6 @@ func (rnr *Runner) Correlation(h Handle) (Handle, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-		// ALIEN:
-		rnr.Log.Info("** Correlation ** params >%#v<", p)
-
 		correlationID := r.Header.Get("X-Correlation-ID")
 		if correlationID == "" {
 			correlationID = uuid.New().String()

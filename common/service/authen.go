@@ -16,9 +16,6 @@ func (rnr *Runner) Authen(h Handle) (Handle, error) {
 
 		rnr.Log.Info("** Authen ** TODO: Authen unimplemented")
 
-		// ALIEN:
-		rnr.Log.Info("** Authen ** params >%#v<", p)
-
 		h(w, r, p, m)
 	}
 

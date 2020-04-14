@@ -43,8 +43,6 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 			return
 		}
 
-		// NOTE: may want to skip methods that don't support body data at all
-
 		// data from context
 		data := r.Context().Value(ContextKeyData)
 
