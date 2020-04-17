@@ -7,9 +7,9 @@ test-all:
   stage: test
   image: golang:1.13.5-alpine3.11
   variables:
-    POSTGRES_DB: holyragingmages-shared
-    POSTGRES_USER: holyragingmages-user
-    POSTGRES_PASSWORD: holyragingmages-pass
+    POSTGRES_DB: hrm
+    POSTGRES_USER: hrm-user
+    POSTGRES_PASSWORD: hrm-pass
   services:
     - postgres:10.4-alpine
   before_script:
