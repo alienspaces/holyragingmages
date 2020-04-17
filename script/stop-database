@@ -20,14 +20,14 @@ if [ $APP_DB_SERVICE = "docker" ]; then
 
     echo "=> Stopping database docker service"
 
-    docker ps -a | grep holyragingmages | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
+    docker ps -a | grep hrm | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
 
 elif [ $APP_DB_SERVICE = "local" ]; then
 
     echo "=> Stopping database local service"
 
-    sudo -u postgres dropdb holyragingmages
-    sudo -u postgres dropuser holyragingmages
+    sudo -u postgres dropdb hrm
+    sudo -u postgres dropuser hrm
     sudo service postgresql stop
 fi
 

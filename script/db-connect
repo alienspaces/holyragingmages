@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Opens a psql session to the database specified in current APP environment
-# \l                          - list schemas
-# \c holyragingmages-template - connect to schema
+# \l              - list schemas
+# \c hrm-template - connect to schema
 
 status=0
 source ${BASH_SOURCE%/*}/environment || status=$?

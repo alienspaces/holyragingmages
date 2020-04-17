@@ -6,14 +6,19 @@ cp .env.ci .env
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
+if ! [[ -n ${APP_DB_SERVICE} ]]; then
+    echo "=> (test-ci) Missing APP_DB_SERVICE"
+    exit 1
+fi
+
 # start database
-source ${BASH_SOURCE%/*}/start-database "ci" || exit $?
+source ${BASH_SOURCE%/*}/start-database || exit $?
 
 # migrate database
 source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 
 # test common
-source ${BASH_SOURCE%/*}/test-common "ci" || exit $?
+source ${BASH_SOURCE%/*}/test-common || exit $?
 
 # test service
-source ${BASH_SOURCE%/*}/test-service "ci" || exit $?
+source ${BASH_SOURCE%/*}/test-service || exit $?

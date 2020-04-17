@@ -3,15 +3,9 @@
 # copy development env
 cp .env.development .env
 
-# "docker" or "local"
-export APP_DB_SERVICE=docker
-if [ -n "$1" ]; then
-    export APP_DB_SERVICE=$1
-fi
-
 # stop
-source ${BASH_SOURCE%/*}/stop-services $1 || exit $?
+source ${BASH_SOURCE%/*}/stop-services || exit $?
 
 # stop database
-source ${BASH_SOURCE%/*}/stop-database $1 || exit $?
+source ${BASH_SOURCE%/*}/stop-database || exit $?
 

@@ -7,17 +7,28 @@ if [ $(command -v gvm) ]; then
     gvm use $GO_VERSION
 fi
 
+# copy development env
+cp .env.development .env
+
+# environment
+source ${BASH_SOURCE%/*}/environment || exit $?
+
+if ! [[ -n ${APP_DB_SERVICE} ]]; then
+    echo "=> (test-ci) Missing APP_DB_SERVICE"
+    exit 1
+fi
+
 # start database
-source ${BASH_SOURCE%/*}/start-database "docker" || exit $?
+source ${BASH_SOURCE%/*}/start-database || exit $?
 
 # migrate database
 source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 
 # test common
-source ${BASH_SOURCE%/*}/test-common "docker" || exit $?
+source ${BASH_SOURCE%/*}/test-common || exit $?
 
 # test service
-source ${BASH_SOURCE%/*}/test-service "docker" || exit $?
+source ${BASH_SOURCE%/*}/test-service || exit $?
 
 # stop services
-source ${BASH_SOURCE%/*}/stop-database "docker" || exit $?
+source ${BASH_SOURCE%/*}/stop-database || exit $?

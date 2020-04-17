@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# "docker" or "local"
-export APP_DB_SERVICE=docker
-if [ -n "$1" ]; then
-    export APP_DB_SERVICE=$1
-    shift
-fi
-
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
@@ -23,7 +16,7 @@ if [ $APP_DB_SERVICE = "docker" ]; then
 
     echo "=> Start database - docker service"
 
-    docker run --hostname postgres --name holyragingmages-shared \
+    docker run --hostname postgres --name hrm-shared \
     -e POSTGRES_USER=$APP_DB_USER \
     -e POSTGRES_PASSWORD=$APP_DB_PASSWORD \
     -e POSTGRES_DB=$APP_DB_NAME \
@@ -61,6 +54,9 @@ cd ./service
 SERVICE_NAMES=(*)
 cd -
 
+# main database
+APP_MAIN_DB_NAME=$APP_DB_NAME
+
 for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     # service specific .env
@@ -68,30 +64,38 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         if [ -f "./service/$SERVICE_NAME/.env.development" ]; then
             cp "./service/$SERVICE_NAME/.env.development" "./service/$SERVICE_NAME/.env"
         fi
+    fi
 
-        if [ -f "./service/$SERVICE_NAME/.env" ]; then
-
-            # reset APP_DB_NAME as each service should define
-            # a unique database name in their local env
-            export APP_DB_NAME=""
-
-            # load service specific environment
-            source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
-
-            echo "=> Start database - creating database name $APP_DB_NAME owner $APP_DB_USER"
-
-            export PGPASSWORD=$APP_DB_PASSWORD
-            retry_cmd psql --host=$APP_DB_HOST \
-                --port=$APP_DB_PORT \
-                --username=$APP_DB_USER \
-                --command="CREATE DATABASE \"${APP_DB_NAME}\" OWNER \"${APP_DB_USER}\";"
-
-            # pgcrypto for uuids
-            retry_cmd psql --host=$APP_DB_HOST \
-                --port=$APP_DB_PORT \
-                --username=$APP_DB_USER \
-                --command="CREATE EXTENSION pgcrypto;" \
-                $APP_DB_NAME
+    # service specific .env
+    if [ $APP_DB_SERVICE = "ci" ]; then
+        if [ -f "./service/$SERVICE_NAME/.env.ci" ]; then
+            cp "./service/$SERVICE_NAME/.env.ci" "./service/$SERVICE_NAME/.env"
         fi
+    fi
+
+    if [ -f "./service/$SERVICE_NAME/.env" ]; then
+
+        # reset APP_DB_NAME as each service should define
+        # a unique database name in their local env
+        export APP_DB_NAME=""
+
+        # load service specific environment
+        source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
+
+        echo "=> Start database - creating database name $APP_DB_NAME owner $APP_DB_USER"
+
+        export PGPASSWORD=$APP_DB_PASSWORD
+        retry_cmd psql --host=$APP_DB_HOST \
+            --port=$APP_DB_PORT \
+            --username=$APP_DB_USER \
+            --command="CREATE DATABASE \"${APP_DB_NAME}\" OWNER \"${APP_DB_USER}\";" \
+            $APP_MAIN_DB_NAME
+
+        # pgcrypto for uuids
+        retry_cmd psql --host=$APP_DB_HOST \
+            --port=$APP_DB_PORT \
+            --username=$APP_DB_USER \
+            --command="CREATE EXTENSION pgcrypto;" \
+            $APP_DB_NAME
     fi
 done
