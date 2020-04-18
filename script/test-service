@@ -4,13 +4,6 @@ echo
 echo "=> Test service"
 echo
 
-# "docker" or "local"
-export APP_DB_SERVICE=docker
-if [ -n "$1" ]; then
-    export APP_DB_SERVICE=$1
-    shift
-fi
-
 # specific service
 TEST_SERVICE=""
 if [ -n "$1" ]; then
