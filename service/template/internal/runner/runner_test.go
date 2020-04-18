@@ -279,8 +279,14 @@ func TestTemplateHandler(t *testing.T) {
 				require.NotEmpty(t, res.Data, "Data is not empty")
 				require.NotEmpty(t, res.Data[0].ID, "ID is not empty")
 
-				// TODO: test for a real date
-				require.NotEmpty(t, res.Data[0].CreatedAt, "CreatedAt is not empty")
+				// record timestamps
+				require.False(t, res.Data[0].CreatedAt.IsZero(), "CreatedAt is not zero")
+				if cfg.Method == http.MethodPost {
+					require.True(t, res.Data[0].UpdatedAt.IsZero(), "UpdatedAt is zero")
+				}
+				if cfg.Method == http.MethodPut {
+					require.False(t, res.Data[0].UpdatedAt.IsZero(), "UpdatedAt is not zero")
+				}
 			}
 		}()
 	}

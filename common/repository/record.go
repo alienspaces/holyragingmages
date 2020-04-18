@@ -9,10 +9,10 @@ import (
 
 // Record -
 type Record struct {
-	ID        string         `db:"id"`
-	CreatedAt string         `db:"created_at"`
-	UpdatedAt sql.NullString `db:"updated_at"`
-	DeletedAt sql.NullString `db:"deleted_at"`
+	ID        string       `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
 }
 
 // NewRecordID -
@@ -23,23 +23,33 @@ func NewRecordID() string {
 }
 
 // NewCreatedAt -
-func NewCreatedAt() string {
+func NewCreatedAt() time.Time {
 	return timestamp()
 }
 
 // NewUpdatedAt -
-func NewUpdatedAt() sql.NullString {
-	return NewNullString(timestamp())
+func NewUpdatedAt() sql.NullTime {
+	return NewNullTime(timestamp())
 }
 
 // NewDeletedAt -
-func NewDeletedAt() sql.NullString {
-	return NewNullString(timestamp())
+func NewDeletedAt() sql.NullTime {
+	return NewNullTime(timestamp())
 }
 
-func timestamp() string {
-	// UTC - "2006-01-02T15:04:05Z07:00"
-	return time.Now().UTC().Format(time.RFC3339)
+func timestamp() time.Time {
+	return time.Now().UTC()
+}
+
+// NewNullTime - converts time type to sql.NewNullTime type
+func NewNullTime(t time.Time) sql.NullTime {
+	if t.IsZero() {
+		return sql.NullTime{}
+	}
+	return sql.NullTime{
+		Time:  t,
+		Valid: true,
+	}
 }
 
 // NewNullString - converts string type to sql.NullString type

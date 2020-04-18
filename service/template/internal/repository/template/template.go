@@ -1,6 +1,8 @@
 package template
 
 import (
+	"time"
+
 	"github.com/jmoiron/sqlx"
 
 	"gitlab.com/alienspaces/holyragingmages/common/repository"
@@ -114,7 +116,7 @@ func (r *Repository) CreateOne(rec *record.Template) error {
 
 	err := r.CreateOneRec(rec)
 	if err != nil {
-		rec.CreatedAt = ""
+		rec.CreatedAt = time.Time{}
 		r.Log.Warn("Failed statement execution >%v<", err)
 		return err
 	}

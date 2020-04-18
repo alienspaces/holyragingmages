@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -34,9 +35,9 @@ type Request struct {
 
 // Data -
 type Data struct {
-	ID        string `json:"id"`
-	CreatedAt string `json:"created_at,omitempty"`
-	UpdatedAt string `json:"updated_at,omitempty"`
+	ID        string    `json:"id"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 // Fault -
@@ -224,7 +225,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		data = append(data, Data{
 			ID:        rec.ID,
 			CreatedAt: rec.CreatedAt,
-			UpdatedAt: rec.UpdatedAt.String,
+			UpdatedAt: rec.UpdatedAt.Time,
 		})
 	}
 
@@ -285,7 +286,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 			{
 				ID:        rec.ID,
 				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.String,
+				UpdatedAt: rec.UpdatedAt.Time,
 			},
 		},
 	}
@@ -343,7 +344,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 			{
 				ID:        rec.ID,
 				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.String,
+				UpdatedAt: rec.UpdatedAt.Time,
 			},
 		},
 	}
