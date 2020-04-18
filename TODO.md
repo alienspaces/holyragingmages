@@ -8,6 +8,7 @@
 
 ### Next
 
+* Run all with Docker Compose
 * Common HTTP server testing packaged with service module (if applicable)
 * Config
   * Common constants so modules aren't free wheeling configuration key "strings" all over the place

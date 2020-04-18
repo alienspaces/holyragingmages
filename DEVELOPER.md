@@ -12,6 +12,14 @@
   * [https://www.postgresql.org/download/macosx/](https://www.postgresql.org/download/macosx/)
   * [https://www.postgresql.org/download/linux/ubuntu/](https://www.postgresql.org/download/linux/ubuntu/)
 
+## Services
+
+Create new service
+
+```bash
+./script/generate service [name]
+```
+
 ## Database Migrations
 
 ```bash
@@ -43,4 +51,18 @@ Test all packages
 
 ```bash
 ./script/test
+```
+
+## Running
+
+Start all services
+
+```bash
+./script/start
+```
+
+Stop all services
+
+```bash
+./script/stop
 ```
