@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.com/alienspaces/holyragingmages/service/mage/internal/record"
 )
@@ -22,6 +23,11 @@ func (m *Model) GetMageRec(recID string, forUpdate bool) (*record.Mage, error) {
 	m.Log.Info("Getting mage rec ID >%s<", recID)
 
 	r := m.MageRepository()
+
+	// validate UUID
+	if m.IsUUID(recID) != true {
+		return nil, fmt.Errorf("ID >%s< is not a valid UUID", recID)
+	}
 
 	rec, err := r.GetOne(recID, forUpdate)
 	if err == sql.ErrNoRows {
@@ -71,6 +77,11 @@ func (m *Model) DeleteMageRec(recID string) error {
 
 	r := m.MageRepository()
 
+	// validate UUID
+	if m.IsUUID(recID) != true {
+		return fmt.Errorf("ID >%s< is not a valid UUID", recID)
+	}
+
 	err := m.ValidateDeleteMageRec(recID)
 	if err != nil {
 		m.Log.Info("Failed model validation >%v<", err)
@@ -86,6 +97,11 @@ func (m *Model) RemoveMageRec(recID string) error {
 	m.Log.Info("Removing mage rec ID >%s<", recID)
 
 	r := m.MageRepository()
+
+	// validate UUID
+	if m.IsUUID(recID) != true {
+		return fmt.Errorf("ID >%s< is not a valid UUID", recID)
+	}
 
 	err := m.ValidateDeleteMageRec(recID)
 	if err != nil {

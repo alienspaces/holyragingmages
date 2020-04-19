@@ -1,17 +1,20 @@
 package template
 
 var createOneSQL = `
-INSERT INTO template
-   (id, created_at)
-VALUES
-   (:id, :created_at)
+INSERT INTO template (
+	id,
+	created_at
+) VALUES (
+	:id,
+	:created_at
+)
 RETURNING *
 `
 
 var updateOneSQL = `
 UPDATE template SET
    updated_at = :updated_at
-WHERE id 		   = :id
+WHERE id = :id
 AND   deleted_at IS NULL
 RETURNING *
 `

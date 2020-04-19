@@ -35,9 +35,15 @@ type Request struct {
 
 // Data -
 type Data struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	ID           string    `json:"id"`
+	Name         string    `json:"name"`
+	Strength     int       `json:"strength"`
+	Dexterity    int       `json:"dexterity"`
+	Intelligence int       `json:"intelligence"`
+	Experience   int64     `json:"experience"`
+	Coin         int64     `json:"coin"`
+	CreatedAt    time.Time `json:"created_at,omitempty"`
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 }
 
 // Fault -
@@ -170,10 +176,10 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 
 		rec, err := m.(*model.Model).GetMageRec(id, false)
 		if err != nil {
-			rnr.Log.Warn("Get mage rec err >%v<", err)
+			rnr.Log.Warn("Failed getting mage record >%v<", err)
 
-			// system error
-			res := rnr.ErrorSystem(err)
+			// model error
+			res := rnr.ErrorResponse(err)
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -206,9 +212,10 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 
 		recs, err = m.(*model.Model).GetMageRecs(nil, nil, false)
 		if err != nil {
+			rnr.Log.Warn("Failed getting mage records >%v<", err)
 
-			// system error
-			res := rnr.ErrorSystem(err)
+			// model error
+			res := rnr.ErrorResponse(err)
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -223,9 +230,15 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 	data := []Data{}
 	for _, rec := range recs {
 		data = append(data, Data{
-			ID:        rec.ID,
-			CreatedAt: rec.CreatedAt,
-			UpdatedAt: rec.UpdatedAt.Time,
+			ID:           rec.ID,
+			Name:         rec.Name,
+			Strength:     rec.Strength,
+			Dexterity:    rec.Dexterity,
+			Intelligence: rec.Intelligence,
+			Experience:   rec.Experience,
+			Coin:         rec.Coin,
+			CreatedAt:    rec.CreatedAt,
+			UpdatedAt:    rec.UpdatedAt.Time,
 		})
 	}
 
@@ -266,11 +279,14 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 
 	// assign request properties
 	rec.ID = req.Data.ID
+	rec.Name = req.Data.Name
 
 	err = m.(*model.Model).CreateMageRec(&rec)
 	if err != nil {
-		// system error
-		res := rnr.ErrorSystem(err)
+		rnr.Log.Warn("Failed creating mage record >%v<", err)
+
+		// model error
+		res := rnr.ErrorResponse(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -284,9 +300,15 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 	res := Response{
 		Data: []Data{
 			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
+				ID:           rec.ID,
+				Name:         rec.Name,
+				Strength:     rec.Strength,
+				Dexterity:    rec.Dexterity,
+				Intelligence: rec.Intelligence,
+				Experience:   rec.Experience,
+				Coin:         rec.Coin,
+				CreatedAt:    rec.CreatedAt,
+				UpdatedAt:    rec.UpdatedAt.Time,
 			},
 		},
 	}
@@ -301,11 +323,45 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 // PutMagesHandler -
 func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-	rnr.Log.Info("** Post mages handler ** p >%#v< m >#%v<", p, m)
+	rnr.Log.Info("** Put mages handler ** p >%#v< m >#%v<", p, m)
+
+	id := p.ByName("id")
+
+	rnr.Log.Info("Updating resource ID >%s<", id)
+
+	rec, err := m.(*model.Model).GetMageRec(id, false)
+	if err != nil {
+		rnr.Log.Warn("Failed getting mage record >%v<", err)
+
+		// model error
+		res := rnr.ErrorResponse(err)
+
+		err = rnr.WriteResponse(w, res)
+		if err != nil {
+			rnr.Log.Warn("Failed writing response >%v<", err)
+			return
+		}
+		return
+	}
+
+	// resource not found
+	if rec == nil {
+		rnr.Log.Warn("Get mage rec nil")
+
+		// not found error
+		res := rnr.ErrorNotFound(fmt.Errorf("Resource with ID >%s< not found", id))
+
+		err = rnr.WriteResponse(w, res)
+		if err != nil {
+			rnr.Log.Warn("Failed writing response >%v<", err)
+			return
+		}
+		return
+	}
 
 	req := Request{}
 
-	err := rnr.ReadRequest(r, &req)
+	err = rnr.ReadRequest(r, &req)
 	if err != nil {
 		rnr.Log.Warn("Failed reading request >%v<", err)
 
@@ -320,15 +376,15 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		return
 	}
 
-	rec := record.Mage{}
-
 	// assign request properties
-	rec.ID = req.Data.ID
+	rec.Name = req.Data.Name
 
-	err = m.(*model.Model).UpdateMageRec(&rec)
+	err = m.(*model.Model).UpdateMageRec(rec)
 	if err != nil {
-		// system error
-		res := rnr.ErrorSystem(err)
+		rnr.Log.Warn("Failed updating mage record >%v<", err)
+
+		// model error
+		res := rnr.ErrorResponse(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -342,9 +398,15 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 	res := Response{
 		Data: []Data{
 			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
+				ID:           rec.ID,
+				Name:         rec.Name,
+				Strength:     rec.Strength,
+				Dexterity:    rec.Dexterity,
+				Intelligence: rec.Intelligence,
+				Experience:   rec.Experience,
+				Coin:         rec.Coin,
+				CreatedAt:    rec.CreatedAt,
+				UpdatedAt:    rec.UpdatedAt.Time,
 			},
 		},
 	}

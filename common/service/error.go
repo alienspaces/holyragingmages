@@ -12,6 +12,20 @@ const (
 	ErrorDetailNotFound   string = "Requested resource could not be found"
 )
 
+// ErrorResponse -
+func (rnr *Runner) ErrorResponse(err error) Response {
+
+	rnr.Log.Error("Error >%v<", err)
+
+	// NOTE: never expose actual system error details
+	return Response{
+		Error: ResponseError{
+			Code:   ErrorCodeValidation,
+			Detail: err.Error(),
+		},
+	}
+}
+
 // ErrorSystem -
 func (rnr *Runner) ErrorSystem(err error) Response {
 

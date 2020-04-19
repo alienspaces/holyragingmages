@@ -118,6 +118,7 @@ func TestMageHandler(t *testing.T) {
 		requestParams func(data *harness.Data) map[string]string
 		requestData   func(data *harness.Data) *Request
 		responseCode  int
+		responseData  func(data *harness.Data) *Response
 	}
 
 	tests := []TestCase{
@@ -136,6 +137,22 @@ func TestMageHandler(t *testing.T) {
 				return nil
 			},
 			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *Response {
+				res := Response{
+					Data: []Data{
+						{
+							ID:           data.MageRecs[0].ID,
+							Name:         data.MageRecs[0].Name,
+							Strength:     data.MageRecs[0].Strength,
+							Dexterity:    data.MageRecs[0].Dexterity,
+							Intelligence: data.MageRecs[0].Intelligence,
+							Experience:   data.MageRecs[0].Experience,
+							Coin:         data.MageRecs[0].Coin,
+						},
+					},
+				}
+				return &res
+			},
 		},
 		{
 			name: "GET - Get missing resource",
@@ -152,6 +169,9 @@ func TestMageHandler(t *testing.T) {
 				return nil
 			},
 			responseCode: http.StatusNotFound,
+			responseData: func(data *harness.Data) *Response {
+				return nil
+			},
 		},
 		{
 			name: "POST - Create basic resource",
@@ -161,27 +181,72 @@ func TestMageHandler(t *testing.T) {
 			requestData: func(data *harness.Data) *Request {
 				req := Request{
 					Data: Data{
-						ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+						ID:   "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+						Name: "Legislate Law",
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *Response {
+				res := Response{
+					Data: []Data{
+						{
+							ID:           "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+							Name:         "Legislate Law",
+							Strength:     0,
+							Dexterity:    0,
+							Intelligence: 0,
+							Experience:   0,
+							Coin:         0,
+						},
+					},
+				}
+				return &res
+			},
 		},
 		{
-			name: "PUT - Create basic resource",
+			name: "PUT - Update basic resource",
 			config: func(rnr *Runner) service.HandlerConfig {
 				return rnr.HandlerConfig[3]
+			},
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":id": data.MageRecs[0].ID,
+				}
+				return params
 			},
 			requestData: func(data *harness.Data) *Request {
 				req := Request{
 					Data: Data{
-						ID: data.MageRecs[0].ID,
+						ID:           data.MageRecs[0].ID,
+						Name:         "Barricade Block",
+						Strength:     data.MageRecs[0].Strength,
+						Dexterity:    data.MageRecs[0].Dexterity,
+						Intelligence: data.MageRecs[0].Intelligence,
+						Experience:   data.MageRecs[0].Experience,
+						Coin:         data.MageRecs[0].Coin,
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *Response {
+				res := Response{
+					Data: []Data{
+						{
+							ID:           data.MageRecs[0].ID,
+							Name:         "Barricade Block",
+							Strength:     data.MageRecs[0].Strength,
+							Dexterity:    data.MageRecs[0].Dexterity,
+							Intelligence: data.MageRecs[0].Intelligence,
+							Experience:   data.MageRecs[0].Experience,
+							Coin:         data.MageRecs[0].Coin,
+						},
+					},
+				}
+				return &res
+			},
 		},
 		{
 			name: "PUT - Missing data",
@@ -192,6 +257,9 @@ func TestMageHandler(t *testing.T) {
 				return nil
 			},
 			responseCode: http.StatusBadRequest,
+			responseData: func(data *harness.Data) *Response {
+				return nil
+			},
 		},
 	}
 
@@ -246,12 +314,12 @@ func TestMageHandler(t *testing.T) {
 			}
 
 			// request data
-			data := tc.requestData(th.Data)
+			reqData := tc.requestData(th.Data)
 
 			var req *http.Request
 
-			if data != nil {
-				jsonData, err := json.Marshal(data)
+			if reqData != nil {
+				jsonData, err := json.Marshal(reqData)
 				require.NoError(t, err, "Marshal returns without error")
 
 				req, err = http.NewRequest(cfg.Method, requestPath, bytes.NewBuffer(jsonData))
@@ -274,10 +342,24 @@ func TestMageHandler(t *testing.T) {
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
+			// response data
+			resData := tc.responseData(th.Data)
+
 			// test data
 			if tc.responseCode == http.StatusOK {
 				require.NotEmpty(t, res.Data, "Data is not empty")
+
 				require.NotEmpty(t, res.Data[0].ID, "ID is not empty")
+				require.NotEmpty(t, res.Data[0].Name, "Name is not empty")
+
+				// specific response data
+				if resData != nil {
+					require.Equal(t, resData.Data[0].Strength, res.Data[0].Strength, "Strength equals expected")
+					require.Equal(t, resData.Data[0].Dexterity, res.Data[0].Dexterity, "Dexterity equals expected")
+					require.Equal(t, resData.Data[0].Intelligence, res.Data[0].Intelligence, "Intelligence equals expected")
+					require.Equal(t, resData.Data[0].Experience, res.Data[0].Experience, "Experience equals expected")
+					require.Equal(t, resData.Data[0].Coin, res.Data[0].Coin, "Coin equals expected")
+				}
 
 				// record timestamps
 				require.False(t, res.Data[0].CreatedAt.IsZero(), "CreatedAt is not zero")
