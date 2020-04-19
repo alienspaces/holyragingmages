@@ -118,6 +118,7 @@ func TestTemplateHandler(t *testing.T) {
 		requestParams func(data *harness.Data) map[string]string
 		requestData   func(data *harness.Data) *Request
 		responseCode  int
+		responseData  func(data *harness.Data) *Response
 	}
 
 	tests := []TestCase{
@@ -136,6 +137,16 @@ func TestTemplateHandler(t *testing.T) {
 				return nil
 			},
 			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *Response {
+				res := Response{
+					Data: []Data{
+						{
+							ID: data.TemplateRecs[0].ID,
+						},
+					},
+				}
+				return &res
+			},
 		},
 		{
 			name: "GET - Get missing resource",
@@ -167,9 +178,19 @@ func TestTemplateHandler(t *testing.T) {
 				return &req
 			},
 			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *Response {
+				res := Response{
+					Data: []Data{
+						{
+							ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+						},
+					},
+				}
+				return &res
+			},
 		},
 		{
-			name: "PUT - Create basic resource",
+			name: "PUT - Update basic resource",
 			config: func(rnr *Runner) service.HandlerConfig {
 				return rnr.HandlerConfig[3]
 			},
@@ -182,6 +203,16 @@ func TestTemplateHandler(t *testing.T) {
 				return &req
 			},
 			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *Response {
+				res := Response{
+					Data: []Data{
+						{
+							ID: data.TemplateRecs[0].ID,
+						},
+					},
+				}
+				return &res
+			},
 		},
 		{
 			name: "PUT - Missing data",
@@ -274,10 +305,19 @@ func TestTemplateHandler(t *testing.T) {
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
+			// response data
+			var resData *Response
+			if tc.responseData != nil {
+				resData = tc.responseData(th.Data)
+			}
+
 			// test data
 			if tc.responseCode == http.StatusOK {
-				require.NotEmpty(t, res.Data, "Data is not empty")
-				require.NotEmpty(t, res.Data[0].ID, "ID is not empty")
+
+				// response data
+				if resData != nil {
+					require.Equal(t, resData.Data[0].ID, res.Data[0].ID, "ID equals expected")
+				}
 
 				// record timestamps
 				require.False(t, res.Data[0].CreatedAt.IsZero(), "CreatedAt is not zero")

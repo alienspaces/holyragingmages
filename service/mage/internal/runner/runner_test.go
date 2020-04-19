@@ -343,17 +343,19 @@ func TestMageHandler(t *testing.T) {
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			resData := tc.responseData(th.Data)
+			var resData *Response
+			if tc.responseData != nil {
+				resData = tc.responseData(th.Data)
+			}
 
 			// test data
 			if tc.responseCode == http.StatusOK {
 				require.NotEmpty(t, res.Data, "Data is not empty")
 
-				require.NotEmpty(t, res.Data[0].ID, "ID is not empty")
-				require.NotEmpty(t, res.Data[0].Name, "Name is not empty")
-
-				// specific response data
+				// response data
 				if resData != nil {
+					require.Equal(t, resData.Data[0].ID, res.Data[0].ID, "ID equals expected")
+					require.Equal(t, resData.Data[0].Name, res.Data[0].Name, "Name equals expected")
 					require.Equal(t, resData.Data[0].Strength, res.Data[0].Strength, "Strength equals expected")
 					require.Equal(t, resData.Data[0].Dexterity, res.Data[0].Dexterity, "Dexterity equals expected")
 					require.Equal(t, resData.Data[0].Intelligence, res.Data[0].Intelligence, "Intelligence equals expected")
