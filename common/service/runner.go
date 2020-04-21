@@ -3,6 +3,10 @@ package service
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -177,6 +181,29 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 			rnr.Log.Warn("Failed run daemon >%v<", err)
 		}
 	}()
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// wait
+	sig := <-sigChan
+
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+
+	bToMb := func(b uint64) uint64 {
+		return b / 1024 / 1024
+	}
+
+	err = fmt.Errorf("Received SIG >%v< Mem Alloc >%d MiB< TotalAlloc >%d MiB< Sys >%d MiB< NumGC >%d<",
+		sig,
+		bToMb(m.Alloc),
+		bToMb(m.TotalAlloc),
+		bToMb(m.Sys),
+		m.NumGC,
+	)
+
+	rnr.Log.Warn(">%v<", err)
 
 	return err
 }

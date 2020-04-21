@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: hrm-configmap
+  name: hrm-template-configmap
   namespace: default
 data:
   APP_LOG_LEVEL: {APP_LOG_LEVEL}
