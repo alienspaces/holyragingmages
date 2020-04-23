@@ -179,7 +179,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 			rnr.Log.Warn("Failed getting mage record >%v<", err)
 
 			// model error
-			res := rnr.ErrorResponse(err)
+			res := rnr.ModelError(err)
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -194,7 +194,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 			rnr.Log.Warn("Get mage rec nil")
 
 			// not found error
-			res := rnr.ErrorNotFound(fmt.Errorf("Resource with ID >%s< not found", id))
+			res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -215,7 +215,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 			rnr.Log.Warn("Failed getting mage records >%v<", err)
 
 			// model error
-			res := rnr.ErrorResponse(err)
+			res := rnr.ModelError(err)
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -265,7 +265,7 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 		rnr.Log.Warn("Failed reading request >%v<", err)
 
 		// system error
-		res := rnr.ErrorSystem(err)
+		res := rnr.SystemError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -286,7 +286,7 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 		rnr.Log.Warn("Failed creating mage record >%v<", err)
 
 		// model error
-		res := rnr.ErrorResponse(err)
+		res := rnr.ModelError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -334,7 +334,7 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		rnr.Log.Warn("Failed getting mage record >%v<", err)
 
 		// model error
-		res := rnr.ErrorResponse(err)
+		res := rnr.ModelError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -349,7 +349,7 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		rnr.Log.Warn("Get mage rec nil")
 
 		// not found error
-		res := rnr.ErrorNotFound(fmt.Errorf("Resource with ID >%s< not found", id))
+		res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -366,7 +366,7 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		rnr.Log.Warn("Failed reading request >%v<", err)
 
 		// system error
-		res := rnr.ErrorSystem(err)
+		res := rnr.SystemError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -384,7 +384,7 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		rnr.Log.Warn("Failed updating mage record >%v<", err)
 
 		// model error
-		res := rnr.ErrorResponse(err)
+		res := rnr.ModelError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {

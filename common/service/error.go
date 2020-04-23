@@ -12,12 +12,11 @@ const (
 	ErrorDetailNotFound   string = "Requested resource could not be found"
 )
 
-// ErrorResponse -
-func (rnr *Runner) ErrorResponse(err error) Response {
+// ModelError -
+func (rnr *Runner) ModelError(err error) Response {
 
 	rnr.Log.Error("Error >%v<", err)
 
-	// NOTE: never expose actual system error details
 	return Response{
 		Error: ResponseError{
 			Code:   ErrorCodeValidation,
@@ -26,8 +25,8 @@ func (rnr *Runner) ErrorResponse(err error) Response {
 	}
 }
 
-// ErrorSystem -
-func (rnr *Runner) ErrorSystem(err error) Response {
+// SystemError -
+func (rnr *Runner) SystemError(err error) Response {
 
 	rnr.Log.Error("Error >%v<", err)
 
@@ -40,8 +39,8 @@ func (rnr *Runner) ErrorSystem(err error) Response {
 	}
 }
 
-// ErrorValidation -
-func (rnr *Runner) ErrorValidation(err error) Response {
+// ValidationError -
+func (rnr *Runner) ValidationError(err error) Response {
 
 	rnr.Log.Error("Error >%v<", err)
 
@@ -57,8 +56,8 @@ func (rnr *Runner) ErrorValidation(err error) Response {
 	}
 }
 
-// ErrorNotFound -
-func (rnr *Runner) ErrorNotFound(err error) Response {
+// NotFoundError -
+func (rnr *Runner) NotFoundError(err error) Response {
 
 	rnr.Log.Error("Error >%v<", err)
 

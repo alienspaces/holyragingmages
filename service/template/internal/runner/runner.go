@@ -170,10 +170,10 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 		rec, err := m.(*model.Model).GetTemplateRec(id, false)
 		if err != nil {
-			rnr.Log.Warn("Get template rec err >%v<", err)
+			rnr.Log.Warn("Failed getting template record >%v<", err)
 
-			// system error
-			res := rnr.ErrorSystem(err)
+			// model error
+			res := rnr.ModelError(err)
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -188,7 +188,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 			rnr.Log.Warn("Get template rec nil")
 
 			// not found error
-			res := rnr.ErrorNotFound(fmt.Errorf("Resource with ID >%s< not found", id))
+			res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -208,7 +208,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		if err != nil {
 
 			// system error
-			res := rnr.ErrorSystem(err)
+			res := rnr.SystemError(err)
 
 			err = rnr.WriteResponse(w, res)
 			if err != nil {
@@ -252,7 +252,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 		rnr.Log.Warn("Failed reading request >%v<", err)
 
 		// system error
-		res := rnr.ErrorSystem(err)
+		res := rnr.SystemError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -269,8 +269,10 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 
 	err = m.(*model.Model).CreateTemplateRec(&rec)
 	if err != nil {
-		// system error
-		res := rnr.ErrorSystem(err)
+		rnr.Log.Warn("Failed creating template record >%v<", err)
+
+		// model error
+		res := rnr.ModelError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -310,7 +312,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		rnr.Log.Warn("Failed reading request >%v<", err)
 
 		// system error
-		res := rnr.ErrorSystem(err)
+		res := rnr.SystemError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
@@ -327,8 +329,10 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	err = m.(*model.Model).UpdateTemplateRec(&rec)
 	if err != nil {
-		// system error
-		res := rnr.ErrorSystem(err)
+		rnr.Log.Warn("Failed updating template record >%v<", err)
+
+		// model error
+		res := rnr.ModelError(err)
 
 		err = rnr.WriteResponse(w, res)
 		if err != nil {
