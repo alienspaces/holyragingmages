@@ -166,7 +166,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 	// single resource
 	if id != "" {
 
-		rnr.Log.Info("Fetching resource ID >%s<", id)
+		rnr.Log.Info("Getting template record ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetTemplateRec(id, false)
 		if err != nil {
@@ -202,7 +202,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	} else {
 
-		rnr.Log.Info("Fetching all resources")
+		rnr.Log.Info("Gatting all template records")
 
 		recs, err = m.(*model.Model).GetTemplateRecs(nil, nil, false)
 		if err != nil {

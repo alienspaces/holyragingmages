@@ -208,7 +208,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 
 	} else {
 
-		rnr.Log.Info("Fetching all resources")
+		rnr.Log.Info("Getting all template records")
 
 		recs, err = m.(*model.Model).GetMageRecs(nil, nil, false)
 		if err != nil {
