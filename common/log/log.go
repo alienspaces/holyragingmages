@@ -100,6 +100,10 @@ func (l *Log) Level(level Level) {
 
 // Context - set logging
 func (l *Log) Context(key, value string) {
+	if value == "" {
+		delete(l.fields, key)
+		return
+	}
 	l.fields[key] = value
 }
 

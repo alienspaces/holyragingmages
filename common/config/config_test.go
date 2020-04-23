@@ -10,11 +10,13 @@ import (
 func TestNewConfig(t *testing.T) {
 
 	tests := map[string]struct {
+		setup   func() func()
 		dotEnv  bool
 		items   []Item
 		wantErr bool
 	}{
 		"NewConfig with items": {
+			setup:  func() func() { return func() {} },
 			dotEnv: false,
 			items: []Item{
 				Item{
@@ -25,11 +27,19 @@ func TestNewConfig(t *testing.T) {
 			wantErr: false,
 		},
 		"NewConfig without items": {
+			setup:   func() func() { return func() {} },
 			dotEnv:  false,
 			items:   nil,
 			wantErr: false,
 		},
 		"NewConfig without dot env": {
+			setup: func() func() {
+				appHome := os.Getenv("APP_HOME")
+				os.Setenv("APP_HOME", "./")
+				return func() {
+					os.Setenv("APP_HOME", appHome)
+				}
+			},
 			dotEnv:  true,
 			items:   nil,
 			wantErr: true,
@@ -40,13 +50,21 @@ func TestNewConfig(t *testing.T) {
 
 		t.Logf("Running test >%s<", tcName)
 
-		e, err := NewConfig(tc.items, tc.dotEnv)
-		if tc.wantErr {
-			require.Error(t, err, "NewConfig returns with error")
-			continue
-		}
-		require.NoError(t, err, "NewConfig returns without error")
-		require.NotNil(t, e, "NewConfig returns environment object")
+		func() {
+
+			teardown := tc.setup()
+			defer func() {
+				teardown()
+			}()
+
+			e, err := NewConfig(tc.items, tc.dotEnv)
+			if tc.wantErr {
+				require.Error(t, err, "NewConfig returns with error")
+				return
+			}
+			require.NoError(t, err, "NewConfig returns without error")
+			require.NotNil(t, e, "NewConfig returns environment object")
+		}()
 	}
 }
 

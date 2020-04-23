@@ -217,7 +217,7 @@ func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
 
 	switch r := s.(type) {
 	case *Response:
-		rnr.Log.Warn("Payload type is a service response >%#v<", r)
+		rnr.Log.Info("Payload type is a base service response >%#v<", r)
 		if r.Error.Code != "" {
 			switch r.Error.Code {
 			case ErrorCodeNotFound:
@@ -229,7 +229,7 @@ func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
 			}
 		}
 	case Response:
-		rnr.Log.Warn("Payload type is a service response >%#v<", r)
+		rnr.Log.Info("Payload type is a base service response >%#v<", r)
 		if r.Error.Code != "" {
 			switch r.Error.Code {
 			case ErrorCodeNotFound:
@@ -241,7 +241,7 @@ func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
 			}
 		}
 	default:
-		rnr.Log.Warn("Payload type is not a service response >%#v<", r)
+		rnr.Log.Info("Payload type is not a base service response >%#v<", r)
 		//
 	}
 
