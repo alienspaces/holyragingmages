@@ -39,6 +39,8 @@ type Runner struct {
 	HandlerConfig []HandlerConfig
 
 	// composable functions
+	RunServerFunc  func(args map[string]interface{}) error
+	RunDaemonFunc  func(args map[string]interface{}) error
 	RouterFunc     func(router *httprouter.Router) error
 	MiddlewareFunc func(h Handle) (Handle, error)
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
@@ -131,6 +133,16 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 
 	rnr.Log.Info("** Initialise **")
 
+	// run server
+	if rnr.RunServerFunc == nil {
+		rnr.RunServerFunc = rnr.RunServer
+	}
+
+	// run daemon
+	if rnr.RunDaemonFunc == nil {
+		rnr.RunDaemonFunc = rnr.RunDaemon
+	}
+
 	// model
 	if rnr.ModellerFunc == nil {
 		rnr.ModellerFunc = rnr.Modeller
@@ -164,25 +176,29 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 
 	rnr.Log.Debug("** Run **")
 
+	// signal channel
+	sigChan := make(chan os.Signal, 1)
+
 	// run HTTP server
 	go func() {
 		rnr.Log.Debug("** Running HTTP server process **")
-		err = rnr.RunServer(args)
+		err = rnr.RunServerFunc(args)
 		if err != nil {
 			rnr.Log.Warn("Failed run server >%v<", err)
+			sigChan <- syscall.SIGTERM
 		}
 	}()
 
 	// run daemon server
 	go func() {
 		rnr.Log.Debug("** Running daemon process **")
-		err = rnr.RunDaemon(args)
+		err = rnr.RunDaemonFunc(args)
 		if err != nil {
 			rnr.Log.Warn("Failed run daemon >%v<", err)
+			sigChan <- syscall.SIGTERM
 		}
 	}()
 
-	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
 	// wait

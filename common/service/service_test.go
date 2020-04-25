@@ -15,27 +15,6 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
 
-// TestRunner - allow Init and Run functions to be defined by tests
-type TestRunner struct {
-	Runner
-	InitFunc func(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error
-	RunFunc  func(args map[string]interface{}) error
-}
-
-func (rnr *TestRunner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
-	if rnr.InitFunc == nil {
-		return rnr.Runner.Init(c, l, s, p)
-	}
-	return rnr.InitFunc(c, l, s, p)
-}
-
-func (rnr *TestRunner) Run(args map[string]interface{}) error {
-	if rnr.RunFunc == nil {
-		return rnr.Runner.Run(args)
-	}
-	return rnr.RunFunc(args)
-}
-
 // NewDefaultDependencies -
 func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Storer, preparer.Preparer, error) {
 
@@ -88,7 +67,7 @@ func TestNewService(t *testing.T) {
 	c, l, s, p, err := NewDefaultDependencies()
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
-	tr := TestRunner{}
+	tr := Runner{}
 
 	ts, err := NewService(c, l, s, p, &tr)
 	require.NoError(t, err, "NewService returns without error")

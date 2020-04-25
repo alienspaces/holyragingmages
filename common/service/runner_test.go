@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -13,6 +14,27 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/storer"
 )
+
+// TestRunner - allow Init and Run functions to be defined by tests
+type TestRunner struct {
+	Runner
+	InitFunc func(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error
+	RunFunc  func(args map[string]interface{}) error
+}
+
+func (rnr *TestRunner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
+	if rnr.InitFunc == nil {
+		return rnr.Runner.Init(c, l, s, p)
+	}
+	return rnr.InitFunc(c, l, s, p)
+}
+
+func (rnr *TestRunner) Run(args map[string]interface{}) error {
+	if rnr.RunFunc == nil {
+		return rnr.Runner.Run(args)
+	}
+	return rnr.RunFunc(args)
+}
 
 func TestRunnerInit(t *testing.T) {
 
@@ -30,6 +52,40 @@ func TestRunnerInit(t *testing.T) {
 	}
 	err = tr.Init(c, l, s, p)
 	require.Error(t, err, "Runner Init returns with error")
+}
+
+func TestRunnerServerError(t *testing.T) {
+
+	c, l, s, p, err := NewDefaultDependencies()
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
+
+	tr := TestRunner{}
+	tr.RunServerFunc = func(args map[string]interface{}) error {
+		return fmt.Errorf("Server run error")
+	}
+
+	err = tr.Init(c, l, s, p)
+	require.NoError(t, err, "Runner Init returns without error")
+
+	err = tr.Run(nil)
+	require.Error(t, err, "Runner Run returns with error")
+}
+
+func TestRunnerDaemonError(t *testing.T) {
+
+	c, l, s, p, err := NewDefaultDependencies()
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
+
+	tr := TestRunner{}
+	tr.RunDaemonFunc = func(args map[string]interface{}) error {
+		return fmt.Errorf("Server run daemon error")
+	}
+
+	err = tr.Init(c, l, s, p)
+	require.NoError(t, err, "Runner Init returns without error")
+
+	err = tr.Run(nil)
+	require.Error(t, err, "Runner Run returns with error")
 }
 
 func TestRunnerRouter(t *testing.T) {
