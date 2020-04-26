@@ -16,7 +16,8 @@ COPY . .
 
 # build API server
 WORKDIR $APP_HOME/service/mage
-RUN go build -o /go/bin/hrm-mage ./cmd/
+RUN go build -o /go/bin/hrm-mage-server ./cmd/server
+RUN go build -o /go/bin/hrm-mage-cli ./cmd/cli
 
 # final image
 FROM golang:1.13.1-alpine3.10
@@ -25,7 +26,8 @@ RUN apk update \
     && apk add curl \
     && apk add bash
 
-COPY --from=builder /go/bin/hrm-mage /go/bin
+COPY --from=builder /go/bin/hrm-mage-server /go/bin
+COPY --from=builder /go/bin/hrm-mage-cli /go/bin
 COPY --from=builder /holyragingmages/service/mage/build/docker/entrypoint.sh .
 
 RUN pwd

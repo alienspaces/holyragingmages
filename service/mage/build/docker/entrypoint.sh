@@ -8,7 +8,7 @@ if [ -z "$COMMAND" ]; then
 
     # run
     echo "=> (entrypoint) Executing run command"
-    hrm-mage
+    hrm-mage-server
 
 else
 

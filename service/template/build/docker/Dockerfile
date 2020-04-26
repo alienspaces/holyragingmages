@@ -16,7 +16,8 @@ COPY . .
 
 # build API server
 WORKDIR $APP_HOME/service/template
-RUN go build -o /go/bin/hrm-template ./cmd/
+RUN go build -o /go/bin/hrm-template-server ./cmd/server
+RUN go build -o /go/bin/hrm-template-cli ./cmd/cli
 
 # final image
 FROM golang:1.13.1-alpine3.10
@@ -25,7 +26,8 @@ RUN apk update \
     && apk add curl \
     && apk add bash
 
-COPY --from=builder /go/bin/hrm-template /go/bin
+COPY --from=builder /go/bin/hrm-template-server /go/bin
+COPY --from=builder /go/bin/hrm-template-cli /go/bin
 COPY --from=builder /holyragingmages/service/template/build/docker/entrypoint.sh .
 
 RUN pwd

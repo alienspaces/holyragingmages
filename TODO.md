@@ -4,7 +4,10 @@
 
 ### Now
 
-* Mage service
+* Support passing modeller to runner init
+  * Service server will replace it with every request
+  * Service daemon could reuse it
+  * CLI application can use it
 
 ### Next
 

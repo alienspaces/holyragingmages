@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"gitlab.com/alienspaces/holyragingmages/common/service"
+	"gitlab.com/alienspaces/holyragingmages/common/server"
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 )
 
@@ -25,7 +25,7 @@ func NewPayload() (*Payload, error) {
 // ReadRequest -
 func (p *Payload) ReadRequest(r *http.Request, s interface{}) error {
 
-	data := r.Context().Value(service.ContextKeyData)
+	data := r.Context().Value(server.ContextKeyData)
 
 	if data != nil {
 		r := strings.NewReader(data.(string))

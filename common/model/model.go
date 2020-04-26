@@ -52,8 +52,7 @@ func (m *Model) Init(p preparer.Preparer, tx *sqlx.Tx) (err error) {
 		m.RepositoriesFunc = m.NewRepositories
 	}
 
-	// assign database tx for possible custom SQL execution
-	// in model functions
+	// assign database tx for possible custom SQL execution in model functions
 	m.Tx = tx
 
 	// repositories
