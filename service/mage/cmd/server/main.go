@@ -63,7 +63,7 @@ func main() {
 
 	svr, err := server.NewServer(c, l, s, p, r)
 	if err != nil {
-		fmt.Printf("Failed new service >%v<", err)
+		fmt.Printf("Failed new server >%v<", err)
 		os.Exit(0)
 	}
 
@@ -71,7 +71,7 @@ func main() {
 
 	err = svr.Run(args)
 	if err != nil {
-		fmt.Printf("Failed service run >%v<", err)
+		fmt.Printf("Failed server run >%v<", err)
 		os.Exit(0)
 	}
 

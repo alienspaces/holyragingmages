@@ -63,7 +63,7 @@ func main() {
 
 	cli, err := cli.NewCLI(c, l, s, p, r)
 	if err != nil {
-		fmt.Printf("Failed new service >%v<", err)
+		fmt.Printf("Failed new cli >%v<", err)
 		os.Exit(0)
 	}
 
@@ -71,7 +71,7 @@ func main() {
 
 	err = cli.Run(args)
 	if err != nil {
-		fmt.Printf("Failed service run >%v<", err)
+		fmt.Printf("Failed cli run >%v<", err)
 		os.Exit(0)
 	}
 

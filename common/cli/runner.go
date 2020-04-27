@@ -23,7 +23,7 @@ type Runner struct {
 	Model   modeller.Modeller
 
 	// cli configuration - https://github.com/urfave/cli/blob/master/docs/v2/manual.md
-	App cli.App
+	App *cli.App
 
 	// composable functions
 	ModellerFunc func() (modeller.Modeller, error)

@@ -1,14 +1,16 @@
 package runner
 
 import (
-	"gitlab.com/alienspaces/holyragingmages/common/cli"
+	"github.com/urfave/cli/v2"
+
+	command "gitlab.com/alienspaces/holyragingmages/common/cli"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 )
 
 // Runner -
 type Runner struct {
-	cli.Runner
+	command.Runner
 }
 
 // NewRunner -
@@ -16,9 +18,28 @@ func NewRunner() *Runner {
 
 	r := Runner{}
 
+	// https://github.com/urfave/cli/blob/master/docs/v2/manual.md
+	r.App = &cli.App{
+		Commands: []*cli.Command{
+			{
+				Name:    "test",
+				Aliases: []string{"t"},
+				Usage:   "Runs the test command",
+				Action:  r.TestCommand,
+			},
+		},
+	}
 	r.ModellerFunc = r.Modeller
 
 	return &r
+}
+
+// TestCommand -
+func (rnr *Runner) TestCommand(c *cli.Context) error {
+
+	rnr.Log.Info("** Load Test Data **")
+
+	return nil
 }
 
 // Modeller -

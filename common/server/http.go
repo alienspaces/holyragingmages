@@ -72,13 +72,14 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 	// default routes
 	r := httprouter.New()
 
-	// default index handler
+	// default index/healthz handler
 	h, err := rnr.DefaultMiddleware("/", rnr.HandlerFunc)
 	if err != nil {
 		rnr.Log.Warn("Failed default middleware >%v<", err)
 		return nil, err
 	}
 	r.GET("/", h)
+	r.GET("/healthz", h)
 
 	// register configured routes
 	for _, hc := range rnr.HandlerConfig {

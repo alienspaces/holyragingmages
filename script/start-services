@@ -15,11 +15,15 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         # a unique server port in their local env
         export APP_PORT=""
 
-        # load service specific environment
-        source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
-
         # build and run service
         cd service/$SERVICE_NAME
+
+        # NOTE: we shift into the service directory before sourcing
+        # the environment so $PWD is correct for APP_HOME
+
+        # load service specific environment
+        source ../../${BASH_SOURCE%/*}/environment || exit $?
+
         rm -f $SERVICE_NAME
         go build -o $SERVICE_NAME ./cmd/
 
