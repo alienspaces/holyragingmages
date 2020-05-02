@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/cors"
+
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 )
@@ -29,7 +31,26 @@ func (rnr *Runner) RunServer(args map[string]interface{}) error {
 		return fmt.Errorf("Missing APP_PORT, cannot start server")
 	}
 
-	return http.ListenAndServe(fmt.Sprintf(":%s", port), router)
+	// cors
+	c := cors.New(cors.Options{
+		Debug:          true,
+		AllowedOrigins: []string{"*"},
+		AllowedHeaders: []string{
+			"X-ProgramID", "X-ProgramName", "Content-Type",
+			"X-Authorization", "X-Authorization-Token",
+			"Origin", "X-Requested-With", "Accept",
+			"Access-Control-Allow-Origin",
+			"X-CSRF-Token",
+		},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
+		AllowCredentials: true,
+	})
+	handler := c.Handler(router)
+
+	// serve
+	rnr.Log.Info("Server running at: http://localhost:%s", port)
+
+	return http.ListenAndServe(fmt.Sprintf(":%s", port), handler)
 }
 
 // Router - default RouterFunc, override this function for custom routes

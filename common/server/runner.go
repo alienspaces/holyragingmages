@@ -61,10 +61,22 @@ type MiddlewareConfig struct {
 
 // HandlerConfig - configuration for routes, handlers and middleware
 type HandlerConfig struct {
-	Method           string
-	Path             string
-	HandlerFunc      func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
+	// Method - The HTTP method
+	Method string
+	// Path - The HTTP request URI including :parameter placeholders
+	Path string
+	// HandlerFunc - Function to handle requests for this method and path
+	HandlerFunc func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
+	// MiddlewareConfig -
 	MiddlewareConfig MiddlewareConfig
+	// DocumentationConfig -
+	DocumentationConfig DocumentationConfig
+}
+
+// DocumentationConfig - Configuration describing how to document a route
+type DocumentationConfig struct {
+	Document    bool
+	Description string
 }
 
 // Request -

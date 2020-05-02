@@ -11,10 +11,13 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     if [ -f "./service/$SERVICE_NAME/.env" ]; then
 
-        PID=$(pgrep $SERVICE_NAME)
+        # stop server
+        SERVER_NAME="hrm-${SERVICE_NAME}-server"
+
+        PID=$(pgrep $SERVER_NAME)
 
         if [ -n "$PID" ]; then
-            echo "Killing process $PID for $SERVICE_NAME"
+            echo "Killing process $PID for $SERVER_NAME"
             kill $PID
             sleep 2
         fi

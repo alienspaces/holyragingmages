@@ -24,11 +24,13 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         # load service specific environment
         source ../../${BASH_SOURCE%/*}/environment || exit $?
 
-        rm -f $SERVICE_NAME
-        go build -o $SERVICE_NAME ./cmd/
+        # build server
+        SERVER_NAME="hrm-${SERVICE_NAME}-server"
+        rm -f $SERVER_NAME
+        go build -o $SERVER_NAME ./cmd/server
 
-        echo "Running service $SERVICE_NAME"
-        ./$SERVICE_NAME&
+        echo "Running server $SERVER_NAME"
+        ./$SERVER_NAME&
         cd -
     fi
 done

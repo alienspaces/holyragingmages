@@ -3,9 +3,9 @@ note/*
 **/*.yml-e
 
 service/template/template
-service/api/api
-service/fight/fight
-service/item/item
+service/template/hrm-template-server
+service/template/hrm-template-cli
+
 service/mage/mage
-service/spell/spell
-service/tactic/tactic
+service/mage/hrm-mage-server
+service/mage/hrm-mage-cli
