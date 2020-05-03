@@ -13,7 +13,7 @@ RETURNING *
 
 var updateOneSQL = `
 UPDATE template SET
-   updated_at = :updated_at
+    updated_at = :updated_at
 WHERE id = :id
 AND   deleted_at IS NULL
 RETURNING *

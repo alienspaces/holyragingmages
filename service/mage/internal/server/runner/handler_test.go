@@ -29,9 +29,9 @@ func TestMageHandler(t *testing.T) {
 		name          string
 		config        func(rnr *Runner) server.HandlerConfig
 		requestParams func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *Request
+		requestData   func(data *harness.Data) *MageRequest
 		responseCode  int
-		responseData  func(data *harness.Data) *Response
+		responseData  func(data *harness.Data) *MageResponse
 	}
 
 	tests := []TestCase{
@@ -42,17 +42,17 @@ func TestMageHandler(t *testing.T) {
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":id": data.MageRecs[0].ID,
+					":mage_id": data.MageRecs[0].ID,
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *Request {
+			requestData: func(data *harness.Data) *MageRequest {
 				return nil
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *Response {
-				res := Response{
-					Data: []Data{
+			responseData: func(data *harness.Data) *MageResponse {
+				res := MageResponse{
+					Data: []MageData{
 						{
 							ID:           data.MageRecs[0].ID,
 							Name:         data.MageRecs[0].Name,
@@ -74,44 +74,59 @@ func TestMageHandler(t *testing.T) {
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
+					":mage_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *Request {
+			requestData: func(data *harness.Data) *MageRequest {
 				return nil
 			},
 			responseCode: http.StatusNotFound,
-			responseData: func(data *harness.Data) *Response {
+			responseData: func(data *harness.Data) *MageResponse {
 				return nil
 			},
 		},
 		{
-			name: "POST - Create basic resource",
+			name: "POST - Create without ID",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
-			requestData: func(data *harness.Data) *Request {
-				req := Request{
-					Data: Data{
-						ID:   "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
-						Name: "Legislate Law",
+			requestData: func(data *harness.Data) *MageRequest {
+				req := MageRequest{
+					Data: MageData{
+						Name: "Veronica The Incredible",
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *Response {
-				res := Response{
-					Data: []Data{
+		},
+		{
+			name: "POST - Create with ID",
+			config: func(rnr *Runner) server.HandlerConfig {
+				return rnr.HandlerConfig[3]
+			},
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":mage_id": "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+				}
+				return params
+			},
+			requestData: func(data *harness.Data) *MageRequest {
+				req := MageRequest{
+					Data: MageData{
+						Name: "Audrey The Amazing",
+					},
+				}
+				return &req
+			},
+			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *MageResponse {
+				res := MageResponse{
+					Data: []MageData{
 						{
-							ID:           "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
-							Name:         "Legislate Law",
-							Strength:     0,
-							Dexterity:    0,
-							Intelligence: 0,
-							Experience:   0,
-							Coin:         0,
+							ID:   "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+							Name: "Audrey The Amazing",
 						},
 					},
 				}
@@ -121,17 +136,17 @@ func TestMageHandler(t *testing.T) {
 		{
 			name: "PUT - Update basic resource",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[3]
+				return rnr.HandlerConfig[4]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":id": data.MageRecs[0].ID,
+					":mage_id": data.MageRecs[0].ID,
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *Request {
-				req := Request{
-					Data: Data{
+			requestData: func(data *harness.Data) *MageRequest {
+				req := MageRequest{
+					Data: MageData{
 						ID:           data.MageRecs[0].ID,
 						Name:         "Barricade Block",
 						Strength:     data.MageRecs[0].Strength,
@@ -144,9 +159,9 @@ func TestMageHandler(t *testing.T) {
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *Response {
-				res := Response{
-					Data: []Data{
+			responseData: func(data *harness.Data) *MageResponse {
+				res := MageResponse{
+					Data: []MageData{
 						{
 							ID:           data.MageRecs[0].ID,
 							Name:         "Barricade Block",
@@ -164,13 +179,13 @@ func TestMageHandler(t *testing.T) {
 		{
 			name: "PUT - Missing data",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[3]
+				return rnr.HandlerConfig[4]
 			},
-			requestData: func(data *harness.Data) *Request {
+			requestData: func(data *harness.Data) *MageRequest {
 				return nil
 			},
 			responseCode: http.StatusBadRequest,
-			responseData: func(data *harness.Data) *Response {
+			responseData: func(data *harness.Data) *MageResponse {
 				return nil
 			},
 		},
@@ -251,12 +266,12 @@ func TestMageHandler(t *testing.T) {
 			// test status
 			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
 
-			res := Response{}
+			res := MageResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			var resData *Response
+			var resData *MageResponse
 			if tc.responseData != nil {
 				resData = tc.responseData(th.Data)
 			}

@@ -5,9 +5,7 @@
     "description": "Payload data for mages",
     "type": "object",
     "additionalProperties": false,
-    "required": [
-        "id"
-    ],
+    "required": [],
     "properties": {
         "id": {
             "description": "Resource ID",

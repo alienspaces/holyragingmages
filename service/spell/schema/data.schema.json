@@ -5,9 +5,7 @@
     "description": "Payload data for spells",
     "type": "object",
     "additionalProperties": false,
-    "required": [
-        "id"
-    ],
+    "required": [],
     "properties": {
         "id": {
             "description": "Resource ID",

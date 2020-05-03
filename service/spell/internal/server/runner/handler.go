@@ -1,15 +1,37 @@
 package runner
 
 import (
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/common/server"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/service/spell/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/spell/internal/record"
 )
+
+// SpellResponse -
+type SpellResponse struct {
+	server.Response
+	Data []SpellData `json:"data"`
+}
+
+// SpellRequest -
+type SpellRequest struct {
+	server.Request
+	Data SpellData `json:"data"`
+}
+
+// SpellData -
+type SpellData struct {
+	ID          string    `json:"id,omitempty"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at,omitempty"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty"`
+}
 
 // GetSpellsHandler -
 func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
@@ -19,40 +41,22 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 	var recs []*record.Spell
 	var err error
 
-	id := p.ByName("id")
+	id := p.ByName("spell_id")
 
 	// single resource
 	if id != "" {
 
-		rnr.Log.Info("Getting spell record ID >%s<", id)
+		rnr.Log.Info("Getting spell ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetSpellRec(id, false)
 		if err != nil {
-			rnr.Log.Warn("Failed getting spell record >%v<", err)
-
-			// model error
-			res := rnr.ModelError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteModelError(w, err)
 			return
 		}
 
 		// resource not found
 		if rec == nil {
-			rnr.Log.Warn("Get spell rec nil")
-
-			// not found error
-			res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteNotFoundError(w, id)
 			return
 		}
 
@@ -60,34 +64,30 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 
 	} else {
 
-		rnr.Log.Info("Gatting all spell records")
+		rnr.Log.Info("Getting all spell records")
 
 		recs, err = m.(*model.Model).GetSpellRecs(nil, nil, false)
 		if err != nil {
-
-			// system error
-			res := rnr.SystemError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteModelError(w, err)
 			return
 		}
 	}
 
 	// assign response properties
-	data := []Data{}
+	data := []SpellData{}
 	for _, rec := range recs {
-		data = append(data, Data{
-			ID:        rec.ID,
-			CreatedAt: rec.CreatedAt,
-			UpdatedAt: rec.UpdatedAt.Time,
-		})
+
+		// response data
+		responseData, err := rnr.RecordToSpellResponseData(rec)
+		if err != nil {
+			rnr.WriteSystemError(w, err)
+			return
+		}
+
+		data = append(data, responseData)
 	}
 
-	res := Response{
+	res := SpellResponse{
 		Data: data,
 	}
 
@@ -103,51 +103,46 @@ func (rnr *Runner) PostSpellsHandler(w http.ResponseWriter, r *http.Request, p h
 
 	rnr.Log.Info("** Post spells handler ** p >%#v< m >#%v<", p, m)
 
-	req := Request{}
+	// parameters
+	id := p.ByName("spell_id")
+
+	req := SpellRequest{}
 
 	err := rnr.ReadRequest(r, &req)
 	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	rec := record.Spell{}
 
 	// assign request properties
-	rec.ID = req.Data.ID
+	rec.ID = id
+
+	// record data
+	err = rnr.SpellRequestDataToRecord(req.Data, &rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
+		return
+	}
 
 	err = m.(*model.Model).CreateSpellRec(&rec)
 	if err != nil {
-		rnr.Log.Warn("Failed creating spell record >%v<", err)
+		rnr.WriteModelError(w, err)
+		return
+	}
 
-		// model error
-		res := rnr.ModelError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+	// response data
+	responseData, err := rnr.RecordToSpellResponseData(&rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	// assign response properties
-	res := Response{
-		Data: []Data{
-			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
-			},
+	res := SpellResponse{
+		Data: []SpellData{
+			responseData,
 		},
 	}
 
@@ -161,53 +156,57 @@ func (rnr *Runner) PostSpellsHandler(w http.ResponseWriter, r *http.Request, p h
 // PutSpellsHandler -
 func (rnr *Runner) PutSpellsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-	rnr.Log.Info("** Post spells handler ** p >%#v< m >#%v<", p, m)
+	rnr.Log.Info("** Put spells handler ** p >%#v< m >#%v<", p, m)
 
-	req := Request{}
+	// parameters
+	id := p.ByName("spell_id")
 
-	err := rnr.ReadRequest(r, &req)
+	rnr.Log.Info("Updating resource ID >%s<", id)
+
+	rec, err := m.(*model.Model).GetSpellRec(id, false)
 	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteModelError(w, err)
 		return
 	}
 
-	rec := record.Spell{}
+	// resource not found
+	if rec == nil {
+		rnr.WriteNotFoundError(w, id)
+		return
+	}
 
-	// assign request properties
-	rec.ID = req.Data.ID
+	req := SpellRequest{}
 
-	err = m.(*model.Model).UpdateSpellRec(&rec)
+	err = rnr.ReadRequest(r, &req)
 	if err != nil {
-		rnr.Log.Warn("Failed updating spell record >%v<", err)
+		rnr.WriteSystemError(w, err)
+		return
+	}
 
-		// model error
-		res := rnr.ModelError(err)
+	// record data
+	err = rnr.SpellRequestDataToRecord(req.Data, rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
+		return
+	}
 
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+	err = m.(*model.Model).UpdateSpellRec(rec)
+	if err != nil {
+		rnr.WriteModelError(w, err)
+		return
+	}
+
+	// response data
+	responseData, err := rnr.RecordToSpellResponseData(rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	// assign response properties
-	res := Response{
-		Data: []Data{
-			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
-			},
+	res := SpellResponse{
+		Data: []SpellData{
+			responseData,
 		},
 	}
 
@@ -216,4 +215,27 @@ func (rnr *Runner) PutSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 		rnr.Log.Warn("Failed writing response >%v<", err)
 		return
 	}
+}
+
+// SpellRequestDataToRecord -
+func (rnr *Runner) SpellRequestDataToRecord(data SpellData, rec *record.Spell) error {
+
+	rec.Name = data.Name
+	rec.Description = data.Description
+
+	return nil
+}
+
+// RecordToSpellResponseData -
+func (rnr *Runner) RecordToSpellResponseData(spellRec *record.Spell) (SpellData, error) {
+
+	data := SpellData{
+		ID:          spellRec.ID,
+		Name:        spellRec.Name,
+		Description: spellRec.Description,
+		CreatedAt:   spellRec.CreatedAt,
+		UpdatedAt:   spellRec.UpdatedAt.Time,
+	}
+
+	return data, nil
 }

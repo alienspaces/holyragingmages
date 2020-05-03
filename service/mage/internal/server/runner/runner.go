@@ -3,7 +3,6 @@ package runner
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -18,31 +17,6 @@ import (
 // Runner -
 type Runner struct {
 	server.Runner
-}
-
-// Response -
-type Response struct {
-	server.Response
-	Data []Data `json:"data"`
-}
-
-// Request -
-type Request struct {
-	server.Request
-	Data Data `json:"data"`
-}
-
-// Data -
-type Data struct {
-	ID           string    `json:"id"`
-	Name         string    `json:"name"`
-	Strength     int       `json:"strength"`
-	Dexterity    int       `json:"dexterity"`
-	Intelligence int       `json:"intelligence"`
-	Experience   int64     `json:"experience"`
-	Coin         int64     `json:"coin"`
-	CreatedAt    time.Time `json:"created_at,omitempty"`
-	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 }
 
 // ensure we comply with the Runnerer interface
@@ -68,7 +42,7 @@ func NewRunner() *Runner {
 		},
 		{
 			Method:           http.MethodGet,
-			Path:             "/api/mages/:id",
+			Path:             "/api/mages/:mage_id",
 			HandlerFunc:      r.GetMagesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
 		},
@@ -85,8 +59,20 @@ func NewRunner() *Runner {
 			},
 		},
 		{
+			Method:      http.MethodPost,
+			Path:        "/api/mages/:mage_id",
+			HandlerFunc: r.PostMagesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				ValidateSchemaLocation: "schema",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
+		},
+		{
 			Method:      http.MethodPut,
-			Path:        "/api/mages/:id",
+			Path:        "/api/mages/:mage_id",
 			HandlerFunc: r.PutMagesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				ValidateSchemaLocation: "schema",

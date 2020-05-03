@@ -154,7 +154,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 // PutTemplatesHandler -
 func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
+	rnr.Log.Info("** Put templates handler ** p >%#v< m >#%v<", p, m)
 
 	// parameters
 	id := p.ByName("template_id")

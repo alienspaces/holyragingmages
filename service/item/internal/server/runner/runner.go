@@ -3,7 +3,6 @@ package runner
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -18,27 +17,6 @@ import (
 // Runner -
 type Runner struct {
 	server.Runner
-}
-
-// Response -
-type Response struct {
-	server.Response
-	Data []Data `json:"data"`
-}
-
-// Request -
-type Request struct {
-	server.Request
-	Data Data `json:"data"`
-}
-
-// Data -
-type Data struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"created_at,omitempty"`
-	UpdatedAt   time.Time `json:"updated_at,omitempty"`
 }
 
 // Fault -
@@ -69,7 +47,7 @@ func NewRunner() *Runner {
 		},
 		{
 			Method:           http.MethodGet,
-			Path:             "/api/items/:id",
+			Path:             "/api/items/:item_id",
 			HandlerFunc:      r.GetItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
 		},
@@ -86,8 +64,20 @@ func NewRunner() *Runner {
 			},
 		},
 		{
+			Method:      http.MethodPost,
+			Path:        "/api/items/:item_id",
+			HandlerFunc: r.PostItemsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				ValidateSchemaLocation: "schema",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
+		},
+		{
 			Method:      http.MethodPut,
-			Path:        "/api/items/:id",
+			Path:        "/api/items/:item_id",
 			HandlerFunc: r.PutItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				ValidateSchemaLocation: "schema",

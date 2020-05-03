@@ -3,7 +3,6 @@ package runner
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -20,23 +19,9 @@ type Runner struct {
 	server.Runner
 }
 
-// Response -
-type Response struct {
-	server.Response
-	Data []Data `json:"data"`
-}
-
-// Request -
-type Request struct {
-	server.Request
-	Data Data `json:"data"`
-}
-
-// Data -
-type Data struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+// Fault -
+type Fault struct {
+	Error error
 }
 
 // ensure we comply with the Runnerer interface
@@ -62,7 +47,7 @@ func NewRunner() *Runner {
 		},
 		{
 			Method:           http.MethodGet,
-			Path:             "/api/spells/:id",
+			Path:             "/api/spells/:spell_id",
 			HandlerFunc:      r.GetSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
 		},
@@ -79,8 +64,20 @@ func NewRunner() *Runner {
 			},
 		},
 		{
+			Method:      http.MethodPost,
+			Path:        "/api/spells/:spell_id",
+			HandlerFunc: r.PostSpellsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				ValidateSchemaLocation: "schema",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
+		},
+		{
 			Method:      http.MethodPut,
-			Path:        "/api/spells/:id",
+			Path:        "/api/spells/:spell_id",
 			HandlerFunc: r.PutSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				ValidateSchemaLocation: "schema",

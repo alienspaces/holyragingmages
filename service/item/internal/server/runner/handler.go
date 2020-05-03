@@ -1,15 +1,37 @@
 package runner
 
 import (
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/common/server"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/service/item/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/item/internal/record"
 )
+
+// ItemResponse -
+type ItemResponse struct {
+	server.Response
+	Data []ItemData `json:"data"`
+}
+
+// ItemRequest -
+type ItemRequest struct {
+	server.Request
+	Data ItemData `json:"data"`
+}
+
+// ItemData -
+type ItemData struct {
+	ID          string    `json:"id,omitempty"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at,omitempty"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty"`
+}
 
 // GetItemsHandler -
 func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
@@ -19,40 +41,22 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 	var recs []*record.Item
 	var err error
 
-	id := p.ByName("id")
+	id := p.ByName("item_id")
 
 	// single resource
 	if id != "" {
 
-		rnr.Log.Info("Getting item record ID >%s<", id)
+		rnr.Log.Info("Getting item ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetItemRec(id, false)
 		if err != nil {
-			rnr.Log.Warn("Failed getting item record >%v<", err)
-
-			// model error
-			res := rnr.ModelError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteModelError(w, err)
 			return
 		}
 
 		// resource not found
 		if rec == nil {
-			rnr.Log.Warn("Get item rec nil")
-
-			// not found error
-			res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteNotFoundError(w, id)
 			return
 		}
 
@@ -60,34 +64,30 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 
 	} else {
 
-		rnr.Log.Info("Gatting all item records")
+		rnr.Log.Info("Getting all item records")
 
 		recs, err = m.(*model.Model).GetItemRecs(nil, nil, false)
 		if err != nil {
-
-			// system error
-			res := rnr.SystemError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteModelError(w, err)
 			return
 		}
 	}
 
 	// assign response properties
-	data := []Data{}
+	data := []ItemData{}
 	for _, rec := range recs {
-		data = append(data, Data{
-			ID:        rec.ID,
-			CreatedAt: rec.CreatedAt,
-			UpdatedAt: rec.UpdatedAt.Time,
-		})
+
+		// response data
+		responseData, err := rnr.RecordToItemResponseData(rec)
+		if err != nil {
+			rnr.WriteSystemError(w, err)
+			return
+		}
+
+		data = append(data, responseData)
 	}
 
-	res := Response{
+	res := ItemResponse{
 		Data: data,
 	}
 
@@ -103,51 +103,46 @@ func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p ht
 
 	rnr.Log.Info("** Post items handler ** p >%#v< m >#%v<", p, m)
 
-	req := Request{}
+	// parameters
+	id := p.ByName("item_id")
+
+	req := ItemRequest{}
 
 	err := rnr.ReadRequest(r, &req)
 	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	rec := record.Item{}
 
 	// assign request properties
-	rec.ID = req.Data.ID
+	rec.ID = id
+
+	// record data
+	err = rnr.ItemRequestDataToRecord(req.Data, &rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
+		return
+	}
 
 	err = m.(*model.Model).CreateItemRec(&rec)
 	if err != nil {
-		rnr.Log.Warn("Failed creating item record >%v<", err)
+		rnr.WriteModelError(w, err)
+		return
+	}
 
-		// model error
-		res := rnr.ModelError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+	// response data
+	responseData, err := rnr.RecordToItemResponseData(&rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	// assign response properties
-	res := Response{
-		Data: []Data{
-			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
-			},
+	res := ItemResponse{
+		Data: []ItemData{
+			responseData,
 		},
 	}
 
@@ -161,53 +156,57 @@ func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p ht
 // PutItemsHandler -
 func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
 
-	rnr.Log.Info("** Post items handler ** p >%#v< m >#%v<", p, m)
+	rnr.Log.Info("** Put items handler ** p >%#v< m >#%v<", p, m)
 
-	req := Request{}
+	// parameters
+	id := p.ByName("item_id")
 
-	err := rnr.ReadRequest(r, &req)
+	rnr.Log.Info("Updating resource ID >%s<", id)
+
+	rec, err := m.(*model.Model).GetItemRec(id, false)
 	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteModelError(w, err)
 		return
 	}
 
-	rec := record.Item{}
+	// resource not found
+	if rec == nil {
+		rnr.WriteNotFoundError(w, id)
+		return
+	}
 
-	// assign request properties
-	rec.ID = req.Data.ID
+	req := ItemRequest{}
 
-	err = m.(*model.Model).UpdateItemRec(&rec)
+	err = rnr.ReadRequest(r, &req)
 	if err != nil {
-		rnr.Log.Warn("Failed updating item record >%v<", err)
+		rnr.WriteSystemError(w, err)
+		return
+	}
 
-		// model error
-		res := rnr.ModelError(err)
+	// record data
+	err = rnr.ItemRequestDataToRecord(req.Data, rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
+		return
+	}
 
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+	err = m.(*model.Model).UpdateItemRec(rec)
+	if err != nil {
+		rnr.WriteModelError(w, err)
+		return
+	}
+
+	// response data
+	responseData, err := rnr.RecordToItemResponseData(rec)
+	if err != nil {
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	// assign response properties
-	res := Response{
-		Data: []Data{
-			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
-			},
+	res := ItemResponse{
+		Data: []ItemData{
+			responseData,
 		},
 	}
 
@@ -216,4 +215,27 @@ func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 		rnr.Log.Warn("Failed writing response >%v<", err)
 		return
 	}
+}
+
+// ItemRequestDataToRecord -
+func (rnr *Runner) ItemRequestDataToRecord(data ItemData, rec *record.Item) error {
+
+	rec.Name = data.Name
+	rec.Description = data.Name
+
+	return nil
+}
+
+// RecordToItemResponseData -
+func (rnr *Runner) RecordToItemResponseData(itemRec *record.Item) (ItemData, error) {
+
+	data := ItemData{
+		ID:          itemRec.ID,
+		Name:        itemRec.Name,
+		Description: itemRec.Description,
+		CreatedAt:   itemRec.CreatedAt,
+		UpdatedAt:   itemRec.UpdatedAt.Time,
+	}
+
+	return data, nil
 }

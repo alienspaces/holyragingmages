@@ -29,30 +29,30 @@ func TestItemHandler(t *testing.T) {
 		name          string
 		config        func(rnr *Runner) server.HandlerConfig
 		requestParams func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *Request
+		requestData   func(data *harness.Data) *ItemRequest
 		responseCode  int
-		responseData  func(data *harness.Data) *Response
+		responseData  func(data *harness.Data) *ItemResponse
 	}
 
 	tests := []TestCase{
 		{
-			name: "GET - Get existing resource",
+			name: "GET - Get existing",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":id": data.ItemRecs[0].ID,
+					":item_id": data.ItemRecs[0].ID,
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *Request {
+			requestData: func(data *harness.Data) *ItemRequest {
 				return nil
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *Response {
-				res := Response{
-					Data: []Data{
+			responseData: func(data *harness.Data) *ItemResponse {
+				res := ItemResponse{
+					Data: []ItemData{
 						{
 							ID: data.ItemRecs[0].ID,
 						},
@@ -62,38 +62,55 @@ func TestItemHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "GET - Get missing resource",
+			name: "GET - Get non-existant",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
+					":item_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *Request {
+			requestData: func(data *harness.Data) *ItemRequest {
 				return nil
 			},
 			responseCode: http.StatusNotFound,
 		},
 		{
-			name: "POST - Create basic resource",
+			name: "POST - Create without ID",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
-			requestData: func(data *harness.Data) *Request {
-				req := Request{
-					Data: Data{
-						ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
-					},
+			requestData: func(data *harness.Data) *ItemRequest {
+				req := ItemRequest{
+					Data: ItemData{},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *Response {
-				res := Response{
-					Data: []Data{
+		},
+		{
+			name: "POST - Create with ID",
+			config: func(rnr *Runner) server.HandlerConfig {
+				return rnr.HandlerConfig[3]
+			},
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":item_id": "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+				}
+				return params
+			},
+			requestData: func(data *harness.Data) *ItemRequest {
+				req := ItemRequest{
+					Data: ItemData{},
+				}
+				return &req
+			},
+			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *ItemResponse {
+				res := ItemResponse{
+					Data: []ItemData{
 						{
 							ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 						},
@@ -103,22 +120,28 @@ func TestItemHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "PUT - Update basic resource",
+			name: "PUT - Update existing",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[3]
+				return rnr.HandlerConfig[4]
 			},
-			requestData: func(data *harness.Data) *Request {
-				req := Request{
-					Data: Data{
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":item_id": data.ItemRecs[0].ID,
+				}
+				return params
+			},
+			requestData: func(data *harness.Data) *ItemRequest {
+				req := ItemRequest{
+					Data: ItemData{
 						ID: data.ItemRecs[0].ID,
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *Response {
-				res := Response{
-					Data: []Data{
+			responseData: func(data *harness.Data) *ItemResponse {
+				res := ItemResponse{
+					Data: []ItemData{
 						{
 							ID: data.ItemRecs[0].ID,
 						},
@@ -128,11 +151,32 @@ func TestItemHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "PUT - Missing data",
+			name: "PUT - Update non-existing",
+			config: func(rnr *Runner) server.HandlerConfig {
+				return rnr.HandlerConfig[4]
+			},
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":item_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
+				}
+				return params
+			},
+			requestData: func(data *harness.Data) *ItemRequest {
+				req := ItemRequest{
+					Data: ItemData{
+						ID: data.ItemRecs[0].ID,
+					},
+				}
+				return &req
+			},
+			responseCode: http.StatusNotFound,
+		},
+		{
+			name: "PUT - Update missing data",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[3]
 			},
-			requestData: func(data *harness.Data) *Request {
+			requestData: func(data *harness.Data) *ItemRequest {
 				return nil
 			},
 			responseCode: http.StatusBadRequest,
@@ -214,12 +258,12 @@ func TestItemHandler(t *testing.T) {
 			// test status
 			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
 
-			res := Response{}
+			res := ItemResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			var resData *Response
+			var resData *ItemResponse
 			if tc.responseData != nil {
 				resData = tc.responseData(th.Data)
 			}
