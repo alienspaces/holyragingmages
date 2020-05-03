@@ -15,6 +15,16 @@
             "format": "uuid",
             "example": "a87feca8-d6f0-4794-98c7-037b30219520"
         },
+        "name": {
+            "description": "Spell name",
+            "type": "string",
+            "example": "Blistering Touch"
+        },
+        "description": {
+            "description": "Spell description",
+            "type": "string",
+            "example": "A basic spell that causes painful burns."
+        },
         "created_at": {
             "description": "Date/time the resource was created",
             "type": "string",

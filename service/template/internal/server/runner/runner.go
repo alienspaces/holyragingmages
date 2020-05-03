@@ -3,7 +3,6 @@ package runner
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -13,31 +12,11 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
-	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
 )
 
 // Runner -
 type Runner struct {
 	server.Runner
-}
-
-// Response -
-type Response struct {
-	server.Response
-	Data []Data `json:"data"`
-}
-
-// Request -
-type Request struct {
-	server.Request
-	Data Data `json:"data"`
-}
-
-// Data -
-type Data struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 // Fault -
@@ -68,7 +47,7 @@ func NewRunner() *Runner {
 		},
 		{
 			Method:           http.MethodGet,
-			Path:             "/api/templates/:id",
+			Path:             "/api/templates/:template_id",
 			HandlerFunc:      r.GetTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
 		},
@@ -85,8 +64,20 @@ func NewRunner() *Runner {
 			},
 		},
 		{
+			Method:      http.MethodPost,
+			Path:        "/api/templates/:template_id",
+			HandlerFunc: r.PostTemplatesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				ValidateSchemaLocation: "schema",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
+		},
+		{
 			Method:      http.MethodPut,
-			Path:        "/api/templates/:id",
+			Path:        "/api/templates/:template_id",
 			HandlerFunc: r.PutTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				ValidateSchemaLocation: "schema",
@@ -151,211 +142,4 @@ func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.
 	rnr.Log.Info("** Template handler **")
 
 	fmt.Fprint(w, "Hello from template!\n")
-}
-
-// GetTemplatesHandler -
-func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
-
-	rnr.Log.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
-
-	var recs []*record.Template
-	var err error
-
-	id := p.ByName("id")
-
-	// single resource
-	if id != "" {
-
-		rnr.Log.Info("Getting template record ID >%s<", id)
-
-		rec, err := m.(*model.Model).GetTemplateRec(id, false)
-		if err != nil {
-			rnr.Log.Warn("Failed getting template record >%v<", err)
-
-			// model error
-			res := rnr.ModelError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
-			return
-		}
-
-		// resource not found
-		if rec == nil {
-			rnr.Log.Warn("Get template rec nil")
-
-			// not found error
-			res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
-			return
-		}
-
-		recs = append(recs, rec)
-
-	} else {
-
-		rnr.Log.Info("Gatting all template records")
-
-		recs, err = m.(*model.Model).GetTemplateRecs(nil, nil, false)
-		if err != nil {
-
-			// system error
-			res := rnr.SystemError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
-			return
-		}
-	}
-
-	// assign response properties
-	data := []Data{}
-	for _, rec := range recs {
-		data = append(data, Data{
-			ID:        rec.ID,
-			CreatedAt: rec.CreatedAt,
-			UpdatedAt: rec.UpdatedAt.Time,
-		})
-	}
-
-	res := Response{
-		Data: data,
-	}
-
-	err = rnr.WriteResponse(w, res)
-	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
-		return
-	}
-}
-
-// PostTemplatesHandler -
-func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
-
-	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
-
-	req := Request{}
-
-	err := rnr.ReadRequest(r, &req)
-	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
-		return
-	}
-
-	rec := record.Template{}
-
-	// assign request properties
-	rec.ID = req.Data.ID
-
-	err = m.(*model.Model).CreateTemplateRec(&rec)
-	if err != nil {
-		rnr.Log.Warn("Failed creating template record >%v<", err)
-
-		// model error
-		res := rnr.ModelError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
-		return
-	}
-
-	// assign response properties
-	res := Response{
-		Data: []Data{
-			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
-			},
-		},
-	}
-
-	err = rnr.WriteResponse(w, res)
-	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
-		return
-	}
-}
-
-// PutTemplatesHandler -
-func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
-
-	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
-
-	req := Request{}
-
-	err := rnr.ReadRequest(r, &req)
-	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
-		return
-	}
-
-	rec := record.Template{}
-
-	// assign request properties
-	rec.ID = req.Data.ID
-
-	err = m.(*model.Model).UpdateTemplateRec(&rec)
-	if err != nil {
-		rnr.Log.Warn("Failed updating template record >%v<", err)
-
-		// model error
-		res := rnr.ModelError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
-		return
-	}
-
-	// assign response properties
-	res := Response{
-		Data: []Data{
-			{
-				ID:        rec.ID,
-				CreatedAt: rec.CreatedAt,
-				UpdatedAt: rec.UpdatedAt.Time,
-			},
-		},
-	}
-
-	err = rnr.WriteResponse(w, res)
-	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
-		return
-	}
 }

@@ -7,4 +7,6 @@ import (
 // Item -
 type Item struct {
 	repository.Record
+	Name        string `db:"name"`
+	Description string `db:"description"`
 }

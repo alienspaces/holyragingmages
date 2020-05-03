@@ -3,9 +3,13 @@ package spell
 var createOneSQL = `
 INSERT INTO spell (
 	id,
+	name,
+	description,
 	created_at
 ) VALUES (
 	:id,
+	:name,
+	:description,
 	:created_at
 )
 RETURNING *
@@ -13,7 +17,9 @@ RETURNING *
 
 var updateOneSQL = `
 UPDATE spell SET
-   updated_at = :updated_at
+	name        = :name,
+	description = :description,
+    updated_at  = :updated_at
 WHERE id = :id
 AND   deleted_at IS NULL
 RETURNING *
