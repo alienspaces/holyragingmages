@@ -4,20 +4,20 @@
 
 ### Now
 
-* Support passing modeller to runner init
-  * Service server will replace it with every request
-  * Service daemon could reuse it
-  * CLI application can use it
+* Add mage spells
 
 ### Next
 
-* Run all with Docker Compose
+* Service to service communications (gRPC)
+* Add mage items
+* Deployment
+  * With Docker Compose
+  * With free GKE
 * Common HTTP server testing packaged with service module (if applicable)
 * Config
   * Common constants so modules aren't free wheeling configuration key "strings" all over the place
   * Database stored configuration
   * Run-time restart trigger
-* Service to service communications (gRPC)
 
 ## License
 

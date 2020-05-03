@@ -34,14 +34,16 @@ function generate_service {
     # create service directory
     mkdir ./service/${SERVICE_LC}
 
+    # remove template binaries in case
+    rm -f ./service/template/hrm-template-server
+    rm -f ./service/template/hrm-template-cli
+
     # copy source
     cp -R ./service/template/* ./service/${SERVICE_LC}
     cp ./service/template/.env* ./service/${SERVICE_LC}/
 
     # rename specific files
     mv ./service/${SERVICE_LC}/internal/repository/template ./service/${SERVICE_LC}/internal/repository/${SERVICE_LC}
-    mv ./service/${SERVICE_LC}/internal/repository/${SERVICE_LC}/template.go ./service/${SERVICE_LC}/internal/repository/${SERVICE_LC}/${SERVICE_LC}.go
-    mv ./service/${SERVICE_LC}/internal/repository/${SERVICE_LC}/test/template_test.go ./service/${SERVICE_LC}/internal/repository/${SERVICE_LC}/test/${SERVICE_LC}_test.go
 
     # replace template names
     find ./service/${SERVICE_LC} -type f -exec perl -pi -e "s/template/${SERVICE_LC}/g" {} \;

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hrm-spell-deployment
+spec:
+  selector:
+    matchLabels:
+      app: hrm-spell
+  replicas: 1
+  strategy:
+    type: Recreate
+  spell:
+    metadata:
+      labels:
+        app: hrm-spell
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - hrm-spell
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: hrm-spell-container
+          image: {APP_IMAGE}
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "0.05"
+            limits:
+              memory: "250Mi"
+              cpu: "0.25"
+          envFrom:
+            - configMapRef:
+                name: hrm-spell-configmap
+          ports:
+            - containerPort: 8080

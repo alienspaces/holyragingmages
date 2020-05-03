@@ -9,3 +9,11 @@ service/template/hrm-template-cli
 service/mage/mage
 service/mage/hrm-mage-server
 service/mage/hrm-mage-cli
+
+service/item/item
+service/item/hrm-item-server
+service/item/hrm-item-cli
+
+service/spell/spell
+service/spell/hrm-spell-server
+service/spell/hrm-spell-cli

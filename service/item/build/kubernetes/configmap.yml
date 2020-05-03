@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hrm-item-configmap
+  namespace: default
+data:
+  APP_LOG_LEVEL: {APP_LOG_LEVEL}
+  APP_DB_HOST: {APP_DB_HOST}
+  APP_DB_PORT: "{APP_DB_PORT}"
+  APP_DB_NAME: {APP_DB_NAME}
+  APP_DB_USER: {APP_DB_USER}
+  APP_DB_PASSWORD: {APP_DB_PASSWORD}
+
