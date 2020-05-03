@@ -1,7 +1,6 @@
 package runner
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -49,31 +48,13 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 		rec, err := m.(*model.Model).GetTemplateRec(id, false)
 		if err != nil {
-			rnr.Log.Warn("Failed getting template record >%v<", err)
-
-			// model error
-			res := rnr.ModelError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteModelError(w, err)
 			return
 		}
 
 		// resource not found
 		if rec == nil {
-			rnr.Log.Warn("Get template rec nil")
-
-			// not found error
-			res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteNotFoundError(w, id)
 			return
 		}
 
@@ -85,16 +66,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 		recs, err = m.(*model.Model).GetTemplateRecs(nil, nil, false)
 		if err != nil {
-			rnr.Log.Warn("Failed getting template records >%v<", err)
-
-			// model error
-			res := rnr.ModelError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteModelError(w, err)
 			return
 		}
 	}
@@ -106,16 +78,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		// response data
 		responseData, err := rnr.RecordToTemplateResponseData(rec)
 		if err != nil {
-			rnr.Log.Warn("Failed transforming record to response >%v<", err)
-
-			// system error
-			res := rnr.SystemError(err)
-
-			err = rnr.WriteResponse(w, res)
-			if err != nil {
-				rnr.Log.Warn("Failed writing response >%v<", err)
-				return
-			}
+			rnr.WriteSystemError(w, err)
 			return
 		}
 
@@ -145,16 +108,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 
 	err := rnr.ReadRequest(r, &req)
 	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
@@ -166,47 +120,20 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 	// record data
 	err = rnr.TemplateRequestDataToRecord(req.Data, &rec)
 	if err != nil {
-		rnr.Log.Warn("Failed transforming request to record >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	err = m.(*model.Model).CreateTemplateRec(&rec)
 	if err != nil {
-		rnr.Log.Warn("Failed creating template record >%v<", err)
-
-		// model error
-		res := rnr.ModelError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteModelError(w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToTemplateResponseData(&rec)
 	if err != nil {
-		rnr.Log.Warn("Failed transforming record to response >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
@@ -236,31 +163,13 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	rec, err := m.(*model.Model).GetTemplateRec(id, false)
 	if err != nil {
-		rnr.Log.Warn("Failed getting buyer application record >%v<", err)
-
-		// model error
-		res := rnr.ModelError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteModelError(w, err)
 		return
 	}
 
 	// resource not found
 	if rec == nil {
-		rnr.Log.Warn("Get Template rec nil")
-
-		// not found error
-		res := rnr.NotFoundError(fmt.Errorf("Resource with ID >%s< not found", id))
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteNotFoundError(w, id)
 		return
 	}
 
@@ -268,63 +177,27 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	err = rnr.ReadRequest(r, &req)
 	if err != nil {
-		rnr.Log.Warn("Failed reading request >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	// record data
 	err = rnr.TemplateRequestDataToRecord(req.Data, rec)
 	if err != nil {
-		rnr.Log.Warn("Failed transforming request to record >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 
 	err = m.(*model.Model).UpdateTemplateRec(rec)
 	if err != nil {
-		rnr.Log.Warn("Failed updating template record >%v<", err)
-
-		// model error
-		res := rnr.ModelError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteModelError(w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToTemplateResponseData(rec)
 	if err != nil {
-		rnr.Log.Warn("Failed transforming record to response >%v<", err)
-
-		// system error
-		res := rnr.SystemError(err)
-
-		err = rnr.WriteResponse(w, res)
-		if err != nil {
-			rnr.Log.Warn("Failed writing response >%v<", err)
-			return
-		}
+		rnr.WriteSystemError(w, err)
 		return
 	}
 

@@ -1,6 +1,9 @@
 package server
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
 
 // ErrorCode -
 const (
@@ -11,6 +14,22 @@ const (
 	ErrorCodeNotFound     string = "not_found"
 	ErrorDetailNotFound   string = "Requested resource could not be found"
 )
+
+// WriteModelError -
+func (rnr *Runner) WriteModelError(w http.ResponseWriter, err error) {
+
+	rnr.Log.Warn("Model error >%v<", err)
+
+	// model error
+	res := rnr.ModelError(err)
+
+	err = rnr.WriteResponse(w, res)
+	if err != nil {
+		rnr.Log.Warn("Failed writing response >%v<", err)
+		return
+	}
+	return
+}
 
 // ModelError -
 func (rnr *Runner) ModelError(err error) Response {
@@ -23,6 +42,22 @@ func (rnr *Runner) ModelError(err error) Response {
 			Detail: err.Error(),
 		},
 	}
+}
+
+// WriteSystemError -
+func (rnr *Runner) WriteSystemError(w http.ResponseWriter, err error) {
+
+	rnr.Log.Warn("System error >%v<", err)
+
+	// system error
+	res := rnr.SystemError(err)
+
+	err = rnr.WriteResponse(w, res)
+	if err != nil {
+		rnr.Log.Warn("Failed writing response >%v<", err)
+		return
+	}
+	return
 }
 
 // SystemError -
@@ -54,6 +89,24 @@ func (rnr *Runner) ValidationError(err error) Response {
 			Detail: err.Error(),
 		},
 	}
+}
+
+// WriteNotFoundError -
+func (rnr *Runner) WriteNotFoundError(w http.ResponseWriter, id string) {
+
+	err := fmt.Errorf("Resource with ID >%s< not found", id)
+
+	rnr.Log.Warn("Not found error >%v<", err)
+
+	// not found error
+	res := rnr.NotFoundError(err)
+
+	err = rnr.WriteResponse(w, res)
+	if err != nil {
+		rnr.Log.Warn("Failed writing response >%v<", err)
+		return
+	}
+	return
 }
 
 // NotFoundError -
