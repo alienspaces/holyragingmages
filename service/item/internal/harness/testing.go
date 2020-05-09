@@ -1,6 +1,8 @@
 package harness
 
 import (
+	"github.com/brianvoe/gofakeit"
+
 	"gitlab.com/alienspaces/holyragingmages/common/harness"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/service/item/internal/model"
@@ -69,7 +71,11 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	rec := record.Item{}
+	// TODO: change this to cycling through config
+
+	rec := record.Item{
+		Name: gofakeit.Name(),
+	}
 
 	err := t.Model.(*model.Model).CreateItemRec(&rec)
 	if err != nil {

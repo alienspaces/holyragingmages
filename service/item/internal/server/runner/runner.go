@@ -42,6 +42,7 @@ func NewRunner() *Runner {
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/items",
+			QueryParams:      []string{"name"},
 			HandlerFunc:      r.GetItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
 		},

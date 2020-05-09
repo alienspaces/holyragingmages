@@ -65,6 +65,8 @@ type HandlerConfig struct {
 	Method string
 	// Path - The HTTP request URI including :parameter placeholders
 	Path string
+	// QueryParams - A whitelist of allowed query parameters
+	QueryParams []string
 	// HandlerFunc - Function to handle requests for this method and path
 	HandlerFunc func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
 	// MiddlewareConfig -

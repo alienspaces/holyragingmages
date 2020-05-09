@@ -3,8 +3,10 @@ package runner
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -29,6 +31,7 @@ func TestMageHandler(t *testing.T) {
 		name          string
 		config        func(rnr *Runner) server.HandlerConfig
 		requestParams func(data *harness.Data) map[string]string
+		queryParams   func(data *harness.Data) map[string]string
 		requestData   func(data *harness.Data) *MageRequest
 		responseCode  int
 		responseData  func(data *harness.Data) *MageResponse
@@ -231,14 +234,34 @@ func TestMageHandler(t *testing.T) {
 			}
 
 			// request params
-			params := map[string]string{}
+			requestParams := map[string]string{}
 			if tc.requestParams != nil {
-				params = tc.requestParams(th.Data)
+				requestParams = tc.requestParams(th.Data)
 			}
 
 			requestPath := cfg.Path
-			for paramKey, paramValue := range params {
+			for paramKey, paramValue := range requestParams {
 				requestPath = strings.Replace(requestPath, paramKey, paramValue, 1)
+			}
+
+			// query params
+			queryParams := map[string]string{}
+			if tc.queryParams != nil {
+				queryParams = tc.queryParams(th.Data)
+			}
+
+			if len(queryParams) > 0 {
+				count := 0
+				for paramKey, paramValue := range queryParams {
+					if count == 0 {
+						requestPath = requestPath + `?`
+					} else {
+						requestPath = requestPath + `&`
+					}
+					t.Logf("Adding parameter key >%s< param >%s<", paramKey, paramValue)
+					requestPath = fmt.Sprintf("%s%s=%s", requestPath, paramKey, url.QueryEscape(paramValue))
+				}
+				t.Logf("Resulting requestPath >%s<", requestPath)
 			}
 
 			// request data

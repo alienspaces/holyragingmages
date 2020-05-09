@@ -66,7 +66,15 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 
 		rnr.Log.Info("Getting all item records")
 
-		recs, err = m.(*model.Model).GetItemRecs(nil, nil, false)
+		// query parameters
+		q := r.URL.Query()
+
+		params := make(map[string]interface{})
+		for paramName, paramValue := range q {
+			params[paramName] = paramValue
+		}
+
+		recs, err = m.(*model.Model).GetItemRecs(params, nil, false)
 		if err != nil {
 			rnr.WriteModelError(w, err)
 			return
