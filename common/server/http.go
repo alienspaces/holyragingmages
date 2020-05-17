@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 )
@@ -70,17 +71,17 @@ func (rnr *Runner) Middleware(h Handle) (Handle, error) {
 }
 
 // Payloader - default PayloaderFunc, override this function for custom payload handling
-func (rnr *Runner) Payloader() (payloader.Payloader, error) {
+func (rnr *Runner) Payloader(l logger.Logger) (payloader.Payloader, error) {
 
-	rnr.Log.Info("** Payloader **")
+	l.Info("** Payloader **")
 
 	return nil, nil
 }
 
 // Handler - default HandlerFunc, override this function for custom handler
-func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Handler **")
+	l.Info("** Handler **")
 
 	fmt.Fprint(w, "Ok!\n")
 }
@@ -105,7 +106,6 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 	// register configured routes
 	for _, hc := range rnr.HandlerConfig {
 
-		// ALIEN:
 		rnr.Log.Info("** Router ** method >%s< path >%s<", hc.Method, hc.Path)
 
 		h, err := rnr.DefaultMiddleware(hc.Path, hc.HandlerFunc)
@@ -201,18 +201,18 @@ func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, 
 	// wrap everything in a httprouter Handler
 	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		// delegate
-		h(w, r, p, nil)
+		h(w, r, p, rnr.Log, nil)
 	}
 
 	return handle, nil
 }
 
 // ReadRequest -
-func (rnr *Runner) ReadRequest(r *http.Request, s interface{}) error {
+func (rnr *Runner) ReadRequest(l logger.Logger, r *http.Request, s interface{}) error {
 
-	p, err := rnr.PayloaderFunc()
+	p, err := rnr.PayloaderFunc(l)
 	if err != nil {
-		rnr.Log.Warn("Failed PayloaderFunc >%v<", err)
+		l.Warn("Failed PayloaderFunc >%v<", err)
 		return err
 	}
 	if p == nil {
@@ -223,11 +223,11 @@ func (rnr *Runner) ReadRequest(r *http.Request, s interface{}) error {
 }
 
 // WriteResponse -
-func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
+func (rnr *Runner) WriteResponse(l logger.Logger, w http.ResponseWriter, s interface{}) error {
 
-	p, err := rnr.PayloaderFunc()
+	p, err := rnr.PayloaderFunc(l)
 	if err != nil {
-		rnr.Log.Warn("Failed PayloaderFunc >%v<", err)
+		l.Warn("Failed PayloaderFunc >%v<", err)
 		return err
 	}
 	if p == nil {
@@ -239,7 +239,7 @@ func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
 
 	switch r := s.(type) {
 	case *Response:
-		rnr.Log.Info("Payload type is a base server response >%#v<", r)
+		l.Info("Payload type is a base server response >%#v<", r)
 		if r.Error.Code != "" {
 			switch r.Error.Code {
 			case ErrorCodeNotFound:
@@ -251,7 +251,7 @@ func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
 			}
 		}
 	case Response:
-		rnr.Log.Info("Payload type is a base server response >%#v<", r)
+		l.Info("Payload type is a base server response >%#v<", r)
 		if r.Error.Code != "" {
 			switch r.Error.Code {
 			case ErrorCodeNotFound:
@@ -263,11 +263,11 @@ func (rnr *Runner) WriteResponse(w http.ResponseWriter, s interface{}) error {
 			}
 		}
 	default:
-		rnr.Log.Info("Payload type is not a base server response >%#v<", r)
+		l.Info("Payload type is not a base server response >%#v<", r)
 		//
 	}
 
-	rnr.Log.Info("Write response status >%d<", status)
+	l.Info("Write response status >%d<", status)
 
 	return p.WriteResponse(w, status, s)
 }

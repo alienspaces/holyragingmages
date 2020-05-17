@@ -43,12 +43,16 @@ type Runner struct {
 	RunDaemonFunc  func(args map[string]interface{}) error
 	RouterFunc     func(router *httprouter.Router) error
 	MiddlewareFunc func(h Handle) (Handle, error)
-	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
-	ModellerFunc   func() (modeller.Modeller, error)
-	PayloaderFunc  func() (payloader.Payloader, error)
+	HandlerFunc    func(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller)
+	PreparerFunc   func(l logger.Logger) (preparer.Preparer, error)
+	ModellerFunc   func(l logger.Logger) (modeller.Modeller, error)
+	PayloaderFunc  func(l logger.Logger) (payloader.Payloader, error)
 }
 
 var _ runnable.Runnable = &Runner{}
+
+// Handle - custom service handle
+type Handle func(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller)
 
 // MiddlewareConfig - configuration for global default middleware
 type MiddlewareConfig struct {
@@ -68,7 +72,7 @@ type HandlerConfig struct {
 	// QueryParams - A whitelist of allowed query parameters
 	QueryParams []string
 	// HandlerFunc - Function to handle requests for this method and path
-	HandlerFunc func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller)
+	HandlerFunc func(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller)
 	// MiddlewareConfig -
 	MiddlewareConfig MiddlewareConfig
 	// DocumentationConfig -
@@ -115,7 +119,7 @@ type ResponsePagination struct {
 var _ runnable.Runnable = &Runner{}
 
 // Init - override to perform custom initialization
-func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
+func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer) error {
 
 	rnr.Log = l
 	if rnr.Log == nil {
@@ -139,13 +143,6 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 		return fmt.Errorf(msg)
 	}
 
-	rnr.Prepare = p
-	if rnr.Prepare == nil {
-		msg := "Preparer undefined, cannot init runner"
-		rnr.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
 	// run server
 	if rnr.RunServerFunc == nil {
 		rnr.RunServerFunc = rnr.RunServer
@@ -154,6 +151,11 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 	// run daemon
 	if rnr.RunDaemonFunc == nil {
 		rnr.RunDaemonFunc = rnr.RunDaemon
+	}
+
+	// prepare
+	if rnr.PreparerFunc == nil {
+		rnr.PreparerFunc = rnr.Preparer
 	}
 
 	// model
@@ -238,10 +240,18 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 	return err
 }
 
-// Modeller - default ModellerFunc, override this function for custom model
-func (rnr *Runner) Modeller() (modeller.Modeller, error) {
+// Preparer - default PreparerFunc, override this function for custom prepare
+func (rnr *Runner) Preparer(l logger.Logger) (preparer.Preparer, error) {
 
-	rnr.Log.Info("** Modeller **")
+	l.Info("** Preparer **")
+
+	return nil, nil
+}
+
+// Modeller - default ModellerFunc, override this function for custom model
+func (rnr *Runner) Modeller(l logger.Logger) (modeller.Modeller, error) {
+
+	l.Info("** Modeller **")
 
 	return nil, nil
 }

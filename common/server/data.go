@@ -7,6 +7,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 )
 
@@ -21,18 +22,18 @@ const (
 // Data -
 func (rnr *Runner) Data(h Handle) (Handle, error) {
 
-	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
 		// read body into a string
 		buf := new(bytes.Buffer)
 		if r.Body != nil {
 			bytes, err := buf.ReadFrom(r.Body)
 			if err != nil {
-				rnr.Log.Warn("Failed reading data buffer >%v<", err)
+				l.Warn("Failed reading data buffer >%v<", err)
 				http.Error(w, "Server Error", http.StatusInternalServerError)
 				return
 			}
-			rnr.Log.Info("Read >%d< bytes", bytes)
+			l.Info("** Data read >%d< bytes ** ", bytes)
 		}
 		data := buf.String()
 
@@ -40,7 +41,7 @@ func (rnr *Runner) Data(h Handle) (Handle, error) {
 		ctx := context.WithValue(r.Context(), ContextKeyData, data)
 
 		// delegate request
-		h(w, r.WithContext(ctx), p, m)
+		h(w, r.WithContext(ctx), p, l, m)
 	}
 
 	return handle, nil

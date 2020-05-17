@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"gitlab.com/alienspaces/holyragingmages/common/server"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/service/mage/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/mage/internal/record"
@@ -38,9 +39,9 @@ type MageData struct {
 }
 
 // GetMagesHandler -
-func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Get mages handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get mages handler ** p >%#v< m >%#v<", p, m)
 
 	var recs []*record.Mage
 	var err error
@@ -50,17 +51,17 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 	// single resource
 	if id != "" {
 
-		rnr.Log.Info("Fetching resource ID >%s<", id)
+		l.Info("Fetching resource ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetMageRec(id, false)
 		if err != nil {
-			rnr.WriteModelError(w, err)
+			rnr.WriteModelError(l, w, err)
 			return
 		}
 
 		// resource not found
 		if rec == nil {
-			rnr.WriteNotFoundError(w, id)
+			rnr.WriteNotFoundError(l, w, id)
 			return
 		}
 
@@ -68,11 +69,11 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 
 	} else {
 
-		rnr.Log.Info("Getting all template records")
+		l.Info("Getting all template records")
 
 		recs, err = m.(*model.Model).GetMageRecs(nil, nil, false)
 		if err != nil {
-			rnr.WriteModelError(w, err)
+			rnr.WriteModelError(l, w, err)
 			return
 		}
 	}
@@ -84,7 +85,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		// response data
 		responseData, err := rnr.RecordToMageResponseData(rec)
 		if err != nil {
-			rnr.WriteSystemError(w, err)
+			rnr.WriteSystemError(l, w, err)
 			return
 		}
 
@@ -95,26 +96,26 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		Data: data,
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }
 
 // PostMagesHandler -
-func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Post mages handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Post mages handler ** p >%#v< m >#%v<", p, m)
 
 	// parameters
 	id := p.ByName("mage_id")
 
 	req := MageRequest{}
 
-	err := rnr.ReadRequest(r, &req)
+	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -126,20 +127,20 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 	// record data
 	err = rnr.MageRequestDataToRecord(req.Data, &rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	err = m.(*model.Model).CreateMageRec(&rec)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToMageResponseData(&rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -150,59 +151,59 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 		},
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }
 
 // PutMagesHandler -
-func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Put mages handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Put mages handler ** p >%#v< m >#%v<", p, m)
 
 	id := p.ByName("mage_id")
 
-	rnr.Log.Info("Updating resource ID >%s<", id)
+	l.Info("Updating resource ID >%s<", id)
 
 	rec, err := m.(*model.Model).GetMageRec(id, false)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// resource not found
 	if rec == nil {
-		rnr.WriteNotFoundError(w, id)
+		rnr.WriteNotFoundError(l, w, id)
 		return
 	}
 
 	req := MageRequest{}
 
-	err = rnr.ReadRequest(r, &req)
+	err = rnr.ReadRequest(l, r, &req)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	// record data
 	err = rnr.MageRequestDataToRecord(req.Data, rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	err = m.(*model.Model).UpdateMageRec(rec)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToMageResponseData(rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -213,9 +214,9 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		},
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }

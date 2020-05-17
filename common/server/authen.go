@@ -5,6 +5,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 )
 
@@ -12,11 +13,11 @@ import (
 func (rnr *Runner) Authen(h Handle) (Handle, error) {
 
 	// TODO: implement authentication via configuration
-	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-		rnr.Log.Info("** Authen ** TODO: Authen unimplemented")
+		l.Info("** Authen ** TODO: Authen unimplemented")
 
-		h(w, r, p, m)
+		h(w, r, p, l, m)
 	}
 
 	return handle, nil

@@ -7,9 +7,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"gitlab.com/alienspaces/holyragingmages/common/payload"
+	"gitlab.com/alienspaces/holyragingmages/common/prepare"
 	"gitlab.com/alienspaces/holyragingmages/common/server"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/service/mage/internal/model"
 )
@@ -30,6 +33,7 @@ func NewRunner() *Runner {
 	r.RouterFunc = r.Router
 	r.MiddlewareFunc = r.Middleware
 	r.HandlerFunc = r.Handler
+	r.PreparerFunc = r.Preparer
 	r.ModellerFunc = r.Modeller
 	r.PayloaderFunc = r.Payloader
 
@@ -103,14 +107,28 @@ func (rnr *Runner) Middleware(h server.Handle) (server.Handle, error) {
 	return h, nil
 }
 
-// Modeller -
-func (rnr *Runner) Modeller() (modeller.Modeller, error) {
+// Preparer -
+func (rnr *Runner) Preparer(l logger.Logger) (preparer.Preparer, error) {
 
-	rnr.Log.Info("** Mage Model **")
+	l.Info("** Mage Preparer **")
 
-	m, err := model.NewModel(rnr.Config, rnr.Log, rnr.Store)
+	p, err := prepare.NewPrepare(l)
 	if err != nil {
-		rnr.Log.Warn("Failed new model >%v<", err)
+		l.Warn("Failed new preparer >%v<", err)
+		return nil, err
+	}
+
+	return p, nil
+}
+
+// Modeller -
+func (rnr *Runner) Modeller(l logger.Logger) (modeller.Modeller, error) {
+
+	l.Info("** Mage Model **")
+
+	m, err := model.NewModel(rnr.Config, l, rnr.Store)
+	if err != nil {
+		l.Warn("Failed new model >%v<", err)
 		return nil, err
 	}
 
@@ -118,13 +136,13 @@ func (rnr *Runner) Modeller() (modeller.Modeller, error) {
 }
 
 // Payloader -
-func (rnr *Runner) Payloader() (payloader.Payloader, error) {
+func (rnr *Runner) Payloader(l logger.Logger) (payloader.Payloader, error) {
 
-	rnr.Log.Info("** Payloader **")
+	l.Info("** Payloader **")
 
 	p, err := payload.NewPayload()
 	if err != nil {
-		rnr.Log.Warn("Failed new payloader >%v<", err)
+		l.Warn("Failed new payloader >%v<", err)
 		return nil, err
 	}
 
@@ -132,9 +150,9 @@ func (rnr *Runner) Payloader() (payloader.Payloader, error) {
 }
 
 // Handler - default handler
-func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) Handler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Mage handler **")
+	l.Info("** Mage handler **")
 
 	fmt.Fprint(w, "Hello from mage!\n")
 }

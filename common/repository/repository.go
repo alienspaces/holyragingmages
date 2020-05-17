@@ -246,7 +246,10 @@ func (r *Repository) GetOneSQL() string {
 
 // GetManySQL -
 func (r *Repository) GetManySQL() string {
-	return fmt.Sprintf("SELECT * FROM %s WHERE deleted_at IS NULL ", r.TableName())
+	sql := `
+SELECT * FROM %s WHERE deleted_at IS NULL
+`
+	return fmt.Sprintf(sql, r.TableName())
 }
 
 // CreateOneSQL -

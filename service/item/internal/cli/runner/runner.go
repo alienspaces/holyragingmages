@@ -4,7 +4,9 @@ import (
 	"github.com/urfave/cli/v2"
 
 	command "gitlab.com/alienspaces/holyragingmages/common/cli"
+	"gitlab.com/alienspaces/holyragingmages/common/prepare"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/common/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/service/item/internal/model"
 )
 
@@ -29,6 +31,8 @@ func NewRunner() *Runner {
 			},
 		},
 	}
+
+	r.PreparerFunc = r.Preparer
 	r.ModellerFunc = r.Modeller
 
 	return &r
@@ -37,15 +41,29 @@ func NewRunner() *Runner {
 // TestCommand -
 func (rnr *Runner) TestCommand(c *cli.Context) error {
 
-	rnr.Log.Info("** Load Test Data **")
+	rnr.Log.Info("** Item Test Command **")
 
 	return nil
+}
+
+// Preparer -
+func (rnr *Runner) Preparer() (preparer.Preparer, error) {
+
+	rnr.Log.Info("** Item Preparer **")
+
+	p, err := prepare.NewPrepare(rnr.Log)
+	if err != nil {
+		rnr.Log.Warn("Failed new preparer >%v<", err)
+		return nil, err
+	}
+
+	return p, nil
 }
 
 // Modeller -
 func (rnr *Runner) Modeller() (modeller.Modeller, error) {
 
-	rnr.Log.Info("** Item Model **")
+	rnr.Log.Info("** Item Modeller **")
 
 	m, err := model.NewModel(rnr.Config, rnr.Log, rnr.Store)
 	if err != nil {

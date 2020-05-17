@@ -26,6 +26,7 @@ type Runner struct {
 	App *cli.App
 
 	// composable functions
+	PreparerFunc func() (preparer.Preparer, error)
 	ModellerFunc func() (modeller.Modeller, error)
 }
 
@@ -33,7 +34,7 @@ type Runner struct {
 var _ runnable.Runnable = &Runner{}
 
 // Init - override to perform custom initialization
-func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer) error {
+func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Storer) error {
 
 	rnr.Log = l
 	if rnr.Log == nil {
@@ -57,18 +58,9 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 		return fmt.Errorf(msg)
 	}
 
-	rnr.Prepare = p
-	if rnr.Prepare == nil {
-		msg := "Preparer undefined, cannot init runner"
-		rnr.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	rnr.Prepare = p
-	if rnr.Prepare == nil {
-		msg := "Preparer undefined, cannot init runner"
-		rnr.Log.Warn(msg)
-		return fmt.Errorf(msg)
+	// preparer
+	if rnr.PreparerFunc == nil {
+		rnr.PreparerFunc = rnr.Preparer
 	}
 
 	// modeller
@@ -91,8 +83,20 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 		return err
 	}
 
+	// preparer
+	p, err := rnr.PreparerFunc()
+	if err != nil {
+		rnr.Log.Warn("Failed preparer func >%v<", err)
+		return err
+	}
+
+	if p == nil {
+		rnr.Log.Warn("Preparer is nil, cannot continue")
+		return err
+	}
+
 	// preparer init
-	err = rnr.Prepare.Init(tx)
+	err = p.Init(tx)
 	if err != nil {
 		rnr.Log.Warn("Failed preparer init >%v<", err)
 		return err
@@ -105,16 +109,18 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 		return err
 	}
 
-	// model init
-	if m != nil {
-		err = m.Init(rnr.Prepare, tx)
-		if err != nil {
-			rnr.Log.Warn("Failed model init >%v<", err)
-			return err
-		}
-
-		rnr.Model = m
+	if m == nil {
+		rnr.Log.Warn("Modeller is nil, cannot continue")
+		return err
 	}
+
+	// model init
+	err = m.Init(p, tx)
+	if err != nil {
+		rnr.Log.Warn("Failed model init >%v<", err)
+		return err
+	}
+	rnr.Model = m
 
 	// run
 	err = rnr.App.Run(os.Args)
@@ -124,6 +130,14 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 	}
 
 	return nil
+}
+
+// Preparer - default PreparerFunc does not provide a modeller
+func (rnr *Runner) Preparer() (preparer.Preparer, error) {
+
+	rnr.Log.Info("** Preparer **")
+
+	return nil, nil
 }
 
 // Modeller - default ModellerFunc does not provide a modeller

@@ -7,7 +7,6 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/cli"
 	"gitlab.com/alienspaces/holyragingmages/common/config"
 	"gitlab.com/alienspaces/holyragingmages/common/log"
-	"gitlab.com/alienspaces/holyragingmages/common/prepare"
 	"gitlab.com/alienspaces/holyragingmages/common/store"
 	"gitlab.com/alienspaces/holyragingmages/service/spell/internal/cli/runner"
 )
@@ -53,15 +52,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	p, err := prepare.NewPrepare(l)
-	if err != nil {
-		fmt.Printf("Failed new prepare >%v<", err)
-		os.Exit(0)
-	}
-
 	r := runner.NewRunner()
 
-	cli, err := cli.NewCLI(c, l, s, p, r)
+	cli, err := cli.NewCLI(c, l, s, r)
 	if err != nil {
 		fmt.Printf("Failed new cli >%v<", err)
 		os.Exit(0)

@@ -20,7 +20,7 @@ import (
 func TestSpellHandler(t *testing.T) {
 
 	// test dependencies
-	c, l, s, p, err := NewDefaultDependencies()
+	c, l, s, err := NewDefaultDependencies()
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	// test harness
@@ -193,7 +193,7 @@ func TestSpellHandler(t *testing.T) {
 		func() {
 			rnr := NewRunner()
 
-			err = rnr.Init(c, l, s, p)
+			err = rnr.Init(c, l, s)
 			require.NoError(t, err, "Runner init returns without error")
 
 			err = th.Setup()

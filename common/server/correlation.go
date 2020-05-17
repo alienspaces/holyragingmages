@@ -6,22 +6,30 @@ import (
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 )
 
 // Correlation -
 func (rnr *Runner) Correlation(h Handle) (Handle, error) {
 
-	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, _ modeller.Modeller) {
+
+		lc, err := l.NewInstance()
+		if err != nil {
+			rnr.Log.Warn("Failed new log instance >%v<", err)
+			http.Error(w, "Server Error", http.StatusInternalServerError)
+			return
+		}
 
 		correlationID := r.Header.Get("X-Correlation-ID")
 		if correlationID == "" {
 			correlationID = uuid.New().String()
-			rnr.Log.Info("Generated correlation ID >%s<", correlationID)
+			lc.Info("Generated correlation ID >%s<", correlationID)
 		}
-		rnr.Log.Context("correlation-id", correlationID)
+		lc.Context("correlation-id", correlationID)
 
-		h(w, r, p, m)
+		h(w, r, p, lc, nil)
 	}
 
 	return handle, nil

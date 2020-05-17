@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"gitlab.com/alienspaces/holyragingmages/common/server"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/service/item/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/item/internal/record"
@@ -34,9 +35,9 @@ type ItemData struct {
 }
 
 // GetItemsHandler -
-func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Get items handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get items handler ** p >%#v< m >%#v<", p, m)
 
 	var recs []*record.Item
 	var err error
@@ -46,17 +47,17 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 	// single resource
 	if id != "" {
 
-		rnr.Log.Info("Getting item ID >%s<", id)
+		l.Info("Getting item ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetItemRec(id, false)
 		if err != nil {
-			rnr.WriteModelError(w, err)
+			rnr.WriteModelError(l, w, err)
 			return
 		}
 
 		// resource not found
 		if rec == nil {
-			rnr.WriteNotFoundError(w, id)
+			rnr.WriteNotFoundError(l, w, id)
 			return
 		}
 
@@ -64,7 +65,7 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 
 	} else {
 
-		rnr.Log.Info("Getting all item records")
+		l.Info("Getting all item records")
 
 		// query parameters
 		q := r.URL.Query()
@@ -76,7 +77,7 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 
 		recs, err = m.(*model.Model).GetItemRecs(params, nil, false)
 		if err != nil {
-			rnr.WriteModelError(w, err)
+			rnr.WriteModelError(l, w, err)
 			return
 		}
 	}
@@ -88,7 +89,7 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 		// response data
 		responseData, err := rnr.RecordToItemResponseData(rec)
 		if err != nil {
-			rnr.WriteSystemError(w, err)
+			rnr.WriteSystemError(l, w, err)
 			return
 		}
 
@@ -99,26 +100,26 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 		Data: data,
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }
 
 // PostItemsHandler -
-func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Post items handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Post items handler ** p >%#v< m >#%v<", p, m)
 
 	// parameters
 	id := p.ByName("item_id")
 
 	req := ItemRequest{}
 
-	err := rnr.ReadRequest(r, &req)
+	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -130,20 +131,20 @@ func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p ht
 	// record data
 	err = rnr.ItemRequestDataToRecord(req.Data, &rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	err = m.(*model.Model).CreateItemRec(&rec)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToItemResponseData(&rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -154,60 +155,60 @@ func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p ht
 		},
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }
 
 // PutItemsHandler -
-func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Put items handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Put items handler ** p >%#v< m >#%v<", p, m)
 
 	// parameters
 	id := p.ByName("item_id")
 
-	rnr.Log.Info("Updating resource ID >%s<", id)
+	l.Info("Updating resource ID >%s<", id)
 
 	rec, err := m.(*model.Model).GetItemRec(id, false)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// resource not found
 	if rec == nil {
-		rnr.WriteNotFoundError(w, id)
+		rnr.WriteNotFoundError(l, w, id)
 		return
 	}
 
 	req := ItemRequest{}
 
-	err = rnr.ReadRequest(r, &req)
+	err = rnr.ReadRequest(l, r, &req)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	// record data
 	err = rnr.ItemRequestDataToRecord(req.Data, rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	err = m.(*model.Model).UpdateItemRec(rec)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToItemResponseData(rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -218,9 +219,9 @@ func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 		},
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }

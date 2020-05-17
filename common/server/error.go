@@ -3,6 +3,8 @@ package server
 import (
 	"fmt"
 	"net/http"
+
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 )
 
 // ErrorCode -
@@ -16,16 +18,16 @@ const (
 )
 
 // WriteModelError -
-func (rnr *Runner) WriteModelError(w http.ResponseWriter, err error) {
+func (rnr *Runner) WriteModelError(l logger.Logger, w http.ResponseWriter, err error) {
 
-	rnr.Log.Warn("Model error >%v<", err)
+	l.Warn("Model error >%v<", err)
 
 	// model error
 	res := rnr.ModelError(err)
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 	return
@@ -45,14 +47,14 @@ func (rnr *Runner) ModelError(err error) Response {
 }
 
 // WriteSystemError -
-func (rnr *Runner) WriteSystemError(w http.ResponseWriter, err error) {
+func (rnr *Runner) WriteSystemError(l logger.Logger, w http.ResponseWriter, err error) {
 
-	rnr.Log.Warn("System error >%v<", err)
+	l.Warn("System error >%v<", err)
 
 	// system error
 	res := rnr.SystemError(err)
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
 		rnr.Log.Warn("Failed writing response >%v<", err)
 		return
@@ -92,18 +94,18 @@ func (rnr *Runner) ValidationError(err error) Response {
 }
 
 // WriteNotFoundError -
-func (rnr *Runner) WriteNotFoundError(w http.ResponseWriter, id string) {
+func (rnr *Runner) WriteNotFoundError(l logger.Logger, w http.ResponseWriter, id string) {
 
 	err := fmt.Errorf("Resource with ID >%s< not found", id)
 
-	rnr.Log.Warn("Not found error >%v<", err)
+	l.Warn("Not found error >%v<", err)
 
 	// not found error
 	res := rnr.NotFoundError(err)
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 	return

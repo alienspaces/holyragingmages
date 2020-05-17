@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 )
 
 // Log -
@@ -15,6 +16,8 @@ type Log struct {
 	fields map[string]interface{}
 	Config configurer.Configurer
 }
+
+var _ logger.Logger = &Log{}
 
 // Level -
 type Level uint32
@@ -84,6 +87,22 @@ func (l *Log) Init() error {
 	}
 
 	return nil
+}
+
+// NewInstance - Create a new log instance based off configuration of this instance
+func (l *Log) NewInstance() (logger.Logger, error) {
+
+	i := Log{
+		fields: make(map[string]interface{}),
+		Config: l.Config,
+	}
+
+	err := i.Init()
+	if err != nil {
+		return nil, err
+	}
+
+	return &i, nil
 }
 
 // Printf -

@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/xeipuuv/gojsonschema"
 
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 )
 
@@ -45,38 +46,47 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 		}
 	}
 
-	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, m modeller.Modeller) {
+	handle := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-		rnr.Log.Info("** Validate ** request URI >%s< method >%s<", r.RequestURI, r.Method)
+		l.Info("** Validate ** request URI >%s< method >%s<", r.RequestURI, r.Method)
 
 		// validate parameters
-		err := rnr.validateParameters(path, r)
+		err := rnr.validateParameters(l, path, r)
 		if err != nil {
-			rnr.WriteResponse(w, rnr.ValidationError(err))
+			rnr.WriteResponse(l, w, rnr.ValidationError(err))
+			return
+		}
+
+		// only validate requests where the method provides data
+		if r.Method != http.MethodPost && r.Method != http.MethodPut {
+			l.Info("Skipping validation of URI >%s< method >%s<", r.RequestURI, r.Method)
+
+			// delegate request
+			h(w, r, ps, l, m)
 			return
 		}
 
 		// schema for URI and method
 		s := schemaCache[path][r.Method]
 		if s == nil {
-			rnr.Log.Info("Not validating URI >%s< method >%s<", r.RequestURI, r.Method)
+			l.Info("Not validating URI >%s< method >%s<", r.RequestURI, r.Method)
 
 			// delegate request
-			h(w, r, ps, m)
+			h(w, r, ps, l, m)
 			return
 		}
 
 		// data from context
 		data := r.Context().Value(ContextKeyData)
 
-		rnr.Log.Info("Data >%s<", data)
+		l.Info("Data >%s<", data)
 
 		// load the data
 		var dataLoader gojsonschema.JSONLoader
 		switch data.(type) {
 		case nil:
-			rnr.Log.Warn("Data is nil")
-			rnr.WriteResponse(w, rnr.SystemError(fmt.Errorf("Data is nil")))
+			l.Warn("Data is nil")
+			rnr.WriteResponse(l, w, rnr.SystemError(fmt.Errorf("Data is nil")))
 			return
 		case string:
 			dataLoader = gojsonschema.NewStringLoader(data.(string))
@@ -87,41 +97,41 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 		// validate the data
 		result, err := s.Validate(dataLoader)
 		if err != nil {
-			rnr.Log.Warn("Failed validate >%v<", err)
+			l.Warn("Failed validate >%v<", err)
 			if err.Error() == "EOF" {
-				rnr.WriteResponse(w, rnr.ValidationError(fmt.Errorf("Posted data is empty, check request content")))
+				rnr.WriteResponse(l, w, rnr.ValidationError(fmt.Errorf("Posted data is empty, check request content")))
 				return
 			}
-			rnr.WriteResponse(w, rnr.SystemError(err))
+			rnr.WriteResponse(l, w, rnr.SystemError(err))
 			return
 		}
 
 		if result.Valid() != true {
 			errStr := ""
 			for _, e := range result.Errors() {
-				rnr.Log.Warn("Invalid data >%s<", e)
+				l.Warn("Invalid data >%s<", e)
 				if errStr == "" {
 					errStr = e.String()
 					continue
 				}
 				errStr = fmt.Sprintf("%s, %s", errStr, e.String())
 			}
-			rnr.WriteResponse(w, rnr.ValidationError(fmt.Errorf("%s", errStr)))
+			rnr.WriteResponse(l, w, rnr.ValidationError(fmt.Errorf("%s", errStr)))
 			return
 		}
 
 		// delegate request
-		h(w, r, ps, m)
+		h(w, r, ps, l, m)
 	}
 
 	return handle, nil
 }
 
 // validateParameters - validate any provided parameters
-func (rnr *Runner) validateParameters(path string, r *http.Request) error {
+func (rnr *Runner) validateParameters(l logger.Logger, path string, r *http.Request) error {
 
 	if len(queryParamCache) == 0 {
-		rnr.Log.Info("Handler method >%s< path >%s< not configured with params list", r.Method, path)
+		l.Info("Handler method >%s< path >%s< not configured with params list", r.Method, path)
 		return nil
 	}
 
@@ -132,7 +142,7 @@ func (rnr *Runner) validateParameters(path string, r *http.Request) error {
 	params := queryParamCache[path][r.Method]
 
 	for paramName, paramValue := range q {
-		rnr.Log.Info("Checking parameter >%s< >%s<", paramName, paramValue)
+		l.Info("Checking parameter >%s< >%s<", paramName, paramValue)
 
 		found := false
 		for _, param := range params {
@@ -142,12 +152,12 @@ func (rnr *Runner) validateParameters(path string, r *http.Request) error {
 		}
 		if found != true {
 			msg := fmt.Sprintf("Parameter >%s< not allowed", paramName)
-			rnr.Log.Warn(msg)
+			l.Warn(msg)
 			return fmt.Errorf(msg)
 		}
 	}
 
-	rnr.Log.Info("All parameters okay")
+	l.Info("All parameters okay")
 
 	return nil
 }

@@ -18,14 +18,13 @@ type CLI struct {
 }
 
 // NewCLI -
-func NewCLI(c configurer.Configurer, l logger.Logger, s storer.Storer, p preparer.Preparer, r runnable.Runnable) (*CLI, error) {
+func NewCLI(c configurer.Configurer, l logger.Logger, s storer.Storer, r runnable.Runnable) (*CLI, error) {
 
 	cli := CLI{
-		Config:  c,
-		Log:     l,
-		Store:   s,
-		Prepare: p,
-		Runner:  r,
+		Config: c,
+		Log:    l,
+		Store:  s,
+		Runner: r,
 	}
 
 	err := cli.Init()
@@ -45,7 +44,7 @@ func (cli *CLI) Init() error {
 	}
 
 	// TODO: alerting, retries
-	return cli.Runner.Init(cli.Config, cli.Log, cli.Store, cli.Prepare)
+	return cli.Runner.Init(cli.Config, cli.Log, cli.Store)
 }
 
 // Run -

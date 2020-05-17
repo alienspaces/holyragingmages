@@ -26,9 +26,15 @@ func (rnr *Runner) GenerateHandlerDocumentation() ([]byte, error) {
 	pre {
 		background-color: #ffffff;
 		padding: 10px;
+		margin-left: 20px;
+		margin-right: 20px;
 	}
 	.path-method {
 		color: #629153;
+	}
+	.description {
+		margin-left: 20px;
+		margin-right: 20px;
 	}
 </style>
 </head>
@@ -48,7 +54,7 @@ func (rnr *Runner) GenerateHandlerDocumentation() ([]byte, error) {
 		var schemaDataContent []byte
 		var err error
 
-		appHome := rnr.Config.Get("APP_SERVER_HOME")
+		appHome := rnr.Config.Get("APP_HOME")
 		schemaLoc := config.MiddlewareConfig.ValidateSchemaLocation
 		if schemaLoc != "" {
 

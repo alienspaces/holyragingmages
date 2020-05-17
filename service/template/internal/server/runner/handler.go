@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"gitlab.com/alienspaces/holyragingmages/common/server"
+	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/common/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/service/template/internal/record"
@@ -32,9 +33,9 @@ type TemplateData struct {
 }
 
 // GetTemplatesHandler -
-func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
 
 	var recs []*record.Template
 	var err error
@@ -44,17 +45,17 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 	// single resource
 	if id != "" {
 
-		rnr.Log.Info("Getting template ID >%s<", id)
+		l.Info("Getting template ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetTemplateRec(id, false)
 		if err != nil {
-			rnr.WriteModelError(w, err)
+			rnr.WriteModelError(l, w, err)
 			return
 		}
 
 		// resource not found
 		if rec == nil {
-			rnr.WriteNotFoundError(w, id)
+			rnr.WriteNotFoundError(l, w, id)
 			return
 		}
 
@@ -62,11 +63,11 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	} else {
 
-		rnr.Log.Info("Getting all template records")
+		l.Info("Getting all template records")
 
 		recs, err = m.(*model.Model).GetTemplateRecs(nil, nil, false)
 		if err != nil {
-			rnr.WriteModelError(w, err)
+			rnr.WriteModelError(l, w, err)
 			return
 		}
 	}
@@ -78,7 +79,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		// response data
 		responseData, err := rnr.RecordToTemplateResponseData(rec)
 		if err != nil {
-			rnr.WriteSystemError(w, err)
+			rnr.WriteSystemError(l, w, err)
 			return
 		}
 
@@ -89,26 +90,26 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		Data: data,
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }
 
 // PostTemplatesHandler -
-func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
 
 	// parameters
 	id := p.ByName("template_id")
 
 	req := TemplateRequest{}
 
-	err := rnr.ReadRequest(r, &req)
+	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -120,20 +121,20 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 	// record data
 	err = rnr.TemplateRequestDataToRecord(req.Data, &rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	err = m.(*model.Model).CreateTemplateRec(&rec)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToTemplateResponseData(&rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -144,60 +145,60 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 		},
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }
 
 // PutTemplatesHandler -
-func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, m modeller.Modeller) {
+func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
 
-	rnr.Log.Info("** Put templates handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Put templates handler ** p >%#v< m >#%v<", p, m)
 
 	// parameters
 	id := p.ByName("template_id")
 
-	rnr.Log.Info("Updating resource ID >%s<", id)
+	l.Info("Updating resource ID >%s<", id)
 
 	rec, err := m.(*model.Model).GetTemplateRec(id, false)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// resource not found
 	if rec == nil {
-		rnr.WriteNotFoundError(w, id)
+		rnr.WriteNotFoundError(l, w, id)
 		return
 	}
 
 	req := TemplateRequest{}
 
-	err = rnr.ReadRequest(r, &req)
+	err = rnr.ReadRequest(l, r, &req)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	// record data
 	err = rnr.TemplateRequestDataToRecord(req.Data, rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
 	err = m.(*model.Model).UpdateTemplateRec(rec)
 	if err != nil {
-		rnr.WriteModelError(w, err)
+		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// response data
 	responseData, err := rnr.RecordToTemplateResponseData(rec)
 	if err != nil {
-		rnr.WriteSystemError(w, err)
+		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
@@ -208,9 +209,9 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		},
 	}
 
-	err = rnr.WriteResponse(w, res)
+	err = rnr.WriteResponse(l, w, res)
 	if err != nil {
-		rnr.Log.Warn("Failed writing response >%v<", err)
+		l.Warn("Failed writing response >%v<", err)
 		return
 	}
 }
