@@ -29,6 +29,10 @@ func (rnr *Runner) GenerateHandlerDocumentation() ([]byte, error) {
 		margin-left: 20px;
 		margin-right: 20px;
 	}
+	.header {
+		padding-top: 10px;
+		padding-bottom: 2px;
+	}
 	.path-method {
 		color: #629153;
 	}
@@ -36,14 +40,70 @@ func (rnr *Runner) GenerateHandlerDocumentation() ([]byte, error) {
 		margin-left: 20px;
 		margin-right: 20px;
 	}
+	.schema {
+		margin-left: 20px;
+		padding-top: 8px;
+		padding-bottom: 8px;
+	}
+	.toggle {
+		font-style: italic;
+		font-size: small;
+	}
+	.footer {
+		padding-top: 50px;
+		padding-bottom: 50px;
+	}
 </style>
+<script language="javascript">
+	// Show an element
+	var show = function (elem) {
+		elem.style.display = 'block';
+	};
+
+	// Hide an element
+	var hide = function (elem) {
+		elem.style.display = 'none';
+	};
+
+	// Toggle element visibility
+	var toggle = function (elem) {
+
+		// If the element is visible, hide it
+		if (window.getComputedStyle(elem).display === 'block') {
+			hide(elem);
+			return;
+		}
+
+		// Otherwise, show it
+		show(elem);
+
+	};
+
+	// Listen for click events
+	document.addEventListener('click', function (event) {
+
+		// Make sure clicked element is our toggle
+		if (!event.target.classList.contains('toggle')) return;
+
+		// Prevent default link behaviour
+		event.preventDefault();
+
+		// Get the content
+		var content = document.querySelector(event.target.hash);
+		if (!content) return;
+
+		// Toggle the content
+		toggle(content);
+
+	}, false);
+</script>
 </head>
 <body>
 	`)
 
-	fmt.Fprintf(&b, "<h2>Documentation</h2>")
+	fmt.Fprintf(&b, "<div class='header'><h2>Documentation</h2></div>")
 
-	for _, config := range rnr.HandlerConfig {
+	for count, config := range rnr.HandlerConfig {
 
 		if config.DocumentationConfig.Document != true {
 			// skip documenting this endpoint
@@ -86,14 +146,22 @@ func (rnr *Runner) GenerateHandlerDocumentation() ([]byte, error) {
 		if config.DocumentationConfig.Description != "" {
 			fmt.Fprintf(&b, "<div class='description'>%s</div>", config.DocumentationConfig.Description)
 		}
-		if schemaMainContent != nil {
-			fmt.Fprintf(&b, "<div class='schema'><h4>Schema</h4></div><pre class='schema-data'>%s</pre>", string(schemaMainContent))
-		}
-		if schemaDataContent != nil {
-			fmt.Fprintf(&b, "<pre class='schema-data'>%s</pre>", string(schemaDataContent))
+		if schemaMainContent != nil || schemaDataContent != nil {
+			fmt.Fprintf(&b, "<div class='schema'>\n<span>Schema - ")
+			fmt.Fprintf(&b, "<a href='#schema-%d' class='toggle'>show / hide</a>", count)
+			fmt.Fprintf(&b, "</span>\n</div>\n")
+			fmt.Fprintf(&b, "<div id='schema-%d' style='display: none'>\n", count)
+			if schemaMainContent != nil {
+				fmt.Fprintf(&b, "<pre class='schema-data'>%s</pre>\n", string(schemaMainContent))
+			}
+			if schemaDataContent != nil {
+				fmt.Fprintf(&b, "<pre class='schema-data'>%s</pre>\n", string(schemaDataContent))
+			}
+			fmt.Fprintf(&b, "</div>\n")
 		}
 	}
 
+	fmt.Fprintf(&b, "<div class='footer'></div>")
 	fmt.Fprintf(&b, `
 	</body>
 		`)

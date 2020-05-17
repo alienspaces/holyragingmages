@@ -48,12 +48,20 @@ func NewRunner() *Runner {
 			Path:             "/api/templates",
 			HandlerFunc:      r.GetTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Query templates.",
+			},
 		},
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/templates/:template_id",
 			HandlerFunc:      r.GetTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Get a template.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -66,6 +74,10 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create a template.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -77,6 +89,10 @@ func NewRunner() *Runner {
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
 				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create a template.",
 			},
 		},
 		{
@@ -90,6 +106,16 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Update a template.",
+			},
+		},
+		{
+			Method:           http.MethodGet,
+			Path:             "/api",
+			HandlerFunc:      r.GetDocumentationHandler,
+			MiddlewareConfig: server.MiddlewareConfig{},
 		},
 	}
 

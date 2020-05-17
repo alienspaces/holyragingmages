@@ -47,7 +47,7 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 	// single resource
 	if id != "" {
 
-		l.Info("Getting spell ID >%s<", id)
+		l.Info("Getting spell record ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetSpellRec(id, false)
 		if err != nil {
@@ -65,9 +65,17 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 
 	} else {
 
-		l.Info("Getting all spell records")
+		l.Info("Querying spell records")
 
-		recs, err = m.(*model.Model).GetSpellRecs(nil, nil, false)
+		// query parameters
+		q := r.URL.Query()
+
+		params := make(map[string]interface{})
+		for paramName, paramValue := range q {
+			params[paramName] = paramValue
+		}
+
+		recs, err = m.(*model.Model).GetSpellRecs(params, nil, false)
 		if err != nil {
 			rnr.WriteModelError(l, w, err)
 			return

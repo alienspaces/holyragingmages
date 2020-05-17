@@ -45,7 +45,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 	// single resource
 	if id != "" {
 
-		l.Info("Getting template ID >%s<", id)
+		l.Info("Getting template record ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetTemplateRec(id, false)
 		if err != nil {
@@ -63,9 +63,17 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	} else {
 
-		l.Info("Getting all template records")
+		l.Info("Querying template records")
 
-		recs, err = m.(*model.Model).GetTemplateRecs(nil, nil, false)
+		// query parameters
+		q := r.URL.Query()
+
+		params := make(map[string]interface{})
+		for paramName, paramValue := range q {
+			params[paramName] = paramValue
+		}
+
+		recs, err = m.(*model.Model).GetTemplateRecs(params, nil, false)
 		if err != nil {
 			rnr.WriteModelError(l, w, err)
 			return

@@ -51,7 +51,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 	// single resource
 	if id != "" {
 
-		l.Info("Fetching resource ID >%s<", id)
+		l.Info("Getting mage record ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetMageRec(id, false)
 		if err != nil {
@@ -69,9 +69,17 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 
 	} else {
 
-		l.Info("Getting all template records")
+		l.Info("Querying mage records")
 
-		recs, err = m.(*model.Model).GetMageRecs(nil, nil, false)
+		// query parameters
+		q := r.URL.Query()
+
+		params := make(map[string]interface{})
+		for paramName, paramValue := range q {
+			params[paramName] = paramValue
+		}
+
+		recs, err = m.(*model.Model).GetMageRecs(params, nil, false)
 		if err != nil {
 			rnr.WriteModelError(l, w, err)
 			return

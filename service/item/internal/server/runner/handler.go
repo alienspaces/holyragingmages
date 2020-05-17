@@ -47,7 +47,7 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 	// single resource
 	if id != "" {
 
-		l.Info("Getting item ID >%s<", id)
+		l.Info("Getting item record ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetItemRec(id, false)
 		if err != nil {
@@ -65,7 +65,7 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 
 	} else {
 
-		l.Info("Getting all item records")
+		l.Info("Querying item records")
 
 		// query parameters
 		q := r.URL.Query()
