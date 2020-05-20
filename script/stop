@@ -6,6 +6,9 @@ cp .env.development .env
 # stop
 source ${BASH_SOURCE%/*}/stop-services || exit $?
 
+# stop nginx
+source ${BASH_SOURCE%/*}/stop-nginx
+
 # stop database
 source ${BASH_SOURCE%/*}/stop-database || exit $?
 

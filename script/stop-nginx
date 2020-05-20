@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo
+echo "=> Stopping nginx"
+echo
+
+docker stop hrm-nginx

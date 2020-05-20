@@ -49,12 +49,20 @@ func NewRunner() *Runner {
 			QueryParams:      []string{"name"},
 			HandlerFunc:      r.GetItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Query items.",
+			},
 		},
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/items/:item_id",
 			HandlerFunc:      r.GetItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Get an item.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -67,6 +75,10 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create an item.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -78,6 +90,10 @@ func NewRunner() *Runner {
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
 				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create an item.",
 			},
 		},
 		{
@@ -91,6 +107,16 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Update an item.",
+			},
+		},
+		{
+			Method:           http.MethodGet,
+			Path:             "/api",
+			HandlerFunc:      r.GetDocumentationHandler,
+			MiddlewareConfig: server.MiddlewareConfig{},
 		},
 	}
 

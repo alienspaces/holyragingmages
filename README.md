@@ -57,7 +57,11 @@ Start all services
 ./script/start
 ```
 
-[http://localhost:8081/](http://localhost:8081/)
+[http://localhost:8080/mage/api](http://localhost:8080/mage/api)
+
+[http://localhost:8080/spell/api](http://localhost:8080/spell/api)
+
+[http://localhost:8080/item/api](http://localhost:8080/item/api)
 
 ## Stop
 

@@ -48,12 +48,20 @@ func NewRunner() *Runner {
 			Path:             "/api/spells",
 			HandlerFunc:      r.GetSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Query spells.",
+			},
 		},
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/spells/:spell_id",
 			HandlerFunc:      r.GetSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Get a spell.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -66,6 +74,10 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create a spell.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -77,6 +89,10 @@ func NewRunner() *Runner {
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
 				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create a spell.",
 			},
 		},
 		{
@@ -90,6 +106,16 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Update a spell.",
+			},
+		},
+		{
+			Method:           http.MethodGet,
+			Path:             "/api",
+			HandlerFunc:      r.GetDocumentationHandler,
+			MiddlewareConfig: server.MiddlewareConfig{},
 		},
 	}
 

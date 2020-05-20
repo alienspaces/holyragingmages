@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo
+echo "=> Starting services"
+echo
+
 # service directory list
 shopt -s dotglob
 shopt -s nullglob

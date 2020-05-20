@@ -43,12 +43,20 @@ func NewRunner() *Runner {
 			Path:             "/api/mages",
 			HandlerFunc:      r.GetMagesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Query mages.",
+			},
 		},
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/mages/:mage_id",
 			HandlerFunc:      r.GetMagesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Get a mage.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -61,6 +69,10 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create a mage.",
+			},
 		},
 		{
 			Method:      http.MethodPost,
@@ -72,6 +84,10 @@ func NewRunner() *Runner {
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
 				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Create a mage.",
 			},
 		},
 		{
@@ -85,6 +101,16 @@ func NewRunner() *Runner {
 					"data.schema.json",
 				},
 			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Update a mage.",
+			},
+		},
+		{
+			Method:           http.MethodGet,
+			Path:             "/api",
+			HandlerFunc:      r.GetDocumentationHandler,
+			MiddlewareConfig: server.MiddlewareConfig{},
 		},
 	}
 
