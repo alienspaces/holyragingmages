@@ -14,6 +14,8 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         # stop server
         SERVER_NAME="hrm-${SERVICE_NAME}-server"
 
+        echo "Finding process for $SERVER_NAME"
+
         PID=$(pgrep $SERVER_NAME)
 
         if [ -n "$PID" ]; then
