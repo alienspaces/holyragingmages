@@ -51,7 +51,7 @@ func TestRunnerServerError(t *testing.T) {
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	tr := TestRunner{}
-	tr.RunServerFunc = func(args map[string]interface{}) error {
+	tr.RunHTTPFunc = func(args map[string]interface{}) error {
 		return fmt.Errorf("Run server error")
 	}
 

@@ -12,12 +12,12 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 )
 
-// RunServer - Starts the HTTP server process. Override to implement a custom HTTP server run function.
+// RunHTTP - Starts the HTTP server process. Override to implement a custom HTTP server run function.
 // The server process exposes a REST API and is intended for clients to manage resources and
 // perform actions.
-func (rnr *Runner) RunServer(args map[string]interface{}) error {
+func (rnr *Runner) RunHTTP(args map[string]interface{}) error {
 
-	rnr.Log.Debug("** RunServer **")
+	rnr.Log.Debug("** RunHTTP **")
 
 	// default handler
 	router, err := rnr.DefaultRouter()

@@ -39,7 +39,7 @@ type Runner struct {
 	HandlerConfig []HandlerConfig
 
 	// composable functions
-	RunServerFunc  func(args map[string]interface{}) error
+	RunHTTPFunc    func(args map[string]interface{}) error
 	RunDaemonFunc  func(args map[string]interface{}) error
 	RouterFunc     func(router *httprouter.Router) error
 	MiddlewareFunc func(h Handle) (Handle, error)
@@ -144,8 +144,8 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 	}
 
 	// run server
-	if rnr.RunServerFunc == nil {
-		rnr.RunServerFunc = rnr.RunServer
+	if rnr.RunHTTPFunc == nil {
+		rnr.RunHTTPFunc = rnr.RunHTTP
 	}
 
 	// run daemon
@@ -198,7 +198,7 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 	// run HTTP server
 	go func() {
 		rnr.Log.Debug("** Running HTTP server process **")
-		err = rnr.RunServerFunc(args)
+		err = rnr.RunHTTPFunc(args)
 		if err != nil {
 			rnr.Log.Warn("Failed run server >%v<", err)
 			sigChan <- syscall.SIGTERM
