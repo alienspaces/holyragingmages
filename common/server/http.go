@@ -12,6 +12,36 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/payloader"
 )
 
+// Request -
+type Request struct {
+	Pagination RequestPagination `json:"pagination"`
+}
+
+// RequestPagination -
+type RequestPagination struct {
+	PageNumber int `json:"page_number"`
+	PageSize   int `json:"page_size"`
+}
+
+// Response -
+type Response struct {
+	Error      ResponseError      `json:"error"`
+	Pagination ResponsePagination `json:"pagination"`
+}
+
+// ResponseError -
+type ResponseError struct {
+	Code   string `json:"code"`
+	Detail string `json:"detail"`
+}
+
+// ResponsePagination -
+type ResponsePagination struct {
+	Number int `json:"page_number"`
+	Size   int `json:"page_size"`
+	Count  int `json:"page_count"`
+}
+
 // RunHTTP - Starts the HTTP server process. Override to implement a custom HTTP server run function.
 // The server process exposes a REST API and is intended for clients to manage resources and
 // perform actions.
