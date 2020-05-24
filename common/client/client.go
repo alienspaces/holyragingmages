@@ -21,6 +21,10 @@ type Client struct {
 	Config     configurer.Configurer
 	Log        logger.Logger
 	MaxRetries int
+	// Path is the base path for all requests
+	Path string
+	// Host is the host for all requests
+	Host string
 
 	// NOTE: Maybe doesn't make sense to attach request config
 	RequestConfig []RequestConfig
@@ -30,7 +34,36 @@ type Client struct {
 type RequestConfig struct {
 	Method string
 	Path   string
-	Host   string
+}
+
+// Request -
+type Request struct {
+	Pagination RequestPagination `json:"pagination"`
+}
+
+// RequestPagination -
+type RequestPagination struct {
+	PageNumber int `json:"page_number"`
+	PageSize   int `json:"page_size"`
+}
+
+// Response -
+type Response struct {
+	Error      ResponseError      `json:"error"`
+	Pagination ResponsePagination `json:"pagination"`
+}
+
+// ResponseError -
+type ResponseError struct {
+	Code   string `json:"code"`
+	Detail string `json:"detail"`
+}
+
+// ResponsePagination -
+type ResponsePagination struct {
+	Number int `json:"page_number"`
+	Size   int `json:"page_size"`
+	Count  int `json:"page_count"`
 }
 
 // NewClient -
@@ -41,7 +74,34 @@ func NewClient(c configurer.Configurer, l logger.Logger) (*Client, error) {
 		Log:    l,
 	}
 
+	err := cl.Init()
+	if err != nil {
+		return nil, err
+	}
+
 	return &cl, nil
+}
+
+// Init - override to perform custom initialization
+func (c *Client) Init() error {
+
+	c.Log.Info("** Initialise **")
+
+	if c.Config == nil {
+		msg := "Configurer undefined, cannot init client"
+		c.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
+	// host
+	c.Host = c.Config.Get("APP_HOST")
+	if c.Host == "" {
+		msg := "APP_HOST undefined, cannot init client"
+		c.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
+	return nil
 }
 
 // RetryRequest -
@@ -86,13 +146,11 @@ func (c *Client) Request(rc RequestConfig, params map[string]string, data interf
 
 	var err error
 
-	// Request URL
-	url := rc.Host + rc.Path
-
-	// Replace placeholder parameters
-	for param, value := range params {
-		url = strings.Replace(url, ":"+param, value, 1)
-		url = strings.Replace(url, param, value, 1)
+	// Replace placeholder parameters and add query parameters
+	url, err := c.BuildURL(rc.Method, rc.Path, params)
+	if err != nil {
+		c.Log.Warn("Failed building URL >%v<", err)
+		return nil, err
 	}
 
 	// data
@@ -153,4 +211,57 @@ func (c *Client) Request(rc RequestConfig, params map[string]string, data interf
 	}
 
 	return resp, err
+}
+
+// BuildURL replaces placeholder parameters and adds query parameters
+func (c *Client) BuildURL(method, url string, params map[string]string) (string, error) {
+
+	// Request URL
+	url = c.Host + c.Path + url
+
+	// Add resource identifier to URL when detected
+	switch method {
+	case http.MethodGet, http.MethodPost:
+		if _, ok := params["id"]; ok {
+			url = url + "/:id"
+		}
+		if _, ok := params[":id"]; ok {
+			url = url + "/:id"
+		}
+	case http.MethodPut:
+		if _, ok := params["id"]; !ok {
+			if _, ok := params[":id"]; !ok {
+				msg := "Params must contain :id for method Put"
+				c.Log.Warn(msg)
+				return url, fmt.Errorf(msg)
+			}
+		}
+		url = url + "/:id"
+	default:
+		// no-op
+	}
+
+	// Replace placeholders and add query parameters
+	queryParamCount := 0
+	for param, value := range params {
+		found := false
+		if strings.Index(url, "/:"+param) != -1 {
+			url = strings.Replace(url, "/:"+param, "/"+value, 1)
+			found = true
+		}
+		if strings.Index(url, "/"+param) != -1 {
+			url = strings.Replace(url, "/"+param, "/"+value, 1)
+			found = true
+		}
+		if !found {
+			if queryParamCount == 0 {
+				url = url + "?"
+			}
+			param = strings.Replace(param, ":", "", 1)
+			url = url + param + "=" + value
+			queryParamCount++
+		}
+	}
+
+	return url, nil
 }

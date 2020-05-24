@@ -23,17 +23,13 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, error) {
 	}
 
 	configVars := []string{
+		// general
+		"APP_HOST",
 		// logger
 		"APP_LOG_LEVEL",
-		// database
-		"APP_DB_HOST",
-		"APP_DB_PORT",
-		"APP_DB_NAME",
-		"APP_DB_USER",
-		"APP_DB_PASSWORD",
 	}
 	for _, key := range configVars {
-		err = c.Add(key, true)
+		err = c.Add(key, false)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -52,13 +48,6 @@ func TestClient(t *testing.T) {
 
 	c, l, err := NewDefaultDependencies()
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
-
-	cl, err := NewClient(c, l)
-	require.NoError(t, err, "NewClient returns without error")
-	require.NotNil(t, cl, "NewClient returns a client")
-
-	// set max retries to speed tests up
-	cl.MaxRetries = 2
 
 	type RequestData struct {
 		Request
@@ -79,21 +68,16 @@ func TestClient(t *testing.T) {
 		expectResponseStatus int
 	}{
 		{
-			name: "Get resource with expected path",
+			name: "Get resource OK",
 			config: RequestConfig{
 				Method: http.MethodGet,
-				Path:   "/api/mages/:mage_id",
+				Path:   "/api/games/:game_id/mages",
 			},
 			params: map[string]string{
-				"mage_id": "52fdfc07-2182-454f-963f-5f0f9a621d72",
+				"id":      "52fdfc07-2182-454f-963f-5f0f9a621d72",
+				"game_id": "3fa1b1b7-cca9-435e-b2d6-a8c03be21bf1",
 			},
 			serverFunc: func(rw http.ResponseWriter, req *http.Request) {
-
-				if req.URL.String() != "/api/mages/52fdfc07-2182-454f-963f-5f0f9a621d72" {
-					rw.WriteHeader(http.StatusBadRequest)
-					return
-				}
-
 				rw.WriteHeader(http.StatusOK)
 				rw.Write([]byte(`OK`))
 			},
@@ -101,29 +85,20 @@ func TestClient(t *testing.T) {
 			expectResponseStatus: http.StatusOK,
 		},
 		{
-			name: "Get resource with unexpected path",
+			name: "Get resource BadRequest",
 			config: RequestConfig{
 				Method: http.MethodGet,
 				Path:   "/api/kobolds/:kobold_id",
 			},
-			params: map[string]string{
-				"owlbear_id": "52fdfc07-2182-454f-963f-5f0f9a621d72",
-			},
 			serverFunc: func(rw http.ResponseWriter, req *http.Request) {
-
-				if req.URL.String() != "/api/kobolds/52fdfc07-2182-454f-963f-5f0f9a621d72" {
-					rw.WriteHeader(http.StatusBadRequest)
-					return
-				}
-
-				rw.WriteHeader(http.StatusOK)
-				rw.Write([]byte(`OK`))
+				rw.WriteHeader(http.StatusBadRequest)
+				return
 			},
 			expectErr:            true,
 			expectResponseStatus: http.StatusBadRequest,
 		},
 		{
-			name: "Post resource with expected path",
+			name: "Post resource OK",
 			config: RequestConfig{
 				Method: http.MethodPost,
 				Path:   "/api/orcs/:orc_id",
@@ -136,11 +111,6 @@ func TestClient(t *testing.T) {
 				Strength: 10,
 			},
 			serverFunc: func(rw http.ResponseWriter, req *http.Request) {
-
-				if req.URL.String() != "/api/orcs/52fdfc07-2182-454f-963f-5f0f9a621d72" {
-					rw.WriteHeader(http.StatusBadRequest)
-					return
-				}
 
 				requestData := RequestData{}
 				err := json.NewDecoder(req.Body).Decode(&requestData)
@@ -164,6 +134,25 @@ func TestClient(t *testing.T) {
 			expectErr:            false,
 			expectResponseStatus: http.StatusOK,
 		},
+		{
+			name: "Post resource BadRequest",
+			config: RequestConfig{
+				Method: http.MethodPost,
+				Path:   "/api/trolls/:troll_id",
+			},
+			params: map[string]string{
+				"troll_id": "52fdfc07-2182-454f-963f-5f0f9a621d72",
+			},
+			requestData: &RequestData{
+				Name:     "Stone Fist",
+				Strength: 20,
+			},
+			serverFunc: func(rw http.ResponseWriter, req *http.Request) {
+				rw.WriteHeader(http.StatusBadRequest)
+			},
+			expectErr:            true,
+			expectResponseStatus: http.StatusBadRequest,
+		},
 	}
 
 	for _, tc := range tests {
@@ -175,10 +164,18 @@ func TestClient(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(tc.serverFunc))
 			defer server.Close()
 
-			cfg := tc.config
-			cfg.Host = server.URL
+			// Set environment
+			c.Set("APP_HOST", server.URL)
 
-			resp, err := cl.RetryRequest(cfg, tc.params, tc.requestData)
+			// Client
+			cl, err := NewClient(c, l)
+			require.NoError(t, err, "NewClient returns without error")
+			require.NotNil(t, cl, "NewClient returns a client")
+
+			// set max retries to speed tests up
+			cl.MaxRetries = 2
+
+			resp, err := cl.RetryRequest(tc.config, tc.params, tc.requestData)
 			if tc.expectErr == true {
 				require.Error(t, err, "RetryRequest returns with error")
 				return
@@ -186,6 +183,72 @@ func TestClient(t *testing.T) {
 			require.NoError(t, err, "RetryRequest returns without error")
 			require.NotNil(t, resp, "RetryRequest returns a response")
 			require.Equal(t, resp.StatusCode, tc.expectResponseStatus)
+		}()
+	}
+}
+
+func TestBuildURL(t *testing.T) {
+
+	c, l, err := NewDefaultDependencies()
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
+
+	// Set environment
+	c.Set("APP_HOST", "www.example.com")
+
+	// Client
+	cl, err := NewClient(c, l)
+	require.NoError(t, err, "NewClient returns without error")
+	require.NotNil(t, cl, "NewClient returns a client")
+
+	// Set base path
+	cl.Host = "www.example.com"
+	cl.Path = "/api"
+
+	tests := []struct {
+		name      string
+		method    string
+		URL       string
+		params    map[string]string
+		expectErr bool
+		expectURL string
+	}{
+		{
+			name:   "Build URL with additional ID",
+			method: http.MethodGet,
+			URL:    "/games/:game_id/mages",
+			params: map[string]string{
+				"id":      "52fdfc07-2182-454f-963f-5f0f9a621d72",
+				"game_id": "3fa1b1b7-cca9-435e-b2d6-a8c03be21bf1",
+			},
+			expectErr: false,
+			expectURL: "www.example.com/api/games/3fa1b1b7-cca9-435e-b2d6-a8c03be21bf1/mages/52fdfc07-2182-454f-963f-5f0f9a621d72",
+		},
+		{
+			name:   "Build URL without additional ID",
+			method: http.MethodGet,
+			URL:    "/games/:game_id/mages",
+			params: map[string]string{
+				"game_id": "3fa1b1b7-cca9-435e-b2d6-a8c03be21bf1",
+			},
+			expectErr: false,
+			expectURL: "www.example.com/api/games/3fa1b1b7-cca9-435e-b2d6-a8c03be21bf1/mages",
+		},
+	}
+
+	for _, tc := range tests {
+
+		t.Logf("Running test >%s<", tc.name)
+
+		func() {
+
+			url, err := cl.BuildURL(tc.method, tc.URL, tc.params)
+			if tc.expectErr == true {
+				require.Error(t, err, "BuildURL returns with error")
+				return
+			}
+			t.Logf("Resulting URL >%s<", url)
+			require.NoError(t, err, "BuildURL returns without error")
+			require.Equal(t, tc.expectURL, url, "BuildURL returns expected URL")
 		}()
 	}
 }
