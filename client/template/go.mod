@@ -2,7 +2,14 @@ module gitlab.com/alienspaces/holyragingmages/client/template
 
 go 1.13
 
-require gitlab.com/alienspaces/holyragingmages/common/client v0.0.0
+require (
+	github.com/stretchr/testify v1.4.0
+	gitlab.com/alienspaces/holyragingmages/common/client v0.0.0
+	gitlab.com/alienspaces/holyragingmages/common/config v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/log v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/type/configurer v1.0.0
+	gitlab.com/alienspaces/holyragingmages/common/type/logger v1.0.0
+)
 
 replace (
 	gitlab.com/alienspaces/holyragingmages/common/client => ../../common/client

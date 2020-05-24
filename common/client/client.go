@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -94,9 +95,12 @@ func (c *Client) Init() error {
 	}
 
 	// host
-	c.Host = c.Config.Get("APP_HOST")
 	if c.Host == "" {
-		msg := "APP_HOST undefined, cannot init client"
+		c.Log.Info("Host undefined, attempting to source host from config")
+		c.Host = c.Config.Get("APP_HOST")
+	}
+	if c.Host == "" {
+		msg := "Host undefined, cannot init client"
 		c.Log.Warn(msg)
 		return fmt.Errorf(msg)
 	}
@@ -154,7 +158,7 @@ func (c *Client) Request(rc RequestConfig, params map[string]string, data interf
 	}
 
 	// data
-	dataBytes, err := json.Marshal(data)
+	dataBytes, err := c.EncodeData(data)
 	if err != nil {
 		c.Log.Warn("Failed marshalling request data >%v<", err)
 		return nil, err
@@ -211,6 +215,39 @@ func (c *Client) Request(rc RequestConfig, params map[string]string, data interf
 	}
 
 	return resp, err
+}
+
+// EncodeData is a convenience function that encodes struct data into bytes
+func (c *Client) EncodeData(data interface{}) ([]byte, error) {
+
+	c.Log.Context("function", "EncodeData")
+	defer func() {
+		c.Log.Context("function", "")
+	}()
+
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		c.Log.Warn("Failed encoding data >%v<", err)
+		return nil, err
+	}
+	return dataBytes, nil
+}
+
+// DecodeData is a convenience function that decodes bytes into struct data
+func (c *Client) DecodeData(rc io.ReadCloser, data interface{}) error {
+
+	c.Log.Context("function", "DecodeData")
+	defer func() {
+		c.Log.Context("function", "")
+	}()
+
+	err := json.NewDecoder(rc).Decode(&data)
+	if err != nil && err.Error() != "EOF" {
+		msg := fmt.Sprintf("Failed decoding data >%v<", err)
+		c.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+	return nil
 }
 
 // BuildURL replaces placeholder parameters and adds query parameters
