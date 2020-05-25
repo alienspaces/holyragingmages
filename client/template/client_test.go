@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/brianvoe/gofakeit"
 	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/common/config"
@@ -13,6 +14,32 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/common/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/common/type/logger"
 )
+
+// Common test handler function
+var handlerFunc = func(rw http.ResponseWriter, req *http.Request) {
+
+	// request data
+	reqData := Request{}
+
+	// close before returning
+	defer req.Body.Close()
+
+	err := json.NewDecoder(req.Body).Decode(&reqData)
+	if err != nil && err.Error() != "EOF" {
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// response data
+	respData, err := json.Marshal(&Response{})
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	rw.Write(respData)
+}
 
 // NewDefaultDependencies -
 func NewDefaultDependencies() (configurer.Configurer, logger.Logger, error) {
@@ -50,17 +77,6 @@ func TestGetTemplate(t *testing.T) {
 	c, l, err := NewDefaultDependencies()
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
-	handlerFunc := func(rw http.ResponseWriter, req *http.Request) {
-		respData, err := json.Marshal(&Response{})
-		if err != nil {
-			l.Warn("Failed encoding data >%v<", err)
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		rw.WriteHeader(http.StatusOK)
-		rw.Write(respData)
-	}
-
 	tests := []struct {
 		name       string
 		ID         string
@@ -68,13 +84,13 @@ func TestGetTemplate(t *testing.T) {
 		expectErr  bool
 	}{
 		{
-			name:       "Get resource OK",
+			name:       "Get resource success",
 			ID:         "bceac4ab-738a-4e62-a040-835e6fab331f",
 			serverFunc: handlerFunc,
 			expectErr:  false,
 		},
 		{
-			name:       "Get resource not OK",
+			name:       "Get resource not success",
 			ID:         "",
 			serverFunc: handlerFunc,
 			expectErr:  true,
@@ -98,7 +114,7 @@ func TestGetTemplate(t *testing.T) {
 			require.NoError(t, err, "NewClient returns without error")
 			require.NotNil(t, cl, "NewClient returns a client")
 
-			// set max retries to speed tests up
+			// Set max retries to speed up tests
 			cl.MaxRetries = 2
 
 			resp, err := cl.GetTemplate(tc.ID)
@@ -117,17 +133,6 @@ func TestGetTemplates(t *testing.T) {
 	c, l, err := NewDefaultDependencies()
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
-	handlerFunc := func(rw http.ResponseWriter, req *http.Request) {
-		respData, err := json.Marshal(&Response{})
-		if err != nil {
-			l.Warn("Failed encoding data >%v<", err)
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		rw.WriteHeader(http.StatusOK)
-		rw.Write(respData)
-	}
-
 	tests := []struct {
 		name       string
 		params     map[string]string
@@ -135,7 +140,7 @@ func TestGetTemplates(t *testing.T) {
 		expectErr  bool
 	}{
 		{
-			name: "Get resources with ID OK",
+			name: "Get resources with ID success",
 			params: map[string]string{
 				"id": "bceac4ab-738a-4e62-a040-835e6fab331f",
 			},
@@ -143,7 +148,7 @@ func TestGetTemplates(t *testing.T) {
 			expectErr:  false,
 		},
 		{
-			name: "Get resources with params OK",
+			name: "Get resources with params success",
 			params: map[string]string{
 				"blah": "bceac4ab-738a-4e62-a040-835e6fab331f",
 			},
@@ -169,7 +174,7 @@ func TestGetTemplates(t *testing.T) {
 			require.NoError(t, err, "NewClient returns without error")
 			require.NotNil(t, cl, "NewClient returns a client")
 
-			// set max retries to speed tests up
+			// Set max retries to speed up tests
 			cl.MaxRetries = 2
 
 			resp, err := cl.GetTemplates(tc.params)
@@ -179,6 +184,130 @@ func TestGetTemplates(t *testing.T) {
 			}
 			require.NoError(t, err, "GetTemplates returns without error")
 			require.NotNil(t, resp, "GetTemplates returns a response")
+		}()
+	}
+}
+
+func TestCreateTemplate(t *testing.T) {
+
+	c, l, err := NewDefaultDependencies()
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
+
+	tests := []struct {
+		name        string
+		requestData *Request
+		serverFunc  func(rw http.ResponseWriter, req *http.Request)
+		expectErr   bool
+	}{
+		{
+			name: "Create resource with ID success",
+			requestData: &Request{
+				Data: Data{
+					ID: gofakeit.UUID(),
+				},
+			},
+			serverFunc: handlerFunc,
+			expectErr:  false,
+		},
+		{
+			name: "Create resource without ID success",
+			requestData: &Request{
+				Data: Data{},
+			},
+			serverFunc: handlerFunc,
+			expectErr:  false,
+		},
+	}
+
+	for _, tc := range tests {
+
+		t.Logf("Running test >%s<", tc.name)
+
+		func() {
+			// Test HTTP server
+			server := httptest.NewServer(http.HandlerFunc(tc.serverFunc))
+			defer server.Close()
+
+			// Set environment
+			c.Set("APP_HOST", server.URL)
+
+			// Client
+			cl, err := NewClient(c, l)
+			require.NoError(t, err, "NewClient returns without error")
+			require.NotNil(t, cl, "NewClient returns a client")
+
+			// Set max retries to speed up tests
+			cl.MaxRetries = 2
+
+			resp, err := cl.CreateTemplate(tc.requestData)
+			if tc.expectErr == true {
+				require.Error(t, err, "CreateTemplate returns with error")
+				return
+			}
+			require.NoError(t, err, "CreateTemplate returns without error")
+			require.NotNil(t, resp, "CreateTemplate returns a response")
+		}()
+	}
+}
+
+func TestUpdateTemplate(t *testing.T) {
+
+	c, l, err := NewDefaultDependencies()
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
+
+	tests := []struct {
+		name        string
+		requestData *Request
+		serverFunc  func(rw http.ResponseWriter, req *http.Request)
+		expectErr   bool
+	}{
+		{
+			name: "Update resource with ID success",
+			requestData: &Request{
+				Data: Data{
+					ID: gofakeit.UUID(),
+				},
+			},
+			serverFunc: handlerFunc,
+			expectErr:  false,
+		},
+		{
+			name: "Update resource without ID fail",
+			requestData: &Request{
+				Data: Data{},
+			},
+			serverFunc: handlerFunc,
+			expectErr:  true,
+		},
+	}
+
+	for _, tc := range tests {
+
+		t.Logf("Running test >%s<", tc.name)
+
+		func() {
+			// Test HTTP server
+			server := httptest.NewServer(http.HandlerFunc(tc.serverFunc))
+			defer server.Close()
+
+			// Set environment
+			c.Set("APP_HOST", server.URL)
+
+			// Client
+			cl, err := NewClient(c, l)
+			require.NoError(t, err, "NewClient returns without error")
+			require.NotNil(t, cl, "NewClient returns a client")
+
+			// Set max retries to speed up tests
+			cl.MaxRetries = 2
+
+			resp, err := cl.UpdateTemplate(tc.requestData)
+			if tc.expectErr == true {
+				require.Error(t, err, "UpdateTemplate returns with error")
+				return
+			}
+			require.NoError(t, err, "UpdateTemplate returns without error")
+			require.NotNil(t, resp, "UpdateTemplate returns a response")
 		}()
 	}
 }

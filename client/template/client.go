@@ -2,7 +2,6 @@ package client
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	"gitlab.com/alienspaces/holyragingmages/common/client"
@@ -18,17 +17,17 @@ type Client struct {
 // Request -
 type Request struct {
 	client.Request
-	Data TemplateData `json:"data"`
+	Data Data `json:"data"`
 }
 
 // Response -
 type Response struct {
 	client.Response
-	Data []TemplateData `json:"data"`
+	Data []Data `json:"data"`
 }
 
-// TemplateData -
-type TemplateData struct {
+// Data -
+type Data struct {
 	ID        string    `json:"id,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
@@ -58,204 +57,64 @@ func NewClient(c configurer.Configurer, l logger.Logger) (*Client, error) {
 // GetTemplate -
 func (c *Client) GetTemplate(templateID string) (*Response, error) {
 
-	c.Log.Context("function", "GetTemplate")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	if templateID == "" {
-		msg := fmt.Sprintf("Template ID is empty >%s<, cannot get template", templateID)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
-	resp, err := c.RetryRequest(
-		client.RequestConfig{
-			Method: http.MethodGet,
-			Path:   "",
-		},
-		map[string]string{
-			"id": templateID,
-		},
-		nil,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
 	respData := Response{}
-	err = c.DecodeData(resp.Body, &respData)
+	err := c.GetResource("", templateID, &respData)
 	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
+		msg := fmt.Sprintf("Failed getting resource >%v<", err)
 		c.Log.Warn(msg)
 		return nil, fmt.Errorf(msg)
 	}
-
-	return &respData, err
+	return &respData, nil
 }
 
 // GetTemplates -
 func (c *Client) GetTemplates(params map[string]string) (*Response, error) {
 
-	c.Log.Context("function", "GetTemplates")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	resp, err := c.RetryRequest(
-		client.RequestConfig{
-			Method: http.MethodGet,
-			Path:   "",
-		},
-		params,
-		nil,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
 	respData := Response{}
-	err = c.DecodeData(resp.Body, &respData)
+	err := c.GetResources("", params, &respData)
 	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
+		msg := fmt.Sprintf("Failed getting resources >%v<", err)
 		c.Log.Warn(msg)
 		return nil, fmt.Errorf(msg)
 	}
-
-	return &respData, err
+	return &respData, nil
 }
 
 // CreateTemplate -
 func (c *Client) CreateTemplate(reqData *Request) (*Response, error) {
 
-	c.Log.Context("function", "CreateTemplate")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	if reqData == nil {
-		msg := fmt.Sprintf("Request data is nil >%v<, cannot create template", reqData)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
-	// id
-	params := map[string]string{}
-	if reqData.Data.ID != "" {
-		params["id"] = reqData.Data.ID
-	}
-
-	resp, err := c.RetryRequest(
-		client.RequestConfig{
-			Method: http.MethodPost,
-			Path:   "",
-		},
-		params,
-		reqData,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
 	respData := Response{}
-	err = c.DecodeData(resp.Body, &respData)
+	err := c.CreateResource("", reqData.Data.ID, reqData, &respData)
 	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
+		msg := fmt.Sprintf("Failed creating resource >%v<", err)
 		c.Log.Warn(msg)
 		return nil, fmt.Errorf(msg)
 	}
-
-	return &respData, err
+	return &respData, nil
 }
 
 // UpdateTemplate -
 func (c *Client) UpdateTemplate(reqData *Request) (*Response, error) {
 
-	c.Log.Context("function", "UpdateTemplate")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	if reqData == nil {
-		msg := fmt.Sprintf("Request data is nil >%v<, cannot update template", reqData)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
-	// id
-	params := map[string]string{}
-	if reqData.Data.ID != "" {
-		params["id"] = reqData.Data.ID
-	}
-
-	resp, err := c.RetryRequest(
-		client.RequestConfig{
-			Method: http.MethodPut,
-			Path:   "",
-		},
-		params,
-		reqData,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
 	respData := Response{}
-	err = c.DecodeData(resp.Body, &respData)
+	err := c.UpdateResource("", reqData.Data.ID, reqData, &respData)
 	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
+		msg := fmt.Sprintf("Failed updating resource >%v<", err)
 		c.Log.Warn(msg)
 		return nil, fmt.Errorf(msg)
 	}
-
-	return &respData, err
+	return &respData, nil
 }
 
 // DeleteTemplate -
 func (c *Client) DeleteTemplate(templateID string) (*Response, error) {
 
-	c.Log.Context("function", "DeleteTemplate")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	if templateID == "" {
-		msg := fmt.Sprintf("Template ID is empty >%s<, cannot delete template", templateID)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
-	resp, err := c.RetryRequest(
-		client.RequestConfig{
-			Method: http.MethodDelete,
-			Path:   "",
-		},
-		map[string]string{
-			"id": templateID,
-		},
-		nil,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
 	respData := Response{}
-	err = c.DecodeData(resp.Body, &respData)
+	err := c.DeleteResource("", templateID, &respData)
 	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
+		msg := fmt.Sprintf("Failed deleting resource >%v<", err)
 		c.Log.Warn(msg)
 		return nil, fmt.Errorf(msg)
 	}
-
-	return &respData, err
+	return &respData, nil
 }
