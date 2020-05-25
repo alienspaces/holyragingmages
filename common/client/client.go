@@ -96,8 +96,8 @@ func (c *Client) Init() error {
 
 	// host
 	if c.Host == "" {
-		c.Log.Info("Host undefined, attempting to source host from config")
 		c.Host = c.Config.Get("APP_HOST")
+		c.Log.Info("Host undefined, sourced host >%s< from config", c.Host)
 	}
 	if c.Host == "" {
 		msg := "Host undefined, cannot init client"
@@ -185,7 +185,6 @@ func (c *Client) Request(rc RequestConfig, params map[string]string, data interf
 			c.Log.Warn("Failed client request >%v<", err)
 			return nil, err
 		}
-		defer resp.Body.Close()
 	case http.MethodPost, http.MethodPut:
 		// Post / Put
 		c.Log.Info("Method %s", rc.Method)
@@ -199,7 +198,6 @@ func (c *Client) Request(rc RequestConfig, params map[string]string, data interf
 			c.Log.Warn("Failed client request >%v<", err)
 			return nil, err
 		}
-		defer resp.Body.Close()
 	case http.MethodDelete:
 		// Delete
 		c.Log.Info("Method Delete")
@@ -241,6 +239,9 @@ func (c *Client) DecodeData(rc io.ReadCloser, data interface{}) error {
 		c.Log.Context("function", "")
 	}()
 
+	// close before returning
+	defer rc.Close()
+
 	err := json.NewDecoder(rc).Decode(&data)
 	if err != nil && err.Error() != "EOF" {
 		msg := fmt.Sprintf("Failed decoding data >%v<", err)
@@ -265,7 +266,7 @@ func (c *Client) BuildURL(method, url string, params map[string]string) (string,
 		if _, ok := params[":id"]; ok {
 			url = url + "/:id"
 		}
-	case http.MethodPut:
+	case http.MethodPut, http.MethodDelete:
 		if _, ok := params["id"]; !ok {
 			if _, ok := params[":id"]; !ok {
 				msg := "Params must contain :id for method Put"

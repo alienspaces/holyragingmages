@@ -45,7 +45,7 @@ func NewClient(c configurer.Configurer, l logger.Logger) (*Client, error) {
 	}
 
 	// Base path for all requests
-	cl.Path = "/templates"
+	cl.Path = "/api/templates"
 
 	err := cl.Init()
 	if err != nil {
@@ -58,13 +58,24 @@ func NewClient(c configurer.Configurer, l logger.Logger) (*Client, error) {
 // GetTemplate -
 func (c *Client) GetTemplate(templateID string) (*Response, error) {
 
+	c.Log.Context("function", "GetTemplate")
+	defer func() {
+		c.Log.Context("function", "")
+	}()
+
+	if templateID == "" {
+		msg := fmt.Sprintf("Template ID is empty >%s<, cannot get template", templateID)
+		c.Log.Warn(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
 	resp, err := c.RetryRequest(
 		client.RequestConfig{
 			Method: http.MethodGet,
-			Path:   "/api/templates",
+			Path:   "",
 		},
 		map[string]string{
-			":id": templateID,
+			"id": templateID,
 		},
 		nil,
 	)
@@ -88,10 +99,15 @@ func (c *Client) GetTemplate(templateID string) (*Response, error) {
 // GetTemplates -
 func (c *Client) GetTemplates(params map[string]string) (*Response, error) {
 
+	c.Log.Context("function", "GetTemplates")
+	defer func() {
+		c.Log.Context("function", "")
+	}()
+
 	resp, err := c.RetryRequest(
 		client.RequestConfig{
 			Method: http.MethodGet,
-			Path:   "/api/templates",
+			Path:   "",
 		},
 		params,
 		nil,
@@ -116,6 +132,17 @@ func (c *Client) GetTemplates(params map[string]string) (*Response, error) {
 // CreateTemplate -
 func (c *Client) CreateTemplate(reqData *Request) (*Response, error) {
 
+	c.Log.Context("function", "CreateTemplate")
+	defer func() {
+		c.Log.Context("function", "")
+	}()
+
+	if reqData == nil {
+		msg := fmt.Sprintf("Request data is nil >%v<, cannot create template", reqData)
+		c.Log.Warn(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
 	// id
 	params := map[string]string{}
 	if reqData.Data.ID != "" {
@@ -125,7 +152,7 @@ func (c *Client) CreateTemplate(reqData *Request) (*Response, error) {
 	resp, err := c.RetryRequest(
 		client.RequestConfig{
 			Method: http.MethodPost,
-			Path:   "/api/templates",
+			Path:   "",
 		},
 		params,
 		reqData,
@@ -150,14 +177,29 @@ func (c *Client) CreateTemplate(reqData *Request) (*Response, error) {
 // UpdateTemplate -
 func (c *Client) UpdateTemplate(reqData *Request) (*Response, error) {
 
+	c.Log.Context("function", "UpdateTemplate")
+	defer func() {
+		c.Log.Context("function", "")
+	}()
+
+	if reqData == nil {
+		msg := fmt.Sprintf("Request data is nil >%v<, cannot update template", reqData)
+		c.Log.Warn(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
+	// id
+	params := map[string]string{}
+	if reqData.Data.ID != "" {
+		params["id"] = reqData.Data.ID
+	}
+
 	resp, err := c.RetryRequest(
 		client.RequestConfig{
 			Method: http.MethodPut,
-			Path:   "/api/templates",
+			Path:   "",
 		},
-		map[string]string{
-			"id": reqData.Data.ID,
-		},
+		params,
 		reqData,
 	)
 	if err != nil {
@@ -180,10 +222,21 @@ func (c *Client) UpdateTemplate(reqData *Request) (*Response, error) {
 // DeleteTemplate -
 func (c *Client) DeleteTemplate(templateID string) (*Response, error) {
 
+	c.Log.Context("function", "DeleteTemplate")
+	defer func() {
+		c.Log.Context("function", "")
+	}()
+
+	if templateID == "" {
+		msg := fmt.Sprintf("Template ID is empty >%s<, cannot delete template", templateID)
+		c.Log.Warn(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
 	resp, err := c.RetryRequest(
 		client.RequestConfig{
 			Method: http.MethodDelete,
-			Path:   "/api/templates/:template_id",
+			Path:   "",
 		},
 		map[string]string{
 			"id": templateID,

@@ -44,7 +44,7 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, error) {
 	return c, l, nil
 }
 
-func TestClient(t *testing.T) {
+func TestRetryRequest(t *testing.T) {
 
 	c, l, err := NewDefaultDependencies()
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
@@ -78,8 +78,14 @@ func TestClient(t *testing.T) {
 				"game_id": "3fa1b1b7-cca9-435e-b2d6-a8c03be21bf1",
 			},
 			serverFunc: func(rw http.ResponseWriter, req *http.Request) {
+				respData, err := json.Marshal(&Response{})
+				if err != nil {
+					l.Warn("Failed encoding data >%v<", err)
+					rw.WriteHeader(http.StatusInternalServerError)
+					return
+				}
 				rw.WriteHeader(http.StatusOK)
-				rw.Write([]byte(`OK`))
+				rw.Write(respData)
 			},
 			expectErr:            false,
 			expectResponseStatus: http.StatusOK,
@@ -111,7 +117,6 @@ func TestClient(t *testing.T) {
 				Strength: 10,
 			},
 			serverFunc: func(rw http.ResponseWriter, req *http.Request) {
-
 				requestData := RequestData{}
 				err := json.NewDecoder(req.Body).Decode(&requestData)
 				if err != nil {
@@ -128,8 +133,14 @@ func TestClient(t *testing.T) {
 					return
 				}
 
+				respData, err := json.Marshal(&Response{})
+				if err != nil {
+					l.Warn("Failed encoding data >%v<", err)
+					rw.WriteHeader(http.StatusInternalServerError)
+					return
+				}
 				rw.WriteHeader(http.StatusOK)
-				rw.Write([]byte(`OK`))
+				rw.Write(respData)
 			},
 			expectErr:            false,
 			expectResponseStatus: http.StatusOK,
