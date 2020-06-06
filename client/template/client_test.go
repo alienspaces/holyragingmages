@@ -79,19 +79,19 @@ func TestGetTemplate(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		ID         string
+		id         string
 		serverFunc func(rw http.ResponseWriter, req *http.Request)
 		expectErr  bool
 	}{
 		{
 			name:       "Get resource success",
-			ID:         "bceac4ab-738a-4e62-a040-835e6fab331f",
+			id:         "bceac4ab-738a-4e62-a040-835e6fab331f",
 			serverFunc: handlerFunc,
 			expectErr:  false,
 		},
 		{
 			name:       "Get resource not success",
-			ID:         "",
+			id:         "",
 			serverFunc: handlerFunc,
 			expectErr:  true,
 		},
@@ -106,18 +106,18 @@ func TestGetTemplate(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(tc.serverFunc))
 			defer server.Close()
 
-			// Set environment
-			c.Set("APP_HOST", server.URL)
-
 			// Client
 			cl, err := NewClient(c, l)
 			require.NoError(t, err, "NewClient returns without error")
 			require.NotNil(t, cl, "NewClient returns a client")
 
+			// Set host
+			cl.Host = server.URL
+
 			// Set max retries to speed up tests
 			cl.MaxRetries = 2
 
-			resp, err := cl.GetTemplate(tc.ID)
+			resp, err := cl.GetTemplate(tc.id)
 			if tc.expectErr == true {
 				require.Error(t, err, "GetTemplate returns with error")
 				return
@@ -166,13 +166,13 @@ func TestGetTemplates(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(tc.serverFunc))
 			defer server.Close()
 
-			// Set environment
-			c.Set("APP_HOST", server.URL)
-
 			// Client
 			cl, err := NewClient(c, l)
 			require.NoError(t, err, "NewClient returns without error")
 			require.NotNil(t, cl, "NewClient returns a client")
+
+			// Set host
+			cl.Host = server.URL
 
 			// Set max retries to speed up tests
 			cl.MaxRetries = 2
@@ -195,16 +195,16 @@ func TestCreateTemplate(t *testing.T) {
 
 	tests := []struct {
 		name        string
+		id          string
 		requestData *Request
 		serverFunc  func(rw http.ResponseWriter, req *http.Request)
 		expectErr   bool
 	}{
 		{
 			name: "Create resource with ID success",
+			id:   gofakeit.UUID(),
 			requestData: &Request{
-				Data: Data{
-					ID: gofakeit.UUID(),
-				},
+				Data: Data{},
 			},
 			serverFunc: handlerFunc,
 			expectErr:  false,
@@ -228,18 +228,18 @@ func TestCreateTemplate(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(tc.serverFunc))
 			defer server.Close()
 
-			// Set environment
-			c.Set("APP_HOST", server.URL)
-
 			// Client
 			cl, err := NewClient(c, l)
 			require.NoError(t, err, "NewClient returns without error")
 			require.NotNil(t, cl, "NewClient returns a client")
 
+			// Set host
+			cl.Host = server.URL
+
 			// Set max retries to speed up tests
 			cl.MaxRetries = 2
 
-			resp, err := cl.CreateTemplate(tc.requestData)
+			resp, err := cl.CreateTemplate(tc.id, tc.requestData)
 			if tc.expectErr == true {
 				require.Error(t, err, "CreateTemplate returns with error")
 				return
@@ -257,16 +257,16 @@ func TestUpdateTemplate(t *testing.T) {
 
 	tests := []struct {
 		name        string
+		id          string
 		requestData *Request
 		serverFunc  func(rw http.ResponseWriter, req *http.Request)
 		expectErr   bool
 	}{
 		{
 			name: "Update resource with ID success",
+			id:   gofakeit.UUID(),
 			requestData: &Request{
-				Data: Data{
-					ID: gofakeit.UUID(),
-				},
+				Data: Data{},
 			},
 			serverFunc: handlerFunc,
 			expectErr:  false,
@@ -290,18 +290,18 @@ func TestUpdateTemplate(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(tc.serverFunc))
 			defer server.Close()
 
-			// Set environment
-			c.Set("APP_HOST", server.URL)
-
 			// Client
 			cl, err := NewClient(c, l)
 			require.NoError(t, err, "NewClient returns without error")
 			require.NotNil(t, cl, "NewClient returns a client")
 
+			// Set host
+			cl.Host = server.URL
+
 			// Set max retries to speed up tests
 			cl.MaxRetries = 2
 
-			resp, err := cl.UpdateTemplate(tc.requestData)
+			resp, err := cl.UpdateTemplate(tc.id, tc.requestData)
 			if tc.expectErr == true {
 				require.Error(t, err, "UpdateTemplate returns with error")
 				return

@@ -46,19 +46,19 @@ func NewClient(c configurer.Configurer, l logger.Logger) (*Client, error) {
 	// Base path for all requests
 	cl.Path = "/api/templates"
 
-	err := cl.Init()
-	if err != nil {
-		return nil, err
-	}
-
 	return &cl, nil
 }
 
 // GetTemplate -
 func (c *Client) GetTemplate(templateID string) (*Response, error) {
 
+	// Required parameters
+	params := map[string]string{
+		"id": templateID,
+	}
+
 	respData := Response{}
-	err := c.GetResource("", templateID, &respData)
+	err := c.Get("", params, &respData)
 	if err != nil {
 		msg := fmt.Sprintf("Failed getting resource >%v<", err)
 		c.Log.Warn(msg)
@@ -71,7 +71,7 @@ func (c *Client) GetTemplate(templateID string) (*Response, error) {
 func (c *Client) GetTemplates(params map[string]string) (*Response, error) {
 
 	respData := Response{}
-	err := c.GetResources("", params, &respData)
+	err := c.Get("", params, &respData)
 	if err != nil {
 		msg := fmt.Sprintf("Failed getting resources >%v<", err)
 		c.Log.Warn(msg)
@@ -81,10 +81,16 @@ func (c *Client) GetTemplates(params map[string]string) (*Response, error) {
 }
 
 // CreateTemplate -
-func (c *Client) CreateTemplate(reqData *Request) (*Response, error) {
+func (c *Client) CreateTemplate(templateID string, reqData *Request) (*Response, error) {
+
+	// Required parameters
+	params := map[string]string{}
+	if templateID != "" {
+		params["id"] = templateID
+	}
 
 	respData := Response{}
-	err := c.CreateResource("", reqData.Data.ID, reqData, &respData)
+	err := c.Create("", params, reqData, &respData)
 	if err != nil {
 		msg := fmt.Sprintf("Failed creating resource >%v<", err)
 		c.Log.Warn(msg)
@@ -94,10 +100,15 @@ func (c *Client) CreateTemplate(reqData *Request) (*Response, error) {
 }
 
 // UpdateTemplate -
-func (c *Client) UpdateTemplate(reqData *Request) (*Response, error) {
+func (c *Client) UpdateTemplate(templateID string, reqData *Request) (*Response, error) {
+
+	// Required parameters
+	params := map[string]string{
+		"id": templateID,
+	}
 
 	respData := Response{}
-	err := c.UpdateResource("", reqData.Data.ID, reqData, &respData)
+	err := c.Update("", params, reqData, &respData)
 	if err != nil {
 		msg := fmt.Sprintf("Failed updating resource >%v<", err)
 		c.Log.Warn(msg)
@@ -109,8 +120,13 @@ func (c *Client) UpdateTemplate(reqData *Request) (*Response, error) {
 // DeleteTemplate -
 func (c *Client) DeleteTemplate(templateID string) (*Response, error) {
 
+	// Required parameters
+	params := map[string]string{
+		"id": templateID,
+	}
+
 	respData := Response{}
-	err := c.DeleteResource("", templateID, &respData)
+	err := c.Delete("", params, &respData)
 	if err != nil {
 		msg := fmt.Sprintf("Failed deleting resource >%v<", err)
 		c.Log.Warn(msg)

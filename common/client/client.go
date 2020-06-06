@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"strings"
 	"time"
 
@@ -15,31 +17,39 @@ import (
 
 const (
 	maxRetries int = 5
+	// AuthTypeBearer will use the AuthToken as Bearer data
+	AuthTypeBearer string = "JWT"
+	// AuthTypeBasic will use AuthUser and AuthPass as credentials
+	AuthTypeBasic string = "Basic"
 )
 
 // Client -
 type Client struct {
-	Config     configurer.Configurer
-	Log        logger.Logger
+	Config configurer.Configurer
+	Log    logger.Logger
+
+	// RequestLogFunc will be called with the request URL, resulting request data and response data
+	// to be used by client consumers wanting to store requests and responses for debugging etc
+	RequestLogFunc func(url, requestData, responseData string)
+
 	MaxRetries int
 	// Path is the base path for all requests
 	Path string
 	// Host is the host for all requests
 	Host string
-
-	// NOTE: Maybe doesn't make sense to attach request config
-	RequestConfig []RequestConfig
-}
-
-// RequestConfig -
-type RequestConfig struct {
-	Method string
-	Path   string
+	// AuthType is the method of authorization to use
+	AuthType string
+	// AuthToken is the authorization "token" to use in the case of authorization type "JWT"
+	AuthToken string
+	// AuthUser is the authorization "user" to use in the case of authorization type "Basic"
+	AuthUser string
+	// AuthPass is the authorization "password" to use in the case of authorization type "Basic"
+	AuthPass string
 }
 
 // Request -
 type Request struct {
-	Pagination RequestPagination `json:"pagination"`
+	Pagination *RequestPagination `json:"pagination,omitempty"`
 }
 
 // RequestPagination -
@@ -50,8 +60,8 @@ type RequestPagination struct {
 
 // Response -
 type Response struct {
-	Error      ResponseError      `json:"error"`
-	Pagination ResponsePagination `json:"pagination"`
+	Error      *ResponseError      `json:"error,omitempty"`
+	Pagination *ResponsePagination `json:"pagination,omitempty"`
 }
 
 // ResponseError -
@@ -75,18 +85,13 @@ func NewClient(c configurer.Configurer, l logger.Logger) (*Client, error) {
 		Log:    l,
 	}
 
-	err := cl.Init()
-	if err != nil {
-		return nil, err
-	}
-
 	return &cl, nil
 }
 
 // Init - override to perform custom initialization
 func (c *Client) Init() error {
 
-	c.Log.Info("** Initialise **")
+	c.Log.Debug("** Initialise **")
 
 	if c.Config == nil {
 		msg := "Configurer undefined, cannot init client"
@@ -94,233 +99,66 @@ func (c *Client) Init() error {
 		return fmt.Errorf(msg)
 	}
 
-	// host
-	if c.Host == "" {
-		c.Host = c.Config.Get("APP_HOST")
-		c.Log.Info("Host undefined, sourced host >%s< from config", c.Host)
-	}
+	// Host
 	if c.Host == "" {
 		msg := "Host undefined, cannot init client"
 		c.Log.Warn(msg)
 		return fmt.Errorf(msg)
 	}
 
-	return nil
-}
-
-// GetResource -
-func (c *Client) GetResource(path, templateID string, respData interface{}) error {
-
-	c.Log.Context("function", "GetResource")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	c.Log.Info("path >%s< templateID >%s< respData >%v<", path, templateID, respData)
-
-	if templateID == "" {
-		msg := fmt.Sprintf("Template ID is empty >%s<, cannot get template", templateID)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
+	// AuthTypeBearer
+	if c.AuthType == AuthTypeBearer {
+		if c.AuthToken == "" {
+			msg := "AuthType is AuthTypeBearer and AuthToken is undefined, cannot init client"
+			c.Log.Warn(msg)
+			return fmt.Errorf(msg)
+		}
 	}
 
-	resp, err := c.RetryRequest(
-		RequestConfig{
-			Method: http.MethodGet,
-			Path:   path,
-		},
-		map[string]string{
-			"id": templateID,
-		},
-		nil,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	err = c.DecodeData(resp.Body, &respData)
-	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	return err
-}
-
-// GetResources -
-func (c *Client) GetResources(path string, params map[string]string, respData interface{}) error {
-
-	c.Log.Context("function", "GetResources")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	c.Log.Info("path >%s< params >%#v< respData >%#v<", path, params, respData)
-
-	resp, err := c.RetryRequest(
-		RequestConfig{
-			Method: http.MethodGet,
-			Path:   path,
-		},
-		params,
-		nil,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	err = c.DecodeData(resp.Body, &respData)
-	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	return nil
-}
-
-// CreateResource -
-func (c *Client) CreateResource(path, resourceID string, reqData interface{}, respData interface{}) error {
-
-	c.Log.Context("function", "CreateResource")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	c.Log.Info("path >%s< resourceID >%s< reqData >%#v< respData >%#v<", path, resourceID, reqData, respData)
-
-	if reqData == nil {
-		msg := fmt.Sprintf("Request data is nil >%v<, cannot create template", reqData)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	// id
-	params := map[string]string{}
-	if resourceID != "" {
-		params["id"] = resourceID
-	}
-
-	resp, err := c.RetryRequest(
-		RequestConfig{
-			Method: http.MethodPost,
-			Path:   path,
-		},
-		params,
-		reqData,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	err = c.DecodeData(resp.Body, &respData)
-	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	return err
-}
-
-// UpdateResource -
-func (c *Client) UpdateResource(path, resourceID string, reqData interface{}, respData interface{}) error {
-
-	c.Log.Context("function", "UpdateTemplate")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	c.Log.Info("path >%s< resourceID >%s< reqData >%#v< respData >%#v<", path, resourceID, reqData, respData)
-
-	if reqData == nil {
-		msg := fmt.Sprintf("Request data is nil >%v<, cannot update template", reqData)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	// id
-	params := map[string]string{}
-	if resourceID != "" {
-		params["id"] = resourceID
-	}
-
-	resp, err := c.RetryRequest(
-		RequestConfig{
-			Method: http.MethodPut,
-			Path:   path,
-		},
-		params,
-		reqData,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	err = c.DecodeData(resp.Body, &respData)
-	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	return err
-}
-
-// DeleteResource -
-func (c *Client) DeleteResource(path, resourceID string, respData interface{}) error {
-
-	c.Log.Context("function", "DeleteResource")
-	defer func() {
-		c.Log.Context("function", "")
-	}()
-
-	if resourceID == "" {
-		msg := fmt.Sprintf("Template ID is empty >%s<, cannot delete template", resourceID)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	resp, err := c.RetryRequest(
-		RequestConfig{
-			Method: http.MethodDelete,
-			Path:   path,
-		},
-		map[string]string{
-			"id": resourceID,
-		},
-		nil,
-	)
-	if err != nil {
-		msg := fmt.Sprintf("Failed request >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
-	}
-
-	err = c.DecodeData(resp.Body, &respData)
-	if err != nil {
-		msg := fmt.Sprintf("Failed decoding response >%v<", err)
-		c.Log.Warn(msg)
-		return fmt.Errorf(msg)
+	// AuthTypeBasic
+	if c.AuthType == AuthTypeBasic {
+		if c.AuthUser == "" {
+			msg := "AuthType is AuthTypeBasic and AuthUser is undefined, cannot init client"
+			c.Log.Warn(msg)
+			return fmt.Errorf(msg)
+		}
+		if c.AuthPass == "" {
+			msg := "AuthType is AuthTypeBasic and AuthUser is undefined, cannot init client"
+			c.Log.Warn(msg)
+			return fmt.Errorf(msg)
+		}
 	}
 
 	return nil
 }
 
 // RetryRequest -
-func (c *Client) RetryRequest(rc RequestConfig, params map[string]string, data interface{}) (*http.Response, error) {
+func (c *Client) RetryRequest(method, path string, params map[string]string, reqData interface{}, respData interface{}) error {
 
 	var err error
+
+	// Initialise client
+	err = c.Init()
+	if err != nil {
+		c.Log.Warn("Failed initialization >%v<", err)
+		return err
+	}
+
 	var resp *http.Response
+
+	// Replace placeholder parameters and add query parameters
+	url, err := c.BuildURL(method, path, params)
+	if err != nil {
+		c.Log.Warn("Failed building URL >%v<", err)
+		return err
+	}
+
+	// data
+	data, err := c.EncodeData(reqData)
+	if err != nil {
+		c.Log.Warn("Failed marshalling request data >%v<", err)
+		return err
+	}
 
 	// default maximum retries
 	if c.MaxRetries == 0 {
@@ -332,12 +170,12 @@ RETRY:
 	for {
 		retries++
 
-		resp, err = c.Request(rc, params, data)
+		resp, err = c.Request(method, url, data)
 		if err != nil {
 			c.Log.Warn("Client request failed retries >%d< >%v<", retries, err)
 			if retries == c.MaxRetries {
 				c.Log.Warn("Client request exceeded max retries, giving up now")
-				break
+				return err
 			}
 			time.Sleep(time.Duration(retries) * time.Second)
 			continue RETRY
@@ -345,11 +183,18 @@ RETRY:
 		break
 	}
 
-	return resp, err
+	err = c.DecodeData(resp.Body, &respData)
+	if err != nil {
+		msg := fmt.Sprintf("Failed decoding response >%v<", err)
+		c.Log.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
+	return err
 }
 
 // Request -
-func (c *Client) Request(rc RequestConfig, params map[string]string, data interface{}) (*http.Response, error) {
+func (c *Client) Request(method, url string, data []byte) (*http.Response, error) {
 
 	c.Log.Context("function", "Request")
 	defer func() {
@@ -358,69 +203,214 @@ func (c *Client) Request(rc RequestConfig, params map[string]string, data interf
 
 	var err error
 
-	// Replace placeholder parameters and add query parameters
-	url, err := c.BuildURL(rc.Method, rc.Path, params)
-	if err != nil {
-		c.Log.Warn("Failed building URL >%v<", err)
-		return nil, err
-	}
-
-	// data
-	dataBytes, err := c.EncodeData(data)
-	if err != nil {
-		c.Log.Warn("Failed marshalling request data >%v<", err)
-		return nil, err
-	}
-
-	c.Log.Info("Client request URL >%s< Data >%v<", url, dataBytes)
+	c.Log.Debug("Client request URL >%s< data length >%d<", url, len(data))
 
 	var resp *http.Response
 	var req *http.Request
 
+	// Request + Response logging
+	var requestDump []byte
+	var responseDump []byte
+
 	client := &http.Client{}
 
-	switch rc.Method {
+	switch method {
 	case http.MethodGet:
+
 		// Get
-		c.Log.Info("Method %s", rc.Method)
-		req, err = http.NewRequest(rc.Method, url, nil)
+		c.Log.Debug("Method %s", method)
+
+		req, err = http.NewRequest(method, url, nil)
 		if err != nil {
 			c.Log.Warn("Failed client request >%v<", err)
 			return nil, err
 		}
+
+		err := c.SetAuthHeaders(req)
+		if err != nil {
+			c.Log.Warn("Failed setting request auth headers >%v<", err)
+			return nil, err
+		}
+
+		if c.RequestLogFunc != nil {
+			requestDump, err = httputil.DumpRequest(req, true)
+			if err != nil {
+				c.Log.Warn("Failed request dump >%v<", err)
+				return nil, err
+			}
+		}
+
 		resp, err = client.Do(req)
 		if err != nil {
 			c.Log.Warn("Failed client request >%v<", err)
 			return nil, err
 		}
+
+		if c.RequestLogFunc != nil {
+			responseDump, err := httputil.DumpResponse(resp, true)
+			if err != nil {
+				c.Log.Warn("Failed response dump >%v<", err)
+				return nil, err
+			}
+			c.RequestLogFunc(url, string(requestDump), string(responseDump))
+		}
+
 	case http.MethodPost, http.MethodPut:
+
 		// Post / Put
-		c.Log.Info("Method %s", rc.Method)
-		req, err = http.NewRequest(rc.Method, url, bytes.NewBuffer(dataBytes))
+		c.Log.Debug("Method %s", method)
+
+		req, err = http.NewRequest(method, url, bytes.NewBuffer(data))
 		if err != nil {
 			c.Log.Warn("Failed client request >%v<", err)
 			return nil, err
 		}
+
+		err := c.SetAuthHeaders(req)
+		if err != nil {
+			c.Log.Warn("Failed setting request auth headers >%v<", err)
+			return nil, err
+		}
+
+		req.Header.Add("Content-Type", "application/json")
+
+		if c.RequestLogFunc != nil {
+			requestDump, err = httputil.DumpRequest(req, true)
+			if err != nil {
+				c.Log.Warn("Failed request dump >%v<", err)
+				return nil, err
+			}
+		}
+
 		resp, err = client.Do(req)
 		if err != nil {
-			c.Log.Warn("Failed client request >%v<", err)
+			c.Log.Warn("Failed client request >%#v< >%v<", resp, err)
 			return nil, err
 		}
-	case http.MethodDelete:
-		// Delete
-		c.Log.Info("Method Delete")
+
+		if c.RequestLogFunc != nil {
+			responseDump, err = httputil.DumpResponse(resp, true)
+			if err != nil {
+				c.Log.Warn("Failed response dump >%v<", err)
+				return nil, err
+			}
+			c.RequestLogFunc(url, string(requestDump), string(responseDump))
+		}
+
 	default:
 		// boom
+		msg := fmt.Sprintf("Method >%s< currently unsupported!", method)
+		c.Log.Warn(msg)
+		return nil, fmt.Errorf(msg)
 	}
 
-	c.Log.Info("Client response status >%s<", resp.Status)
+	c.Log.Debug("Client response status >%s<", resp.Status)
 
 	// Check response code
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusAccepted {
-		err = fmt.Errorf("Response status %d", resp.StatusCode)
+		var responseData interface{}
+		err = c.DecodeData(resp.Body, &responseData)
+		err = fmt.Errorf("Response status >%d< body >%v<", resp.StatusCode, responseData)
 	}
 
 	return resp, err
+}
+
+// SetAuthHeaders sets authentication headers on an request object based
+// on client authentication configuration
+func (c *Client) SetAuthHeaders(req *http.Request) error {
+
+	c.Log.Debug("Setting request authentication headers")
+
+	// Auth type bearer with token
+	if c.AuthType == AuthTypeBearer {
+		var bearer = "Bearer " + c.AuthToken
+		req.Header.Add("Authorization", bearer)
+		return nil
+	}
+
+	// Auth type basic with user and pass
+	if c.AuthType == AuthTypeBasic {
+		req.SetBasicAuth(c.AuthUser, c.AuthPass)
+		return nil
+	}
+
+	return nil
+}
+
+// BuildURL replaces placeholder parameters and adds query parameters
+// The parameter "id" or ":id" has special behaviour. When provided the
+// returned URL will have "/:id" appended and replaced with whatever
+// the parameter value for "id" or ":id" was.
+func (c *Client) BuildURL(method, requestURL string, params map[string]string) (string, error) {
+
+	// Request URL
+	requestURL = c.Host + c.Path + requestURL
+
+	// Add resource identifier to URL when detected
+	switch method {
+	case http.MethodGet, http.MethodPost:
+		if _, ok := params["id"]; ok {
+			requestURL = requestURL + "/:id"
+		}
+		if _, ok := params[":id"]; ok {
+			requestURL = requestURL + "/:id"
+		}
+	case http.MethodPut, http.MethodDelete:
+		if _, ok := params["id"]; !ok {
+			if _, ok := params[":id"]; !ok {
+				msg := "Params must contain :id for method Put"
+				c.Log.Warn(msg)
+				return requestURL, fmt.Errorf(msg)
+			}
+		}
+		requestURL = requestURL + "/:id"
+	default:
+		// no-op
+	}
+
+	// Replace placeholders and add query parameters
+	paramString := ""
+	for param, value := range params {
+
+		// do not allow empty param values
+		if value == "" {
+			return requestURL, fmt.Errorf("Param >%s< has empty value", param)
+		}
+
+		found := false
+		if strings.Index(requestURL, "/:"+param) != -1 {
+			requestURL = strings.Replace(requestURL, "/:"+param, "/"+value, 1)
+			found = true
+		}
+		if strings.Index(requestURL, "/"+param) != -1 {
+			requestURL = strings.Replace(requestURL, "/"+param, "/"+value, 1)
+			found = true
+		}
+		if !found {
+			param = strings.Replace(param, ":", "", 1)
+			if paramString != "" {
+				paramString = paramString + "&"
+			}
+			paramString = paramString + param + "=" + url.QueryEscape(value)
+		}
+	}
+
+	if paramString != "" {
+		requestURL = requestURL + "?" + paramString
+	}
+
+	// do not allow missing parameters
+	if strings.Index(requestURL, "/:") != -1 {
+		return requestURL, fmt.Errorf("URL >%s< still contains placeholders", requestURL)
+	}
+
+	return requestURL, nil
+}
+
+// RegisterRequestLogFunc -
+func (c *Client) RegisterRequestLogFunc(logFunc func(url, request, response string)) {
+	c.RequestLogFunc = logFunc
 }
 
 // EncodeData is a convenience function that encodes struct data into bytes
@@ -456,57 +446,4 @@ func (c *Client) DecodeData(rc io.ReadCloser, data interface{}) error {
 		return err
 	}
 	return nil
-}
-
-// BuildURL replaces placeholder parameters and adds query parameters
-func (c *Client) BuildURL(method, url string, params map[string]string) (string, error) {
-
-	// Request URL
-	url = c.Host + c.Path + url
-
-	// Add resource identifier to URL when detected
-	switch method {
-	case http.MethodGet, http.MethodPost:
-		if _, ok := params["id"]; ok {
-			url = url + "/:id"
-		}
-		if _, ok := params[":id"]; ok {
-			url = url + "/:id"
-		}
-	case http.MethodPut, http.MethodDelete:
-		if _, ok := params["id"]; !ok {
-			if _, ok := params[":id"]; !ok {
-				msg := "Params must contain :id for method Put"
-				c.Log.Warn(msg)
-				return url, fmt.Errorf(msg)
-			}
-		}
-		url = url + "/:id"
-	default:
-		// no-op
-	}
-
-	// Replace placeholders and add query parameters
-	queryParamCount := 0
-	for param, value := range params {
-		found := false
-		if strings.Index(url, "/:"+param) != -1 {
-			url = strings.Replace(url, "/:"+param, "/"+value, 1)
-			found = true
-		}
-		if strings.Index(url, "/"+param) != -1 {
-			url = strings.Replace(url, "/"+param, "/"+value, 1)
-			found = true
-		}
-		if !found {
-			if queryParamCount == 0 {
-				url = url + "?"
-			}
-			param = strings.Replace(param, ":", "", 1)
-			url = url + param + "=" + value
-			queryParamCount++
-		}
-	}
-
-	return url, nil
 }

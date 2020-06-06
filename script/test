@@ -24,6 +24,9 @@ source ${BASH_SOURCE%/*}/start-database || exit $?
 # migrate database
 source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 
+# test client
+source ${BASH_SOURCE%/*}/test-client || exit $?
+
 # test common
 source ${BASH_SOURCE%/*}/test-common || exit $?
 

@@ -75,16 +75,18 @@ func (l *Log) Init() error {
 
 	switch level {
 	case "debug":
-		l.log.Level(DebugLevel)
+		l.log = l.log.Level(zerolog.DebugLevel)
 	case "info":
-		l.log.Level(InfoLevel)
+		l.log = l.log.Level(zerolog.InfoLevel)
 	case "warn":
-		l.log.Level(WarnLevel)
+		l.log = l.log.Level(zerolog.WarnLevel)
 	case "error":
-		l.log.Level(ErrorLevel)
+		l.log = l.log.Level(zerolog.ErrorLevel)
 	default:
-		l.log.Level(DebugLevel)
+		l.log = l.log.Level(zerolog.DebugLevel)
 	}
+
+	l.log.Info().Msgf("Log level config >%s< actual >%s<", configLevel, l.log.GetLevel())
 
 	return nil
 }

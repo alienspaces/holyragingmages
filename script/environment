@@ -10,7 +10,7 @@ function verify_env {
     ENV_VARS=( \
         # general
         "APP_ENV" \
-        "APP_PORT" \
+        "APP_HOST" \
         # database
 		'APP_DB_HOST' \
 		'APP_DB_NAME' \
