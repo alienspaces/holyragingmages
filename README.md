@@ -61,11 +61,15 @@ You can:
 
 ### Gameplay
 
-* Players will be able to determine how their mage and familliar fight by adjusting how offensive, defensive or regenerative their turn by turn actions should be
-  * This setting can be adjusted for the mage and the familliar independently
-  * When playing offensively then spells and items categorised as offensive will be used more often
-  * When playing defensively then spells and items categorised as defensive will be used more often
-  * When playing supportively then spells and items categorised as supportive will be used more often
+Players do not control turn by turn what actions their mage or familliar do.
+
+Instead a player will be able to determine how their mage and familliar fight by adjusting how offensive, defensive or regenerative their actions should be.
+
+This setting can be adjusted for the mage and the familliar independently.
+
+* When playing offensively spells and items categorised as offensive will be used more often
+* When playing defensively spells and items categorised as defensive will be used more often
+* When playing supportively spells and items categorised as supportive will be used more often
 
 ## Start
 
