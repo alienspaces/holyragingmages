@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-echo
-echo "=> Stopping nginx"
-echo
-
-docker stop hrm-nginx
+NGINX_RUNNING=$(docker ps | grep "hrm-nginx")
+if [[ ! -z "${NGINX_RUNNING}" ]]; then
+    echo
+    echo "=> Stopping nginx"
+    echo
+    docker stop hrm-nginx
+    docker rm hrm-nginx
+fi
