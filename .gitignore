@@ -2,18 +2,18 @@
 note/*
 **/*.yml-e
 
-service/template/template
-service/template/hrm-template-server
-service/template/hrm-template-cli
+server/service/template/template
+server/service/template/hrm-template-server
+server/service/template/hrm-template-cli
 
-service/mage/mage
-service/mage/hrm-mage-server
-service/mage/hrm-mage-cli
+server/service/mage/mage
+server/service/mage/hrm-mage-server
+server/service/mage/hrm-mage-cli
 
-service/item/item
-service/item/hrm-item-server
-service/item/hrm-item-cli
+server/service/item/item
+server/service/item/hrm-item-server
+server/service/item/hrm-item-cli
 
-service/spell/spell
-service/spell/hrm-spell-server
-service/spell/hrm-spell-cli
+server/service/spell/spell
+server/service/spell/hrm-spell-server
+server/service/spell/hrm-spell-cli
