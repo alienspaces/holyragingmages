@@ -5,12 +5,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/config"
-	"gitlab.com/alienspaces/holyragingmages/server/common/log"
-	"gitlab.com/alienspaces/holyragingmages/server/common/store"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/configurer"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/storer"
+	"gitlab.com/alienspaces/holyragingmages/server/core/config"
+	"gitlab.com/alienspaces/holyragingmages/server/core/log"
+	"gitlab.com/alienspaces/holyragingmages/server/core/store"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/storer"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/harness"
 )
 

@@ -13,7 +13,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/server"
+	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/harness"
 )
 

@@ -3,10 +3,10 @@ package runner
 import (
 	"github.com/urfave/cli/v2"
 
-	command "gitlab.com/alienspaces/holyragingmages/server/common/cli"
-	"gitlab.com/alienspaces/holyragingmages/server/common/prepare"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/modeller"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/preparer"
+	command "gitlab.com/alienspaces/holyragingmages/server/core/cli"
+	"gitlab.com/alienspaces/holyragingmages/server/core/prepare"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/model"
 )
 

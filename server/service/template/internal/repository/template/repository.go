@@ -5,10 +5,10 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/repository"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/preparer"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/repositor"
+	"gitlab.com/alienspaces/holyragingmages/server/core/repository"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/preparer"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/repositor"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/record"
 )
 

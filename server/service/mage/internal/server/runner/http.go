@@ -6,11 +6,11 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/payload"
-	"gitlab.com/alienspaces/holyragingmages/server/common/server"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/modeller"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/payloader"
+	"gitlab.com/alienspaces/holyragingmages/server/core/payload"
+	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/payloader"
 )
 
 // Handler - default handler

@@ -1,8 +1,8 @@
 package harness
 
 import (
-	"gitlab.com/alienspaces/holyragingmages/server/common/harness"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/core/harness"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/record"
 )

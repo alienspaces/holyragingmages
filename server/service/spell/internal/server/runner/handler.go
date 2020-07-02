@@ -6,9 +6,9 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/server"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/record"
 )

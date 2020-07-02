@@ -1,7 +1,7 @@
 package record
 
 import (
-	"gitlab.com/alienspaces/holyragingmages/server/common/repository"
+	"gitlab.com/alienspaces/holyragingmages/server/core/repository"
 )
 
 // Spell -

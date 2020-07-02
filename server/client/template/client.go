@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/client"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/configurer"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/server/core/client"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/configurer"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 )
 
 // Client -

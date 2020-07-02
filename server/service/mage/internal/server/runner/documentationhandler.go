@@ -5,8 +5,8 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 )
 
 // GetDocumentationHandler -

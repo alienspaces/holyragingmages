@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/config"
-	"gitlab.com/alienspaces/holyragingmages/server/common/log"
-	"gitlab.com/alienspaces/holyragingmages/server/common/server"
-	"gitlab.com/alienspaces/holyragingmages/server/common/store"
+	"gitlab.com/alienspaces/holyragingmages/server/core/config"
+	"gitlab.com/alienspaces/holyragingmages/server/core/log"
+	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/core/store"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/server/runner"
 )
 

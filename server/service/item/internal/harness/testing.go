@@ -3,8 +3,8 @@ package harness
 import (
 	"github.com/brianvoe/gofakeit"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/harness"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/core/harness"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/record"
 )

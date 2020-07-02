@@ -3,12 +3,12 @@ package runner
 import (
 	"net/http"
 
-	"gitlab.com/alienspaces/holyragingmages/server/common/prepare"
-	"gitlab.com/alienspaces/holyragingmages/server/common/server"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/modeller"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/preparer"
-	"gitlab.com/alienspaces/holyragingmages/server/common/type/runnable"
+	"gitlab.com/alienspaces/holyragingmages/server/core/prepare"
+	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/preparer"
+	"gitlab.com/alienspaces/holyragingmages/server/core/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/model"
 )
 
