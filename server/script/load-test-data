@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# environment
+source ${BASH_SOURCE%/*}/environment || exit $?
+
+SERVICES=(mage spell item)
+
+for SERVICE in "${SERVICES[@]}"; do
+
+    # reset APP_SERVER_PORT as each service should define
+    # a unique server port in their local env
+    export APP_SERVER_PORT=""
+
+    # load mage service test data
+    cd "service/${SERVICE}"
+
+    echo
+    echo "** Loading ${SERVICE} service test data"
+    echo
+
+    # environment
+    source ../../${BASH_SOURCE%/*}/environment || exit $?
+
+    # go run ./cmd/cli load-test-data || exit $?
+
+    cd -
+
+done

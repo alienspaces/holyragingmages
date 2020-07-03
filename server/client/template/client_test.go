@@ -52,9 +52,9 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, error) {
 
 	configVars := []string{
 		// general
-		"APP_HOST",
+		"APP_SERVER_HOST",
 		// logger
-		"APP_LOG_LEVEL",
+		"APP_SERVER_LOG_LEVEL",
 	}
 	for _, key := range configVars {
 		err = c.Add(key, false)

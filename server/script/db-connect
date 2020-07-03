@@ -11,8 +11,8 @@ if [ $status -ne 0 ]; then
     exit $status
 fi
 
-export PGPASSWORD=$APP_DB_PASSWORD
-psql --host=$APP_DB_HOST \
-     --port=$APP_DB_PORT \
-     --username=$APP_DB_USER \
-     $APP_DB_NAME
+export PGPASSWORD=$APP_SERVER_DB_PASSWORD
+psql --host=$APP_SERVER_DB_HOST \
+     --port=$APP_SERVER_DB_PORT \
+     --username=$APP_SERVER_DB_USER \
+     $APP_SERVER_DB_NAME

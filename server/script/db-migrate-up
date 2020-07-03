@@ -33,7 +33,7 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         # load service specific environment
         source ${BASH_SOURCE%/*}/environment ./service/$SERVICE_NAME || exit $?
 
-        URL="postgres://$APP_DB_USER:$APP_DB_PASSWORD@$APP_DB_HOST:$APP_DB_PORT/$APP_DB_NAME?sslmode=disable"
+        URL="postgres://$APP_SERVER_DB_USER:$APP_SERVER_DB_PASSWORD@$APP_SERVER_DB_HOST:$APP_SERVER_DB_PORT/$APP_SERVER_DB_NAME?sslmode=disable"
 
         echo "=> Migration path ./service/$SERVICE_NAME/migration"
 

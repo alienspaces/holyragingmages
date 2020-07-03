@@ -9,14 +9,14 @@ function verify_env {
     # required for all environments
     ENV_VARS=( \
         # general
-        "APP_ENV" \
-        "APP_HOST" \
+        "APP_SERVER_ENV" \
+        "APP_SERVER_HOST" \
         # database
-		'APP_DB_HOST' \
-		'APP_DB_NAME' \
-		'APP_DB_PORT' \
-		'APP_DB_USER' \
-		'APP_DB_PASSWORD' \
+		'APP_SERVER_DB_HOST' \
+		'APP_SERVER_DB_NAME' \
+		'APP_SERVER_DB_PORT' \
+		'APP_SERVER_DB_USER' \
+		'APP_SERVER_DB_PASSWORD' \
     );
 
     # verify

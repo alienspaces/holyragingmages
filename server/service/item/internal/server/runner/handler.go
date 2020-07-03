@@ -2,47 +2,25 @@ package runner
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/record"
 )
 
-// ItemResponse -
-type ItemResponse struct {
-	server.Response
-	Data []ItemData `json:"data"`
-}
-
-// ItemRequest -
-type ItemRequest struct {
-	server.Request
-	Data ItemData `json:"data"`
-}
-
-// ItemData -
-type ItemData struct {
-	ID          string    `json:"id,omitempty"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"created_at,omitempty"`
-	UpdatedAt   time.Time `json:"updated_at,omitempty"`
-}
-
 // GetItemsHandler -
-func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Get items handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get items handler ** p >%#v< m >%#v<", pp, m)
 
 	var recs []*record.Item
 	var err error
 
-	id := p.ByName("item_id")
+	id := pp.ByName("item_id")
 
 	// single resource
 	if id != "" {
@@ -67,11 +45,8 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 
 		l.Info("Querying item records")
 
-		// query parameters
-		q := r.URL.Query()
-
 		params := make(map[string]interface{})
-		for paramName, paramValue := range q {
+		for paramName, paramValue := range qp {
 			params[paramName] = paramValue
 		}
 
@@ -83,7 +58,7 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 	}
 
 	// assign response properties
-	data := []ItemData{}
+	data := []schema.ItemData{}
 	for _, rec := range recs {
 
 		// response data
@@ -96,7 +71,7 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 		data = append(data, responseData)
 	}
 
-	res := ItemResponse{
+	res := schema.ItemResponse{
 		Data: data,
 	}
 
@@ -108,14 +83,14 @@ func (rnr *Runner) GetItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 }
 
 // PostItemsHandler -
-func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Post items handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Post items handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := p.ByName("item_id")
+	id := pp.ByName("item_id")
 
-	req := ItemRequest{}
+	req := schema.ItemRequest{}
 
 	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -149,8 +124,8 @@ func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p ht
 	}
 
 	// assign response properties
-	res := ItemResponse{
-		Data: []ItemData{
+	res := schema.ItemResponse{
+		Data: []schema.ItemData{
 			responseData,
 		},
 	}
@@ -163,12 +138,12 @@ func (rnr *Runner) PostItemsHandler(w http.ResponseWriter, r *http.Request, p ht
 }
 
 // PutItemsHandler -
-func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Put items handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Put items handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := p.ByName("item_id")
+	id := pp.ByName("item_id")
 
 	l.Info("Updating resource ID >%s<", id)
 
@@ -184,7 +159,7 @@ func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 		return
 	}
 
-	req := ItemRequest{}
+	req := schema.ItemRequest{}
 
 	err = rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -213,8 +188,8 @@ func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 	}
 
 	// assign response properties
-	res := ItemResponse{
-		Data: []ItemData{
+	res := schema.ItemResponse{
+		Data: []schema.ItemData{
 			responseData,
 		},
 	}
@@ -227,7 +202,7 @@ func (rnr *Runner) PutItemsHandler(w http.ResponseWriter, r *http.Request, p htt
 }
 
 // ItemRequestDataToRecord -
-func (rnr *Runner) ItemRequestDataToRecord(data ItemData, rec *record.Item) error {
+func (rnr *Runner) ItemRequestDataToRecord(data schema.ItemData, rec *record.Item) error {
 
 	rec.Name = data.Name
 	rec.Description = data.Name
@@ -236,9 +211,9 @@ func (rnr *Runner) ItemRequestDataToRecord(data ItemData, rec *record.Item) erro
 }
 
 // RecordToItemResponseData -
-func (rnr *Runner) RecordToItemResponseData(itemRec *record.Item) (ItemData, error) {
+func (rnr *Runner) RecordToItemResponseData(itemRec *record.Item) (schema.ItemData, error) {
 
-	data := ItemData{
+	data := schema.ItemData{
 		ID:          itemRec.ID,
 		Name:        itemRec.Name,
 		Description: itemRec.Description,

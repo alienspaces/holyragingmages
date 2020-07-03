@@ -27,6 +27,7 @@ require (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/repositor v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/runnable v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/storer v1.0.0
+	gitlab.com/alienspaces/holyragingmages/server/schema v1.0.0
 )
 
 replace (
@@ -49,5 +50,6 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/repositor => ../../core/type/repositor
 	gitlab.com/alienspaces/holyragingmages/server/core/type/runnable => ../../core/type/runnable
 	gitlab.com/alienspaces/holyragingmages/server/core/type/storer => ../../core/type/storer
+	gitlab.com/alienspaces/holyragingmages/server/schema => ../../schema
 	gitlab.com/alienspaces/holyragingmages/server/service/spell => ../../service/spell
 )

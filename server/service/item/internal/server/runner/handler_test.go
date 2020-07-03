@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/harness"
 )
 
@@ -32,9 +33,9 @@ func TestItemHandler(t *testing.T) {
 		config        func(rnr *Runner) server.HandlerConfig
 		requestParams func(data *harness.Data) map[string]string
 		queryParams   func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *ItemRequest
+		requestData   func(data *harness.Data) *schema.ItemRequest
 		responseCode  int
-		responseData  func(data *harness.Data) *ItemResponse
+		responseData  func(data *harness.Data) *schema.ItemResponse
 	}
 
 	tests := []TestCase{
@@ -49,13 +50,13 @@ func TestItemHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
+			requestData: func(data *harness.Data) *schema.ItemRequest {
 				return nil
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *ItemResponse {
-				res := ItemResponse{
-					Data: []ItemData{
+			responseData: func(data *harness.Data) *schema.ItemResponse {
+				res := schema.ItemResponse{
+					Data: []schema.ItemData{
 						{
 							ID: data.ItemRecs[0].ID,
 						},
@@ -75,13 +76,13 @@ func TestItemHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
+			requestData: func(data *harness.Data) *schema.ItemRequest {
 				return nil
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *ItemResponse {
-				res := ItemResponse{
-					Data: []ItemData{
+			responseData: func(data *harness.Data) *schema.ItemResponse {
+				res := schema.ItemResponse{
+					Data: []schema.ItemData{
 						{
 							ID: data.ItemRecs[0].ID,
 						},
@@ -101,7 +102,7 @@ func TestItemHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
+			requestData: func(data *harness.Data) *schema.ItemRequest {
 				return nil
 			},
 			responseCode: http.StatusNotFound,
@@ -111,9 +112,9 @@ func TestItemHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
-				req := ItemRequest{
-					Data: ItemData{},
+			requestData: func(data *harness.Data) *schema.ItemRequest {
+				req := schema.ItemRequest{
+					Data: schema.ItemData{},
 				}
 				return &req
 			},
@@ -130,16 +131,16 @@ func TestItemHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
-				req := ItemRequest{
-					Data: ItemData{},
+			requestData: func(data *harness.Data) *schema.ItemRequest {
+				req := schema.ItemRequest{
+					Data: schema.ItemData{},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *ItemResponse {
-				res := ItemResponse{
-					Data: []ItemData{
+			responseData: func(data *harness.Data) *schema.ItemResponse {
+				res := schema.ItemResponse{
+					Data: []schema.ItemData{
 						{
 							ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 						},
@@ -159,18 +160,18 @@ func TestItemHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
-				req := ItemRequest{
-					Data: ItemData{
+			requestData: func(data *harness.Data) *schema.ItemRequest {
+				req := schema.ItemRequest{
+					Data: schema.ItemData{
 						ID: data.ItemRecs[0].ID,
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *ItemResponse {
-				res := ItemResponse{
-					Data: []ItemData{
+			responseData: func(data *harness.Data) *schema.ItemResponse {
+				res := schema.ItemResponse{
+					Data: []schema.ItemData{
 						{
 							ID: data.ItemRecs[0].ID,
 						},
@@ -190,9 +191,9 @@ func TestItemHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
-				req := ItemRequest{
-					Data: ItemData{
+			requestData: func(data *harness.Data) *schema.ItemRequest {
+				req := schema.ItemRequest{
+					Data: schema.ItemData{
 						ID: data.ItemRecs[0].ID,
 					},
 				}
@@ -205,7 +206,7 @@ func TestItemHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[3]
 			},
-			requestData: func(data *harness.Data) *ItemRequest {
+			requestData: func(data *harness.Data) *schema.ItemRequest {
 				return nil
 			},
 			responseCode: http.StatusBadRequest,
@@ -307,12 +308,12 @@ func TestItemHandler(t *testing.T) {
 			// test status
 			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
 
-			res := ItemResponse{}
+			res := schema.ItemResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			var resData *ItemResponse
+			var resData *schema.ItemResponse
 			if tc.responseData != nil {
 				resData = tc.responseData(th.Data)
 			}

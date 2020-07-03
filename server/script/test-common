@@ -5,9 +5,9 @@ echo "=> Test common"
 echo
 
 # "docker" or "local"
-export APP_DB_SERVICE=docker
+export APP_SERVER_DB_SERVICE=docker
 if [ -n "$1" ]; then
-    export APP_DB_SERVICE=$1
+    export APP_SERVER_DB_SERVICE=$1
     shift
 fi
 

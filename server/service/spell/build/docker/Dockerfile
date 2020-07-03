@@ -8,14 +8,14 @@ RUN apk update \
     && apk add git
 
 # app home
-ENV APP_HOME /holyragingmages
+ENV APP_SERVER_HOME /holyragingmages
 
 # copy application
-WORKDIR $APP_HOME
+WORKDIR $APP_SERVER_HOME
 COPY . .
 
 # build API server
-WORKDIR $APP_HOME/service/spell
+WORKDIR $APP_SERVER_HOME/service/spell
 RUN go build -o /go/bin/hrm-spell-server ./cmd/server
 RUN go build -o /go/bin/hrm-spell-cli ./cmd/cli
 

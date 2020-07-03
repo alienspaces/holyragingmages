@@ -63,7 +63,7 @@ func NewRunner() *Runner {
 			Path:        "/api/templates",
 			HandlerFunc: r.PostTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema",
+				ValidateSchemaLocation: "schema/template",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -79,7 +79,7 @@ func NewRunner() *Runner {
 			Path:        "/api/templates/:template_id",
 			HandlerFunc: r.PostTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema",
+				ValidateSchemaLocation: "schema/template",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -95,7 +95,7 @@ func NewRunner() *Runner {
 			Path:        "/api/templates/:template_id",
 			HandlerFunc: r.PutTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema",
+				ValidateSchemaLocation: "schema/template",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",

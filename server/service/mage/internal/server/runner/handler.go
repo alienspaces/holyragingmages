@@ -2,51 +2,25 @@ package runner
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/mage/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/server/service/mage/internal/record"
 )
 
-// MageResponse -
-type MageResponse struct {
-	server.Response
-	Data []MageData `json:"data"`
-}
-
-// MageRequest -
-type MageRequest struct {
-	server.Request
-	Data MageData `json:"data"`
-}
-
-// MageData -
-type MageData struct {
-	ID           string    `json:"id,omitempty"`
-	Name         string    `json:"name"`
-	Strength     int       `json:"strength"`
-	Dexterity    int       `json:"dexterity"`
-	Intelligence int       `json:"intelligence"`
-	Experience   int64     `json:"experience"`
-	Coin         int64     `json:"coin"`
-	CreatedAt    time.Time `json:"created_at,omitempty"`
-	UpdatedAt    time.Time `json:"updated_at,omitempty"`
-}
-
 // GetMagesHandler -
-func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Get mages handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get mages handler ** p >%#v< m >%#v<", pp, m)
 
 	var recs []*record.Mage
 	var err error
 
-	id := p.ByName("mage_id")
+	id := pp.ByName("mage_id")
 
 	// single resource
 	if id != "" {
@@ -72,10 +46,8 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		l.Info("Querying mage records")
 
 		// query parameters
-		q := r.URL.Query()
-
 		params := make(map[string]interface{})
-		for paramName, paramValue := range q {
+		for paramName, paramValue := range qp {
 			params[paramName] = paramValue
 		}
 
@@ -87,7 +59,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 	}
 
 	// assign response properties
-	data := []MageData{}
+	data := []schema.MageData{}
 	for _, rec := range recs {
 
 		// response data
@@ -100,7 +72,7 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		data = append(data, responseData)
 	}
 
-	res := MageResponse{
+	res := schema.MageResponse{
 		Data: data,
 	}
 
@@ -112,14 +84,14 @@ func (rnr *Runner) GetMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 }
 
 // PostMagesHandler -
-func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Post mages handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Post mages handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := p.ByName("mage_id")
+	id := pp.ByName("mage_id")
 
-	req := MageRequest{}
+	req := schema.MageRequest{}
 
 	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -153,8 +125,8 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 	}
 
 	// assign response properties
-	res := MageResponse{
-		Data: []MageData{
+	res := schema.MageResponse{
+		Data: []schema.MageData{
 			responseData,
 		},
 	}
@@ -167,11 +139,11 @@ func (rnr *Runner) PostMagesHandler(w http.ResponseWriter, r *http.Request, p ht
 }
 
 // PutMagesHandler -
-func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Put mages handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Put mages handler ** p >%#v< m >#%v<", pp, m)
 
-	id := p.ByName("mage_id")
+	id := pp.ByName("mage_id")
 
 	l.Info("Updating resource ID >%s<", id)
 
@@ -187,7 +159,7 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 		return
 	}
 
-	req := MageRequest{}
+	req := schema.MageRequest{}
 
 	err = rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -216,8 +188,8 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 	}
 
 	// assign response properties
-	res := MageResponse{
-		Data: []MageData{
+	res := schema.MageResponse{
+		Data: []schema.MageData{
 			responseData,
 		},
 	}
@@ -230,7 +202,7 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, p htt
 }
 
 // MageRequestDataToRecord -
-func (rnr *Runner) MageRequestDataToRecord(data MageData, rec *record.Mage) error {
+func (rnr *Runner) MageRequestDataToRecord(data schema.MageData, rec *record.Mage) error {
 
 	rec.Name = data.Name
 
@@ -238,9 +210,9 @@ func (rnr *Runner) MageRequestDataToRecord(data MageData, rec *record.Mage) erro
 }
 
 // RecordToMageResponseData -
-func (rnr *Runner) RecordToMageResponseData(rec *record.Mage) (MageData, error) {
+func (rnr *Runner) RecordToMageResponseData(rec *record.Mage) (schema.MageData, error) {
 
-	data := MageData{
+	data := schema.MageData{
 		ID:           rec.ID,
 		Name:         rec.Name,
 		Strength:     rec.Strength,

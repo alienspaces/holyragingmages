@@ -22,16 +22,16 @@ func main() {
 
 	configVars := []string{
 		// general
-		"APP_ENV",
-		"APP_PORT",
+		"APP_SERVER_ENV",
+		"APP_SERVER_PORT",
 		// logger
-		"APP_LOG_LEVEL",
+		"APP_SERVER_LOG_LEVEL",
 		// database
-		"APP_DB_HOST",
-		"APP_DB_PORT",
-		"APP_DB_NAME",
-		"APP_DB_USER",
-		"APP_DB_PASSWORD",
+		"APP_SERVER_DB_HOST",
+		"APP_SERVER_DB_PORT",
+		"APP_SERVER_DB_NAME",
+		"APP_SERVER_DB_USER",
+		"APP_SERVER_DB_PASSWORD",
 	}
 	for _, key := range configVars {
 		err := c.Add(key, true)

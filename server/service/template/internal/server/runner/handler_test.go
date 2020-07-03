@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/harness"
 )
 
@@ -32,9 +33,9 @@ func TestTemplateHandler(t *testing.T) {
 		config        func(rnr *Runner) server.HandlerConfig
 		requestParams func(data *harness.Data) map[string]string
 		queryParams   func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *TemplateRequest
+		requestData   func(data *harness.Data) *schema.TemplateRequest
 		responseCode  int
-		responseData  func(data *harness.Data) *TemplateResponse
+		responseData  func(data *harness.Data) *schema.TemplateResponse
 	}
 
 	tests := []TestCase{
@@ -49,13 +50,13 @@ func TestTemplateHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *TemplateRequest {
+			requestData: func(data *harness.Data) *schema.TemplateRequest {
 				return nil
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *TemplateResponse {
-				res := TemplateResponse{
-					Data: []TemplateData{
+			responseData: func(data *harness.Data) *schema.TemplateResponse {
+				res := schema.TemplateResponse{
+					Data: []schema.TemplateData{
 						{
 							ID: data.TemplateRecs[0].ID,
 						},
@@ -75,7 +76,7 @@ func TestTemplateHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *TemplateRequest {
+			requestData: func(data *harness.Data) *schema.TemplateRequest {
 				return nil
 			},
 			responseCode: http.StatusNotFound,
@@ -85,9 +86,9 @@ func TestTemplateHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
-			requestData: func(data *harness.Data) *TemplateRequest {
-				req := TemplateRequest{
-					Data: TemplateData{},
+			requestData: func(data *harness.Data) *schema.TemplateRequest {
+				req := schema.TemplateRequest{
+					Data: schema.TemplateData{},
 				}
 				return &req
 			},
@@ -104,16 +105,16 @@ func TestTemplateHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *TemplateRequest {
-				req := TemplateRequest{
-					Data: TemplateData{},
+			requestData: func(data *harness.Data) *schema.TemplateRequest {
+				req := schema.TemplateRequest{
+					Data: schema.TemplateData{},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *TemplateResponse {
-				res := TemplateResponse{
-					Data: []TemplateData{
+			responseData: func(data *harness.Data) *schema.TemplateResponse {
+				res := schema.TemplateResponse{
+					Data: []schema.TemplateData{
 						{
 							ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 						},
@@ -133,18 +134,18 @@ func TestTemplateHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *TemplateRequest {
-				req := TemplateRequest{
-					Data: TemplateData{
+			requestData: func(data *harness.Data) *schema.TemplateRequest {
+				req := schema.TemplateRequest{
+					Data: schema.TemplateData{
 						ID: data.TemplateRecs[0].ID,
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *TemplateResponse {
-				res := TemplateResponse{
-					Data: []TemplateData{
+			responseData: func(data *harness.Data) *schema.TemplateResponse {
+				res := schema.TemplateResponse{
+					Data: []schema.TemplateData{
 						{
 							ID: data.TemplateRecs[0].ID,
 						},
@@ -164,9 +165,9 @@ func TestTemplateHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *TemplateRequest {
-				req := TemplateRequest{
-					Data: TemplateData{
+			requestData: func(data *harness.Data) *schema.TemplateRequest {
+				req := schema.TemplateRequest{
+					Data: schema.TemplateData{
 						ID: data.TemplateRecs[0].ID,
 					},
 				}
@@ -179,7 +180,7 @@ func TestTemplateHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[3]
 			},
-			requestData: func(data *harness.Data) *TemplateRequest {
+			requestData: func(data *harness.Data) *schema.TemplateRequest {
 				return nil
 			},
 			responseCode: http.StatusBadRequest,
@@ -281,12 +282,12 @@ func TestTemplateHandler(t *testing.T) {
 			// test status
 			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
 
-			res := TemplateResponse{}
+			res := schema.TemplateResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			var resData *TemplateResponse
+			var resData *schema.TemplateResponse
 			if tc.responseData != nil {
 				resData = tc.responseData(th.Data)
 			}

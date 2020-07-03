@@ -69,7 +69,7 @@ func (r *Repository) NewRecordArray() []*record.Template {
 // GetOne -
 func (r *Repository) GetOne(id string, forUpdate bool) (*record.Template, error) {
 	rec := r.NewRecord()
-	if err := r.GetOneRec(id, rec); err != nil {
+	if err := r.GetOneRec(id, rec, forUpdate); err != nil {
 		r.Log.Warn("Failed statement execution >%v<", err)
 		return nil, err
 	}

@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/harness"
 )
 
@@ -32,9 +33,9 @@ func TestSpellHandler(t *testing.T) {
 		config        func(rnr *Runner) server.HandlerConfig
 		requestParams func(data *harness.Data) map[string]string
 		queryParams   func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *SpellRequest
+		requestData   func(data *harness.Data) *schema.SpellRequest
 		responseCode  int
-		responseData  func(data *harness.Data) *SpellResponse
+		responseData  func(data *harness.Data) *schema.SpellResponse
 	}
 
 	tests := []TestCase{
@@ -49,13 +50,13 @@ func TestSpellHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *SpellRequest {
+			requestData: func(data *harness.Data) *schema.SpellRequest {
 				return nil
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *SpellResponse {
-				res := SpellResponse{
-					Data: []SpellData{
+			responseData: func(data *harness.Data) *schema.SpellResponse {
+				res := schema.SpellResponse{
+					Data: []schema.SpellData{
 						{
 							ID: data.SpellRecs[0].ID,
 						},
@@ -75,7 +76,7 @@ func TestSpellHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *SpellRequest {
+			requestData: func(data *harness.Data) *schema.SpellRequest {
 				return nil
 			},
 			responseCode: http.StatusNotFound,
@@ -85,9 +86,9 @@ func TestSpellHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
-			requestData: func(data *harness.Data) *SpellRequest {
-				req := SpellRequest{
-					Data: SpellData{},
+			requestData: func(data *harness.Data) *schema.SpellRequest {
+				req := schema.SpellRequest{
+					Data: schema.SpellData{},
 				}
 				return &req
 			},
@@ -104,16 +105,16 @@ func TestSpellHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *SpellRequest {
-				req := SpellRequest{
-					Data: SpellData{},
+			requestData: func(data *harness.Data) *schema.SpellRequest {
+				req := schema.SpellRequest{
+					Data: schema.SpellData{},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *SpellResponse {
-				res := SpellResponse{
-					Data: []SpellData{
+			responseData: func(data *harness.Data) *schema.SpellResponse {
+				res := schema.SpellResponse{
+					Data: []schema.SpellData{
 						{
 							ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 						},
@@ -133,18 +134,18 @@ func TestSpellHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *SpellRequest {
-				req := SpellRequest{
-					Data: SpellData{
+			requestData: func(data *harness.Data) *schema.SpellRequest {
+				req := schema.SpellRequest{
+					Data: schema.SpellData{
 						ID: data.SpellRecs[0].ID,
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *SpellResponse {
-				res := SpellResponse{
-					Data: []SpellData{
+			responseData: func(data *harness.Data) *schema.SpellResponse {
+				res := schema.SpellResponse{
+					Data: []schema.SpellData{
 						{
 							ID: data.SpellRecs[0].ID,
 						},
@@ -164,9 +165,9 @@ func TestSpellHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *SpellRequest {
-				req := SpellRequest{
-					Data: SpellData{
+			requestData: func(data *harness.Data) *schema.SpellRequest {
+				req := schema.SpellRequest{
+					Data: schema.SpellData{
 						ID: data.SpellRecs[0].ID,
 					},
 				}
@@ -179,7 +180,7 @@ func TestSpellHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[3]
 			},
-			requestData: func(data *harness.Data) *SpellRequest {
+			requestData: func(data *harness.Data) *schema.SpellRequest {
 				return nil
 			},
 			responseCode: http.StatusBadRequest,
@@ -281,12 +282,12 @@ func TestSpellHandler(t *testing.T) {
 			// test status
 			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
 
-			res := SpellResponse{}
+			res := schema.SpellResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			var resData *SpellResponse
+			var resData *schema.SpellResponse
 			if tc.responseData != nil {
 				resData = tc.responseData(th.Data)
 			}

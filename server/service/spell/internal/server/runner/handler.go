@@ -2,47 +2,25 @@ package runner
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/server/service/spell/internal/record"
 )
 
-// SpellResponse -
-type SpellResponse struct {
-	server.Response
-	Data []SpellData `json:"data"`
-}
-
-// SpellRequest -
-type SpellRequest struct {
-	server.Request
-	Data SpellData `json:"data"`
-}
-
-// SpellData -
-type SpellData struct {
-	ID          string    `json:"id,omitempty"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"created_at,omitempty"`
-	UpdatedAt   time.Time `json:"updated_at,omitempty"`
-}
-
 // GetSpellsHandler -
-func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Get spells handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get spells handler ** p >%#v< m >%#v<", pp, m)
 
 	var recs []*record.Spell
 	var err error
 
-	id := p.ByName("spell_id")
+	id := pp.ByName("spell_id")
 
 	// single resource
 	if id != "" {
@@ -67,11 +45,8 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 
 		l.Info("Querying spell records")
 
-		// query parameters
-		q := r.URL.Query()
-
 		params := make(map[string]interface{})
-		for paramName, paramValue := range q {
+		for paramName, paramValue := range qp {
 			params[paramName] = paramValue
 		}
 
@@ -83,7 +58,7 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 	}
 
 	// assign response properties
-	data := []SpellData{}
+	data := []schema.SpellData{}
 	for _, rec := range recs {
 
 		// response data
@@ -96,7 +71,7 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 		data = append(data, responseData)
 	}
 
-	res := SpellResponse{
+	res := schema.SpellResponse{
 		Data: data,
 	}
 
@@ -108,14 +83,14 @@ func (rnr *Runner) GetSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 }
 
 // PostSpellsHandler -
-func (rnr *Runner) PostSpellsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PostSpellsHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Post spells handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Post spells handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := p.ByName("spell_id")
+	id := pp.ByName("spell_id")
 
-	req := SpellRequest{}
+	req := schema.SpellRequest{}
 
 	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -149,8 +124,8 @@ func (rnr *Runner) PostSpellsHandler(w http.ResponseWriter, r *http.Request, p h
 	}
 
 	// assign response properties
-	res := SpellResponse{
-		Data: []SpellData{
+	res := schema.SpellResponse{
+		Data: []schema.SpellData{
 			responseData,
 		},
 	}
@@ -163,12 +138,12 @@ func (rnr *Runner) PostSpellsHandler(w http.ResponseWriter, r *http.Request, p h
 }
 
 // PutSpellsHandler -
-func (rnr *Runner) PutSpellsHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PutSpellsHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Put spells handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Put spells handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := p.ByName("spell_id")
+	id := pp.ByName("spell_id")
 
 	l.Info("Updating resource ID >%s<", id)
 
@@ -184,7 +159,7 @@ func (rnr *Runner) PutSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 		return
 	}
 
-	req := SpellRequest{}
+	req := schema.SpellRequest{}
 
 	err = rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -213,8 +188,8 @@ func (rnr *Runner) PutSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 	}
 
 	// assign response properties
-	res := SpellResponse{
-		Data: []SpellData{
+	res := schema.SpellResponse{
+		Data: []schema.SpellData{
 			responseData,
 		},
 	}
@@ -227,7 +202,7 @@ func (rnr *Runner) PutSpellsHandler(w http.ResponseWriter, r *http.Request, p ht
 }
 
 // SpellRequestDataToRecord -
-func (rnr *Runner) SpellRequestDataToRecord(data SpellData, rec *record.Spell) error {
+func (rnr *Runner) SpellRequestDataToRecord(data schema.SpellData, rec *record.Spell) error {
 
 	rec.Name = data.Name
 	rec.Description = data.Description
@@ -236,9 +211,9 @@ func (rnr *Runner) SpellRequestDataToRecord(data SpellData, rec *record.Spell) e
 }
 
 // RecordToSpellResponseData -
-func (rnr *Runner) RecordToSpellResponseData(spellRec *record.Spell) (SpellData, error) {
+func (rnr *Runner) RecordToSpellResponseData(spellRec *record.Spell) (schema.SpellData, error) {
 
-	data := SpellData{
+	data := schema.SpellData{
 		ID:          spellRec.ID,
 		Name:        spellRec.Name,
 		Description: spellRec.Description,

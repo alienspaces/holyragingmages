@@ -6,8 +6,8 @@ cp .env.ci .env
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
-if ! [[ -n ${APP_DB_SERVICE} ]]; then
-    echo "=> (test-ci) Missing APP_DB_SERVICE"
+if ! [[ -n ${APP_SERVER_DB_SERVICE} ]]; then
+    echo "=> (test-ci) Missing APP_SERVER_DB_SERVICE"
     exit 1
 fi
 

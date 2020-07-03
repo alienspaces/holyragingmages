@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # "docker" or "local"
-export APP_DB_SERVICE=docker
+export APP_SERVER_DB_SERVICE=docker
 if [ -n "$1" ]; then
-    export APP_DB_SERVICE=$1
+    export APP_SERVER_DB_SERVICE=$1
     shift
 fi
 
@@ -16,13 +16,13 @@ source ${BASH_SOURCE%/*}/retry || exit $?
 # stop database
 echo "=> Stopping database";
 
-if [ $APP_DB_SERVICE = "docker" ]; then
+if [ $APP_SERVER_DB_SERVICE = "docker" ]; then
 
     echo "=> Stopping database docker service"
 
     docker ps -a | grep hrm | awk '{print $1}' | xargs sh -c 'for arg do docker stop $arg; docker rm $arg; done' _
 
-elif [ $APP_DB_SERVICE = "local" ]; then
+elif [ $APP_SERVER_DB_SERVICE = "local" ]; then
 
     echo "=> Stopping database local service"
 

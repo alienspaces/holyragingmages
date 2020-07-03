@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/mage/internal/harness"
 )
 
@@ -32,9 +33,9 @@ func TestMageHandler(t *testing.T) {
 		config        func(rnr *Runner) server.HandlerConfig
 		requestParams func(data *harness.Data) map[string]string
 		queryParams   func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *MageRequest
+		requestData   func(data *harness.Data) *schema.MageRequest
 		responseCode  int
-		responseData  func(data *harness.Data) *MageResponse
+		responseData  func(data *harness.Data) *schema.MageResponse
 	}
 
 	tests := []TestCase{
@@ -49,13 +50,13 @@ func TestMageHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *MageRequest {
+			requestData: func(data *harness.Data) *schema.MageRequest {
 				return nil
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *MageResponse {
-				res := MageResponse{
-					Data: []MageData{
+			responseData: func(data *harness.Data) *schema.MageResponse {
+				res := schema.MageResponse{
+					Data: []schema.MageData{
 						{
 							ID:           data.MageRecs[0].ID,
 							Name:         data.MageRecs[0].Name,
@@ -81,11 +82,11 @@ func TestMageHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *MageRequest {
+			requestData: func(data *harness.Data) *schema.MageRequest {
 				return nil
 			},
 			responseCode: http.StatusNotFound,
-			responseData: func(data *harness.Data) *MageResponse {
+			responseData: func(data *harness.Data) *schema.MageResponse {
 				return nil
 			},
 		},
@@ -94,9 +95,9 @@ func TestMageHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
-			requestData: func(data *harness.Data) *MageRequest {
-				req := MageRequest{
-					Data: MageData{
+			requestData: func(data *harness.Data) *schema.MageRequest {
+				req := schema.MageRequest{
+					Data: schema.MageData{
 						Name: "Veronica The Incredible",
 					},
 				}
@@ -115,18 +116,18 @@ func TestMageHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *MageRequest {
-				req := MageRequest{
-					Data: MageData{
+			requestData: func(data *harness.Data) *schema.MageRequest {
+				req := schema.MageRequest{
+					Data: schema.MageData{
 						Name: "Audrey The Amazing",
 					},
 				}
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *MageResponse {
-				res := MageResponse{
-					Data: []MageData{
+			responseData: func(data *harness.Data) *schema.MageResponse {
+				res := schema.MageResponse{
+					Data: []schema.MageData{
 						{
 							ID:   "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 							Name: "Audrey The Amazing",
@@ -147,9 +148,9 @@ func TestMageHandler(t *testing.T) {
 				}
 				return params
 			},
-			requestData: func(data *harness.Data) *MageRequest {
-				req := MageRequest{
-					Data: MageData{
+			requestData: func(data *harness.Data) *schema.MageRequest {
+				req := schema.MageRequest{
+					Data: schema.MageData{
 						ID:           data.MageRecs[0].ID,
 						Name:         "Barricade Block",
 						Strength:     data.MageRecs[0].Strength,
@@ -162,9 +163,9 @@ func TestMageHandler(t *testing.T) {
 				return &req
 			},
 			responseCode: http.StatusOK,
-			responseData: func(data *harness.Data) *MageResponse {
-				res := MageResponse{
-					Data: []MageData{
+			responseData: func(data *harness.Data) *schema.MageResponse {
+				res := schema.MageResponse{
+					Data: []schema.MageData{
 						{
 							ID:           data.MageRecs[0].ID,
 							Name:         "Barricade Block",
@@ -184,11 +185,11 @@ func TestMageHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[4]
 			},
-			requestData: func(data *harness.Data) *MageRequest {
+			requestData: func(data *harness.Data) *schema.MageRequest {
 				return nil
 			},
 			responseCode: http.StatusBadRequest,
-			responseData: func(data *harness.Data) *MageResponse {
+			responseData: func(data *harness.Data) *schema.MageResponse {
 				return nil
 			},
 		},
@@ -289,12 +290,12 @@ func TestMageHandler(t *testing.T) {
 			// test status
 			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
 
-			res := MageResponse{}
+			res := schema.MageResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			var resData *MageResponse
+			var resData *schema.MageResponse
 			if tc.responseData != nil {
 				resData = tc.responseData(th.Data)
 			}

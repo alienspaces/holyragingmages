@@ -2,45 +2,25 @@ package runner
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
+	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/model"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/record"
 )
 
-// TemplateResponse -
-type TemplateResponse struct {
-	server.Response
-	Data []TemplateData `json:"data"`
-}
-
-// TemplateRequest -
-type TemplateRequest struct {
-	server.Request
-	Data TemplateData `json:"data"`
-}
-
-// TemplateData -
-type TemplateData struct {
-	ID        string    `json:"id,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-}
-
 // GetTemplatesHandler -
-func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Get templates handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get templates handler ** p >%#v< m >%#v<", pp, m)
 
 	var recs []*record.Template
 	var err error
 
-	id := p.ByName("template_id")
+	id := pp.ByName("template_id")
 
 	// single resource
 	if id != "" {
@@ -65,11 +45,8 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 		l.Info("Querying template records")
 
-		// query parameters
-		q := r.URL.Query()
-
 		params := make(map[string]interface{})
-		for paramName, paramValue := range q {
+		for paramName, paramValue := range qp {
 			params[paramName] = paramValue
 		}
 
@@ -81,7 +58,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 	}
 
 	// assign response properties
-	data := []TemplateData{}
+	data := []schema.TemplateData{}
 	for _, rec := range recs {
 
 		// response data
@@ -94,7 +71,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		data = append(data, responseData)
 	}
 
-	res := TemplateResponse{
+	res := schema.TemplateResponse{
 		Data: data,
 	}
 
@@ -106,14 +83,14 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 }
 
 // PostTemplatesHandler -
-func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Post templates handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Post templates handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := p.ByName("template_id")
+	id := pp.ByName("template_id")
 
-	req := TemplateRequest{}
+	req := schema.TemplateRequest{}
 
 	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -147,8 +124,8 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 	}
 
 	// assign response properties
-	res := TemplateResponse{
-		Data: []TemplateData{
+	res := schema.TemplateResponse{
+		Data: []schema.TemplateData{
 			responseData,
 		},
 	}
@@ -161,12 +138,12 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 }
 
 // PutTemplatesHandler -
-func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Put templates handler ** p >%#v< m >#%v<", p, m)
+	l.Info("** Put templates handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := p.ByName("template_id")
+	id := pp.ByName("template_id")
 
 	l.Info("Updating resource ID >%s<", id)
 
@@ -182,7 +159,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		return
 	}
 
-	req := TemplateRequest{}
+	req := schema.TemplateRequest{}
 
 	err = rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -211,8 +188,8 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 	}
 
 	// assign response properties
-	res := TemplateResponse{
-		Data: []TemplateData{
+	res := schema.TemplateResponse{
+		Data: []schema.TemplateData{
 			responseData,
 		},
 	}
@@ -225,15 +202,15 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 }
 
 // TemplateRequestDataToRecord -
-func (rnr *Runner) TemplateRequestDataToRecord(data TemplateData, rec *record.Template) error {
+func (rnr *Runner) TemplateRequestDataToRecord(data schema.TemplateData, rec *record.Template) error {
 
 	return nil
 }
 
 // RecordToTemplateResponseData -
-func (rnr *Runner) RecordToTemplateResponseData(templateRec *record.Template) (TemplateData, error) {
+func (rnr *Runner) RecordToTemplateResponseData(templateRec *record.Template) (schema.TemplateData, error) {
 
-	data := TemplateData{
+	data := schema.TemplateData{
 		ID:        templateRec.ID,
 		CreatedAt: templateRec.CreatedAt,
 		UpdatedAt: templateRec.UpdatedAt.Time,

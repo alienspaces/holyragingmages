@@ -39,11 +39,12 @@ func NewRunner() *Runner {
 
 	r.HandlerConfig = []server.HandlerConfig{
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/items",
-			QueryParams:      []string{"name"},
-			HandlerFunc:      r.GetItemsHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/items",
+			HandlerFunc: r.GetItemsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				ValidateQueryParams: []string{"name"},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Query items.",
@@ -64,7 +65,7 @@ func NewRunner() *Runner {
 			Path:        "/api/items",
 			HandlerFunc: r.PostItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema",
+				ValidateSchemaLocation: "schema/item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -80,7 +81,7 @@ func NewRunner() *Runner {
 			Path:        "/api/items/:item_id",
 			HandlerFunc: r.PostItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema",
+				ValidateSchemaLocation: "schema/item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -96,7 +97,7 @@ func NewRunner() *Runner {
 			Path:        "/api/items/:item_id",
 			HandlerFunc: r.PutItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema",
+				ValidateSchemaLocation: "schema/item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",

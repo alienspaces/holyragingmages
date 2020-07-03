@@ -15,15 +15,15 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
     if [ -f "./service/$SERVICE_NAME/.env" ]; then
 
-        # reset APP_PORT as each service should define
+        # reset APP_SERVER_PORT as each service should define
         # a unique server port in their local env
-        export APP_PORT=""
+        export APP_SERVER_PORT=""
 
         # build and run service
         cd service/$SERVICE_NAME
 
         # NOTE: we shift into the service directory before sourcing
-        # the environment so $PWD is correct for APP_HOME
+        # the environment so $PWD is correct for APP_SERVER_HOME
 
         # load service specific environment
         source ../../${BASH_SOURCE%/*}/environment || exit $?

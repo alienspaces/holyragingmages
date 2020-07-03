@@ -10,9 +10,9 @@ import (
 )
 
 // GetDocumentationHandler -
-func (rnr *Runner) GetDocumentationHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params, l logger.Logger, m modeller.Modeller) {
+func (rnr *Runner) GetDocumentationHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Get documentation handler ** p >%#v< m >%#v<", p, m)
+	l.Info("** Get documentation handler ** p >%#v< m >%#v<", pp, m)
 
 	// content type html
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
