@@ -3,11 +3,9 @@ package runner
 import (
 	"net/http"
 
-	"gitlab.com/alienspaces/holyragingmages/server/core/prepare"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
-	"gitlab.com/alienspaces/holyragingmages/server/core/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/model"
 )
@@ -33,7 +31,6 @@ func NewRunner() *Runner {
 	r.RouterFunc = r.Router
 	r.MiddlewareFunc = r.Middleware
 	r.HandlerFunc = r.Handler
-	r.PreparerFunc = r.Preparer
 	r.ModellerFunc = r.Modeller
 
 	r.HandlerConfig = []server.HandlerConfig{
@@ -114,20 +111,6 @@ func NewRunner() *Runner {
 	}
 
 	return &r
-}
-
-// Preparer -
-func (rnr *Runner) Preparer(l logger.Logger) (preparer.Preparer, error) {
-
-	l.Info("** Template Preparer **")
-
-	p, err := prepare.NewPrepare(l)
-	if err != nil {
-		l.Warn("Failed new preparer >%v<", err)
-		return nil, err
-	}
-
-	return p, nil
 }
 
 // Modeller -
