@@ -11,14 +11,6 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 )
 
-// ContextData - data type for data context  key
-type ContextData string
-
-const (
-	// ContextKeyData - context key for request body data
-	ContextKeyData ContextData = "data"
-)
-
 // Data -
 func (rnr *Runner) Data(h Handle) (Handle, error) {
 

@@ -101,6 +101,18 @@ func (t *Testing) Init() (err error) {
 		return err
 	}
 
+	db, err := t.Store.GetDb()
+	if err != nil {
+		t.Log.Warn("Failed getting database handle >%v<", err)
+		return err
+	}
+
+	err = t.Prepare.Init(db)
+	if err != nil {
+		t.Log.Warn("Failed preparer init >%v<", err)
+		return err
+	}
+
 	t.Log.Debug("Preparer ready")
 
 	// modeller
@@ -118,8 +130,6 @@ func (t *Testing) Init() (err error) {
 // InitTx -
 func (t *Testing) InitTx(tx *sqlx.Tx) (err error) {
 
-	t.Log.Debug("Initialising database tx")
-
 	// initialise our own database tx when none is provided
 	if tx == nil {
 		t.Log.Debug("Starting database tx")
@@ -131,12 +141,6 @@ func (t *Testing) InitTx(tx *sqlx.Tx) (err error) {
 		}
 	}
 
-	err = t.Prepare.Init(tx)
-	if err != nil {
-		t.Log.Warn("Failed preparer init >%v<", err)
-		return err
-	}
-
 	err = t.Model.Init(t.Prepare, tx)
 	if err != nil {
 		t.Log.Warn("Failed modeller init >%v<", err)
@@ -145,19 +149,31 @@ func (t *Testing) InitTx(tx *sqlx.Tx) (err error) {
 
 	t.tx = tx
 
-	t.Log.Debug("Database tx initialised")
-
 	return nil
 }
 
 // CommitTx -
 func (t *Testing) CommitTx() (err error) {
-	return t.tx.Commit()
+
+	err = t.tx.Commit()
+	if err != nil {
+		return err
+	}
+	t.tx = nil
+
+	return nil
 }
 
 // RollbackTx -
 func (t *Testing) RollbackTx() (err error) {
-	return t.tx.Rollback()
+
+	err = t.tx.Rollback()
+	if err != nil {
+		return err
+	}
+	t.tx = nil
+
+	return nil
 }
 
 // Setup -
@@ -190,8 +206,6 @@ func (t *Testing) Setup() (err error) {
 			return err
 		}
 	}
-
-	t.Log.Debug("Setup complete")
 
 	return nil
 }
@@ -226,8 +240,6 @@ func (t *Testing) Teardown() (err error) {
 			return err
 		}
 	}
-
-	t.Log.Debug("Teardown complete")
 
 	return nil
 }

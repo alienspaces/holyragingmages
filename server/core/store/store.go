@@ -16,10 +16,10 @@ const (
 
 // Store -
 type Store struct {
-	Log        logger.Logger
-	Config     configurer.Configurer
-	Database   string
-	Connection *sqlx.DB
+	Log      logger.Logger
+	Config   configurer.Configurer
+	Database string
+	DB       *sqlx.DB
 }
 
 // NewStore -
@@ -40,36 +40,49 @@ func NewStore(c configurer.Configurer, l logger.Logger) (*Store, error) {
 	return &s, nil
 }
 
-// Init - initialize store
+// Init sets up a database connection if one doesn't already exist
 func (s *Store) Init() error {
 
+	// Get a database connection
 	c, err := s.GetDb()
 	if err != nil {
-		s.Log.Warn("Failed getting DB connection >%v<", err)
+		s.Log.Warn("Failed database init >%v<", err)
 		return err
 	}
-
-	s.Connection = c
+	s.DB = c
 
 	return nil
 }
 
 // GetDb -
 func (s *Store) GetDb() (*sqlx.DB, error) {
+
+	// Return existing database handle if we have one
+	if s.DB != nil {
+		return s.DB, nil
+	}
+
 	if s.Database == DBPostgres {
 		s.Log.Debug("Connecting to postgres")
-		return getPostgresDB(s.Config, s.Log)
+		c, err := getPostgresDB(s.Config, s.Log)
+		if err != nil {
+			s.Log.Warn("Failed getting postgres DB handle >%v<", err)
+			return nil, err
+		}
+		s.DB = c
+		return c, nil
 	}
+
 	return nil, fmt.Errorf("Unsupported database")
 }
 
 // GetTx -
 func (s *Store) GetTx() (*sqlx.Tx, error) {
 
-	if s.Connection == nil {
+	if s.DB == nil {
 		s.Log.Warn("Not connected")
 		return nil, fmt.Errorf("Not Not connected")
 	}
 
-	return s.Connection.Beginx()
+	return s.DB.Beginx()
 }

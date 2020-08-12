@@ -81,6 +81,8 @@ func (r *Repository) GetOneRec(recordID string, rec interface{}, forUpdate bool)
 
 	r.Log.Debug("Get record ID >%s<", recordID)
 
+	stmt = r.Tx.Stmtx(stmt)
+
 	err := stmt.QueryRowx(recordID).StructScan(rec)
 	if err != nil {
 		r.Log.Warn("Failed executing query >%v<", err)
@@ -137,6 +139,8 @@ func (r *Repository) CreateOneRec(rec interface{}) error {
 	// stmt
 	stmt := p.CreateOneStmt(r)
 
+	stmt = r.Tx.NamedStmt(stmt)
+
 	err := stmt.QueryRowx(rec).StructScan(rec)
 	if err != nil {
 		r.Log.Warn("Failed executing create >%v<", err)
@@ -154,6 +158,8 @@ func (r *Repository) UpdateOneRec(rec interface{}) error {
 
 	// stmt
 	stmt := p.UpdateOneStmt(r)
+
+	stmt = r.Tx.NamedStmt(stmt)
 
 	err := stmt.QueryRowx(rec).StructScan(rec)
 	if err != nil {
@@ -181,6 +187,8 @@ func (r *Repository) deleteOneRec(recordID string) error {
 
 	// stmt
 	stmt := p.DeleteOneStmt(r)
+
+	stmt = r.Tx.NamedStmt(stmt)
 
 	res, err := stmt.Exec(params)
 	if err != nil {
@@ -221,6 +229,8 @@ func (r *Repository) removeOneRec(recordID string) error {
 	params := map[string]interface{}{
 		"id": recordID,
 	}
+
+	stmt = r.Tx.NamedStmt(stmt)
 
 	res, err := stmt.Exec(params)
 	if err != nil {
@@ -285,7 +295,10 @@ func (r *Repository) DeleteOneSQL() string {
 
 // DeleteManySQL -
 func (r *Repository) DeleteManySQL() string {
-	return ""
+	sql := `
+UPDATE %s SET deleted_at = :deleted_at WHERE deleted_at IS NULL
+`
+	return fmt.Sprintf(sql, r.TableName())
 }
 
 // RemoveOneSQL -
@@ -295,5 +308,8 @@ func (r *Repository) RemoveOneSQL() string {
 
 // RemoveManySQL -
 func (r *Repository) RemoveManySQL() string {
-	return ``
+	sql := `
+DELETE FROM %s WHERE 1 = 1
+`
+	return fmt.Sprintf(sql, r.TableName())
 }

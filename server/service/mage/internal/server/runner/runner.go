@@ -30,7 +30,6 @@ func NewRunner() *Runner {
 	r.HandlerFunc = r.Handler
 	r.PreparerFunc = r.Preparer
 	r.ModellerFunc = r.Modeller
-	r.PayloaderFunc = r.Payloader
 
 	r.HandlerConfig = []server.HandlerConfig{
 		{

@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli/v2 v2.2.0
 
 	gitlab.com/alienspaces/holyragingmages/server/core/cli v1.0.0

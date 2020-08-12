@@ -25,10 +25,6 @@ func (rnr *Runner) Tx(h Handle) (Handle, error) {
 			return
 		}
 
-		// NOTE: The PREPARER is created an initialised with every request instead of
-		// creating and assigning to a runner struct "Prepare" property at start up.
-		// This ensures statements are valid for the current database transaction.
-
 		// preparer
 		if rnr.PreparerFunc == nil {
 			l.Warn("Runner PreparerFunc is nil")
@@ -45,13 +41,6 @@ func (rnr *Runner) Tx(h Handle) (Handle, error) {
 
 		if p == nil {
 			l.Warn("Preparer is nil, cannot continue")
-			http.Error(w, "Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		err = p.Init(tx)
-		if err != nil {
-			l.Warn("Failed init preparer >%v<", err)
 			http.Error(w, "Server Error", http.StatusInternalServerError)
 			return
 		}

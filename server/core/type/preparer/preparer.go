@@ -8,7 +8,7 @@ import (
 
 // Preparer -
 type Preparer interface {
-	Init(tx *sqlx.Tx) (err error)
+	Init(tx *sqlx.DB) (err error)
 	Prepare(m preparable.Preparable) error
 	GetOneStmt(m preparable.Preparable) *sqlx.Stmt
 	GetOneForUpdateStmt(m preparable.Preparable) *sqlx.Stmt

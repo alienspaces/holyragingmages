@@ -11,7 +11,7 @@ import (
 
 func TestNewStore(t *testing.T) {
 
-	// config
+	// configurer
 	c, err := config.NewConfig([]config.Item{}, false)
 	require.NoError(t, err, "NewConfig returns without error")
 
@@ -27,11 +27,12 @@ func TestNewStore(t *testing.T) {
 		require.NoError(t, c.Add(key, true), "Add config item")
 	}
 
+	// logger
 	l, err := log.NewLogger(c)
 	require.NoError(t, err, "NewLogger returns without error")
 
-	// database
+	// storer
 	s, err := NewStore(c, l)
-	require.Nil(t, err, "NewStore returns without error")
+	require.NoError(t, err, "NewStore returns without error")
 	require.NotNil(t, s, "NewStore returns a store")
 }

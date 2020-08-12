@@ -6,11 +6,9 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	"gitlab.com/alienspaces/holyragingmages/server/core/payload"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
-	"gitlab.com/alienspaces/holyragingmages/server/core/type/payloader"
 )
 
 // Handler - default handler
@@ -35,18 +33,4 @@ func (rnr *Runner) Middleware(h server.Handle) (server.Handle, error) {
 	rnr.Log.Info("** Spell Middleware **")
 
 	return h, nil
-}
-
-// Payloader -
-func (rnr *Runner) Payloader(l logger.Logger) (payloader.Payloader, error) {
-
-	l.Info("** Payloader **")
-
-	p, err := payload.NewPayload()
-	if err != nil {
-		l.Warn("Failed new payloader >%v<", err)
-		return nil, err
-	}
-
-	return p, nil
 }

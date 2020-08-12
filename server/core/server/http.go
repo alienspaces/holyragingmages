@@ -1,16 +1,23 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
-	"gitlab.com/alienspaces/holyragingmages/server/core/type/payloader"
 )
+
+// ContextData - data type for data context key
+type ContextData string
+
+// ContextKeyData - context key for payload data
+const ContextKeyData ContextData = "data"
 
 // RunHTTP - Starts the HTTP server process. Override to implement a custom HTTP server run function.
 // The server process exposes a REST API and is intended for clients to manage resources and
@@ -68,14 +75,6 @@ func (rnr *Runner) Middleware(h Handle) (Handle, error) {
 	rnr.Log.Info("** Middleware **")
 
 	return h, nil
-}
-
-// Payloader - default PayloaderFunc, override this function for custom payload handling
-func (rnr *Runner) Payloader(l logger.Logger) (payloader.Payloader, error) {
-
-	l.Info("** Payloader **")
-
-	return nil, nil
 }
 
 // Handler - default HandlerFunc, override this function for custom handler
@@ -210,29 +209,23 @@ func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, 
 // ReadRequest -
 func (rnr *Runner) ReadRequest(l logger.Logger, r *http.Request, s interface{}) error {
 
-	p, err := rnr.PayloaderFunc(l)
-	if err != nil {
-		l.Warn("Failed PayloaderFunc >%v<", err)
-		return err
-	}
-	if p == nil {
-		return fmt.Errorf("Payloader is nil, cannot read request")
+	data := r.Context().Value(ContextKeyData)
+
+	if data != nil {
+		r := strings.NewReader(data.(string))
+		err := json.NewDecoder(r).Decode(s)
+		if err != nil {
+			// Include data in error response
+			return fmt.Errorf("Failed decoding request data >%s< >%v<", data.(string), err)
+		}
 	}
 
-	return p.ReadRequest(r, s)
+	// return p.ReadRequest(r, s)
+	return nil
 }
 
 // WriteResponse -
 func (rnr *Runner) WriteResponse(l logger.Logger, w http.ResponseWriter, s interface{}) error {
-
-	p, err := rnr.PayloaderFunc(l)
-	if err != nil {
-		l.Warn("Failed PayloaderFunc >%v<", err)
-		return err
-	}
-	if p == nil {
-		return fmt.Errorf("Payloader is nil, cannot write response")
-	}
 
 	// determine response status
 	status := http.StatusOK
@@ -269,5 +262,13 @@ func (rnr *Runner) WriteResponse(l logger.Logger, w http.ResponseWriter, s inter
 
 	l.Info("Write response status >%d<", status)
 
-	return p.WriteResponse(w, status, s)
+	// content type json
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	// status
+	w.WriteHeader(status)
+
+	return json.NewEncoder(w).Encode(s)
+
+	// return p.WriteResponse(w, status, s)
 }

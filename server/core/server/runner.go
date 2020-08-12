@@ -10,10 +10,10 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/prepare"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
-	"gitlab.com/alienspaces/holyragingmages/server/core/type/payloader"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/preparer"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/runnable"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/storer"
@@ -46,7 +46,6 @@ type Runner struct {
 	HandlerFunc    func(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller)
 	PreparerFunc   func(l logger.Logger) (preparer.Preparer, error)
 	ModellerFunc   func(l logger.Logger) (modeller.Modeller, error)
-	PayloaderFunc  func(l logger.Logger) (payloader.Payloader, error)
 }
 
 var _ runnable.Runnable = &Runner{}
@@ -85,16 +84,9 @@ type DocumentationConfig struct {
 	Description string
 }
 
-// Request -
-// type Request struct {
-// 	Pagination RequestPagination `json:"pagination"`
-// }
-
-// // RequestPagination -
-// type RequestPagination struct {
-// 	PageNumber int `json:"page_number"`
-// 	PageSize   int `json:"page_size"`
-// }
+// NOTE: Request struct definitions are located in the top level `schema` module. We might
+// want to consider moving the Response definitions there as well, especially if we decide
+// to validate our own response payloads against schema definitions..
 
 // Response -
 type Response struct {
@@ -143,6 +135,30 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 		return fmt.Errorf(msg)
 	}
 
+	// Initialise storer
+	err := rnr.Store.Init()
+	if err != nil {
+		rnr.Log.Warn("Failed store init >%v<", err)
+		return err
+	}
+
+	// Preparer
+	if rnr.PreparerFunc == nil {
+		rnr.PreparerFunc = rnr.Preparer
+	}
+
+	p, err := rnr.PreparerFunc(l)
+	if err != nil {
+		rnr.Log.Warn("Failed preparer func >%v<", err)
+		return err
+	}
+
+	rnr.Prepare = p
+	if rnr.Prepare == nil {
+		rnr.Log.Warn("Preparer is nil, cannot continue")
+		return err
+	}
+
 	// run server
 	if rnr.RunHTTPFunc == nil {
 		rnr.RunHTTPFunc = rnr.RunHTTP
@@ -178,15 +194,10 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 		rnr.HandlerFunc = rnr.Handler
 	}
 
-	// http server - payloader
-	if rnr.PayloaderFunc == nil {
-		rnr.PayloaderFunc = rnr.Payloader
-	}
-
 	return nil
 }
 
-// TODO: Use this function from HTTP middleware Tx
+// TODO: Use this function from HTTP middleware Tx maybe..
 
 // InitTx initialises a new database transaction returning a prepared modeller
 func (rnr *Runner) InitTx(l logger.Logger) (modeller.Modeller, error) {
@@ -220,34 +231,7 @@ func (rnr *Runner) InitTx(l logger.Logger) (modeller.Modeller, error) {
 		return m, err
 	}
 
-	// NOTE: The PREPARER is created an initialised with every request instead of
-	// creating and assigning to a runner struct "Prepare" property at start up.
-	// This ensures statements are valid for the current database transaction.
-
-	// preparer
-	if rnr.PreparerFunc == nil {
-		l.Warn("Runner PreparerFunc is nil")
-		return m, err
-	}
-
-	p, err := rnr.PreparerFunc(l)
-	if err != nil {
-		l.Warn("Failed PreparerFunc >%v<", err)
-		return m, err
-	}
-
-	if p == nil {
-		l.Warn("Preparer is nil, cannot continue")
-		return m, err
-	}
-
-	err = p.Init(tx)
-	if err != nil {
-		l.Warn("Failed init preparer >%v<", err)
-		return m, err
-	}
-
-	err = m.Init(p, tx)
+	err = m.Init(rnr.Prepare, tx)
 	if err != nil {
 		l.Warn("Failed init modeller >%v<", err)
 		return m, err
@@ -313,15 +297,47 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 // Preparer - default PreparerFunc, override this function for custom prepare
 func (rnr *Runner) Preparer(l logger.Logger) (preparer.Preparer, error) {
 
-	l.Info("** Preparer **")
+	// NOTE: We have a good generic preparer so we'll provide that here
 
-	return nil, nil
+	l.Debug("** Preparer **")
+
+	// Return the existing preparer if we already have one
+	if rnr.Prepare != nil {
+		l.Debug("Returning existing preparer")
+		return rnr.Prepare, nil
+	}
+
+	l.Debug("Creating new preparer")
+
+	p, err := prepare.NewPrepare(l)
+	if err != nil {
+		l.Warn("Failed new prepare >%v<", err)
+		return nil, err
+	}
+
+	db, err := rnr.Store.GetDb()
+	if err != nil {
+		l.Warn("Failed getting database handle >%v<", err)
+		return nil, err
+	}
+
+	err = p.Init(db)
+	if err != nil {
+		l.Warn("Failed preparer init >%v<", err)
+		return nil, err
+	}
+
+	rnr.Prepare = p
+
+	return p, nil
 }
 
 // Modeller - default ModellerFunc, override this function for custom model
 func (rnr *Runner) Modeller(l logger.Logger) (modeller.Modeller, error) {
 
-	l.Info("** Modeller **")
+	// NOTE: A modeller is very service agnostic so there is no default generalised modeller we can provide here
+
+	l.Debug("** Modeller **")
 
 	return nil, nil
 }

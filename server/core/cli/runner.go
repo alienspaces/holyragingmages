@@ -51,6 +51,7 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 		return fmt.Errorf(msg)
 	}
 
+	// Storer
 	rnr.Store = s
 	if rnr.Store == nil {
 		msg := "Storer undefined, cannot init runner"
@@ -58,12 +59,44 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 		return fmt.Errorf(msg)
 	}
 
-	// preparer
+	// Initialise storer
+	err := rnr.Store.Init()
+	if err != nil {
+		rnr.Log.Warn("Failed store init >%v<", err)
+		return err
+	}
+
+	// Preparer
 	if rnr.PreparerFunc == nil {
 		rnr.PreparerFunc = rnr.Preparer
 	}
 
-	// modeller
+	p, err := rnr.PreparerFunc()
+	if err != nil {
+		rnr.Log.Warn("Failed preparer func >%v<", err)
+		return err
+	}
+
+	rnr.Prepare = p
+	if rnr.Prepare == nil {
+		rnr.Log.Warn("Preparer is nil, cannot continue")
+		return err
+	}
+
+	db, err := rnr.Store.GetDb()
+	if err != nil {
+		rnr.Log.Warn("Failed getting database handle >%v<", err)
+		return err
+	}
+
+	// Initialise preparer
+	err = rnr.Prepare.Init(db)
+	if err != nil {
+		rnr.Log.Warn("Failed preparer init >%v<", err)
+		return err
+	}
+
+	// Modeller
 	if rnr.ModellerFunc == nil {
 		rnr.ModellerFunc = rnr.Modeller
 	}
@@ -83,25 +116,6 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 		return err
 	}
 
-	// preparer
-	p, err := rnr.PreparerFunc()
-	if err != nil {
-		rnr.Log.Warn("Failed preparer func >%v<", err)
-		return err
-	}
-
-	if p == nil {
-		rnr.Log.Warn("Preparer is nil, cannot continue")
-		return err
-	}
-
-	// preparer init
-	err = p.Init(tx)
-	if err != nil {
-		rnr.Log.Warn("Failed preparer init >%v<", err)
-		return err
-	}
-
 	// modeller
 	m, err := rnr.ModellerFunc()
 	if err != nil {
@@ -115,7 +129,7 @@ func (rnr *Runner) Run(args map[string]interface{}) (err error) {
 	}
 
 	// model init
-	err = m.Init(p, tx)
+	err = m.Init(rnr.Prepare, tx)
 	if err != nil {
 		rnr.Log.Warn("Failed model init >%v<", err)
 		return err

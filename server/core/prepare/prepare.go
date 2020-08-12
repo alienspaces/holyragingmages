@@ -14,7 +14,7 @@ import (
 // Prepare - Methods for preparing and fetching repo statements
 type Prepare struct {
 	Log logger.Logger
-	Tx  *sqlx.Tx
+	DB  *sqlx.DB
 	// prepared
 	prepared map[string]bool
 	// statements
@@ -72,15 +72,15 @@ func NewPrepare(l logger.Logger) (*Prepare, error) {
 }
 
 // Init - Initialise preparer with database tx
-func (p *Prepare) Init(tx *sqlx.Tx) error {
+func (p *Prepare) Init(db *sqlx.DB) error {
 
-	if tx == nil {
-		msg := "Database tx is nill, cannot init"
+	if db == nil {
+		msg := "Database db is nil, cannot init"
 		p.Log.Warn(msg)
 		return fmt.Errorf(msg)
 	}
 
-	p.Tx = tx
+	p.DB = db
 
 	return nil
 }
@@ -97,12 +97,12 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 		return nil
 	}
 
-	p.Log.Debug("** Prepare ** table >%s< statements", m.TableName())
+	p.Log.Info("** Preparing ** table >%s< statements", m.TableName())
 
 	// get one
 	query := m.GetOneSQL()
 
-	getOneStmt, err := p.Tx.Preparex(query)
+	getOneStmt, err := p.DB.Preparex(query)
 	if err != nil {
 		p.Log.Warn("Error preparing GetOneSQL statement >%v<", err)
 		return err
@@ -114,7 +114,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// get one for update
 	query = m.GetOneForUpdateSQL()
 
-	getOneForUpdateStmt, err := p.Tx.Preparex(query)
+	getOneForUpdateStmt, err := p.DB.Preparex(query)
 	if err != nil {
 		p.Log.Warn("Error preparing GetOneForUpdateSQL statement >%v<", err)
 		return err
@@ -126,7 +126,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// get many
 	query = m.GetManySQL()
 
-	getManyStmt, err := p.Tx.PrepareNamed(m.GetManySQL())
+	getManyStmt, err := p.DB.PrepareNamed(m.GetManySQL())
 	if err != nil {
 		p.Log.Warn("Error preparing GetManySQL statement >%v<", err)
 		return err
@@ -138,7 +138,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// create
 	query = m.CreateOneSQL()
 
-	createStmt, err := p.Tx.PrepareNamed(query)
+	createStmt, err := p.DB.PrepareNamed(query)
 	if err != nil {
 		p.Log.Warn("Error preparing CreateSQL statement >%v<", err)
 		return err
@@ -150,7 +150,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// update
 	query = m.UpdateOneSQL()
 
-	updateOneStmt, err := p.Tx.PrepareNamed(query)
+	updateOneStmt, err := p.DB.PrepareNamed(query)
 	if err != nil {
 		p.Log.Warn("Error preparing UpdateOneSQL statement >%v<", err)
 		return err
@@ -162,7 +162,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// update many
 	query = m.UpdateManySQL()
 
-	updateManyStmt, err := p.Tx.PrepareNamed(query)
+	updateManyStmt, err := p.DB.PrepareNamed(query)
 	if err != nil {
 		p.Log.Warn("Error preparing UpdateManySQL statement >%v<", err)
 		return err
@@ -174,7 +174,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// delete
 	query = m.DeleteOneSQL()
 
-	deleteStmt, err := p.Tx.PrepareNamed(query)
+	deleteStmt, err := p.DB.PrepareNamed(query)
 	if err != nil {
 		p.Log.Warn("Error preparing DeleteSQL statement >%v<", err)
 		return err
@@ -186,7 +186,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// delete many
 	query = m.DeleteManySQL()
 
-	deleteManyStmt, err := p.Tx.PrepareNamed(query)
+	deleteManyStmt, err := p.DB.PrepareNamed(query)
 	if err != nil {
 		p.Log.Warn("Error preparing DeleteManySQL statement >%v<", err)
 		return err
@@ -198,7 +198,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// remove
 	query = m.RemoveOneSQL()
 
-	removeStmt, err := p.Tx.PrepareNamed(query)
+	removeStmt, err := p.DB.PrepareNamed(query)
 	if err != nil {
 		p.Log.Warn("Error preparing RemoveSQL statement >%v<", err)
 		return err
@@ -210,7 +210,7 @@ func (p *Prepare) Prepare(m preparable.Preparable) error {
 	// remove many
 	query = m.RemoveManySQL()
 
-	removeManyStmt, err := p.Tx.PrepareNamed(query)
+	removeManyStmt, err := p.DB.PrepareNamed(query)
 	if err != nil {
 		p.Log.Warn("Error preparing RemoveManySQL statement >%v<", err)
 		return err
@@ -229,7 +229,7 @@ func (p *Prepare) GetOneStmt(m preparable.Preparable) *sqlx.Stmt {
 
 	stmt := p.getOneStmtList[m.TableName()]
 
-	return p.Tx.Stmtx(stmt)
+	return stmt
 }
 
 // GetOneForUpdateStmt -
@@ -237,7 +237,7 @@ func (p *Prepare) GetOneForUpdateStmt(m preparable.Preparable) *sqlx.Stmt {
 
 	stmt := p.getOneForUpdateStmtList[m.TableName()]
 
-	return p.Tx.Stmtx(stmt)
+	return stmt
 }
 
 // GetManyStmt -
@@ -245,7 +245,7 @@ func (p *Prepare) GetManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.getManyStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // CreateOneStmt -
@@ -253,7 +253,7 @@ func (p *Prepare) CreateOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.createStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // UpdateOneStmt -
@@ -261,7 +261,7 @@ func (p *Prepare) UpdateOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.updateOneStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // UpdateManyStmt -
@@ -269,7 +269,7 @@ func (p *Prepare) UpdateManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.updateManyStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // DeleteOneStmt -
@@ -277,7 +277,7 @@ func (p *Prepare) DeleteOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.deleteOneStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // DeleteManyStmt -
@@ -285,7 +285,7 @@ func (p *Prepare) DeleteManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.deleteManyStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // RemoveOneStmt -
@@ -293,7 +293,7 @@ func (p *Prepare) RemoveOneStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.removeOneStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // RemoveManyStmt -
@@ -301,7 +301,7 @@ func (p *Prepare) RemoveManyStmt(m preparable.Preparable) *sqlx.NamedStmt {
 
 	stmt := p.removeManyStmtList[m.TableName()]
 
-	return p.Tx.NamedStmt(stmt)
+	return stmt
 }
 
 // GetOneSQL -
