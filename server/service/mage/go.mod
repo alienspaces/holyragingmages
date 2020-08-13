@@ -15,7 +15,6 @@ require (
 	gitlab.com/alienspaces/holyragingmages/server/core/harness v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/log v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/model v1.0.0
-	gitlab.com/alienspaces/holyragingmages/server/core/payload v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/prepare v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/repository v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/server v1.0.0
@@ -23,7 +22,6 @@ require (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/configurer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/logger v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/modeller v1.0.0
-	gitlab.com/alienspaces/holyragingmages/server/core/type/payloader v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/preparer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/repositor v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/runnable v1.0.0
@@ -37,7 +35,6 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/server/core/harness => ../../core/harness
 	gitlab.com/alienspaces/holyragingmages/server/core/log => ../../core/log
 	gitlab.com/alienspaces/holyragingmages/server/core/model => ../../core/model
-	gitlab.com/alienspaces/holyragingmages/server/core/payload => ../../core/payload
 	gitlab.com/alienspaces/holyragingmages/server/core/prepare => ../../core/prepare
 	gitlab.com/alienspaces/holyragingmages/server/core/repository => ../../core/repository
 	gitlab.com/alienspaces/holyragingmages/server/core/server => ../../core/server
@@ -45,7 +42,6 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/configurer => ../../core/type/configurer
 	gitlab.com/alienspaces/holyragingmages/server/core/type/logger => ../../core/type/logger
 	gitlab.com/alienspaces/holyragingmages/server/core/type/modeller => ../../core/type/modeller
-	gitlab.com/alienspaces/holyragingmages/server/core/type/payloader => ../../core/type/payloader
 	gitlab.com/alienspaces/holyragingmages/server/core/type/preparable => ../../core/type/preparable
 	gitlab.com/alienspaces/holyragingmages/server/core/type/preparer => ../../core/type/preparer
 	gitlab.com/alienspaces/holyragingmages/server/core/type/repositor => ../../core/type/repositor

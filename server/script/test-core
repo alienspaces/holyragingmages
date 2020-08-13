@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo
-echo "=> Test common"
+echo "=> Test core"
 echo
 
 # "docker" or "local"
@@ -14,9 +14,9 @@ fi
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
-dir="common"
+dir="core"
 for f in "$dir"/*; do
-    echo "=> Test common - $f"
+    echo "=> Test core - $f"
     cd $f
     if [ -f "go.mod" ]; then
         go test -cover -count 1 ./... || exit $?
@@ -24,9 +24,9 @@ for f in "$dir"/*; do
     cd -
 done
 
-dir="common/type"
+dir="core/type"
 for f in "$dir"/*; do
-    echo "=> Test common - $f"
+    echo "=> Test core - $f"
     cd $f
     if [ -f "go.mod" ]; then
         go test -cover -count 1 ./... || exit $?

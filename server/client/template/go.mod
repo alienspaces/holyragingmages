@@ -22,7 +22,6 @@ replace (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/configurer => ../../core/type/configurer
 	gitlab.com/alienspaces/holyragingmages/server/core/type/logger => ../../core/type/logger
 	gitlab.com/alienspaces/holyragingmages/server/core/type/modeller => ../../core/type/modeller
-	gitlab.com/alienspaces/holyragingmages/server/core/type/payloader => ../../core/type/payloader
 	gitlab.com/alienspaces/holyragingmages/server/core/type/preparable => ../../core/type/preparable
 	gitlab.com/alienspaces/holyragingmages/server/core/type/preparer => ../../core/type/preparer
 	gitlab.com/alienspaces/holyragingmages/server/core/type/runnable => ../../core/type/runnable

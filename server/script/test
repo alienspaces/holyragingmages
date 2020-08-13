@@ -27,8 +27,8 @@ source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 # test client
 source ${BASH_SOURCE%/*}/test-client || exit $?
 
-# test common
-source ${BASH_SOURCE%/*}/test-common || exit $?
+# test core
+source ${BASH_SOURCE%/*}/test-core || exit $?
 
 # test service
 source ${BASH_SOURCE%/*}/test-service || exit $?
