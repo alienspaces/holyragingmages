@@ -5,7 +5,7 @@ stages:
 
 test-server:
   stage: test
-  image: golang:1.13.5-alpine3.11
+  image: golang:1.14.8-alpine3.12
   variables:
     POSTGRES_DB: hrm
     POSTGRES_USER: hrm-user
