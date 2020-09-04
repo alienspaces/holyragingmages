@@ -89,7 +89,13 @@ func TestCreateOne(t *testing.T) {
 func TestGetOne(t *testing.T) {
 
 	// harness
-	config := harness.DataConfig{}
+	config := harness.DataConfig{
+		ItemConfig: []harness.ItemConfig{
+			{
+				Record: record.Item{},
+			},
+		},
+	}
 
 	h, err := harness.NewTesting(config)
 	require.NoError(t, err, "NewTesting returns without error")
@@ -157,7 +163,13 @@ func TestGetOne(t *testing.T) {
 func TestUpdateOne(t *testing.T) {
 
 	// harness
-	config := harness.DataConfig{}
+	config := harness.DataConfig{
+		ItemConfig: []harness.ItemConfig{
+			{
+				Record: record.Item{},
+			},
+		},
+	}
 
 	h, err := harness.NewTesting(config)
 
@@ -229,7 +241,13 @@ func TestUpdateOne(t *testing.T) {
 func TestDeleteOne(t *testing.T) {
 
 	// harness
-	config := harness.DataConfig{}
+	config := harness.DataConfig{
+		ItemConfig: []harness.ItemConfig{
+			{
+				Record: record.Item{},
+			},
+		},
+	}
 
 	h, err := harness.NewTesting(config)
 	require.NoError(t, err, "NewTesting returns without error")

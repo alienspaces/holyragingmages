@@ -11,7 +11,9 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/configurer"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/storer"
+
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/harness"
+	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/record"
 )
 
 // NewDefaultDependencies -
@@ -63,7 +65,13 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Stor
 func NewTestHarness() (*harness.Testing, error) {
 
 	// harness
-	config := harness.DataConfig{}
+	config := harness.DataConfig{
+		ItemConfig: []harness.ItemConfig{
+			{
+				Record: record.Item{},
+			},
+		},
+	}
 
 	h, err := harness.NewTesting(config)
 	if err != nil {
