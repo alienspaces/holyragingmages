@@ -29,6 +29,12 @@ func NewRunner() *Runner {
 				Usage:   "Runs the test command",
 				Action:  r.TestCommand,
 			},
+			{
+				Name:    "load-test-data",
+				Aliases: []string{"l"},
+				Usage:   "Load a set of test data",
+				Action:  r.LoadTestData,
+			},
 		},
 	}
 

@@ -16,7 +16,7 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
 
         echo "Finding process for $SERVER_NAME"
 
-        PID=$(pgrep $SERVER_NAME)
+        PID=$(pgrep -f $SERVER_NAME)
 
         if [ -n "$PID" ]; then
             echo "Killing process $PID for $SERVER_NAME"
