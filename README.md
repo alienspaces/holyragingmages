@@ -1,10 +1,10 @@
 # Holy Raging Mages
 
-> Another overly ambitious project in active development ~ alienspaces
+> Yet another overly ambitious project ~ alienspaces
 
 ## Overview
 
-Source code for the game [Holy Raging Mages](https://holyragingmages.com]).
+Source code for the game [Holy Raging Mages](https://holyragingmages.com).
 
 You are a mage with:
 
