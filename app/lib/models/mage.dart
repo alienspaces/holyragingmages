@@ -1,11 +1,11 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 
 /// A Mage encapsulates all mage specific data
-class MageModel {
-  final String id;
+class MageModel extends ChangeNotifier {
+  // Server sourced properties
+  String id;
   String name;
   int strength;
   int dexterity;
@@ -13,19 +13,25 @@ class MageModel {
   int experience;
   int coin;
 
+  // Runtime properties
+  bool currentMage;
+
   MageModel({
-    @required this.id,
-    @required this.name,
-    @required this.strength,
-    @required this.dexterity,
-    @required this.intelligence,
+    this.id,
+    this.name,
+    this.strength,
+    this.dexterity,
+    this.intelligence,
     this.experience,
     this.coin,
   });
 }
 
 class MageListModel extends ChangeNotifier {
-  final List<MageModel> _mages = [];
+  final List<MageModel> _mages = [
+    MageModel(name: "Bruce"),
+    MageModel(name: "Margeret"),
+  ];
 
   UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);
 

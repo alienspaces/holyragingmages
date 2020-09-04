@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:holyragingmages/env.dart';
+
+import '../widgets/mage_list.dart';
+import '../widgets/mage_create.dart';
+import '../env.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -9,7 +12,12 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Dashboard $apiUrl'),
       ),
-      body: Container(),
+      body: Container(
+        child: Center(
+          child: MageListWidget(),
+        ),
+      ),
+      floatingActionButton: MageCreateWidget(),
     );
   }
 }

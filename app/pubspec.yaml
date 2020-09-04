@@ -27,6 +27,14 @@ dependencies:
   # A wrapper around InheritedWidget to make them easier to use and more reusable.
   provider: ^4.3.2
 
+  # A powerful Http client for Dart, which supports Interceptors, Global configuration, 
+  # FormData, Request Cancellation, File downloading, Timeout etc.
+  dio: ^3.0.10
+
+  # Provides APIs for debugging and error logging. This library introduces abstractions 
+  # similar to those used in other languages, such as the Closure JS Logger and java.util.logging.Logger.
+  logging: ^0.11.4
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
