@@ -1,6 +1,6 @@
 # Holy Raging Mages
 
-> Yet another overly ambitious project ~ alienspaces
+> This is simply insane! ~ alienspaces
 
 ## Overview
 
