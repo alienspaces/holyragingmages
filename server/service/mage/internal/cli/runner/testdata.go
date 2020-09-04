@@ -4,8 +4,8 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"gitlab.com/alienspaces/holyragingmages/server/core/repository"
-	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/harness"
-	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/record"
+	"gitlab.com/alienspaces/holyragingmages/server/service/mage/internal/harness"
+	"gitlab.com/alienspaces/holyragingmages/server/service/mage/internal/record"
 )
 
 // LoadTestData -
@@ -15,9 +15,9 @@ func (rnr *Runner) LoadTestData(c *cli.Context) error {
 
 	// harness
 	config := harness.DataConfig{
-		TemplateConfig: []harness.TemplateConfig{
+		MageConfig: []harness.MageConfig{
 			{
-				Record: record.Template{
+				Record: record.Mage{
 					Record: repository.Record{
 						ID: "a11f45c3-a0c7-4f79-a90d-52585c9e1473",
 					},

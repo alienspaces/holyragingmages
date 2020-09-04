@@ -1,8 +1,6 @@
 package harness
 
 import (
-	"github.com/brianvoe/gofakeit"
-
 	"gitlab.com/alienspaces/holyragingmages/server/core/harness"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/server/service/item/internal/model"
@@ -23,8 +21,7 @@ type DataConfig struct {
 
 // ItemConfig -
 type ItemConfig struct {
-	Count  int
-	Record *record.Item
+	Record record.Item
 }
 
 // Data -
@@ -71,19 +68,15 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	// TODO: change this to cycling through config
+	for _, itemConfig := range t.DataConfig.ItemConfig {
 
-	rec := record.Item{
-		Name: gofakeit.Name(),
+		itemRec, err := t.createItemRec(itemConfig)
+		if err != nil {
+			t.Log.Warn("Failed creating item record >%v<", err)
+			return err
+		}
+		t.Data.ItemRecs = append(t.Data.ItemRecs, itemRec)
 	}
-
-	err := t.Model.(*model.Model).CreateItemRec(&rec)
-	if err != nil {
-		t.Log.Warn("Failed creating testing item record >%v<", err)
-		return err
-	}
-
-	t.Data.ItemRecs = append(t.Data.ItemRecs, rec)
 
 	return nil
 }

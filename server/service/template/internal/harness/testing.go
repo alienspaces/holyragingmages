@@ -21,8 +21,7 @@ type DataConfig struct {
 
 // TemplateConfig -
 type TemplateConfig struct {
-	Count  int
-	Record *record.Template
+	Record record.Template
 }
 
 // Data -
@@ -69,15 +68,15 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	rec := record.Template{}
+	for _, templateConfig := range t.DataConfig.TemplateConfig {
 
-	err := t.Model.(*model.Model).CreateTemplateRec(&rec)
-	if err != nil {
-		t.Log.Warn("Failed creating testing template record >%v<", err)
-		return err
+		templateRec, err := t.createTemplateRec(templateConfig)
+		if err != nil {
+			t.Log.Warn("Failed creating template record >%v<", err)
+			return err
+		}
+		t.Data.TemplateRecs = append(t.Data.TemplateRecs, templateRec)
 	}
-
-	t.Data.TemplateRecs = append(t.Data.TemplateRecs, rec)
 
 	return nil
 }

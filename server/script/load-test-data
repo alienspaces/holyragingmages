@@ -21,7 +21,7 @@ for SERVICE in "${SERVICES[@]}"; do
     # environment
     source ../../${BASH_SOURCE%/*}/environment || exit $?
 
-    # go run ./cmd/cli load-test-data || exit $?
+    go run ./cmd/cli load-test-data || exit $?
 
     cd -
 

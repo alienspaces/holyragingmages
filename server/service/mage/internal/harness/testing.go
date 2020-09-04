@@ -1,8 +1,6 @@
 package harness
 
 import (
-	"github.com/brianvoe/gofakeit/v5"
-
 	"gitlab.com/alienspaces/holyragingmages/server/core/harness"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/server/service/mage/internal/model"
@@ -23,8 +21,7 @@ type DataConfig struct {
 
 // MageConfig -
 type MageConfig struct {
-	Count  int
-	Record *record.Mage
+	Record record.Mage
 }
 
 // Data -
@@ -71,17 +68,15 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	rec := record.Mage{
-		Name: gofakeit.Name(),
-	}
+	for _, mageConfig := range t.DataConfig.MageConfig {
 
-	err := t.Model.(*model.Model).CreateMageRec(&rec)
-	if err != nil {
-		t.Log.Warn("Failed creating testing mage record >%v<", err)
-		return err
+		mageRec, err := t.createMageRec(mageConfig)
+		if err != nil {
+			t.Log.Warn("Failed creating mage record >%v<", err)
+			return err
+		}
+		t.Data.MageRecs = append(t.Data.MageRecs, mageRec)
 	}
-
-	t.Data.MageRecs = append(t.Data.MageRecs, rec)
 
 	return nil
 }

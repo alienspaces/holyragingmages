@@ -21,8 +21,7 @@ type DataConfig struct {
 
 // SpellConfig -
 type SpellConfig struct {
-	Count  int
-	Record *record.Spell
+	Record record.Spell
 }
 
 // Data -
@@ -69,15 +68,15 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	rec := record.Spell{}
+	for _, spellConfig := range t.DataConfig.SpellConfig {
 
-	err := t.Model.(*model.Model).CreateSpellRec(&rec)
-	if err != nil {
-		t.Log.Warn("Failed creating testing spell record >%v<", err)
-		return err
+		spellRec, err := t.createSpellRec(spellConfig)
+		if err != nil {
+			t.Log.Warn("Failed creating spell record >%v<", err)
+			return err
+		}
+		t.Data.SpellRecs = append(t.Data.SpellRecs, spellRec)
 	}
-
-	t.Data.SpellRecs = append(t.Data.SpellRecs, rec)
 
 	return nil
 }
