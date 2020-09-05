@@ -12,6 +12,9 @@ source ${BASH_SOURCE%/*}/start-database $1 || exit $?
 # migrate database
 source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 
+# load test data
+source ${BASH_SOURCE%/*}/load-test-data || exit $?
+
 # start nginx
 source ${BASH_SOURCE%/*}/start-nginx $1 || exit $?
 

@@ -16,11 +16,31 @@ func (rnr *Runner) LoadTestData(c *cli.Context) error {
 	// harness
 	config := harness.DataConfig{
 		MageConfig: []harness.MageConfig{
+			// Maize
 			{
 				Record: record.Mage{
 					Record: repository.Record{
-						ID: "a11f45c3-a0c7-4f79-a90d-52585c9e1473",
+						ID: "1d3f8d0b-b7b3-4569-a099-8f1b6e2a2c71",
 					},
+					Name: "Maize",
+				},
+			},
+			// Veronica
+			{
+				Record: record.Mage{
+					Record: repository.Record{
+						ID: "6992c452-dadf-47fd-99fa-64287b44e475",
+					},
+					Name: "Veronica",
+				},
+			},
+			// Audrey
+			{
+				Record: record.Mage{
+					Record: repository.Record{
+						ID: "cf0371e6-10e3-4594-a3fb-fd8253cccf2a",
+					},
+					Name: "Audrey",
 				},
 			},
 		},
