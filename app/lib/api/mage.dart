@@ -1,29 +1,28 @@
-import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 
 import 'api.dart';
 
 class MageHandler extends BaseHandler {
-  List<MageData> parseResponse(Response response) {
+  List<MageData> convert(Map<String, dynamic> data) {
     // Logger
     final log = Logger('parseResponse');
 
-    log.info('Parsing response $response');
+    log.info('Parsing response $data');
 
     List<MageData> magesData = [];
-    if (response.data != null) {
-      Map<String, dynamic> data = response.data;
-      if (data["data"] != null) {
-        (data["data"] as List).forEach((mage) {
-          log.info('Adding mage $mage');
+    if (data["data"] != null) {
+      (data["data"] as List).forEach((mage) {
+        log.info('Adding mage $mage');
 
-          MageData mageData = new MageData(
-            id: mage["id"],
-            name: mage["name"],
-          );
-          magesData.add(mageData);
-        });
-      }
+        MageData mageData = new MageData(
+          id: mage["id"],
+          name: mage["name"],
+          strength: mage["strength"],
+          dexterity: mage["dexterity"],
+          intelligence: mage["intelligence"],
+        );
+        magesData.add(mageData);
+      });
     }
 
     return magesData;
@@ -39,5 +38,11 @@ class MageData extends BaseData {
   int experience;
   int coin;
 
-  MageData({this.id, this.name});
+  MageData({
+    this.id,
+    this.name,
+    this.strength,
+    this.dexterity,
+    this.intelligence,
+  });
 }

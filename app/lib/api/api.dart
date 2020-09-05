@@ -21,10 +21,13 @@ class Api {
     );
     Dio dio = new Dio(options);
     // dio.interceptors.add(LogInterceptor(responseBody: false));
-    response = await dio.get("/mage/api/mages",
-        queryParameters: {}, options: Options());
+    response = await dio.get(
+      "/mage/api/mages",
+      queryParameters: {},
+      options: Options(),
+    );
     // Mage http request and response handling
-    MageHandler mageResponse = new MageHandler();
-    return mageResponse.parseResponse(response);
+    MageHandler mageHandler = new MageHandler();
+    return mageHandler.convert(response.data);
   }
 }
