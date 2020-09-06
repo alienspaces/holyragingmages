@@ -1,33 +1,35 @@
 import 'package:dio/dio.dart';
 
-import 'mage.dart';
-export 'mage.dart';
-
-class BaseHandler {}
-
-class BaseData {
-  String id;
-  String createdAt;
-  String updatedAt;
-}
-
 class Api {
-  // getMages returns a list of mages
-  Future<List<MageData>> getMages() async {
-    Response response;
+  Dio dio;
+
+  Api() {
     // Dio http client
     BaseOptions options = new BaseOptions(
       baseUrl: "http://10.1.1.22:8082",
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+      },
     );
-    Dio dio = new Dio(options);
-    // dio.interceptors.add(LogInterceptor(responseBody: false));
-    response = await dio.get(
-      "/mage/api/mages",
-      queryParameters: {},
-      options: Options(),
-    );
-    // Mage http request and response handling
-    MageHandler mageHandler = new MageHandler();
-    return mageHandler.convert(response.data);
+
+    dio = new Dio(options);
+
+    // Logging
+    dio.interceptors.add(LogInterceptor(responseBody: false));
+  }
+
+  // getMages returns a list of mages
+  Future<List<dynamic>> getMages() async {
+    Response response = await this.dio.get(
+          "/mage/api/mages",
+          queryParameters: {},
+          options: Options(),
+        );
+
+    if (response.data == null) {
+      return null;
+    }
+
+    return response.data["data"];
   }
 }

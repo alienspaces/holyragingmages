@@ -27,6 +27,18 @@ class MageModel extends ChangeNotifier {
     this.experience,
     this.coin,
   });
+
+  factory MageModel.fromJson(Map<String, dynamic> json) {
+    return MageModel(
+      id: json["id"],
+      name: json["name"],
+      strength: json["strength"],
+      dexterity: json["dexterity"],
+      intelligence: json["intelligence"],
+      experience: json["experience"],
+      coin: json["coin"],
+    );
+  }
 }
 
 class MageListModel extends ChangeNotifier {
@@ -36,7 +48,7 @@ class MageListModel extends ChangeNotifier {
   UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);
 
   /// Adds [mage] to list
-  void add(MageModel mage) {
+  void addMage(MageModel mage) {
     // Call API to save new mage
     _mages.add(mage);
     // Notify listeners
@@ -44,33 +56,21 @@ class MageListModel extends ChangeNotifier {
   }
 
   /// Get all mages
-  List<MageModel> refreshMages() {
+  void refreshMages() {
     // Call on API to fetch mages
-    Future<List<MageData>> magesFuture = this.api.getMages();
+    Future<List<dynamic>> magesFuture = this.api.getMages();
     magesFuture.then((magesData) {
-      for (MageData mageData in magesData) {
-        var mage = new MageModel(
-          id: mageData.id,
-          name: mageData.name,
-          strength: mageData.strength,
-          dexterity: mageData.dexterity,
-          intelligence: mageData.intelligence,
-          experience: mageData.experience,
-          coin: mageData.coin,
-        );
+      for (Map<String, dynamic> mageData in magesData) {
+        var mage = MageModel.fromJson(mageData);
         _mages.add(mage);
       }
       // Notify listeners
       notifyListeners();
-
-      return _mages;
     });
-
-    return null;
   }
 
   /// Removes all mages from list.
-  void removeAll() {
+  void removeMages() {
     _mages.clear();
     // This call tells the widgets that are listening to this model to rebuild.
     notifyListeners();

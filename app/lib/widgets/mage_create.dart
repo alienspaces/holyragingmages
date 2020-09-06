@@ -26,6 +26,6 @@ class MageCreateWidget extends StatelessWidget {
       dexterity: null,
       intelligence: null,
     );
-    mageList.add(mage);
+    mageList.addMage(mage);
   }
 }
