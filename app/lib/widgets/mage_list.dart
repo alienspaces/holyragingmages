@@ -29,7 +29,7 @@ class MageListWidget extends StatelessWidget {
     // Have mages
     return GridView.count(
       crossAxisCount: 2,
-      childAspectRatio: 0.90,
+      childAspectRatio: .7,
       children: List.generate(
         mages.length,
         (index) => ListTile(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/mage_list.dart';
-import '../widgets/mage_create.dart';
+import '../widgets/mage_create_button.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -15,7 +15,7 @@ class DashboardScreen extends StatelessWidget {
           child: MageListWidget(),
         ),
       ),
-      floatingActionButton: MageCreateWidget(),
+      floatingActionButton: MageCreateButtonWidget(),
     );
   }
 }

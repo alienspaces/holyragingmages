@@ -16,6 +16,7 @@ class MageCard extends StatelessWidget {
     log.info("Building");
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         CircleAvatar(
           maxRadius: 60.0,
@@ -66,6 +67,36 @@ class MageCard extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Text(this.mage.intelligence.toString()),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              flex: 7,
+              child: Text("Coin"),
+            ),
+            Expanded(
+              flex: 3,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(this.mage.coin.toString()),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              flex: 7,
+              child: Text("Experience"),
+            ),
+            Expanded(
+              flex: 3,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(this.mage.experience.toString()),
               ),
             ),
           ],
