@@ -1,1 +1,1 @@
-final environment = {"apiUrl":"http://localhost:8082"};
+final environment = {"apiUrl":"http://10.1.1.22:8082"};

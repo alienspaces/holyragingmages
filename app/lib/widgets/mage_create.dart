@@ -10,7 +10,7 @@ class MageCreateWidget extends StatelessWidget {
     return Container(
       color: Colors.green,
       child: IconButton(
-        icon: Icon(Icons.add_a_photo),
+        icon: Icon(Icons.add),
         onPressed: () {
           _addMage(mageList);
         },

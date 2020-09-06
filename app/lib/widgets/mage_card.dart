@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import '../models/models.dart';
 
@@ -9,19 +10,20 @@ class MageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Logger
+    final log = Logger('MageListWidget - build');
+
+    log.info("Building");
+
     return Column(
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              flex: 5,
-              child: Text("Name"),
-            ),
-            Expanded(
-              flex: 5,
-              child: Text(this.mage.name),
-            ),
-          ],
+        CircleAvatar(
+          maxRadius: 60.0,
+          backgroundImage: AssetImage("assets/avatars/2.jpg"),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Text(this.mage.name),
         ),
         Row(
           children: <Widget>[
