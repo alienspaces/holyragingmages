@@ -14,6 +14,7 @@ class MageCreateScreen extends StatelessWidget {
           child: MageCreateWidget(),
         ),
       ),
+      resizeToAvoidBottomInset: false,
     );
   }
 }
