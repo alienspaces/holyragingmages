@@ -15,6 +15,7 @@ class MageCreateWidgetState extends State<MageCreateWidget> {
   int strength;
   int dexterity;
   int intelligence;
+  int points;
 
   @override
   void initState() {
@@ -22,41 +23,60 @@ class MageCreateWidgetState extends State<MageCreateWidget> {
     strength = 10;
     dexterity = 10;
     intelligence = 10;
+    points = 10;
   }
 
   void _incrementStrength() {
     setState(() {
-      strength++;
+      if (points > 0) {
+        strength++;
+        points--;
+      }
     });
   }
 
   void _decrementStrength() {
     setState(() {
-      strength--;
+      if (strength > 10) {
+        strength--;
+        points++;
+      }
     });
   }
 
   void _incrementDexterity() {
     setState(() {
-      dexterity++;
+      if (points > 0) {
+        dexterity++;
+        points--;
+      }
     });
   }
 
   void _decrementDexterity() {
     setState(() {
-      dexterity--;
+      if (dexterity > 10) {
+        dexterity--;
+        points++;
+      }
     });
   }
 
   void _incrementIntelligence() {
     setState(() {
-      intelligence++;
+      if (points > 0) {
+        intelligence++;
+        points--;
+      }
     });
   }
 
   void _decrementIntelligence() {
     setState(() {
-      intelligence--;
+      if (intelligence > 10) {
+        intelligence--;
+        points++;
+      }
     });
   }
 
@@ -80,13 +100,24 @@ class MageCreateWidgetState extends State<MageCreateWidget> {
           ),
           controller: _mageNameController,
         ),
-        // TODO: Attribute points remaining
+        Row(children: <Widget>[
+          Expanded(
+            flex: 5,
+            child: Text('Points Remaining'),
+          ),
+          Expanded(
+            flex: 5,
+            child: Text(this.points.toString()),
+          ),
+        ]),
         // Strength
         MageCreateAttribute(
           name: 'Strength',
           value: this.strength,
           incrementValue: _incrementStrength,
           decrementValue: _decrementStrength,
+          incrementEnabled: this.points > 0,
+          decrementEnabled: this.strength > 10,
         ),
         // Dexterity
         MageCreateAttribute(
@@ -94,6 +125,8 @@ class MageCreateWidgetState extends State<MageCreateWidget> {
           value: this.dexterity,
           incrementValue: _incrementDexterity,
           decrementValue: _decrementDexterity,
+          incrementEnabled: this.points > 0,
+          decrementEnabled: this.dexterity > 10,
         ),
         // Intelligence
         MageCreateAttribute(
@@ -101,6 +134,8 @@ class MageCreateWidgetState extends State<MageCreateWidget> {
           value: this.intelligence,
           incrementValue: _incrementIntelligence,
           decrementValue: _decrementIntelligence,
+          incrementEnabled: this.points > 0,
+          decrementEnabled: this.intelligence > 10,
         ),
       ],
     );

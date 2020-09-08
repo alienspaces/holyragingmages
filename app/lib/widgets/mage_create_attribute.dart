@@ -11,6 +11,8 @@ class MageCreateAttribute extends StatefulWidget {
   // final DecrementValueCallback decrementValue;
   final VoidCallback incrementValue;
   final VoidCallback decrementValue;
+  final bool incrementEnabled;
+  final bool decrementEnabled;
 
   MageCreateAttribute({
     Key key,
@@ -18,6 +20,8 @@ class MageCreateAttribute extends StatefulWidget {
     this.value,
     this.incrementValue,
     this.decrementValue,
+    this.incrementEnabled,
+    this.decrementEnabled,
   }) : super(key: key);
 
   @override
@@ -42,7 +46,7 @@ class MageCreateAttributeState extends State<MageCreateAttribute> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: FlatButton(
-              onPressed: widget.decrementValue,
+              onPressed: widget.decrementEnabled ? widget.decrementValue : null,
               child: Icon(Icons.arrow_back),
             ),
           ),
@@ -59,7 +63,7 @@ class MageCreateAttributeState extends State<MageCreateAttribute> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: FlatButton(
-              onPressed: widget.incrementValue,
+              onPressed: widget.incrementEnabled ? widget.incrementValue : null,
               child: Icon(Icons.arrow_forward),
             ),
           ),
