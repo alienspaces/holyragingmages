@@ -137,6 +137,7 @@ class MageCreateWidgetState extends State<MageCreateWidget> {
           incrementEnabled: this.points > 0,
           decrementEnabled: this.intelligence > 10,
         ),
+        // TODO: Save button and save new mage
       ],
     );
   }

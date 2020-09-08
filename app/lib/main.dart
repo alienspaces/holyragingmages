@@ -22,7 +22,6 @@ class HolyRagingMages extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => MageModel()),
         ChangeNotifierProvider(create: (context) => MageListModel()),
       ],
       child: MaterialApp(

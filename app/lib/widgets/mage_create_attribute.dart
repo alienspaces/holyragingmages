@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
-typedef void IncrementValueCallback();
-typedef void DecrementValueCallback();
-
 class MageCreateAttribute extends StatefulWidget {
   final String name;
   final int value;
-  // final IncrementValueCallback incrementValue;
-  // final DecrementValueCallback decrementValue;
   final VoidCallback incrementValue;
   final VoidCallback decrementValue;
   final bool incrementEnabled;

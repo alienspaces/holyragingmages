@@ -47,9 +47,9 @@ class MageListModel extends ChangeNotifier {
 
   UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);
 
-  /// Adds [mage] to list
-  void addMage(MageModel mage) {
-    // Call API to save new mage
+  /// Creates a [mage] adding it to the existing mages list
+  void createMage(MageModel mage) {
+    // TODO: Call API to save new mage
     _mages.add(mage);
     // Notify listeners
     notifyListeners();
