@@ -3,6 +3,15 @@ stages:
   - build
   - deploy
 
+test-app:
+  stage: test
+  image: cirrusci/flutter:stable
+  before_script:
+    - flutter pub get
+    - flutter clean
+  script:
+    - flutter test test/*
+
 test-server:
   stage: test
   image: golang:1.14.8-alpine3.12

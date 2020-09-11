@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/models.dart';
 
 import 'mage_create_attribute.dart';
+import 'mage_create_name.dart';
 
 class MageCreateWidget extends StatelessWidget {
   @override
@@ -16,11 +17,7 @@ class MageCreateWidget extends StatelessWidget {
 
     // Mage models
     var mageModel = Provider.of<MageModel>(context);
-
-    // TODO: Add saving mage and adding to mage list
-    // var mageListModel = Provider.of<MageListModel>(context);
-
-    final _mageNameController = TextEditingController();
+    var mageListModel = Provider.of<MageListModel>(context);
 
     void _incrementStrength() {
       mageModel.strength++;
@@ -46,19 +43,30 @@ class MageCreateWidget extends StatelessWidget {
       mageModel.intelligence--;
     }
 
+    void _addMage() {
+      mageListModel.addMage(mageModel);
+    }
+
+    bool _createEnabled() {
+      if (mageModel.name == null) {
+        log.info('Mage name is null, create disabled');
+        return false;
+      }
+      if (mageModel.points != 0) {
+        log.info(
+            'Mage points ${mageModel.points} are unspent, create disabled');
+        return false;
+      }
+      return true;
+    }
+
     return Column(
       children: <Widget>[
         CircleAvatar(
           maxRadius: 60.0,
           backgroundImage: AssetImage("assets/avatars/2.jpg"),
         ),
-        TextField(
-          decoration: InputDecoration(
-            filled: true,
-            labelText: "Name",
-          ),
-          controller: _mageNameController,
-        ),
+        MageCreateNameWidget(),
         Row(children: <Widget>[
           Expanded(
             flex: 5,
@@ -70,7 +78,7 @@ class MageCreateWidget extends StatelessWidget {
           ),
         ]),
         // Strength
-        MageCreateAttribute(
+        MageCreateAttributeWidget(
           name: 'Strength',
           value: mageModel.strength,
           incrementValue: _incrementStrength,
@@ -79,7 +87,7 @@ class MageCreateWidget extends StatelessWidget {
           decrementEnabled: mageModel.strength > 10,
         ),
         // Dexterity
-        MageCreateAttribute(
+        MageCreateAttributeWidget(
           name: 'Dexterity',
           value: mageModel.dexterity,
           incrementValue: _incrementDexterity,
@@ -88,13 +96,16 @@ class MageCreateWidget extends StatelessWidget {
           decrementEnabled: mageModel.dexterity > 10,
         ),
         // Intelligence
-        MageCreateAttribute(
+        MageCreateAttributeWidget(
           name: 'Intelligence',
           value: mageModel.intelligence,
           incrementValue: _incrementIntelligence,
           decrementValue: _decrementIntelligence,
           incrementEnabled: mageModel.points > 0,
           decrementEnabled: mageModel.intelligence > 10,
+        ),
+        FloatingActionButton(
+          onPressed: _createEnabled() ? _addMage : null,
         ),
       ],
     );

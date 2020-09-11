@@ -13,7 +13,7 @@ const int initialAttributePoints = 40;
 class MageModel extends ChangeNotifier {
   // Server sourced properties
   String id;
-  String name;
+  String _name;
   int _strength;
   int _dexterity;
   int _intelligence;
@@ -50,6 +50,15 @@ class MageModel extends ChangeNotifier {
     mage.coin = json['coin'];
 
     return mage;
+  }
+
+  String get name {
+    return this._name;
+  }
+
+  set name(String value) {
+    this._name = value;
+    notifyListeners();
   }
 
   int get strength {
@@ -174,14 +183,17 @@ class MageListModel extends ChangeNotifier {
   UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);
 
   /// Creates a [mage] adding it to the existing mages list
-  void createMage(MageModel mage) {
-    // TODO: Call API to save new mage
+  void addMage(MageModel mage) {
+    // Validate required
+    if (mage.name == null) {
+      throw 'Mage name must be set before adding a mage';
+    }
     _mages.add(mage);
     // Notify listeners
     notifyListeners();
   }
 
-  /// Get all mages
+  /// Refresh all mages
   void refreshMages() {
     // Call on API to fetch mages
     Future<List<dynamic>> magesFuture = this.api.getMages();

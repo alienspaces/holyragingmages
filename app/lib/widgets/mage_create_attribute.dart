@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
-class MageCreateAttribute extends StatefulWidget {
+class MageCreateAttributeWidget extends StatefulWidget {
   final String name;
   final int value;
   final VoidCallback incrementValue;
@@ -9,7 +9,7 @@ class MageCreateAttribute extends StatefulWidget {
   final bool incrementEnabled;
   final bool decrementEnabled;
 
-  MageCreateAttribute({
+  MageCreateAttributeWidget({
     Key key,
     this.name,
     this.value,
@@ -20,10 +20,11 @@ class MageCreateAttribute extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  MageCreateAttributeState createState() => new MageCreateAttributeState();
+  MageCreateAttributeWidgetState createState() =>
+      new MageCreateAttributeWidgetState();
 }
 
-class MageCreateAttributeState extends State<MageCreateAttribute> {
+class MageCreateAttributeWidgetState extends State<MageCreateAttributeWidget> {
   @override
   Widget build(BuildContext context) {
     // Logger
