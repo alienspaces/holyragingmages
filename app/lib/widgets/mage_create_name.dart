@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
+typedef UpdateValueCallback = void Function(String value);
+
 class MageCreateNameWidget extends StatefulWidget {
   final String value;
+  final UpdateValueCallback updateValue;
 
   MageCreateNameWidget({
     Key key,
     this.value,
+    this.updateValue,
   }) : super(key: key);
 
   @override
@@ -18,7 +22,11 @@ class MageCreateNameWidgetState extends State<MageCreateNameWidget> {
 
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    _controller = TextEditingController(text: widget.value);
+    _controller.addListener(() {
+      final text = _controller.text;
+      widget.updateValue(text);
+    });
   }
 
   void dispose() {
@@ -38,6 +46,7 @@ class MageCreateNameWidgetState extends State<MageCreateNameWidget> {
         labelText: "Name",
       ),
       controller: _controller,
+      autofocus: true,
     );
   }
 }

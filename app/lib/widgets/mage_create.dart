@@ -43,21 +43,12 @@ class MageCreateWidget extends StatelessWidget {
       mageModel.intelligence--;
     }
 
-    void _addMage() {
-      mageListModel.addMage(mageModel);
+    void _updateName(String value) {
+      mageModel.name = value;
     }
 
-    bool _createEnabled() {
-      if (mageModel.name == null) {
-        log.info('Mage name is null, create disabled');
-        return false;
-      }
-      if (mageModel.points != 0) {
-        log.info(
-            'Mage points ${mageModel.points} are unspent, create disabled');
-        return false;
-      }
-      return true;
+    void _addMage() {
+      mageListModel.addMage(mageModel);
     }
 
     return Column(
@@ -66,7 +57,10 @@ class MageCreateWidget extends StatelessWidget {
           maxRadius: 60.0,
           backgroundImage: AssetImage("assets/avatars/2.jpg"),
         ),
-        MageCreateNameWidget(),
+        MageCreateNameWidget(
+          value: mageModel.name,
+          updateValue: _updateName,
+        ),
         Row(children: <Widget>[
           Expanded(
             flex: 5,
@@ -103,9 +97,6 @@ class MageCreateWidget extends StatelessWidget {
           decrementValue: _decrementIntelligence,
           incrementEnabled: mageModel.points > 0,
           decrementEnabled: mageModel.intelligence > 10,
-        ),
-        FloatingActionButton(
-          onPressed: _createEnabled() ? _addMage : null,
         ),
       ],
     );

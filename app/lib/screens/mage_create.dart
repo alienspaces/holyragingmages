@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 
 import '../models/models.dart';
 import '../widgets/mage_create.dart';
+import '../widgets/mage_create_button.dart';
 
 class MageCreateScreen extends StatelessWidget {
   @override
@@ -13,19 +14,20 @@ class MageCreateScreen extends StatelessWidget {
 
     log.info("Building");
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Mage Create'),
-      ),
-      body: Container(
-        child: Center(
-          child: ChangeNotifierProvider<MageModel>(
-            create: (context) => MageModel(),
+    return ChangeNotifierProvider<MageModel>(
+      create: (context) => MageModel(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Mage Create'),
+        ),
+        body: Container(
+          child: Center(
             child: MageCreateWidget(),
           ),
         ),
+        floatingActionButton: MageCreateButtonWidget(),
+        resizeToAvoidBottomInset: false,
       ),
-      resizeToAvoidBottomInset: false,
     );
   }
 }
