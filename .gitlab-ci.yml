@@ -7,10 +7,14 @@ test-app:
   stage: test
   image: cirrusci/flutter:stable
   before_script:
+    - cd app
     - flutter pub get
     - flutter clean
+    - cd -
   script:
+    - cd app
     - flutter test test/*
+    - cd -
 
 test-server:
   stage: test
