@@ -21,6 +21,7 @@ class HolyRagingMages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
+      // Global providers
       providers: [
         ChangeNotifierProvider(create: (context) => MageListModel()),
       ],
