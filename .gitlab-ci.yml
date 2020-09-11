@@ -8,6 +8,7 @@ test-app:
   image: cirrusci/flutter:stable
   before_script:
     - cd app
+    - flutter upgrade
     - flutter pub get
     - flutter clean
     - cd -
