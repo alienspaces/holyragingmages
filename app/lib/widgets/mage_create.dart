@@ -68,7 +68,7 @@ class MageCreateWidget extends StatelessWidget {
           ),
           Expanded(
             flex: 5,
-            child: Text(mageModel.points.toString()),
+            child: Text(mageModel.attributePoints.toString()),
           ),
         ]),
         // Strength
@@ -77,7 +77,7 @@ class MageCreateWidget extends StatelessWidget {
           value: mageModel.strength,
           incrementValue: _incrementStrength,
           decrementValue: _decrementStrength,
-          incrementEnabled: mageModel.points > 0,
+          incrementEnabled: mageModel.attributePoints > 0,
           decrementEnabled: mageModel.strength > 10,
         ),
         // Dexterity
@@ -86,7 +86,7 @@ class MageCreateWidget extends StatelessWidget {
           value: mageModel.dexterity,
           incrementValue: _incrementDexterity,
           decrementValue: _decrementDexterity,
-          incrementEnabled: mageModel.points > 0,
+          incrementEnabled: mageModel.attributePoints > 0,
           decrementEnabled: mageModel.dexterity > 10,
         ),
         // Intelligence
@@ -95,7 +95,7 @@ class MageCreateWidget extends StatelessWidget {
           value: mageModel.intelligence,
           incrementValue: _incrementIntelligence,
           decrementValue: _decrementIntelligence,
-          incrementEnabled: mageModel.points > 0,
+          incrementEnabled: mageModel.attributePoints > 0,
           decrementEnabled: mageModel.intelligence > 10,
         ),
       ],

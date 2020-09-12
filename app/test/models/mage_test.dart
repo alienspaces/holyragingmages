@@ -14,7 +14,7 @@ void main() {
   test('New mage defaults', () {
     var mage = new MageModel();
 
-    expect(mage.points, 10, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 10, reason: 'Points equals expected value');
     expect(mage.strength, 10, reason: 'Strength equals expected value');
     expect(mage.dexterity, 10, reason: 'Dexterity equals expected value');
     expect(mage.intelligence, 10, reason: 'Intelligence equals expected value');
@@ -26,11 +26,11 @@ void main() {
     mage.strength = 12;
 
     expect(mage.strength, 12, reason: 'Strength equals expected value');
-    expect(mage.points, 8, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 8, reason: 'Points equals expected value');
 
     mage.strength = 10;
     expect(mage.strength, 10, reason: 'Strength equals expected value');
-    expect(mage.points, 10, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 10, reason: 'Points equals expected value');
   });
 
   test('Adjusting dexterity', () {
@@ -39,11 +39,11 @@ void main() {
     mage.dexterity = 12;
 
     expect(mage.dexterity, 12, reason: 'Dexterity equals expected value');
-    expect(mage.points, 8, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 8, reason: 'Points equals expected value');
 
     mage.dexterity = 10;
     expect(mage.dexterity, 10, reason: 'Dexterity equals expected value');
-    expect(mage.points, 10, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 10, reason: 'Points equals expected value');
   });
 
   test('Adjusting intelligence', () {
@@ -52,11 +52,11 @@ void main() {
     mage.intelligence = 12;
 
     expect(mage.intelligence, 12, reason: 'Intelligence equals expected value');
-    expect(mage.points, 8, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 8, reason: 'Points equals expected value');
 
     mage.intelligence = 10;
     expect(mage.intelligence, 10, reason: 'Intelligence equals expected value');
-    expect(mage.points, 10, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 10, reason: 'Points equals expected value');
   });
 
   test('New mage from JSON', () {
@@ -69,7 +69,7 @@ void main() {
 
     var mage = MageModel.fromJson(mageJson);
 
-    expect(mage.points, 4, reason: 'Points equals expected value');
+    expect(mage.attributePoints, 4, reason: 'Points equals expected value');
     expect(mage.strength, 12, reason: 'Strength equals expected value');
     expect(mage.dexterity, 12, reason: 'Dexterity equals expected value');
     expect(mage.intelligence, 12, reason: 'Intelligence equals expected value');

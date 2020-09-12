@@ -205,6 +205,9 @@ func (rnr *Runner) PutMagesHandler(w http.ResponseWriter, r *http.Request, pp ht
 func (rnr *Runner) MageRequestDataToRecord(data schema.MageData, rec *record.Mage) error {
 
 	rec.Name = data.Name
+	rec.Strength = data.Strength
+	rec.Dexterity = data.Dexterity
+	rec.Intelligence = data.Intelligence
 
 	return nil
 }
@@ -213,15 +216,16 @@ func (rnr *Runner) MageRequestDataToRecord(data schema.MageData, rec *record.Mag
 func (rnr *Runner) RecordToMageResponseData(rec *record.Mage) (schema.MageData, error) {
 
 	data := schema.MageData{
-		ID:           rec.ID,
-		Name:         rec.Name,
-		Strength:     rec.Strength,
-		Dexterity:    rec.Dexterity,
-		Intelligence: rec.Intelligence,
-		Experience:   rec.Experience,
-		Coin:         rec.Coin,
-		CreatedAt:    rec.CreatedAt,
-		UpdatedAt:    rec.UpdatedAt.Time,
+		ID:               rec.ID,
+		Name:             rec.Name,
+		Strength:         rec.Strength,
+		Dexterity:        rec.Dexterity,
+		Intelligence:     rec.Intelligence,
+		AttributePoints:  rec.AttributePoints,
+		ExperiencePoints: rec.ExperiencePoints,
+		Coins:            rec.Coins,
+		CreatedAt:        rec.CreatedAt,
+		UpdatedAt:        rec.UpdatedAt.Time,
 	}
 
 	return data, nil

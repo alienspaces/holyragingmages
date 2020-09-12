@@ -45,6 +45,8 @@ func (m *Model) CreateMageRec(rec *record.Mage) error {
 
 	r := m.MageRepository()
 
+	// Defaults
+
 	err := m.ValidateMageRec(rec)
 	if err != nil {
 		m.Log.Info("Failed model validation >%v<", err)

@@ -17,9 +17,9 @@ class MageModel extends ChangeNotifier {
   int _strength;
   int _dexterity;
   int _intelligence;
-  int _points;
-  int experience;
-  int coin;
+  int _attributePoints;
+  int experiencePoints;
+  int coins;
 
   // Runtime properties
   bool currentMage;
@@ -40,16 +40,39 @@ class MageModel extends ChangeNotifier {
     mage.name = json['name'];
     // Points is "at least" the sum of the current attributes. Anything beyond
     // that are available to distribute.
-    mage.points =
-        json['points'] != null ? json['points'] : initialAttributePoints;
+    mage.attributePoints = json['attribute_points'] != null
+        ? json['attribute_points']
+        : initialAttributePoints;
     mage.strength = json['strength'];
     mage.dexterity = json['dexterity'];
     mage.intelligence = json['intelligence'];
 
-    mage.experience = json['experience'];
-    mage.coin = json['coin'];
+    mage.experiencePoints =
+        json['experiencePoints'] != null ? json['experiencePoints'] : 0;
+    mage.coins = json['coins'];
 
     return mage;
+  }
+
+  Map<String, dynamic> toJson() {
+    // Logger
+    final log = Logger('MageModel - toJson');
+
+    Map<String, dynamic> json = {};
+
+    json["data"] = {
+      "name": this.name,
+      "strength": this.strength,
+      "dexterity": this.dexterity,
+      "intelligence": this.intelligence,
+      "attribute_points": this._attributePoints,
+      "experience_points": this.experiencePoints,
+      "coins": this.coins,
+    };
+
+    log.info('Returning json $json');
+
+    return json;
   }
 
   String get name {
@@ -69,15 +92,15 @@ class MageModel extends ChangeNotifier {
     // Logger
     final log = Logger('MageModel - strength');
 
-    if (this._points == null) {
+    if (this._attributePoints == null) {
       throw 'Mage points must be set before adjusting attributes';
     }
 
     var difference =
         this._strength != null ? this._strength - value : 0 - value;
 
-    var available =
-        this._points - (this._strength + this._dexterity + this._intelligence);
+    var available = this._attributePoints -
+        (this._strength + this._dexterity + this._intelligence);
 
     log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
@@ -101,13 +124,13 @@ class MageModel extends ChangeNotifier {
     // Logger
     final log = Logger('MageModel - dexterity');
 
-    if (this._points == null) {
+    if (this._attributePoints == null) {
       throw 'Mage points must be set before adjusting attributes';
     }
 
     var difference = this._dexterity - value;
-    var available =
-        this._points - (this._strength + this._dexterity + this._intelligence);
+    var available = this._attributePoints -
+        (this._strength + this._dexterity + this._intelligence);
 
     log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
@@ -131,13 +154,13 @@ class MageModel extends ChangeNotifier {
     // Logger
     final log = Logger('MageModel - intelligence');
 
-    if (this._points == null) {
+    if (this._attributePoints == null) {
       throw 'Mage points must be set before adjusting attributes';
     }
 
     var difference = this._intelligence - value;
-    var available =
-        this._points - (this._strength + this._dexterity + this._intelligence);
+    var available = this._attributePoints -
+        (this._strength + this._dexterity + this._intelligence);
 
     log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
@@ -153,25 +176,25 @@ class MageModel extends ChangeNotifier {
     return;
   }
 
-  int get points {
-    var available =
-        this._points - (this._strength + this._dexterity + this._intelligence);
+  int get attributePoints {
+    var available = this._attributePoints -
+        (this._strength + this._dexterity + this._intelligence);
     return available;
   }
 
-  set points(int value) {
-    this._points = value;
+  set attributePoints(int value) {
+    this._attributePoints = value;
   }
 
   void initDefaults() {
     // When not given an ID we can assume this is a newly created mage
     if (this.id == null) {
-      this._points = initialAttributePoints;
+      this._attributePoints = initialAttributePoints;
       this._strength = initialAttributeValue;
       this._dexterity = initialAttributeValue;
       this._intelligence = initialAttributeValue;
-      this.experience = 0;
-      this.coin = 0;
+      this.experiencePoints = 0;
+      this.coins = 0;
     }
   }
 }
@@ -184,13 +207,25 @@ class MageListModel extends ChangeNotifier {
 
   /// Creates a [mage] adding it to the existing mages list
   void addMage(MageModel mage) {
+    // Logger
+    final log = Logger('MageModel - addMage');
+
     // Validate required
     if (mage.name == null) {
       throw 'Mage name must be set before adding a mage';
     }
-    _mages.add(mage);
-    // Notify listeners
-    notifyListeners();
+
+    Future<List<dynamic>> magesFuture = this.api.postMage(mage.toJson());
+    magesFuture.then((magesData) {
+      log.info('Post returned ${magesData.length} length');
+      for (Map<String, dynamic> mageData in magesData) {
+        log.info('Post has mage data $mageData');
+        var mage = MageModel.fromJson(mageData);
+        _mages.add(mage);
+      }
+      // Notify listeners
+      notifyListeners();
+    });
   }
 
   /// Refresh all mages

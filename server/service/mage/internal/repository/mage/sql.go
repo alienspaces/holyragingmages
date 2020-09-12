@@ -7,8 +7,9 @@ INSERT INTO mage (
 	strength,
 	dexterity,
 	intelligence,
-	experience,
-	coin,
+	attribute_points,
+	experience_points,
+	coins,
 	created_at
 ) VALUES (
 	:id,
@@ -16,8 +17,9 @@ INSERT INTO mage (
 	:strength,
 	:dexterity,
 	:intelligence,
-	:experience,
-	:coin,
+	:attribute_points,
+	:experience_points,
+	:coins,
 	:created_at
 )
 RETURNING *
@@ -25,15 +27,16 @@ RETURNING *
 
 var updateOneSQL = `
 UPDATE mage SET
-    id           = :id,
-    name         = :name,
-    strength     = :strength,
-    dexterity    = :dexterity,
-    intelligence = :intelligence,
-    experience   = :experience,
-    coin         = :coin,
-    updated_at   = :updated_at
-WHERE id 		   = :id
+    id                = :id,
+    name              = :name,
+    strength          = :strength,
+    dexterity         = :dexterity,
+    intelligence      = :intelligence,
+    attribute_points  = :attribute_points,
+    experience_points = :experience_points,
+    coins             = :coins,
+    updated_at        = :updated_at
+WHERE id 		      = :id
 AND   deleted_at IS NULL
 RETURNING *
 `

@@ -58,13 +58,14 @@ func TestMageHandler(t *testing.T) {
 				res := schema.MageResponse{
 					Data: []schema.MageData{
 						{
-							ID:           data.MageRecs[0].ID,
-							Name:         data.MageRecs[0].Name,
-							Strength:     data.MageRecs[0].Strength,
-							Dexterity:    data.MageRecs[0].Dexterity,
-							Intelligence: data.MageRecs[0].Intelligence,
-							Experience:   data.MageRecs[0].Experience,
-							Coin:         data.MageRecs[0].Coin,
+							ID:               data.MageRecs[0].ID,
+							Name:             data.MageRecs[0].Name,
+							Strength:         data.MageRecs[0].Strength,
+							Dexterity:        data.MageRecs[0].Dexterity,
+							Intelligence:     data.MageRecs[0].Intelligence,
+							AttributePoints:  data.MageRecs[0].AttributePoints,
+							ExperiencePoints: data.MageRecs[0].ExperiencePoints,
+							Coins:            data.MageRecs[0].Coins,
 						},
 					},
 				}
@@ -151,13 +152,14 @@ func TestMageHandler(t *testing.T) {
 			requestData: func(data *harness.Data) *schema.MageRequest {
 				req := schema.MageRequest{
 					Data: schema.MageData{
-						ID:           data.MageRecs[0].ID,
-						Name:         "Barricade Block",
-						Strength:     data.MageRecs[0].Strength,
-						Dexterity:    data.MageRecs[0].Dexterity,
-						Intelligence: data.MageRecs[0].Intelligence,
-						Experience:   data.MageRecs[0].Experience,
-						Coin:         data.MageRecs[0].Coin,
+						ID:               data.MageRecs[0].ID,
+						Name:             "Barricade Block",
+						Strength:         data.MageRecs[0].Strength,
+						Dexterity:        data.MageRecs[0].Dexterity,
+						Intelligence:     data.MageRecs[0].Intelligence,
+						AttributePoints:  data.MageRecs[0].AttributePoints,
+						ExperiencePoints: data.MageRecs[0].ExperiencePoints,
+						Coins:            data.MageRecs[0].Coins,
 					},
 				}
 				return &req
@@ -167,13 +169,14 @@ func TestMageHandler(t *testing.T) {
 				res := schema.MageResponse{
 					Data: []schema.MageData{
 						{
-							ID:           data.MageRecs[0].ID,
-							Name:         "Barricade Block",
-							Strength:     data.MageRecs[0].Strength,
-							Dexterity:    data.MageRecs[0].Dexterity,
-							Intelligence: data.MageRecs[0].Intelligence,
-							Experience:   data.MageRecs[0].Experience,
-							Coin:         data.MageRecs[0].Coin,
+							ID:               data.MageRecs[0].ID,
+							Name:             "Barricade Block",
+							Strength:         data.MageRecs[0].Strength,
+							Dexterity:        data.MageRecs[0].Dexterity,
+							Intelligence:     data.MageRecs[0].Intelligence,
+							AttributePoints:  data.MageRecs[0].AttributePoints,
+							ExperiencePoints: data.MageRecs[0].ExperiencePoints,
+							Coins:            data.MageRecs[0].Coins,
 						},
 					},
 				}
@@ -311,8 +314,9 @@ func TestMageHandler(t *testing.T) {
 					require.Equal(t, resData.Data[0].Strength, res.Data[0].Strength, "Strength equals expected")
 					require.Equal(t, resData.Data[0].Dexterity, res.Data[0].Dexterity, "Dexterity equals expected")
 					require.Equal(t, resData.Data[0].Intelligence, res.Data[0].Intelligence, "Intelligence equals expected")
-					require.Equal(t, resData.Data[0].Experience, res.Data[0].Experience, "Experience equals expected")
-					require.Equal(t, resData.Data[0].Coin, res.Data[0].Coin, "Coin equals expected")
+					require.Equal(t, resData.Data[0].AttributePoints, res.Data[0].AttributePoints, "Attribute points equals expected")
+					require.Equal(t, resData.Data[0].ExperiencePoints, res.Data[0].ExperiencePoints, "Experience points equals expected")
+					require.Equal(t, resData.Data[0].Coins, res.Data[0].Coins, "Coins equals expected")
 				}
 
 				// record timestamps

@@ -81,7 +81,7 @@ class MageCard extends StatelessWidget {
               flex: 3,
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Text(this.mage.coin.toString()),
+                child: Text(this.mage.coins.toString()),
               ),
             ),
           ],
@@ -96,7 +96,7 @@ class MageCard extends StatelessWidget {
               flex: 3,
               child: Align(
                 alignment: Alignment.centerRight,
-                child: Text(this.mage.experience.toString()),
+                child: Text(this.mage.experiencePoints.toString()),
               ),
             ),
           ],
