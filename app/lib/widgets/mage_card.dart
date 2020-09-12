@@ -19,12 +19,15 @@ class MageCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         CircleAvatar(
-          maxRadius: 60.0,
+          maxRadius: 50.0,
           backgroundImage: AssetImage("assets/avatars/2.jpg"),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Text(this.mage.name),
+        Container(
+          padding: EdgeInsets.all(3.0),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Text(this.mage.name),
+          ),
         ),
         Row(
           children: <Widget>[
@@ -101,6 +104,7 @@ class MageCard extends StatelessWidget {
             ),
           ],
         ),
+        FlatButton(onPressed: null, child: Text("Play")),
       ],
     );
   }

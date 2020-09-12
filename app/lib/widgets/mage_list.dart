@@ -26,14 +26,22 @@ class MageListWidget extends StatelessWidget {
       return Text("No mages yet");
     }
 
+    // Calculate aspect ratio so we can have 4 mages
+    var size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
+
     // Have mages
     return GridView.count(
       crossAxisCount: 2,
-      childAspectRatio: .7,
+      crossAxisSpacing: 4,
+      mainAxisSpacing: 4,
+      childAspectRatio: (itemWidth / itemHeight),
       children: List.generate(
         mages.length,
-        (index) => ListTile(
-          title: MageCard(mages[index]),
+        (index) => Container(
+          padding: EdgeInsets.all(10.0),
+          child: MageCard(mages[index]),
         ),
       ),
     );
