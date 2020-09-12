@@ -8,14 +8,13 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: Text('Mages'),
       ),
       body: Container(
         child: Center(
           child: MageListWidget(),
         ),
       ),
-      // floatingActionButton: MageCreateButtonWidget(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, '/mage_create');

@@ -28,7 +28,7 @@ class MageListWidget extends StatelessWidget {
 
     // Calculate aspect ratio so we can have 4 mages
     var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemHeight = (size.height - kToolbarHeight - 50) / 2;
     final double itemWidth = size.width / 2;
 
     // Have mages

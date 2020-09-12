@@ -18,10 +18,28 @@ class MageCard extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        CircleAvatar(
-          maxRadius: 50.0,
-          backgroundImage: AssetImage("assets/avatars/2.jpg"),
+        Stack(
+          children: <Widget>[
+            // Mage avatar
+            Container(
+              alignment: Alignment.topCenter,
+              child: CircleAvatar(
+                maxRadius: 50.0,
+                backgroundImage: AssetImage("assets/avatars/2.jpg"),
+              ),
+            ),
+            // Familliar avatar
+            Container(
+              alignment: Alignment.bottomRight,
+              padding: EdgeInsets.only(top: 60),
+              child: CircleAvatar(
+                maxRadius: 20.0,
+                backgroundImage: AssetImage("assets/avatars/2.jpg"),
+              ),
+            ),
+          ],
         ),
+        // Mage name
         Container(
           padding: EdgeInsets.all(3.0),
           child: Align(
@@ -29,6 +47,7 @@ class MageCard extends StatelessWidget {
             child: Text(this.mage.name),
           ),
         ),
+        // Mage attributes
         Row(
           children: <Widget>[
             Expanded(
@@ -74,11 +93,12 @@ class MageCard extends StatelessWidget {
             ),
           ],
         ),
+        // Mage coins
         Row(
           children: <Widget>[
             Expanded(
               flex: 7,
-              child: Text("Coin"),
+              child: Text("Coins"),
             ),
             Expanded(
               flex: 3,
@@ -89,6 +109,7 @@ class MageCard extends StatelessWidget {
             ),
           ],
         ),
+        // Mage experience
         Row(
           children: <Widget>[
             Expanded(
@@ -104,7 +125,17 @@ class MageCard extends StatelessWidget {
             ),
           ],
         ),
-        FlatButton(onPressed: null, child: Text("Play")),
+        Container(
+          alignment: Alignment.center,
+          child: FlatButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/mage_play');
+            },
+            color: Colors.green,
+            disabledColor: Colors.grey,
+            child: Text("Play"),
+          ),
+        ),
       ],
     );
   }

@@ -205,7 +205,6 @@ class MageListModel extends ChangeNotifier {
 
   UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);
 
-  /// Creates a [mage] adding it to the existing mages list
   void addMage(MageModel mage) {
     // Logger
     final log = Logger('MageModel - addMage');
@@ -228,7 +227,6 @@ class MageListModel extends ChangeNotifier {
     });
   }
 
-  /// Refresh all mages
   void refreshMages() {
     // Call on API to fetch mages
     Future<List<dynamic>> magesFuture = this.api.getMages();
@@ -242,7 +240,6 @@ class MageListModel extends ChangeNotifier {
     });
   }
 
-  /// Removes all mages from list.
   void removeMages() {
     _mages.clear();
     // This call tells the widgets that are listening to this model to rebuild.

@@ -28,10 +28,9 @@ class HolyRagingMages extends StatelessWidget {
       child: MaterialApp(
         initialRoute: '/',
         routes: {
-          // When navigating to the "/" route, build the FirstScreen widget.
           '/': (context) => DashboardScreen(),
-          // When navigating to the "/second" route, build the SecondScreen widget.
           '/mage_create': (context) => MageCreateScreen(),
+          '/mage_play': (context) => MagePlayScreen(),
         },
       ),
     );
