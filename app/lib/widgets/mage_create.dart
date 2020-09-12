@@ -17,7 +17,6 @@ class MageCreateWidget extends StatelessWidget {
 
     // Mage models
     var mageModel = Provider.of<MageModel>(context);
-    var mageListModel = Provider.of<MageListModel>(context);
 
     void _incrementStrength() {
       mageModel.strength++;
@@ -45,10 +44,6 @@ class MageCreateWidget extends StatelessWidget {
 
     void _updateName(String value) {
       mageModel.name = value;
-    }
-
-    void _addMage() {
-      mageListModel.addMage(mageModel);
     }
 
     return Column(
