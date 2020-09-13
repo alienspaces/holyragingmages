@@ -199,8 +199,8 @@ func (rnr *Runner) validateLoadSchemas(hc HandlerConfig) error {
 	schema := hc.MiddlewareConfig.ValidateSchemaMain
 	schemaReferences := hc.MiddlewareConfig.ValidateSchemaReferences
 
-	appHome := rnr.Config.Get("APP_SERVER_HOME")
-	schemaLoc = fmt.Sprintf("file://%s/%s", appHome, schemaLoc)
+	schemaPath := rnr.Config.Get("APP_SERVER_SCHEMA_PATH")
+	schemaLoc = fmt.Sprintf("file://%s/%s", schemaPath, schemaLoc)
 
 	rnr.Log.Info("Loading schema %s/%s", schemaLoc, schema)
 

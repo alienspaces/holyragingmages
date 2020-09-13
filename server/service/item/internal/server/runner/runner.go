@@ -61,7 +61,7 @@ func NewRunner() *Runner {
 			Path:        "/api/items",
 			HandlerFunc: r.PostItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/item",
+				ValidateSchemaLocation: "item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -77,7 +77,7 @@ func NewRunner() *Runner {
 			Path:        "/api/items/:item_id",
 			HandlerFunc: r.PostItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/item",
+				ValidateSchemaLocation: "item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -93,7 +93,7 @@ func NewRunner() *Runner {
 			Path:        "/api/items/:item_id",
 			HandlerFunc: r.PutItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/item",
+				ValidateSchemaLocation: "item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",

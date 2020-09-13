@@ -29,6 +29,7 @@ RUN apk update \
 COPY --from=builder /go/bin/hrm-spell-server /go/bin
 COPY --from=builder /go/bin/hrm-spell-cli /go/bin
 COPY --from=builder /holyragingmages/service/spell/build/docker/entrypoint.sh .
+COPY --from=builder /holyragingmages/schema/docs ./schema/docs
 
 RUN pwd
 RUN ls -la

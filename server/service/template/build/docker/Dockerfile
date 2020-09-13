@@ -29,6 +29,7 @@ RUN apk update \
 COPY --from=builder /go/bin/hrm-template-server /go/bin
 COPY --from=builder /go/bin/hrm-template-cli /go/bin
 COPY --from=builder /holyragingmages/service/template/build/docker/entrypoint.sh .
+COPY --from=builder /holyragingmages/schema/docs ./schema/docs
 
 RUN pwd
 RUN ls -la

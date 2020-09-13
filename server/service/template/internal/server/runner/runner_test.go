@@ -34,6 +34,8 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Stor
 		"APP_SERVER_DB_NAME",
 		"APP_SERVER_DB_USER",
 		"APP_SERVER_DB_PASSWORD",
+		// schema
+		"APP_SERVER_SCHEMA_PATH",
 	}
 	for _, key := range configVars {
 		err = c.Add(key, true)

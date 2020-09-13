@@ -148,12 +148,12 @@ func (rnr *Runner) GenerateHandlerDocumentation() ([]byte, error) {
 		var schemaDataContent []byte
 		var err error
 
-		appHome := rnr.Config.Get("APP_SERVER_HOME")
+		schemaPath := rnr.Config.Get("APP_SERVER_SCHEMA_PATH")
 		schemaLoc := config.MiddlewareConfig.ValidateSchemaLocation
 		if schemaLoc != "" {
 
 			schemaMain := config.MiddlewareConfig.ValidateSchemaMain
-			filename := fmt.Sprintf("%s/%s/%s", appHome, schemaLoc, schemaMain)
+			filename := fmt.Sprintf("%s/%s/%s", schemaPath, schemaLoc, schemaMain)
 
 			rnr.Log.Info("Schema main content filename >%s<", filename)
 
@@ -165,7 +165,7 @@ func (rnr *Runner) GenerateHandlerDocumentation() ([]byte, error) {
 			schemaReferences := config.MiddlewareConfig.ValidateSchemaReferences
 			for _, schemaReference := range schemaReferences {
 
-				filename := fmt.Sprintf("%s/%s/%s", appHome, schemaLoc, schemaReference)
+				filename := fmt.Sprintf("%s/%s/%s", schemaPath, schemaLoc, schemaReference)
 
 				rnr.Log.Info("Schema reference content filename >%s<", filename)
 

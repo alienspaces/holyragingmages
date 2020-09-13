@@ -54,7 +54,7 @@ func NewRunner() *Runner {
 			Path:        "/api/mages",
 			HandlerFunc: r.PostMagesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/mage",
+				ValidateSchemaLocation: "mage",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -70,7 +70,7 @@ func NewRunner() *Runner {
 			Path:        "/api/mages/:mage_id",
 			HandlerFunc: r.PostMagesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/mage",
+				ValidateSchemaLocation: "mage",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -86,7 +86,7 @@ func NewRunner() *Runner {
 			Path:        "/api/mages/:mage_id",
 			HandlerFunc: r.PutMagesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/mage",
+				ValidateSchemaLocation: "mage",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",

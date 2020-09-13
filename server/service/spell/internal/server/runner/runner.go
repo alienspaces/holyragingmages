@@ -59,7 +59,7 @@ func NewRunner() *Runner {
 			Path:        "/api/spells",
 			HandlerFunc: r.PostSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/spell",
+				ValidateSchemaLocation: "spell",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -75,7 +75,7 @@ func NewRunner() *Runner {
 			Path:        "/api/spells/:spell_id",
 			HandlerFunc: r.PostSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/spell",
+				ValidateSchemaLocation: "spell",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
@@ -91,7 +91,7 @@ func NewRunner() *Runner {
 			Path:        "/api/spells/:spell_id",
 			HandlerFunc: r.PutSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
-				ValidateSchemaLocation: "schema/spell",
+				ValidateSchemaLocation: "spell",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
 					"data.schema.json",
