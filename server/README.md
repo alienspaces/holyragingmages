@@ -10,7 +10,7 @@ Start all services
 ./script/start
 ```
 
-[http://localhost:8082/mage/api](http://localhost:8082/mage/api)
+[http://localhost:8082/entity/api](http://localhost:8082/entity/api)
 
 [http://localhost:8082/spell/api](http://localhost:8082/spell/api)
 

@@ -3,7 +3,7 @@
 # environment
 source ${BASH_SOURCE%/*}/environment || exit $?
 
-SERVICES=(mage spell item)
+SERVICES=(entity spell item)
 
 for SERVICE in "${SERVICES[@]}"; do
 

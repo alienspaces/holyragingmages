@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hrm-item-deployment
+  name: hrm-entity-deployment
 spec:
   selector:
     matchLabels:
-      app: hrm-item
+      app: hrm-entity
   replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: hrm-item
+        app: hrm-entity
     spec:
       affinity:
         podAntiAffinity:
@@ -22,10 +22,10 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - hrm-item
+                      - hrm-entity
               topologyKey: "kubernetes.io/hostname"
       containers:
-        - name: hrm-item-container
+        - name: hrm-entity-container
           image: {APP_IMAGE}
           imagePullPolicy: Always
           livenessProbe:
@@ -49,6 +49,6 @@ spec:
               cpu: "0.25"
           envFrom:
             - configMapRef:
-                name: hrm-item-configmap
+                name: hrm-entity-configmap
           ports:
             - containerPort: 8080

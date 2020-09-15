@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema#",
-    "$id": "http://holyragingmages.com/schema/spells/main.schema.json",
+    "$id": "http://holyragingmages.com/schema/spell/main.schema.json",
     "title": "Spells Main",
     "type": "object",
     "required": [
@@ -8,7 +8,7 @@
     ],
     "properties": {
         "data": {
-            "$ref": "http://holyragingmages.com/schema/spells/data.schema.json"
+            "$ref": "http://holyragingmages.com/schema/spell/data.schema.json"
         }
     }
 }

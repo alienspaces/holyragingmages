@@ -24,7 +24,7 @@ class Api {
   // getMages returns a list of mages
   Future<List<dynamic>> getMages() async {
     Response response = await this.dio.get(
-      "/mage/api/mages",
+      "/entity/api/entities",
       queryParameters: {},
     );
 
@@ -38,7 +38,7 @@ class Api {
   // postMage creates a new mage
   Future<List<dynamic>> postMage(Map<String, dynamic> data) async {
     Response response = await this.dio.post(
-          "/mage/api/mages",
+          "/entity/api/entities",
           data: data,
         );
 
@@ -52,7 +52,7 @@ class Api {
   // putMage creates a new mage
   Future<List<dynamic>> putMage(String id, Map<String, dynamic> data) async {
     Response response = await this.dio.put(
-          "/mage/api/mages/$id",
+          "/entity/api/entities/$id",
           data: data,
         );
 

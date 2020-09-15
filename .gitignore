@@ -6,9 +6,9 @@ server/service/template/template
 server/service/template/hrm-template-server
 server/service/template/hrm-template-cli
 
-server/service/mage/mage
-server/service/mage/hrm-mage-server
-server/service/mage/hrm-mage-cli
+server/service/entity/entity
+server/service/entity/hrm-entity-server
+server/service/entity/hrm-entity-cli
 
 server/service/item/item
 server/service/item/hrm-item-server

@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema#",
-    "$id": "http://holyragingmages.com/schema/spells/data.schema.json",
+    "$id": "http://holyragingmages.com/schema/spell/data.schema.json",
     "title": "Spells Data",
     "description": "Payload data for spells",
     "type": "object",
