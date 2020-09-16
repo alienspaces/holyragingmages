@@ -1,6 +1,6 @@
 -- Entity
 CREATE TABLE "entity" (
-  "id" uuid PRIMARY KEY,
+  "id" UUID CONSTRAINT entity_pk PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" text NOT NULL,
   "strength" int NOT NULL DEFAULT 0,
   "dexterity" int NOT NULL DEFAULT 0,
@@ -15,7 +15,7 @@ CREATE TABLE "entity" (
 
 -- Entity Instance
 CREATE TABLE "entity_instance" (
-  "id" uuid PRIMARY KEY,
+  "id" UUID CONSTRAINT entity_instance_pk PRIMARY KEY DEFAULT gen_random_uuid(),
   "entity_id" uuid NOT NULL,
   "health_points" int NOT NULL DEFAULT 0,
   "action_points" int NOT NULL DEFAULT 0,
@@ -26,7 +26,7 @@ CREATE TABLE "entity_instance" (
 
 -- Entity Item
 CREATE TABLE "entity_item" (
-  "id" uuid PRIMARY KEY,
+  "id" UUID CONSTRAINT entity_item_pk PRIMARY KEY DEFAULT gen_random_uuid(),
   "entity_id" uuid NOT NULL,
   "item_id" uuid NOT NULL,
   "created_at" timestamp NOT NULL DEFAULT (current_timestamp),
@@ -36,7 +36,7 @@ CREATE TABLE "entity_item" (
 
 -- Entity Spell
 CREATE TABLE "entity_spell" (
-  "id" uuid PRIMARY KEY,
+  "id" UUID CONSTRAINT entity_spell_pk PRIMARY KEY DEFAULT gen_random_uuid(),
   "entity_id" uuid NOT NULL,
   "spell_id" uuid NOT NULL,
   "created_at" timestamp NOT NULL DEFAULT (current_timestamp),
