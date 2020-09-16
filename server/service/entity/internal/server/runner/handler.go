@@ -15,17 +15,17 @@ import (
 // GetEntitiesHandler -
 func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Get mages handler ** p >%#v< m >%#v<", pp, m)
+	l.Info("** Get entities handler ** p >%#v< m >%#v<", pp, m)
 
 	var recs []*record.Entity
 	var err error
 
-	id := pp.ByName("mage_id")
+	id := pp.ByName("entity_id")
 
 	// single resource
 	if id != "" {
 
-		l.Info("Getting mage record ID >%s<", id)
+		l.Info("Getting entity record ID >%s<", id)
 
 		rec, err := m.(*model.Model).GetEntityRec(id, false)
 		if err != nil {
@@ -43,7 +43,7 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 
 	} else {
 
-		l.Info("Querying mage records")
+		l.Info("Querying entity records")
 
 		// query parameters
 		params := make(map[string]interface{})
@@ -86,10 +86,10 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 // PostEntitiesHandler -
 func (rnr *Runner) PostEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Post mages handler ** p >%#v< m >#%v<", pp, m)
+	l.Info("** Post entities handler ** p >%#v< m >#%v<", pp, m)
 
 	// parameters
-	id := pp.ByName("mage_id")
+	id := pp.ByName("entity_id")
 
 	req := schema.EntityRequest{}
 
@@ -141,9 +141,9 @@ func (rnr *Runner) PostEntitiesHandler(w http.ResponseWriter, r *http.Request, p
 // PutEntitiesHandler -
 func (rnr *Runner) PutEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Put mages handler ** p >%#v< m >#%v<", pp, m)
+	l.Info("** Put entities handler ** p >%#v< m >#%v<", pp, m)
 
-	id := pp.ByName("mage_id")
+	id := pp.ByName("entity_id")
 
 	l.Info("Updating resource ID >%s<", id)
 

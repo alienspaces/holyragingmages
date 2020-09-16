@@ -18,7 +18,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/harness"
 )
 
-func TestMageHandler(t *testing.T) {
+func TestEntityHandler(t *testing.T) {
 
 	// test dependencies
 	c, l, s, err := NewDefaultDependencies()
@@ -46,7 +46,7 @@ func TestMageHandler(t *testing.T) {
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":mage_id": data.EntityRecs[0].ID,
+					":entity_id": data.EntityRecs[0].ID,
 				}
 				return params
 			},
@@ -79,7 +79,7 @@ func TestMageHandler(t *testing.T) {
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":mage_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
+					":entity_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
 				}
 				return params
 			},
@@ -113,7 +113,7 @@ func TestMageHandler(t *testing.T) {
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":mage_id": "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+					":entity_id": "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 				}
 				return params
 			},
@@ -130,8 +130,9 @@ func TestMageHandler(t *testing.T) {
 				res := schema.EntityResponse{
 					Data: []schema.EntityData{
 						{
-							ID:   "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
-							Name: "Audrey The Amazing",
+							ID:              "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+							Name:            "Audrey The Amazing",
+							AttributePoints: 32,
 						},
 					},
 				}
@@ -145,7 +146,7 @@ func TestMageHandler(t *testing.T) {
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":mage_id": data.EntityRecs[0].ID,
+					":entity_id": data.EntityRecs[0].ID,
 				}
 				return params
 			},
