@@ -39,6 +39,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
 
+  # Google Sign In https://developers.google.com/identity/
+  google_sign_in: ^4.5.3
+
   # Common words
   english_words: ^3.1.5
 
