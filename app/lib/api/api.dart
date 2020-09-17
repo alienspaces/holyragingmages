@@ -21,8 +21,8 @@ class Api {
     dio.interceptors.add(LogInterceptor(responseBody: false));
   }
 
-  // getMages returns a list of mages
-  Future<List<dynamic>> getMages() async {
+  // getEntities returns a list of entities
+  Future<List<dynamic>> getEntities() async {
     Response response = await this.dio.get(
       "/entity/api/entities",
       queryParameters: {},
@@ -35,8 +35,8 @@ class Api {
     return response.data["data"];
   }
 
-  // postMage creates a new mage
-  Future<List<dynamic>> postMage(Map<String, dynamic> data) async {
+  // postEntity creates a new entity
+  Future<List<dynamic>> postEntity(Map<String, dynamic> data) async {
     Response response = await this.dio.post(
           "/entity/api/entities",
           data: data,
@@ -49,8 +49,8 @@ class Api {
     return response.data["data"];
   }
 
-  // putMage creates a new mage
-  Future<List<dynamic>> putMage(String id, Map<String, dynamic> data) async {
+  // putEntity updates an existing entity
+  Future<List<dynamic>> putEntity(String id, Map<String, dynamic> data) async {
     Response response = await this.dio.put(
           "/entity/api/entities/$id",
           data: data,

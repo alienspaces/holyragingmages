@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logging/logging.dart';
 
 import '../widgets/mage_list.dart';
 
@@ -41,10 +42,26 @@ class DashboardScreenState extends State<DashboardScreen> {
   Future<void> _handleSignOut() => _googleSignIn.disconnect();
 
   Widget _buildBody() {
+    // Logger
+    final log = Logger('DashboardScreen - _buildBody');
+
+    log.info("Building");
+
     if (_currentUser != null) {
+      // Current user
+      log.info('Current user ID ${_currentUser.id ?? ''}');
+      log.info('Current user displayName ${_currentUser.displayName ?? ''}');
+      log.info('Current user email ${_currentUser.email ?? ''}');
+
       return Scaffold(
         appBar: AppBar(
           title: Text('Mages'),
+          actions: <Widget>[
+            RaisedButton(
+              child: const Text('SIGN OUT'),
+              onPressed: _handleSignOut,
+            ),
+          ],
         ),
         body: Container(
           child: Center(
@@ -57,29 +74,6 @@ class DashboardScreenState extends State<DashboardScreen> {
           },
         ),
       );
-
-      // return Column(
-      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //   children: <Widget>[
-      //     ListTile(
-      //       leading: GoogleUserCircleAvatar(
-      //         identity: _currentUser,
-      //       ),
-      //       title: Text(_currentUser.displayName ?? ''),
-      //       subtitle: Text(_currentUser.email ?? ''),
-      //     ),
-      //     const Text("Signed in successfully."),
-      //     Text(_contactText ?? ''),
-      //     RaisedButton(
-      //       child: const Text('SIGN OUT'),
-      //       onPressed: _handleSignOut,
-      //     ),
-      //     RaisedButton(
-      //       child: const Text('REFRESH'),
-      //       onPressed: _handleGetContact,
-      //     ),
-      //   ],
-      // );
     } else {
       return Scaffold(
         appBar: AppBar(
@@ -105,23 +99,4 @@ class DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return _buildBody();
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text('Mages'),
-  //     ),
-  //     body: Container(
-  //       child: Center(
-  //         child: MageListWidget(),
-  //       ),
-  //     ),
-  //     floatingActionButton: FloatingActionButton(
-  //       onPressed: () {
-  //         Navigator.pushNamed(context, '/mage_create');
-  //       },
-  //     ),
-  //   );
-  // }
 }

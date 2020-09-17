@@ -214,7 +214,7 @@ class MageListModel extends ChangeNotifier {
       throw 'Mage name must be set before adding a mage';
     }
 
-    Future<List<dynamic>> magesFuture = this.api.postMage(mage.toJson());
+    Future<List<dynamic>> magesFuture = this.api.postEntity(mage.toJson());
     magesFuture.then((magesData) {
       log.info('Post returned ${magesData.length} length');
       for (Map<String, dynamic> mageData in magesData) {
@@ -227,9 +227,9 @@ class MageListModel extends ChangeNotifier {
     });
   }
 
-  void refreshMages() {
+  void refreshEntities() {
     // Call on API to fetch mages
-    Future<List<dynamic>> magesFuture = this.api.getMages();
+    Future<List<dynamic>> magesFuture = this.api.getEntities();
     magesFuture.then((magesData) {
       for (Map<String, dynamic> mageData in magesData) {
         var mage = MageModel.fromJson(mageData);
