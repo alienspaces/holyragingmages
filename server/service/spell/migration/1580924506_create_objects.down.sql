@@ -1,2 +1,2 @@
 -- drop table
-DROP TABLE spell;
+DROP TABLE "spell";

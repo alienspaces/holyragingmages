@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 
+	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/record"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
@@ -58,7 +60,11 @@ func TestAccountHandler(t *testing.T) {
 				res := schema.AccountResponse{
 					Data: []schema.AccountData{
 						{
-							ID: data.AccountRecs[0].ID,
+							ID:                data.AccountRecs[0].ID,
+							Name:              data.AccountRecs[0].Name,
+							Email:             data.AccountRecs[0].Email,
+							Provider:          data.AccountRecs[0].Provider,
+							ProviderAccountID: data.AccountRecs[0].ProviderAccountID,
 						},
 					},
 				}
@@ -88,7 +94,12 @@ func TestAccountHandler(t *testing.T) {
 			},
 			requestData: func(data *harness.Data) *schema.AccountRequest {
 				req := schema.AccountRequest{
-					Data: schema.AccountData{},
+					Data: schema.AccountData{
+						Name:              "Horrific Harry",
+						Email:             "horrificharry@example.com",
+						Provider:          record.AccountProviderGoogle,
+						ProviderAccountID: "abcdefg",
+					},
 				}
 				return &req
 			},
@@ -107,7 +118,12 @@ func TestAccountHandler(t *testing.T) {
 			},
 			requestData: func(data *harness.Data) *schema.AccountRequest {
 				req := schema.AccountRequest{
-					Data: schema.AccountData{},
+					Data: schema.AccountData{
+						Name:              "Scary Susan",
+						Email:             "scarysusan@example.com",
+						Provider:          record.AccountProviderGoogle,
+						ProviderAccountID: "abcdefg",
+					},
 				}
 				return &req
 			},
@@ -116,7 +132,11 @@ func TestAccountHandler(t *testing.T) {
 				res := schema.AccountResponse{
 					Data: []schema.AccountData{
 						{
-							ID: "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+							ID:                "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+							Name:              "Scary Susan",
+							Email:             "scarysusan@example.com",
+							Provider:          record.AccountProviderGoogle,
+							ProviderAccountID: "abcdefg",
 						},
 					},
 				}
@@ -137,7 +157,11 @@ func TestAccountHandler(t *testing.T) {
 			requestData: func(data *harness.Data) *schema.AccountRequest {
 				req := schema.AccountRequest{
 					Data: schema.AccountData{
-						ID: data.AccountRecs[0].ID,
+						ID:                data.AccountRecs[0].ID,
+						Name:              "Scary Susan",
+						Email:             "scarysusan@example.com",
+						Provider:          record.AccountProviderGoogle,
+						ProviderAccountID: "abcdefg",
 					},
 				}
 				return &req
@@ -147,7 +171,11 @@ func TestAccountHandler(t *testing.T) {
 				res := schema.AccountResponse{
 					Data: []schema.AccountData{
 						{
-							ID: data.AccountRecs[0].ID,
+							ID:                data.AccountRecs[0].ID,
+							Name:              "Scary Susan",
+							Email:             "scarysusan@example.com",
+							Provider:          record.AccountProviderGoogle,
+							ProviderAccountID: "abcdefg",
 						},
 					},
 				}
@@ -298,6 +326,10 @@ func TestAccountHandler(t *testing.T) {
 				// response data
 				if resData != nil {
 					require.Equal(t, resData.Data[0].ID, res.Data[0].ID, "ID equals expected")
+					require.Equal(t, resData.Data[0].Name, res.Data[0].Name, "Name equals expected")
+					require.Equal(t, resData.Data[0].Email, res.Data[0].Email, "Email equals expected")
+					require.Equal(t, resData.Data[0].Provider, res.Data[0].Provider, "Provider equals expected")
+					require.Equal(t, resData.Data[0].ProviderAccountID, res.Data[0].ProviderAccountID, "ProviderAccountID equals expected")
 				}
 
 				// record timestamps

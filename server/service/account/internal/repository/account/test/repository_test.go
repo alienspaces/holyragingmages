@@ -33,14 +33,24 @@ func TestCreateOne(t *testing.T) {
 		{
 			name: "Without ID",
 			rec: func() *record.Account {
-				return &record.Account{}
+				return &record.Account{
+					Name:              "Scary Susan",
+					Email:             "scarysusan@example.com",
+					Provider:          record.AccountProviderGoogle,
+					ProviderAccountID: "abcdefg",
+				}
 			},
 			err: false,
 		},
 		{
 			name: "With ID",
 			rec: func() *record.Account {
-				rec := &record.Account{}
+				rec := &record.Account{
+					Name:              "Horrific Harry",
+					Email:             "horrificharry@example.com",
+					Provider:          record.AccountProviderGoogle,
+					ProviderAccountID: "abcdefg",
+				}
 				id, _ := uuid.NewRandom()
 				rec.ID = id.String()
 				return rec

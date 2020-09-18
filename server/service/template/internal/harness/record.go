@@ -9,6 +9,8 @@ func (t *Testing) createTemplateRec(templateConfig TemplateConfig) (record.Templ
 
 	rec := templateConfig.Record
 
+	// NOTE: Add default values for required properties here
+
 	t.Log.Info("Creating testing record >%#v<", rec)
 
 	err := t.Model.(*model.Model).CreateTemplateRec(&rec)

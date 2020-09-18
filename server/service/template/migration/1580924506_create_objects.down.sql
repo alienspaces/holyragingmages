@@ -1,2 +1,2 @@
 -- drop table
-DROP TABLE template;
+DROP TABLE "template";

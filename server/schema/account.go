@@ -16,7 +16,11 @@ type AccountRequest struct {
 
 // AccountData -
 type AccountData struct {
-	ID        string    `json:"id,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	ID                string    `json:"id,omitempty"`
+	Name              string    `json:"name,omitempty"`
+	Email             string    `json:"email,omitempty"`
+	Provider          string    `json:"provider,omitempty"`
+	ProviderAccountID string    `json:"provider_account_id,omitempty"`
+	CreatedAt         time.Time `json:"created_at,omitempty"`
+	UpdatedAt         time.Time `json:"updated_at,omitempty"`
 }

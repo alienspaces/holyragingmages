@@ -2,18 +2,30 @@ package account
 
 var createOneSQL = `
 INSERT INTO account (
-	id,
-	created_at
+    id,
+    name,
+    email,
+    provider,
+    provider_account_id,
+    created_at
 ) VALUES (
-	:id,
-	:created_at
+    :id,
+    :name,
+    :email,
+    :provider,
+    :provider_account_id,
+    :created_at
 )
 RETURNING *
 `
 
 var updateOneSQL = `
 UPDATE account SET
-    updated_at = :updated_at
+    name                = :name,
+    email               = :email,
+    provider            = :provider,
+    provider_account_id = :provider_account_id,
+    updated_at          = :updated_at
 WHERE id = :id
 AND   deleted_at IS NULL
 RETURNING *

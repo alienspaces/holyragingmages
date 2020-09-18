@@ -204,6 +204,11 @@ func (rnr *Runner) PutAccountsHandler(w http.ResponseWriter, r *http.Request, pp
 // AccountRequestDataToRecord -
 func (rnr *Runner) AccountRequestDataToRecord(data schema.AccountData, rec *record.Account) error {
 
+	rec.Name = data.Name
+	rec.Email = data.Email
+	rec.Provider = data.Provider
+	rec.ProviderAccountID = data.ProviderAccountID
+
 	return nil
 }
 
@@ -211,9 +216,13 @@ func (rnr *Runner) AccountRequestDataToRecord(data schema.AccountData, rec *reco
 func (rnr *Runner) RecordToAccountResponseData(accountRec *record.Account) (schema.AccountData, error) {
 
 	data := schema.AccountData{
-		ID:        accountRec.ID,
-		CreatedAt: accountRec.CreatedAt,
-		UpdatedAt: accountRec.UpdatedAt.Time,
+		ID:                accountRec.ID,
+		Name:              accountRec.Name,
+		Email:             accountRec.Email,
+		Provider:          accountRec.Provider,
+		ProviderAccountID: accountRec.ProviderAccountID,
+		CreatedAt:         accountRec.CreatedAt,
+		UpdatedAt:         accountRec.UpdatedAt.Time,
 	}
 
 	return data, nil
