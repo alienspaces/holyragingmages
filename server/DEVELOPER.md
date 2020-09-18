@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-* Go 1.14
+* Go 1.15
   * [https://golang.org/](https://golang.org/)
 * gvm
   * [https://github.com/moovweb/gvm](https://github.com/moovweb/gvm)
@@ -72,3 +72,10 @@ Stop all services
 ```bash
 ./script/stop
 ```
+
+## Upgrading Go Version
+
+* Install `gvm get go1.X.X && gvm user go1.X.X --default`
+* Update all `~/server/service/*/build/docker/Dockerfile` configurations
+* Update `~/server/script` scripts
+* Update `~/.gitlab-ci.yml`

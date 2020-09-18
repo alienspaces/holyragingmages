@@ -24,6 +24,10 @@
   * Update mage card UI to show equipped spells
   * Provide ability to click on spell in UI to show details
 
+### Future
+
+* Make upgrading Go version a bit easier
+
 ## License
 
 COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com

@@ -62,7 +62,7 @@ fi
 if [ $(command -v go) ]; then
 
     # go version
-    GO_VERSION=go1.14
+    GO_VERSION=go1.15
     VERSION=$(go version)
     if [[ "$VERSION" != *"${GO_VERSION}"* ]]; then
         echo "(env) Go version ${GO_VERSION} is required, please check your Go version and try again"
