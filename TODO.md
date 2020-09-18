@@ -4,12 +4,15 @@
 
 ### Now
 
-* Attribute points
-  * All `attribute_points` should be fully allocated across attributes on mage creation
-  * Sum of attributes points should never exceed `attribute_points` when updating attributes
+* OAuth with Google
+  * Account creation
+  * Account signin
 
 ### Next
 
+* Attribute points
+  * All `attribute_points` should be fully allocated across attributes on mage creation
+  * Sum of attributes points should never exceed `attribute_points` when updating attributes
 * Mage items
   * Default items when a mage is created
   * Enhance mage API to equipped items
