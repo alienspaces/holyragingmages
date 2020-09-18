@@ -17,3 +17,7 @@ server/service/item/hrm-item-cli
 server/service/spell/spell
 server/service/spell/hrm-spell-server
 server/service/spell/hrm-spell-cli
+
+server/service/account/account
+server/service/account/hrm-account-server
+server/service/account/hrm-account-cli

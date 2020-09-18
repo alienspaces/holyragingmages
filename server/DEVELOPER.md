@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-* Go 1.13
+* Go 1.14
   * [https://golang.org/](https://golang.org/)
 * gvm
   * [https://github.com/moovweb/gvm](https://github.com/moovweb/gvm)
@@ -19,6 +19,12 @@ Create new service
 ```bash
 ./script/generate service [name]
 ```
+
+* Update `~/.gitignore` to ignore binaries
+* Update `service/[service name]/.env.development` server port to an available port
+* Add configuration to `~/server/nginx.conf` and `~/server/nginx.macos.conf`
+* Add configuration to `~/server/script/load-test-data` for loading test data
+* Add configuration and types to `~/server/schema`
 
 ## Database Migrations
 
