@@ -1,57 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
+import '../models/models.dart';
 import '../widgets/mage_list.dart';
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  scopes: <String>[
-    'email',
-    'profile',
-    'openid',
-  ],
-);
-
-class DashboardScreen extends StatefulWidget {
-  @override
-  State createState() => DashboardScreenState();
-}
-
-class DashboardScreenState extends State<DashboardScreen> {
-  GoogleSignInAccount _currentUser;
-
-  @override
-  void initState() {
-    super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-      setState(() {
-        _currentUser = account;
-      });
-    });
-    _googleSignIn.signInSilently(suppressErrors: false);
-  }
-
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Future<void> _handleSignOut() => _googleSignIn.disconnect();
-
-  Widget _buildBody() {
+class DashboardScreen extends StatelessWidget {
+  Widget _buildBody(BuildContext context) {
     // Logger
     final log = Logger('DashboardScreen - _buildBody');
 
     log.info("Building");
 
-    if (_currentUser != null) {
+    // Mage list model
+    var accountModel = Provider.of<AccountModel>(context);
+
+    if (accountModel.providerAccountId != null) {
       // Current user
-      log.info('Current user ID ${_currentUser.id ?? ''}');
-      log.info('Current user displayName ${_currentUser.displayName ?? ''}');
-      log.info('Current user email ${_currentUser.email ?? ''}');
+      log.info('Current user ID ${accountModel.id ?? ''}');
+      log.info('Current user displayName ${accountModel.name ?? ''}');
+      log.info('Current user email ${accountModel.email ?? ''}');
 
       return Scaffold(
         appBar: AppBar(
@@ -59,7 +28,7 @@ class DashboardScreenState extends State<DashboardScreen> {
           actions: <Widget>[
             RaisedButton(
               child: const Text('SIGN OUT'),
-              onPressed: _handleSignOut,
+              onPressed: accountModel.handleSignOut,
             ),
           ],
         ),
@@ -86,7 +55,7 @@ class DashboardScreenState extends State<DashboardScreen> {
               const Text("You are not currently signed in."),
               RaisedButton(
                 child: const Text('SIGN IN'),
-                onPressed: _handleSignIn,
+                onPressed: accountModel.handleGoogleSignIn,
               ),
             ],
           ),
@@ -97,6 +66,6 @@ class DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildBody();
+    return _buildBody(context);
   }
 }

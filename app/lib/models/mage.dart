@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'package:logging/logging.dart';
-
 import 'package:flutter/foundation.dart';
 
 import '../api/api.dart';
@@ -9,9 +8,9 @@ import '../api/api.dart';
 const int initialAttributeValue = 10;
 const int initialAttributePoints = 40;
 
-/// A Mage encapsulates all mage specific data
+/// MageModel encapsulates a mages data and methods
 class MageModel extends ChangeNotifier {
-  // Server sourced properties
+  // Properties
   String id;
   String _name;
   int _strength;
@@ -21,11 +20,8 @@ class MageModel extends ChangeNotifier {
   int experiencePoints;
   int coins;
 
-  // Runtime properties
-  bool currentMage;
-
   MageModel() {
-    this.initDefaults();
+    this.initModel();
   }
 
   factory MageModel.fromJson(Map<String, dynamic> json) {
@@ -186,7 +182,7 @@ class MageModel extends ChangeNotifier {
     this._attributePoints = value;
   }
 
-  void initDefaults() {
+  void initModel() {
     // When not given an ID we can assume this is a newly created mage
     if (this.id == null) {
       this._attributePoints = initialAttributePoints;
@@ -199,6 +195,8 @@ class MageModel extends ChangeNotifier {
   }
 }
 
+// MageListModel contains a collection of MagesModels and provides access
+// to server API's for managing mages
 class MageListModel extends ChangeNotifier {
   final List<MageModel> _mages = [];
   final Api api = new Api();

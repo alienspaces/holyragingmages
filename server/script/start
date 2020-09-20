@@ -15,8 +15,11 @@ source ${BASH_SOURCE%/*}/db-migrate-up || exit $?
 # load test data
 source ${BASH_SOURCE%/*}/load-test-data || exit $?
 
-# start nginx
-source ${BASH_SOURCE%/*}/start-nginx $1 || exit $?
+# # start nginx
+# source ${BASH_SOURCE%/*}/start-nginx $1 || exit $?
+
+# start krakend
+source ${BASH_SOURCE%/*}/start-krakend $1 || exit $?
 
 # start services
 source ${BASH_SOURCE%/*}/start-services $1 || exit $?

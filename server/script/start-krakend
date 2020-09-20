@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# stop krakend
+source ${BASH_SOURCE%/*}/stop-krakend || exit $?
+
+# start krakend
+docker run --name hrm-krakend -p 8082:8080 -v "${PWD}:/etc/krakend/" -d devopsfaith/krakend:1.1 run -d -c krakend.json
+

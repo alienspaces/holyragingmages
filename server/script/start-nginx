@@ -3,6 +3,7 @@
 # stop nginx
 source ${BASH_SOURCE%/*}/stop-nginx || exit $?
 
+# start nginx
 if [ $(uname) = "Linux" ]; then
     echo
     echo "=> Starting nginx (Linux)"

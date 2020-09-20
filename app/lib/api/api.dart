@@ -24,7 +24,7 @@ class Api {
   // getEntities returns a list of entities
   Future<List<dynamic>> getEntities() async {
     Response response = await this.dio.get(
-      "/entity/api/entities",
+      "/api/entities",
       queryParameters: {},
     );
 

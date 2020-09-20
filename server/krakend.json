@@ -1,0 +1,291 @@
+{
+    "version": 2,
+    "extra_config": {
+        "github_com/devopsfaith/krakend-cors": {
+            "allow_origins": [
+                "*"
+            ],
+            "expose_headers": [
+                "Content-Length"
+            ],
+            "max_age": "12h",
+            "allow_methods": [
+                "GET",
+                "HEAD",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+            ],
+            "allow_credentials": false
+        },
+        "github_com/devopsfaith/krakend-gologging": {
+            "level": "ERROR",
+            "prefix": "[KRAKEND]",
+            "syslog": false,
+            "stdout": true,
+            "format": "default"
+        },
+        "github_com/devopsfaith/krakend-logstash": {
+            "enabled": false
+        }
+    },
+    "timeout": "3000ms",
+    "cache_ttl": "300s",
+    "output_encoding": "json",
+    "name": "HolyRagingMages",
+    "endpoints": [
+        {
+            "endpoint": "/api/spells",
+            "method": "GET",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/spells",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8084"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/spells",
+            "method": "POST",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/spells",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "POST",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8084"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/spells/{spell_id}",
+            "method": "GET",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/spells/{spell_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8084"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/spells/{spell_id}",
+            "method": "POST",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/spells/{spell_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "POST",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8084"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/spells/{spell_id}",
+            "method": "PUT",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/spells/{spell_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "PUT",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8084"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/spells/{spell_id}",
+            "method": "DELETE",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/spells/{spell_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "DELETE",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8084"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/entities",
+            "method": "GET",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/entities",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/entities",
+            "method": "POST",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/entities",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "POST",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/entities/{entity_id}",
+            "method": "GET",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/entities/{entity_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/entities/{entity_id}",
+            "method": "POST",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/entities/{entity_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "POST",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/entities/{entity_id}",
+            "method": "PUT",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/entities/{entity_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "PUT",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/entities/{entity_id}",
+            "method": "DELETE",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/entities/{entity_id}",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "DELETE",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/api/accounts",
+            "method": "GET",
+            "output_encoding": "json",
+            "extra_config": {},
+            "querystring_params": [
+                "email",
+                "provider",
+                "provider_account_id"
+            ],
+            "backend": [
+                {
+                    "url_pattern": "/api/accounts",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8087"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        }
+    ]
+}

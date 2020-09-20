@@ -23,6 +23,7 @@ class HolyRagingMages extends StatelessWidget {
     return MultiProvider(
       // Global providers
       providers: [
+        ChangeNotifierProvider(create: (context) => AccountModel()),
         ChangeNotifierProvider(create: (context) => MageListModel()),
       ],
       child: MaterialApp(
