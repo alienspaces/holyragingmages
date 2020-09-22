@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/julienschmidt/httprouter v1.3.0
@@ -26,6 +27,7 @@ require (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/runnable v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/storer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/schema v1.0.0
+	google.golang.org/api v0.32.0
 )
 
 replace (

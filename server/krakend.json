@@ -264,6 +264,25 @@
             ]
         },
         {
+            "endpoint": "/api/auth",
+            "method": "POST",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/auth",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "POST",
+                    "extra_config": {},
+                    "host": [
+                        "http://172.17.0.1:8087"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
             "endpoint": "/api/accounts",
             "method": "GET",
             "output_encoding": "json",

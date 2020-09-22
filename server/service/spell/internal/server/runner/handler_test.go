@@ -280,7 +280,7 @@ func TestSpellHandler(t *testing.T) {
 			rtr.ServeHTTP(rec, req)
 
 			// test status
-			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
+			require.Equalf(t, tc.responseCode, rec.Code, "%s - Response code equals expected", tc.name)
 
 			res := schema.SpellResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)

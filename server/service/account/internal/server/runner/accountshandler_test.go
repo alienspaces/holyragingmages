@@ -10,14 +10,13 @@ import (
 	"strings"
 	"testing"
 
-	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/record"
-
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/harness"
+	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/record"
 )
 
 func TestAccountHandler(t *testing.T) {
@@ -41,10 +40,13 @@ func TestAccountHandler(t *testing.T) {
 	}
 
 	tests := []TestCase{
+		// Auth
+		// - TODO
+		// Accounts
 		{
 			name: "GET - Get existing",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[1]
+				return rnr.HandlerConfig[2]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -74,7 +76,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "GET - Get non-existant",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[1]
+				return rnr.HandlerConfig[2]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -90,7 +92,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "POST - Create without ID",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[2]
+				return rnr.HandlerConfig[3]
 			},
 			requestData: func(data *harness.Data) *schema.AccountRequest {
 				req := schema.AccountRequest{
@@ -108,7 +110,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "POST - Create with ID",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[3]
+				return rnr.HandlerConfig[4]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -146,7 +148,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "PUT - Update existing",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[4]
+				return rnr.HandlerConfig[5]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -185,7 +187,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "PUT - Update non-existing",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[4]
+				return rnr.HandlerConfig[5]
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -206,7 +208,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "PUT - Update missing data",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[3]
+				return rnr.HandlerConfig[5]
 			},
 			requestData: func(data *harness.Data) *schema.AccountRequest {
 				return nil
@@ -308,7 +310,7 @@ func TestAccountHandler(t *testing.T) {
 			rtr.ServeHTTP(rec, req)
 
 			// test status
-			require.Equal(t, tc.responseCode, rec.Code, "Response code equals expected")
+			require.Equalf(t, tc.responseCode, rec.Code, "%s - Response code equals expected", tc.name)
 
 			res := schema.AccountResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)

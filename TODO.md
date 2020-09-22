@@ -4,9 +4,9 @@
 
 ### Now
 
-* OAuth with Google
-  * Account creation
-  * Account signin
+* OAuth with Google, account creation, account signin/confirmation
+  * Server account model needs to abstract provider token verification services for unit testing
+  * Account token retreived from Flutter app Google sign in needs to be passed to the backed for verification prior to account resolution.
 
 ### Next
 

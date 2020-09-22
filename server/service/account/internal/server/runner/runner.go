@@ -34,6 +34,24 @@ func NewRunner() *Runner {
 	r.ModellerFunc = r.Modeller
 
 	r.HandlerConfig = []server.HandlerConfig{
+		// Authentication
+		{
+			Method:      http.MethodGet,
+			Path:        "/api/auth",
+			HandlerFunc: r.PostAuthHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				ValidateSchemaLocation: "auth",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Authenticate OAuth provider token.",
+			},
+		},
+		// Accounts
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/accounts",
@@ -51,7 +69,7 @@ func NewRunner() *Runner {
 			MiddlewareConfig: server.MiddlewareConfig{},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
-				Description: "Get a account.",
+				Description: "Get an account.",
 			},
 		},
 		{
