@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/record"
 	"google.golang.org/api/oauth2/v1"
+
+	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/record"
 )
 
 // AuthData - encapsulates data provided by an authorizer
@@ -15,6 +16,12 @@ type AuthData struct {
 	ProviderToken     string
 	AccountEmail      string
 	AccountName       string
+}
+
+// VerifiedData -
+type VerifiedData struct {
+	UserID string
+	Email  string
 }
 
 // TODO: Return JWT instead of account record..
@@ -29,18 +36,18 @@ func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
 
 	switch data.Provider {
 	case record.AccountProviderGoogle:
-		tokenInfo, err := m.verifyGoogleToken(data.ProviderToken)
+		verifiedData, err := m.VerifyAuthTokenFunc(record.AccountProviderGoogle, data.ProviderToken)
 		if err != nil {
-			m.Log.Warn("Failed verifyGoogleToken >%v<", err)
+			m.Log.Warn("Failed verifyAuthToken >%v<", err)
 			return nil, err
 		}
 
-		m.Log.Info("Token info UserId>%s<", tokenInfo.UserId)
-		m.Log.Info("Token info Email >%s<", tokenInfo.Email)
+		m.Log.Info("Token info UserId>%s<", verifiedData.UserID)
+		m.Log.Info("Token info Email >%s<", verifiedData.Email)
 
-		if data.ProviderAccountID == tokenInfo.UserId {
-			verifiedAccountID = tokenInfo.UserId
-			verifiedAccountEmail = tokenInfo.Email
+		if data.ProviderAccountID == verifiedData.UserID {
+			verifiedAccountID = verifiedData.UserID
+			verifiedAccountEmail = verifiedData.Email
 			// Google token verification does not return an account name
 			// so we'll use the account name provided by the client
 			verifiedAccountName = data.AccountName
@@ -101,15 +108,22 @@ func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
 }
 
 // Provider verification methods
-func (m *Model) verifyGoogleToken(token string) (*oauth2.Tokeninfo, error) {
+func (m *Model) verifyAuthToken(provider, token string) (*VerifiedData, error) {
 
-	var httpClient = &http.Client{}
-	oauth2Service, err := oauth2.New(httpClient)
-	tokenInfoCall := oauth2Service.Tokeninfo()
-	tokenInfoCall.IdToken(token)
-	tokenInfo, err := tokenInfoCall.Do()
-	if err != nil {
-		return nil, err
+	verifiedData := &VerifiedData{}
+
+	if provider == record.AccountProviderGoogle {
+		var httpClient = &http.Client{}
+		oauth2Service, err := oauth2.New(httpClient)
+		tokenInfoCall := oauth2Service.Tokeninfo()
+		tokenInfoCall.IdToken(token)
+		tokenInfo, err := tokenInfoCall.Do()
+		if err != nil {
+			return nil, err
+		}
+		verifiedData.UserID = tokenInfo.UserId
+		verifiedData.Email = tokenInfo.Email
 	}
-	return tokenInfo, nil
+
+	return verifiedData, nil
 }

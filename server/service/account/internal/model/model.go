@@ -16,19 +16,23 @@ import (
 // Model -
 type Model struct {
 	model.Model
+	// Allows auth token verification to be mocked for testing
+	VerifyAuthTokenFunc func(provider, token string) (*VerifiedData, error)
 }
 
 // NewModel -
 func NewModel(c configurer.Configurer, l logger.Logger, s storer.Storer) (*Model, error) {
 
 	m := &Model{
-		model.Model{
+		Model: model.Model{
 			Config: c,
 			Log:    l,
 			Store:  s,
 		},
+		VerifyAuthTokenFunc: nil,
 	}
 
+	m.VerifyAuthTokenFunc = m.verifyAuthToken
 	m.RepositoriesFunc = m.NewRepositories
 
 	return m, nil
