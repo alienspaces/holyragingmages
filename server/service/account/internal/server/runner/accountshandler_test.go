@@ -21,13 +21,13 @@ import (
 
 func TestAccountHandler(t *testing.T) {
 
-	// test dependencies
-	c, l, s, err := NewDefaultDependencies()
-	require.NoError(t, err, "NewDefaultDependencies returns without error")
-
 	// test harness
 	th, err := NewTestHarness()
 	require.NoError(t, err, "New test data returns without error")
+
+	// test dependencies
+	c, l, s, err := th.NewDefaultDependencies()
+	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	type TestCase struct {
 		name          string

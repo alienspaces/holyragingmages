@@ -53,46 +53,15 @@ func NewTesting() (t *Testing, err error) {
 // Init -
 func (t *Testing) Init() (err error) {
 
-	// configurer
-	t.Config, err = config.NewConfig(nil, false)
+	// default dependencies
+	c, l, s, err := t.NewDefaultDependencies()
 	if err != nil {
 		return err
 	}
 
-	configVars := []string{
-		// logger
-		"APP_SERVER_LOG_LEVEL",
-		// database
-		"APP_SERVER_DB_HOST",
-		"APP_SERVER_DB_PORT",
-		"APP_SERVER_DB_NAME",
-		"APP_SERVER_DB_USER",
-		"APP_SERVER_DB_PASSWORD",
-	}
-	for _, key := range configVars {
-		err = t.Config.Add(key, true)
-		if err != nil {
-			return err
-		}
-	}
-
-	// logger
-	t.Log, err = log.NewLogger(t.Config)
-	if err != nil {
-		return err
-	}
-
-	// storer
-	t.Store, err = store.NewStore(t.Config, t.Log)
-	if err != nil {
-		return err
-	}
-
-	err = t.Store.Init()
-	if err != nil {
-		t.Log.Warn("Failed storer init >%v<", err)
-		return err
-	}
+	t.Config = c
+	t.Log = l
+	t.Store = s
 
 	// preparer
 	t.Prepare, err = prepare.NewPrepare(t.Log)
@@ -125,6 +94,54 @@ func (t *Testing) Init() (err error) {
 	t.Log.Debug("Modeller ready")
 
 	return nil
+}
+
+// NewDefaultDependencies -
+func (t *Testing) NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Storer, error) {
+
+	// configurer
+	c, err := config.NewConfig(nil, false)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	configVars := []string{
+		// logger
+		"APP_SERVER_LOG_LEVEL",
+		// database
+		"APP_SERVER_DB_HOST",
+		"APP_SERVER_DB_PORT",
+		"APP_SERVER_DB_NAME",
+		"APP_SERVER_DB_USER",
+		"APP_SERVER_DB_PASSWORD",
+		// schema
+		"APP_SERVER_SCHEMA_PATH",
+	}
+	for _, key := range configVars {
+		err = c.Add(key, true)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
+
+	// logger
+	l, err := log.NewLogger(c)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	// storer
+	s, err := store.NewStore(c, l)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	err = s.Init()
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	return c, l, s, nil
 }
 
 // InitTx -
