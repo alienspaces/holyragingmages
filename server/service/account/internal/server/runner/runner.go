@@ -34,7 +34,7 @@ func NewRunner() *Runner {
 	r.ModellerFunc = r.Modeller
 
 	r.HandlerConfig = []server.HandlerConfig{
-		// Authentication
+		// 0 - Authentication
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/auth",
@@ -51,7 +51,7 @@ func NewRunner() *Runner {
 				Description: "Authenticate OAuth provider token.",
 			},
 		},
-		// Accounts
+		// 1 - Accounts - Get many
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/accounts",
@@ -62,6 +62,7 @@ func NewRunner() *Runner {
 				Description: "Query accounts.",
 			},
 		},
+		// 2 - Accounts - Get one
 		{
 			Method:           http.MethodGet,
 			Path:             "/api/accounts/:account_id",
@@ -72,6 +73,7 @@ func NewRunner() *Runner {
 				Description: "Get an account.",
 			},
 		},
+		// 3 - Accounts - Create one without ID
 		{
 			Method:      http.MethodPost,
 			Path:        "/api/accounts",
@@ -88,6 +90,7 @@ func NewRunner() *Runner {
 				Description: "Create a account.",
 			},
 		},
+		// 4 - Accounts - Create one with ID
 		{
 			Method:      http.MethodPost,
 			Path:        "/api/accounts/:account_id",
@@ -104,6 +107,7 @@ func NewRunner() *Runner {
 				Description: "Create a account.",
 			},
 		},
+		// 5 - Accounts - Update one
 		{
 			Method:      http.MethodPut,
 			Path:        "/api/accounts/:account_id",
@@ -120,6 +124,7 @@ func NewRunner() *Runner {
 				Description: "Update a account.",
 			},
 		},
+		// 6 - Documentation
 		{
 			Method:           http.MethodGet,
 			Path:             "/api",

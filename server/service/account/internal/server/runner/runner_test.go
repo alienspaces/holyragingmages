@@ -33,11 +33,11 @@ func NewTestHarness() (*harness.Testing, error) {
 
 func TestNewRunner(t *testing.T) {
 
-	// test harness
+	// Test harness
 	th, err := NewTestHarness()
 	require.NoError(t, err, "New test data returns without error")
 
-	// test dependencies
+	//  Test dependencies
 	c, l, s, err := th.NewDefaultDependencies()
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 

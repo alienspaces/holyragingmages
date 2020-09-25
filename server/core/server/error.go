@@ -9,13 +9,44 @@ import (
 
 // ErrorCode -
 const (
-	ErrorCodeSystem       string = "internal_error"
-	ErrorDetailSystem     string = "An internal error has occurred"
-	ErrorCodeValidation   string = "validation_error"
-	ErrorDetailValidation string = "Request contains validation errors"
-	ErrorCodeNotFound     string = "not_found"
-	ErrorDetailNotFound   string = "Requested resource could not be found"
+	ErrorCodeUnauthorized   string = "unauthorized_error"
+	ErrorDetailUnauthorized string = "Request could not be authorized"
+	ErrorCodeSystem         string = "internal_error"
+	ErrorDetailSystem       string = "An internal error has occurred"
+	ErrorCodeValidation     string = "validation_error"
+	ErrorDetailValidation   string = "Request contains validation errors"
+	ErrorCodeNotFound       string = "not_found"
+	ErrorDetailNotFound     string = "Requested resource could not be found"
 )
+
+// WriteUnauthorizedError -
+func (rnr *Runner) WriteUnauthorizedError(l logger.Logger, w http.ResponseWriter, err error) {
+
+	l.Warn("Unauthorized error >%v<", err)
+
+	// Unauthorized error
+	res := rnr.UnauthorizedError(err)
+
+	err = rnr.WriteResponse(l, w, res)
+	if err != nil {
+		l.Warn("Failed writing response >%v<", err)
+		return
+	}
+	return
+}
+
+// UnauthorizedError -
+func (rnr *Runner) UnauthorizedError(err error) Response {
+
+	rnr.Log.Error("Error >%v<", err)
+
+	return Response{
+		Error: &ResponseError{
+			Code:   ErrorCodeUnauthorized,
+			Detail: err.Error(),
+		},
+	}
+}
 
 // WriteModelError -
 func (rnr *Runner) WriteModelError(l logger.Logger, w http.ResponseWriter, err error) {

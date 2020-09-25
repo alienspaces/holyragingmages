@@ -34,7 +34,7 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 		AccountName:       req.Data.AccountName,
 	})
 	if err != nil {
-		rnr.WriteModelError(l, w, err)
+		rnr.WriteUnauthorizedError(l, w, err)
 		return
 	}
 

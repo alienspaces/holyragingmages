@@ -55,7 +55,7 @@ func TestCreateTemplateRec(t *testing.T) {
 
 		func() {
 
-			// test harness
+			// Test harness
 			err = h.Setup()
 			require.NoError(t, err, "Setup returns without error")
 			defer func() {

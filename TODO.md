@@ -26,7 +26,8 @@
 
 ### Future
 
-* Make upgrading Go version a bit easier
+* Server - make upgrading Go version a bit easier
+* Server - make handler unit tests cleaning up POST data correctly
 
 ## License
 

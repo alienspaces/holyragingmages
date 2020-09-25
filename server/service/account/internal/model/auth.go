@@ -24,8 +24,6 @@ type VerifiedData struct {
 	Email  string
 }
 
-// TODO: Return JWT instead of account record..
-
 // VerifyProviderToken - verifies an authentication token from a provider and returns a local account record
 func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
 
@@ -34,12 +32,30 @@ func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
 	var verifiedAccountName string
 	var rec *record.Account
 
+	// Check required
+	if data.Provider == "" {
+		msg := "AuthData missing Provider, cannot VerifyProviderToken"
+		m.Log.Warn(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
+	if data.ProviderToken == "" {
+		msg := "AuthData missing ProviderToken, cannot VerifyProviderToken"
+		m.Log.Warn(msg)
+		return nil, fmt.Errorf(msg)
+	}
+
 	switch data.Provider {
 	case record.AccountProviderGoogle:
 		verifiedData, err := m.VerifyAuthTokenFunc(record.AccountProviderGoogle, data.ProviderToken)
 		if err != nil {
-			m.Log.Warn("Failed verifyAuthToken >%v<", err)
+			m.Log.Warn("Failed VerifyAuthTokenFunc >%v<", err)
 			return nil, err
+		}
+		if verifiedData == nil {
+			msg := "Failed VerifyAuthTokenFunc, verified data is nil"
+			m.Log.Warn(msg)
+			return nil, fmt.Errorf(msg)
 		}
 
 		m.Log.Info("Token info UserId>%s<", verifiedData.UserID)

@@ -220,7 +220,6 @@ func (rnr *Runner) ReadRequest(l logger.Logger, r *http.Request, s interface{}) 
 		}
 	}
 
-	// return p.ReadRequest(r, s)
 	return nil
 }
 
@@ -241,6 +240,8 @@ func (rnr *Runner) WriteResponse(l logger.Logger, w http.ResponseWriter, s inter
 				status = http.StatusBadRequest
 			case ErrorCodeSystem:
 				status = http.StatusInternalServerError
+			case ErrorCodeUnauthorized:
+				status = http.StatusUnauthorized
 			}
 		}
 	case Response:
@@ -253,6 +254,8 @@ func (rnr *Runner) WriteResponse(l logger.Logger, w http.ResponseWriter, s inter
 				status = http.StatusBadRequest
 			case ErrorCodeSystem:
 				status = http.StatusInternalServerError
+			case ErrorCodeUnauthorized:
+				status = http.StatusUnauthorized
 			}
 		}
 	default:
@@ -269,6 +272,4 @@ func (rnr *Runner) WriteResponse(l logger.Logger, w http.ResponseWriter, s inter
 	w.WriteHeader(status)
 
 	return json.NewEncoder(w).Encode(s)
-
-	// return p.WriteResponse(w, status, s)
 }
