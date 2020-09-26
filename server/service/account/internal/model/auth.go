@@ -1,10 +1,11 @@
 package model
 
 import (
+	"context"
 	"fmt"
-	"net/http"
 
 	"google.golang.org/api/oauth2/v1"
+	"google.golang.org/api/option"
 
 	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/record"
 )
@@ -44,6 +45,10 @@ func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
 		m.Log.Warn(msg)
 		return nil, fmt.Errorf(msg)
 	}
+
+	m.Log.Info("Verifying provider >%s<", data.Provider)
+	m.Log.Info("Verifying account  >%s<", data.ProviderAccountID)
+	m.Log.Info("Verifying token    >%s<", data.ProviderToken)
 
 	switch data.Provider {
 	case record.AccountProviderGoogle:
@@ -129,12 +134,24 @@ func (m *Model) verifyAuthToken(provider, token string) (*VerifiedData, error) {
 	verifiedData := &VerifiedData{}
 
 	if provider == record.AccountProviderGoogle {
-		var httpClient = &http.Client{}
-		oauth2Service, err := oauth2.New(httpClient)
+
+		// API key
+		apiKey := m.Config.Get("APP_SERVER_GOOGLE_API_KEY")
+
+		m.Log.Info("Google API key >%s<", apiKey)
+
+		ctx := context.Background()
+		oauth2Service, err := oauth2.NewService(ctx, option.WithAPIKey(apiKey))
+		if err != nil {
+			m.Log.Warn("Failed new Google oauth2 service >%v<", err)
+			return nil, err
+		}
+
 		tokenInfoCall := oauth2Service.Tokeninfo()
-		tokenInfoCall.IdToken(token)
+		tokenInfoCall.AccessToken(token)
 		tokenInfo, err := tokenInfoCall.Do()
 		if err != nil {
+			m.Log.Warn("Google oauth2 token info call >%v<", err)
 			return nil, err
 		}
 		verifiedData.UserID = tokenInfo.UserId

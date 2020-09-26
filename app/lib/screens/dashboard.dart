@@ -7,6 +7,7 @@ import '../models/models.dart';
 import '../widgets/mage_list.dart';
 
 class DashboardScreen extends StatelessWidget {
+  // Display the sign in page if we do not have an account
   Widget _buildBody(BuildContext context) {
     // Logger
     final log = Logger('DashboardScreen - _buildBody');
@@ -16,11 +17,15 @@ class DashboardScreen extends StatelessWidget {
     // Mage list model
     var accountModel = Provider.of<AccountModel>(context);
 
-    if (accountModel.providerAccountId != null) {
+    if (accountModel.id != null) {
       // Current user
-      log.info('Current user ID ${accountModel.id ?? ''}');
-      log.info('Current user displayName ${accountModel.name ?? ''}');
+      log.info('Current user id ${accountModel.id ?? ''}');
+      log.info('Current user name ${accountModel.name ?? ''}');
       log.info('Current user email ${accountModel.email ?? ''}');
+      log.info(
+          'Current user provider id ${accountModel.providerAccountId ?? ''}');
+      log.info(
+          'Current user provider token ${accountModel.providerToken ?? ''}');
 
       return Scaffold(
         appBar: AppBar(
@@ -44,6 +49,15 @@ class DashboardScreen extends StatelessWidget {
         ),
       );
     } else {
+      // Account model
+      log.info('Current user id ${accountModel.id ?? ''}');
+      log.info('Current user name ${accountModel.name ?? ''}');
+      log.info('Current user email ${accountModel.email ?? ''}');
+      log.info(
+          'Current user provider id ${accountModel.providerAccountId ?? ''}');
+      log.info(
+          'Current user provider token ${accountModel.providerToken ?? ''}');
+
       return Scaffold(
         appBar: AppBar(
           title: Text('Sign In'),

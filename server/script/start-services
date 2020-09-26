@@ -25,6 +25,12 @@ for SERVICE_NAME in "${SERVICE_NAMES[@]}"; do
         # NOTE: we shift into the service directory before sourcing
         # the environment so $PWD is correct for APP_SERVER_HOME
 
+        # copy development env
+        cp .env.development .env
+
+        # add local env (runtime secrets we don't actually want committed to git)
+        cat .env.local >> .env
+
         # load service specific environment
         source ../../${BASH_SOURCE%/*}/environment || exit $?
 

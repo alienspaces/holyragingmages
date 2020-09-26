@@ -36,7 +36,7 @@ func NewRunner() *Runner {
 	r.HandlerConfig = []server.HandlerConfig{
 		// 0 - Authentication
 		{
-			Method:      http.MethodGet,
+			Method:      http.MethodPost,
 			Path:        "/api/auth",
 			HandlerFunc: r.PostAuthHandler,
 			MiddlewareConfig: server.MiddlewareConfig{

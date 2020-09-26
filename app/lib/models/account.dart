@@ -3,16 +3,21 @@ import 'package:logging/logging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-// import '../api/api.dart';
+import '../api/api.dart';
 
 class AccountModel extends ChangeNotifier {
-  // Properties
-  String id;
-  String email;
-  String name;
+  // Provider
   String provider;
   String providerAccountId;
   String providerToken;
+
+  // Account
+  String id;
+  String email;
+  String name;
+
+  // Api
+  final Api api = new Api();
 
   // Provider specific account types
   GoogleSignInAccount _googleAccount;
@@ -30,14 +35,17 @@ class AccountModel extends ChangeNotifier {
   }
 
   Future<void> handleGoogleSignIn() async {
+    // Logger
+    final log = Logger('AccountModel - handleGoogleSignIn');
     try {
+      log.info('Signing in');
       await _googleSignIn.signIn();
     } catch (error) {
-      print(error);
+      log.warning('Error signing in $error');
     }
   }
 
-// Generic sign out handles whichever provider initially used
+  // Generic sign out handles whichever provider initially used
   Future<void> handleSignOut() async {
     // Logger
     final log = Logger('AccountModel - handleSignOut');
@@ -50,10 +58,11 @@ class AccountModel extends ChangeNotifier {
 
         this._googleAccount = null;
         this.provider = null;
-        this.email = null;
-        this.name = null;
         this.providerAccountId = null;
         this.providerToken = null;
+        this.id = null;
+        this.name = null;
+        this.email = null;
 
         // Notify
         notifyListeners();
@@ -62,20 +71,20 @@ class AccountModel extends ChangeNotifier {
     return null;
   }
 
-  void initModel() {
+  void verifyAccount(GoogleSignInAccount account) async {
     // Logger
-    final log = Logger('AccountModel - onCurrentUserChanged');
+    final log = Logger('AccountModel - verifyAccount');
+    // Account has changed however could mean the user has logged out
+    log.info('Account changed $account');
 
-    _googleSignIn.onCurrentUserChanged
-        .listen((GoogleSignInAccount account) async {
-      log.info('Signed in $account');
+    if (account != null) {
+      // Provider
       this._googleAccount = account;
       this.provider = 'google';
-      this.email = account.email;
-      this.name = account.displayName;
+      this.providerToken = null;
       this.providerAccountId = account.id;
 
-      // Access token
+      // Provider token
       GoogleSignInAuthentication auth = await account.authentication;
 
       this.providerToken = auth.accessToken;
@@ -84,9 +93,52 @@ class AccountModel extends ChangeNotifier {
       log.info('Signed in providerAccountId ${this.providerAccountId}');
       log.info('Signed in providerToken ${this.providerToken}');
 
-      // Notify
-      notifyListeners();
-    });
-    _googleSignIn.signInSilently(suppressErrors: false);
+      // JWT for additional API calls
+      Map<String, dynamic> data = {
+        "data": {
+          "provider": "google",
+          "provider_account_id": this.providerAccountId,
+          "provider_token": this.providerToken,
+        },
+      };
+
+      List<dynamic> accountsData = await this.api.postAuth(data);
+      log.info('Post returned ${accountsData.length} length');
+      for (Map<String, dynamic> accountData in accountsData) {
+        log.info('Post has account data $accountData');
+        // Account
+        this.id = accountData['account_id'];
+        this.name = accountData['account_name'];
+        this.email = accountData['account_email'];
+      }
+    } else {
+      this._googleAccount = null;
+      this.provider = null;
+      this.providerToken = null;
+      this.providerAccountId = null;
+
+      this.id = null;
+      this.email = null;
+      this.name = null;
+    }
+
+    // Notify
+    notifyListeners();
+
+    return;
+  }
+
+  void initModel() {
+    // Logger
+    // final log = Logger('AccountModel - initModel');
+
+    _googleSignIn.onCurrentUserChanged.listen(this.verifyAccount);
+
+    // try {
+    //   log.info('Signing in silently');
+    //   _googleSignIn.signInSilently(suppressErrors: true);
+    // } catch (error) {
+    //   log.warning('Error signing in silently $error');
+    // }
   }
 }

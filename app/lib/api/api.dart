@@ -21,6 +21,20 @@ class Api {
     dio.interceptors.add(LogInterceptor(responseBody: false));
   }
 
+  // postAuth creates a new entity
+  Future<List<dynamic>> postAuth(Map<String, dynamic> data) async {
+    Response response = await this.dio.post(
+          "/api/auth",
+          data: data,
+        );
+
+    if (response.data == null) {
+      return null;
+    }
+
+    return response.data["data"];
+  }
+
   // getEntities returns a list of entities
   Future<List<dynamic>> getEntities() async {
     Response response = await this.dio.get(
@@ -38,7 +52,7 @@ class Api {
   // postEntity creates a new entity
   Future<List<dynamic>> postEntity(Map<String, dynamic> data) async {
     Response response = await this.dio.post(
-          "/entity/api/entities",
+          "/api/entities",
           data: data,
         );
 
@@ -52,7 +66,7 @@ class Api {
   // putEntity updates an existing entity
   Future<List<dynamic>> putEntity(String id, Map<String, dynamic> data) async {
     Response response = await this.dio.put(
-          "/entity/api/entities/$id",
+          "/api/entities/$id",
           data: data,
         );
 

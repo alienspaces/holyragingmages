@@ -33,6 +33,10 @@ func main() {
 		"APP_SERVER_DB_PASSWORD",
 		// schema
 		"APP_SERVER_SCHEMA_PATH",
+		// google API key
+		"APP_SERVER_GOOGLE_API_KEY",
+		// jwt signing key
+		"APP_SERVER_JWT_SIGNING_KEY",
 	}
 	for _, key := range configVars {
 		err := c.Add(key, true)

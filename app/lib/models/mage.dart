@@ -25,10 +25,10 @@ class MageModel extends ChangeNotifier {
   }
 
   factory MageModel.fromJson(Map<String, dynamic> json) {
-    var mage = new MageModel();
-
     // Logger
     final log = Logger('MageModel - fromJson');
+
+    var mage = new MageModel();
 
     log.info('Creating mage from $json');
 
@@ -199,6 +199,7 @@ class MageModel extends ChangeNotifier {
 // to server API's for managing mages
 class MageListModel extends ChangeNotifier {
   final List<MageModel> _mages = [];
+  // api
   final Api api = new Api();
 
   UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);

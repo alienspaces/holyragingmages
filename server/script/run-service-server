@@ -8,8 +8,8 @@ fi
 
 shift
 
-# start nginx
-source ${BASH_SOURCE%/*}/start-nginx || exit $?
+# start krakend
+source ${BASH_SOURCE%/*}/start-krakend || exit $?
 
 echo
 echo "=> Starting service ${SERVICE_NAME}"

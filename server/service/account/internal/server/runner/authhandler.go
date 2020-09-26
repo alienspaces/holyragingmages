@@ -46,7 +46,11 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
-	tokenString, err := token.SignedString("abcdefgh")
+	jwtKey := rnr.Config.Get("APP_SERVER_JWT_SIGNING_KEY")
+
+	l.Info("JWT signing key >%s<", jwtKey)
+
+	tokenString, err := token.SignedString([]byte(jwtKey))
 	if err != nil {
 		l.Warn("Failed singing JWT >%v<", err)
 		rnr.WriteSystemError(l, w, nil)
