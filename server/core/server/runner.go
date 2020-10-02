@@ -26,6 +26,9 @@ const (
 	ConfigKeyValidateMainSchema string = "validateMainSchema"
 	// ConfigKeyValidateReferenceSchemas - Schema referenced from the main schema
 	ConfigKeyValidateReferenceSchemas string = "validateReferenceSchemas"
+
+	// AuthTypeJWT -
+	AuthTypeJWT string = "jwt"
 )
 
 // Runner - implements the runnerer interface
@@ -55,11 +58,19 @@ type Handle func(w http.ResponseWriter, r *http.Request, pathParams httprouter.P
 
 // MiddlewareConfig - configuration for global default middleware
 type MiddlewareConfig struct {
-	AuthenType               string
-	AuthzType                string
+
+	// AuthTypes - What auth types are supported by this endpoint
+	AuthTypes string
+	// AuthRequuiredRoles - What roles are required to access this endpoint
+	AuthRequiredRoles []string
+	// AuthRequiredIdentities - What identities are required to be defined to access this endpoint
+	AuthRequiredIdentities []string
+
+	// Validate Schema - JSON schema validation
 	ValidateSchemaLocation   string
 	ValidateSchemaMain       string
 	ValidateSchemaReferences []string
+
 	// ValidateQueryParams - A whitelist of allowed query parameters
 	ValidateQueryParams []string
 }
@@ -202,7 +213,7 @@ func (rnr *Runner) Init(c configurer.Configurer, l logger.Logger, s storer.Store
 // InitTx initialises a new database transaction returning a prepared modeller
 func (rnr *Runner) InitTx(l logger.Logger) (modeller.Modeller, error) {
 
-	// NOTE: The modeller is created an initialised with every request instead of
+	// NOTE: The modeller is created and initialised with every request instead of
 	// creating and assigning to a runner struct "Model" property at start up.
 	// This prevents directly accessing a shared property from with the handler
 	// function which is running in a goroutine. Otherwise accessing the "Model"

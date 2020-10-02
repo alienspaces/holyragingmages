@@ -1,6 +1,6 @@
 module gitlab.com/alienspaces/holyragingmages/server/service/entity
 
-go 1.13
+go 1.15
 
 require (
 	github.com/brianvoe/gofakeit/v5 v5.2.0

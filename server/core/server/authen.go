@@ -17,6 +17,10 @@ func (rnr *Runner) Authen(h Handle) (Handle, error) {
 
 		l.Debug("** Authen ** TODO: Authen unimplemented")
 
+		// TODO: Source config from handler, parse JWT, set auth context and pass it
+		// down through the handler stack somehow. Another argument? Context on the
+		// request object? As long as it is common functions for access / checking.
+
 		h(w, r, pp, qp, l, m)
 	}
 

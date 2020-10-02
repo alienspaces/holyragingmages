@@ -1,6 +1,6 @@
 module gitlab.com/alienspaces/holyragingmages/server/core/store
 
-go 1.13
+go 1.15
 
 require (
 	github.com/jmoiron/sqlx v1.2.0

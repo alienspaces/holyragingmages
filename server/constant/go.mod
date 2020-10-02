@@ -1,4 +1,4 @@
-module gitlab.com/alienspaces/holyragingmages/server/schema
+module gitlab.com/alienspaces/holyragingmages/server/constant
 
 go 1.15
 

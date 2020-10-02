@@ -1,6 +1,6 @@
 module gitlab.com/alienspaces/holyragingmages/server/core/log
 
-go 1.13
+go 1.15
 
 require (
 	github.com/rs/zerolog v1.18.0

@@ -1,6 +1,6 @@
 module gitlab.com/alienspaces/holyragingmages/server/core/repository
 
-go 1.13
+go 1.15
 
 require (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/configurer v1.0.0
