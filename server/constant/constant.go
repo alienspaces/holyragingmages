@@ -7,7 +7,7 @@ package constant
 // AuthRole -
 const (
 	AuthRoleAdministrator string = "administrator"
-	AuthRolePlayer        string = "player"
+	AuthRoleDefault       string = "default"
 )
 
 // AuthIdentity -

@@ -111,14 +111,14 @@ func TestEncode(t *testing.T) {
 					gofakeit.Word(),
 					gofakeit.Word(),
 				}
-				identities := map[string]interface{}{
+				identity := map[string]interface{}{
 					gofakeit.Word(): gofakeit.Uint32(),
 					gofakeit.Word(): gofakeit.Word(),
 					gofakeit.Word(): gofakeit.Bool(),
 				}
 				c := Claims{
-					Roles:      roles,
-					Identities: identities,
+					Roles:    roles,
+					Identity: identity,
 				}
 				return &c
 			},
@@ -186,14 +186,14 @@ func TestDecode(t *testing.T) {
 					gofakeit.Word(),
 					gofakeit.Word(),
 				}
-				identities := map[string]interface{}{
+				identity := map[string]interface{}{
 					gofakeit.Word(): gofakeit.Uint32(),
 					gofakeit.Word(): gofakeit.Word(),
 					gofakeit.Word(): gofakeit.Bool(),
 				}
 				c := Claims{
-					Roles:      roles,
-					Identities: identities,
+					Roles:    roles,
+					Identity: identity,
 				}
 				return &c
 			},
@@ -215,14 +215,14 @@ func TestDecode(t *testing.T) {
 					gofakeit.Word(),
 					gofakeit.Word(),
 				}
-				identities := map[string]interface{}{
+				identity := map[string]interface{}{
 					gofakeit.Word(): gofakeit.Uint32(),
 					gofakeit.Word(): gofakeit.Word(),
 					gofakeit.Word(): gofakeit.Bool(),
 				}
 				c := Claims{
-					Roles:      roles,
-					Identities: identities,
+					Roles:    roles,
+					Identity: identity,
 				}
 				return &c
 			},

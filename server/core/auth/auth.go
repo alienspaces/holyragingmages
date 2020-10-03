@@ -25,8 +25,8 @@ type Auth struct {
 
 // Claims -
 type Claims struct {
-	Roles      []string               `json:"roles"`
-	Identities map[string]interface{} `json:"identities"`
+	Roles    []string               `json:"roles"`
+	Identity map[string]interface{} `json:"identity"`
 	jwt.StandardClaims
 }
 
@@ -99,7 +99,7 @@ func (j *Auth) Decode(tokenString string) (*Claims, error) {
 	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
 		j.Log.Info("Expires >%v<", claims.StandardClaims.ExpiresAt)
 		j.Log.Info("Roles >%v<", claims.Roles)
-		j.Log.Info("Identities >%v<", claims.Identities)
+		j.Log.Info("Identity >%v<", claims.Identity)
 		return claims, nil
 	}
 

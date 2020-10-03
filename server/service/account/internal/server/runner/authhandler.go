@@ -2,11 +2,11 @@ package runner
 
 import (
 	"net/http"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 
+	"gitlab.com/alienspaces/holyragingmages/server/constant"
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/server/schema"
@@ -38,22 +38,29 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 		return
 	}
 
-	// Create a new token object, specifying signing method and the claims
-	// you would like it to contain.
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"foo": "bar",
-		"nbf": time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
-	})
-
-	// Sign and get the complete encoded token as a string using the secret
-	jwtKey := rnr.Config.Get("APP_SERVER_JWT_SIGNING_KEY")
-
-	l.Info("JWT signing key >%s<", jwtKey)
-
-	tokenString, err := token.SignedString([]byte(jwtKey))
+	a, err := auth.NewAuth(rnr.Config, rnr.Log)
 	if err != nil {
-		l.Warn("Failed singing JWT >%v<", err)
-		rnr.WriteSystemError(l, w, nil)
+		rnr.WriteUnauthorizedError(l, w, err)
+		return
+	}
+
+	// TODO: Expand on account roles
+	roles := []string{
+		constant.AuthRoleDefault,
+	}
+
+	identity := map[string]interface{}{
+		constant.AuthIdentityAccount: accountRec.ID,
+	}
+
+	claims := auth.Claims{
+		Roles:    roles,
+		Identity: identity,
+	}
+
+	tokenString, err := a.Encode(&claims)
+	if err != nil {
+		rnr.WriteUnauthorizedError(l, w, err)
 		return
 	}
 
