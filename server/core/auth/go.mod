@@ -6,8 +6,9 @@ require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/stretchr/testify v1.6.1
+
 	gitlab.com/alienspaces/holyragingmages/server/core/config v1.0.0
-	gitlab.com/alienspaces/holyragingmages/server/core/log v0.0.0-00010101000000-000000000000
+	gitlab.com/alienspaces/holyragingmages/server/core/log v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/configurer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/logger v1.0.0
 )

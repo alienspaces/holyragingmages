@@ -11,6 +11,10 @@ import (
 )
 
 const (
+	// AuthTypeJWT -
+	AuthTypeJWT string = "jwt"
+
+	// Internal defaults
 	jwtDefaultExpiryMinutes int32 = 180
 )
 

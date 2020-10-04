@@ -3,6 +3,7 @@ package runner
 import (
 	"net/http"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
@@ -30,20 +31,28 @@ func NewRunner() *Runner {
 
 	r.HandlerConfig = []server.HandlerConfig{
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/entities",
-			HandlerFunc:      r.GetEntitiesHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/entities",
+			HandlerFunc: r.GetEntitiesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Query entities.",
 			},
 		},
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/entities/:entity_id",
-			HandlerFunc:      r.GetEntitiesHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/entities/:entity_id",
+			HandlerFunc: r.GetEntitiesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Get an entity.",
@@ -54,6 +63,9 @@ func NewRunner() *Runner {
 			Path:        "/api/entities",
 			HandlerFunc: r.PostEntitiesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "entity",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -70,6 +82,9 @@ func NewRunner() *Runner {
 			Path:        "/api/entities/:entity_id",
 			HandlerFunc: r.PostEntitiesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "entity",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -86,6 +101,9 @@ func NewRunner() *Runner {
 			Path:        "/api/entities/:entity_id",
 			HandlerFunc: r.PutEntitiesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "entity",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -98,10 +116,14 @@ func NewRunner() *Runner {
 			},
 		},
 		{
-			Method:           http.MethodGet,
-			Path:             "/api",
-			HandlerFunc:      r.GetDocumentationHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api",
+			HandlerFunc: r.GetDocumentationHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 		},
 	}
 

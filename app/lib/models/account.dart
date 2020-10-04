@@ -110,6 +110,8 @@ class AccountModel extends ChangeNotifier {
         this.id = accountData['account_id'];
         this.name = accountData['account_name'];
         this.email = accountData['account_email'];
+        // Set API token to use from now on
+        this.api.apiToken = accountData['token'];
       }
     } else {
       this._googleAccount = null;

@@ -8,12 +8,11 @@ require (
 	github.com/rs/cors v1.7.0
 	github.com/stretchr/testify v1.6.1
 	github.com/xeipuuv/gojsonschema v1.2.0
-
+	gitlab.com/alienspaces/holyragingmages/server/core/auth v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/config v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/log v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/prepare v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/store v1.0.0
-
 	gitlab.com/alienspaces/holyragingmages/server/core/type/configurer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/logger v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/modeller v1.0.0
@@ -23,6 +22,7 @@ require (
 )
 
 replace (
+	gitlab.com/alienspaces/holyragingmages/server/core/auth => ../../core/auth
 	gitlab.com/alienspaces/holyragingmages/server/core/config => ../../core/config
 	gitlab.com/alienspaces/holyragingmages/server/core/log => ../../core/log
 	gitlab.com/alienspaces/holyragingmages/server/core/model => ../../core/model

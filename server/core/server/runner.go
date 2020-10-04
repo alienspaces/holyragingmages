@@ -60,7 +60,7 @@ type Handle func(w http.ResponseWriter, r *http.Request, pathParams httprouter.P
 type MiddlewareConfig struct {
 
 	// AuthTypes - What auth types are supported by this endpoint
-	AuthTypes string
+	AuthTypes []string
 	// AuthRequuiredRoles - What roles are required to access this endpoint
 	AuthRequiredRoles []string
 	// AuthRequiredIdentities - What identities are required to be defined to access this endpoint

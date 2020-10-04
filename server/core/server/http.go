@@ -170,14 +170,14 @@ func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, 
 	}
 
 	// authz
-	h, err = rnr.Authz(h)
+	h, err = rnr.Authz(path, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding authz middleware >%v<", err)
 		return nil, err
 	}
 
 	// authen
-	h, err = rnr.Authen(h)
+	h, err = rnr.Authen(path, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding authen middleware >%v<", err)
 		return nil, err

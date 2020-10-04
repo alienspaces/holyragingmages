@@ -3,10 +3,36 @@ import 'package:dio/dio.dart';
 import '../env.dart';
 
 class Api {
+  // Singleton instance
+  static Api _instance;
+  // HTTP package
   Dio dio;
-  final String apiUrl = environment['apiUrl'];
+  // API host
+  static String apiUrl = environment['apiUrl'];
+  // API token
+  String _apiToken;
 
-  Api() {
+  String get apiToken {
+    return _apiToken;
+  }
+
+  set apiToken(String token) {
+    this._apiToken = token;
+
+    // Add token to all DIO requests
+    this.dio.options.headers["Authorization"] = "Bearer: " + this.apiToken;
+  }
+
+  // Singleton
+  factory Api() {
+    if (_instance == null) {
+      _instance = Api._internal();
+    }
+    return _instance;
+  }
+
+  // Internal constructor
+  Api._internal() {
     // Dio http client
     BaseOptions options = new BaseOptions(
       baseUrl: apiUrl,

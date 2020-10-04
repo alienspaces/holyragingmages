@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# environment
+source ${BASH_SOURCE%/*}/environment || exit $?
+
+# stop
+source ${BASH_SOURCE%/*}/stop-services || exit $?
+
 echo
 echo "=> Starting services"
 echo

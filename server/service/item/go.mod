@@ -9,7 +9,9 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli/v2 v2.2.0
+
 	gitlab.com/alienspaces/holyragingmages/server/constant v1.0.0
+	gitlab.com/alienspaces/holyragingmages/server/core/auth v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/cli v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/config v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/harness v1.0.0
@@ -27,11 +29,11 @@ require (
 	gitlab.com/alienspaces/holyragingmages/server/core/type/runnable v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/type/storer v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/schema v1.0.0
-	gitlab.com/alienspaces/holyragingmages/server/service/template v0.0.0-20200904095316-97e081d117cc
 )
 
 replace (
 	gitlab.com/alienspaces/holyragingmages/server/constant => ../../constant
+	gitlab.com/alienspaces/holyragingmages/server/core/auth => ../../core/auth
 	gitlab.com/alienspaces/holyragingmages/server/core/cli => ../../core/cli
 	gitlab.com/alienspaces/holyragingmages/server/core/config => ../../core/config
 	gitlab.com/alienspaces/holyragingmages/server/core/harness => ../../core/harness

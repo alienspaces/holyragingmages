@@ -38,7 +38,7 @@ func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
 	// load configured schemas
 	if schemaCache == nil {
 		for _, hc := range rnr.HandlerConfig {
-			err := rnr.validateLoadSchemas(hc)
+			err := rnr.validateCacheSchemas(hc)
 			if err != nil {
 				rnr.Log.Warn("Failed loading schemas >%v<", err)
 				return nil, err
@@ -187,8 +187,8 @@ func (rnr *Runner) cacheQueryParamList(hc HandlerConfig) error {
 	return nil
 }
 
-// validateLoadSchemas - load validation JSON schemas
-func (rnr *Runner) validateLoadSchemas(hc HandlerConfig) error {
+// validateCacheSchemas - load validation JSON schemas
+func (rnr *Runner) validateCacheSchemas(hc HandlerConfig) error {
 
 	if hc.MiddlewareConfig.ValidateSchemaLocation == "" || hc.MiddlewareConfig.ValidateSchemaMain == "" {
 		rnr.Log.Info("Handler method >%s< path >%s< not configured for validation", hc.Method, hc.Path)
