@@ -58,7 +58,7 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 		Identity: identity,
 	}
 
-	tokenString, err := a.Encode(&claims)
+	tokenString, err := a.EncodeJWT(&claims)
 	if err != nil {
 		rnr.WriteUnauthorizedError(l, w, err)
 		return

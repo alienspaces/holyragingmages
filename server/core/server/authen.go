@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -50,9 +51,18 @@ func (rnr *Runner) Authen(path string, h Handle) (Handle, error) {
 			for _, authType := range authTypes {
 				switch authType {
 				case auth.AuthTypeJWT:
-					l.Info("** Authen ** Checking JWT")
-					token := r.Header.Get("Authorization")
-					claims, err := authen.Decode(token)
+					l.Info("** Authen ** JWT")
+					authString := r.Header.Get("Authorization")
+					if authString == "" {
+						msg := "Authorization header is empty"
+						l.Warn(msg)
+						rnr.WriteUnauthorizedError(l, w, fmt.Errorf(msg))
+						return
+					}
+					if strings.Contains(authString, "Bearer ") {
+						authString = strings.Split(authString, "Bearer ")[1]
+					}
+					claims, err := authen.DecodeJWT(authString)
 					if err != nil {
 						l.Warn("Failed authenticating token >%v<", err)
 						rnr.WriteUnauthorizedError(l, w, err)

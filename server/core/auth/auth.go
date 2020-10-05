@@ -67,8 +67,8 @@ func (j *Auth) Init() error {
 	return nil
 }
 
-// Encode -
-func (j *Auth) Encode(claims *Claims) (string, error) {
+// EncodeJWT -
+func (j *Auth) EncodeJWT(claims *Claims) (string, error) {
 
 	j.Log.Info("Encoding JWT")
 
@@ -91,14 +91,18 @@ func (j *Auth) Encode(claims *Claims) (string, error) {
 	return tokenString, nil
 }
 
-// Decode -
-func (j *Auth) Decode(tokenString string) (*Claims, error) {
+// DecodeJWT -
+func (j *Auth) DecodeJWT(tokenString string) (*Claims, error) {
 
-	j.Log.Info("Decoding JWT")
+	j.Log.Info("Decoding JWT >%s<", tokenString)
 
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.JwtSigningKey), nil
 	})
+	if err != nil {
+		j.Log.Warn("Failed parsing JWT claims >%v<", err)
+		return nil, err
+	}
 
 	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
 		j.Log.Info("Expires >%v<", claims.StandardClaims.ExpiresAt)

@@ -20,7 +20,7 @@ class Api {
     this._apiToken = token;
 
     // Add token to all DIO requests
-    this.dio.options.headers["Authorization"] = "Bearer: " + this.apiToken;
+    this.dio.options.headers["Authorization"] = "Bearer " + this.apiToken;
   }
 
   // Singleton

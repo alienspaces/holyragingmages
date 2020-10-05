@@ -6,7 +6,8 @@
                 "*"
             ],
             "expose_headers": [
-                "Content-Length"
+                "Content-Length",
+                "Authorization"
             ],
             "max_age": "12h",
             "allow_methods": [
@@ -17,7 +18,10 @@
                 "DELETE",
                 "OPTIONS"
             ],
-            "allow_credentials": false
+            "allow_credentials": true,
+            "allow_headers": [
+                "Authorization"
+            ]
         },
         "github_com/devopsfaith/krakend-gologging": {
             "level": "ERROR",
@@ -37,6 +41,9 @@
     "endpoints": [
         {
             "endpoint": "/api/spells",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "GET",
             "output_encoding": "json",
             "extra_config": {},
@@ -56,6 +63,9 @@
         },
         {
             "endpoint": "/api/spells",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "POST",
             "output_encoding": "json",
             "extra_config": {},
@@ -75,6 +85,9 @@
         },
         {
             "endpoint": "/api/spells/{spell_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "GET",
             "output_encoding": "json",
             "extra_config": {},
@@ -94,6 +107,9 @@
         },
         {
             "endpoint": "/api/spells/{spell_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "POST",
             "output_encoding": "json",
             "extra_config": {},
@@ -113,6 +129,9 @@
         },
         {
             "endpoint": "/api/spells/{spell_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "PUT",
             "output_encoding": "json",
             "extra_config": {},
@@ -132,6 +151,9 @@
         },
         {
             "endpoint": "/api/spells/{spell_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "DELETE",
             "output_encoding": "json",
             "extra_config": {},
@@ -151,6 +173,9 @@
         },
         {
             "endpoint": "/api/entities",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "GET",
             "output_encoding": "json",
             "extra_config": {},
@@ -170,6 +195,9 @@
         },
         {
             "endpoint": "/api/entities",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "POST",
             "output_encoding": "json",
             "extra_config": {},
@@ -189,6 +217,9 @@
         },
         {
             "endpoint": "/api/entities/{entity_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "GET",
             "output_encoding": "json",
             "extra_config": {},
@@ -208,6 +239,9 @@
         },
         {
             "endpoint": "/api/entities/{entity_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "POST",
             "output_encoding": "json",
             "extra_config": {},
@@ -227,6 +261,9 @@
         },
         {
             "endpoint": "/api/entities/{entity_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "PUT",
             "output_encoding": "json",
             "extra_config": {},
@@ -246,6 +283,9 @@
         },
         {
             "endpoint": "/api/entities/{entity_id}",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "DELETE",
             "output_encoding": "json",
             "extra_config": {},
@@ -265,6 +305,9 @@
         },
         {
             "endpoint": "/api/auth",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "POST",
             "output_encoding": "json",
             "extra_config": {},
@@ -284,6 +327,9 @@
         },
         {
             "endpoint": "/api/accounts",
+            "headers_to_pass": [
+                "Authorization"
+            ],
             "method": "GET",
             "output_encoding": "json",
             "extra_config": {},

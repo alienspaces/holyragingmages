@@ -157,15 +157,15 @@ func TestEncode(t *testing.T) {
 			require.NoError(t, err, "Init returns without error")
 		}
 
-		// Encode
-		token, err := auth.Encode(tc.claims())
+		// EncodeJWT
+		token, err := auth.EncodeJWT(tc.claims())
 		if tc.expectErr == true {
-			require.Error(t, err, "Encode returns expected error")
+			require.Error(t, err, "EncodeJWT returns expected error")
 			continue
 		}
 
-		require.NoError(t, err, "Encode returns without error")
-		require.NotEmpty(t, token, "Encode returns a token")
+		require.NoError(t, err, "EncodeJWT returns without error")
+		require.NotEmpty(t, token, "EncodeJWT returns a token")
 	}
 }
 
@@ -261,19 +261,19 @@ func TestDecode(t *testing.T) {
 			require.NoError(t, err, "Init returns without error")
 		}
 
-		// Encode
-		token, err := auth.Encode(tc.claims())
-		require.NoError(t, err, "Encode returns without error")
-		require.NotEmpty(t, token, "Encode returns a token")
+		// EncodeJWT
+		token, err := auth.EncodeJWT(tc.claims())
+		require.NoError(t, err, "EncodeJWT returns without error")
+		require.NotEmpty(t, token, "EncodeJWT returns a token")
 
-		// Decode
-		claims, err := auth.Decode(token)
+		// DecodeJWT
+		claims, err := auth.DecodeJWT(token)
 		if tc.expectErr {
-			require.Error(t, err, "Decode returns expected error")
+			require.Error(t, err, "DecodeJWT returns expected error")
 			continue
 		}
 
-		require.NoError(t, err, "Decode returns without error")
-		require.NotEmpty(t, claims, "Decode returns claims")
+		require.NoError(t, err, "DecodeJWT returns without error")
+		require.NotEmpty(t, claims, "DecodeJWT returns claims")
 	}
 }

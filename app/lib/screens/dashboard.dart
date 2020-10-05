@@ -14,8 +14,11 @@ class DashboardScreen extends StatelessWidget {
 
     log.info("Building");
 
-    // Mage list model
+    // Account model
     var accountModel = Provider.of<AccountModel>(context);
+
+    // Mage list model
+    var mageListModel = Provider.of<MageListModel>(context);
 
     if (accountModel.id != null) {
       // Current user
@@ -33,7 +36,10 @@ class DashboardScreen extends StatelessWidget {
           actions: <Widget>[
             RaisedButton(
               child: const Text('SIGN OUT'),
-              onPressed: accountModel.handleSignOut,
+              onPressed: () {
+                accountModel.handleSignOut();
+                mageListModel.removeMages();
+              },
             ),
           ],
         ),
