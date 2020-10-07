@@ -13,6 +13,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/harness"
@@ -29,13 +30,14 @@ func TestEntityHandler(t *testing.T) {
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	type TestCase struct {
-		name          string
-		config        func(rnr *Runner) server.HandlerConfig
-		requestParams func(data *harness.Data) map[string]string
-		queryParams   func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *schema.EntityRequest
-		responseCode  int
-		responseData  func(data *harness.Data) *schema.EntityResponse
+		name           string
+		config         func(rnr *Runner) server.HandlerConfig
+		requestHeaders func(data *harness.Data) map[string]string
+		requestParams  func(data *harness.Data) map[string]string
+		queryParams    func(data *harness.Data) map[string]string
+		requestData    func(data *harness.Data) *schema.EntityRequest
+		responseCode   int
+		responseData   func(data *harness.Data) *schema.EntityResponse
 	}
 
 	tests := []TestCase{
@@ -43,6 +45,17 @@ func TestEntityHandler(t *testing.T) {
 			name: "GET - Get existing resource",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				authen, _ := auth.NewAuth(c, l)
+				token, _ := authen.EncodeJWT(&auth.Claims{
+					Roles:    []string{},
+					Identity: map[string]interface{}{},
+				})
+				headers := map[string]string{
+					"Authorization": "Bearer " + token,
+				}
+				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -77,6 +90,17 @@ func TestEntityHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
 			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				authen, _ := auth.NewAuth(c, l)
+				token, _ := authen.EncodeJWT(&auth.Claims{
+					Roles:    []string{},
+					Identity: map[string]interface{}{},
+				})
+				headers := map[string]string{
+					"Authorization": "Bearer " + token,
+				}
+				return headers
+			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
 					":entity_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
@@ -96,6 +120,17 @@ func TestEntityHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				authen, _ := auth.NewAuth(c, l)
+				token, _ := authen.EncodeJWT(&auth.Claims{
+					Roles:    []string{},
+					Identity: map[string]interface{}{},
+				})
+				headers := map[string]string{
+					"Authorization": "Bearer " + token,
+				}
+				return headers
+			},
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
@@ -110,6 +145,17 @@ func TestEntityHandler(t *testing.T) {
 			name: "POST - Create with ID",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[3]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				authen, _ := auth.NewAuth(c, l)
+				token, _ := authen.EncodeJWT(&auth.Claims{
+					Roles:    []string{},
+					Identity: map[string]interface{}{},
+				})
+				headers := map[string]string{
+					"Authorization": "Bearer " + token,
+				}
+				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -143,6 +189,17 @@ func TestEntityHandler(t *testing.T) {
 			name: "PUT - Update basic resource",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[4]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				authen, _ := auth.NewAuth(c, l)
+				token, _ := authen.EncodeJWT(&auth.Claims{
+					Roles:    []string{},
+					Identity: map[string]interface{}{},
+				})
+				headers := map[string]string{
+					"Authorization": "Bearer " + token,
+				}
+				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -188,6 +245,17 @@ func TestEntityHandler(t *testing.T) {
 			name: "PUT - Missing data",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[4]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				authen, _ := auth.NewAuth(c, l)
+				token, _ := authen.EncodeJWT(&auth.Claims{
+					Roles:    []string{},
+					Identity: map[string]interface{}{},
+				})
+				headers := map[string]string{
+					"Authorization": "Bearer " + token,
+				}
+				return headers
 			},
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				return nil
@@ -283,6 +351,16 @@ func TestEntityHandler(t *testing.T) {
 			} else {
 				req, err = http.NewRequest(cfg.Method, requestPath, nil)
 				require.NoError(t, err, "NewRequest returns without error")
+			}
+
+			// request headers
+			requestHeaders := map[string]string{}
+			if tc.requestHeaders != nil {
+				requestHeaders = tc.requestHeaders(th.Data)
+			}
+
+			for headerKey, headerVal := range requestHeaders {
+				req.Header.Add(headerKey, headerVal)
 			}
 
 			// recorder

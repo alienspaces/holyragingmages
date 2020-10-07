@@ -1,0 +1,41 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "$id": "http://holyragingmages.com/schema/accountentity/data.schema.json",
+    "title": "Account Entities Data",
+    "description": "Payload data for account entities",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [],
+    "properties": {
+        "id": {
+            "description": "Resource ID",
+            "type": "string",
+            "format": "uuid",
+            "example": "a87feca8-d6f0-4794-98c7-037b30219520"
+        },
+        "account_id": {
+            "description": "Account resource ID",
+            "type": "string",
+            "format": "uuid",
+            "example": "a87feca8-d6f0-4794-98c7-037b30219520"
+        },
+        "entity_id": {
+            "description": "Entity resource ID",
+            "type": "string",
+            "format": "uuid",
+            "example": "a87feca8-d6f0-4794-98c7-037b30219520"
+        },
+        "created_at": {
+            "description": "Date/time the resource was created",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+        },
+        "updated_at": {
+            "description": "Date/time the resource was last updated",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+        }
+    }
+}

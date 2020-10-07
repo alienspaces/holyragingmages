@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "$id": "http://holyragingmages.com/schema/accountentity/main.schema.json",
+    "title": "Account Entities Main",
+    "type": "object",
+    "required": [
+        "data"
+    ],
+    "properties": {
+        "data": {
+            "$ref": "http://holyragingmages.com/schema/accountentity/data.schema.json"
+        }
+    }
+}

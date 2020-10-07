@@ -5,6 +5,10 @@
 ### Now
 
 * API authentication
+  * Add route to account/entity
+  * Claims to request context?
+* API authorization
+  * Configure required roles and identifiers per route
   * Now we have a JWT, we need to use it to constrain resources
 
 ### Next

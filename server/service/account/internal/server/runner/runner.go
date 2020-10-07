@@ -80,9 +80,9 @@ func NewRunner() *Runner {
 			HandlerFunc: r.PostAccountsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				ValidateSchemaLocation: "account",
-				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaMain:     "account-main.schema.json",
 				ValidateSchemaReferences: []string{
-					"data.schema.json",
+					"account-data.schema.json",
 				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
@@ -97,9 +97,9 @@ func NewRunner() *Runner {
 			HandlerFunc: r.PostAccountsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				ValidateSchemaLocation: "account",
-				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaMain:     "account-main.schema.json",
 				ValidateSchemaReferences: []string{
-					"data.schema.json",
+					"account-data.schema.json",
 				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
@@ -114,9 +114,9 @@ func NewRunner() *Runner {
 			HandlerFunc: r.PutAccountsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				ValidateSchemaLocation: "account",
-				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaMain:     "account-main.schema.json",
 				ValidateSchemaReferences: []string{
-					"data.schema.json",
+					"account-data.schema.json",
 				},
 			},
 			DocumentationConfig: server.DocumentationConfig{

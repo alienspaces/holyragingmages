@@ -13,8 +13,16 @@ class MageListWidget extends StatelessWidget {
 
     log.info("Building");
 
+    // Account model
+    var accountModel = Provider.of<AccountModel>(context);
+
     // Mage list model
     var mageListModel = Provider.of<MageListModel>(context);
+
+    if (accountModel.id == null) {
+      log.info("Account is null");
+      return Text("Not signed in");
+    }
 
     // List of mages
     var mages = mageListModel.mages;

@@ -31,6 +31,8 @@ func NewDefaultDependencies() (configurer.Configurer, logger.Logger, storer.Stor
 		"APP_SERVER_DB_NAME",
 		"APP_SERVER_DB_USER",
 		"APP_SERVER_DB_PASSWORD",
+		// jwt signing key
+		"APP_SERVER_JWT_SIGNING_KEY",
 	}
 	for _, key := range configVars {
 		err = c.Add(key, true)

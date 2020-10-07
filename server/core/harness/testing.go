@@ -116,6 +116,8 @@ func (t *Testing) NewDefaultDependencies() (configurer.Configurer, logger.Logger
 		"APP_SERVER_DB_PASSWORD",
 		// schema
 		"APP_SERVER_SCHEMA_PATH",
+		// jwt signing key
+		"APP_SERVER_JWT_SIGNING_KEY",
 	}
 	for _, key := range configVars {
 		err = c.Add(key, true)
