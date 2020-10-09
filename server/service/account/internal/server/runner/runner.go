@@ -3,6 +3,7 @@ package runner
 import (
 	"net/http"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
@@ -53,10 +54,14 @@ func NewRunner() *Runner {
 		},
 		// 1 - Accounts - Get many
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/accounts",
-			HandlerFunc:      r.GetAccountsHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/accounts",
+			HandlerFunc: r.GetAccountsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Query accounts.",
@@ -64,10 +69,14 @@ func NewRunner() *Runner {
 		},
 		// 2 - Accounts - Get one
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/accounts/:account_id",
-			HandlerFunc:      r.GetAccountsHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/accounts/:account_id",
+			HandlerFunc: r.GetAccountsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Get an account.",
@@ -79,6 +88,9 @@ func NewRunner() *Runner {
 			Path:        "/api/accounts",
 			HandlerFunc: r.PostAccountsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -96,6 +108,9 @@ func NewRunner() *Runner {
 			Path:        "/api/accounts/:account_id",
 			HandlerFunc: r.PostAccountsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -113,6 +128,9 @@ func NewRunner() *Runner {
 			Path:        "/api/accounts/:account_id",
 			HandlerFunc: r.PutAccountsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",
 				ValidateSchemaReferences: []string{

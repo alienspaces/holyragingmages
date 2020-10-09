@@ -40,6 +40,16 @@ func TestEntityHandler(t *testing.T) {
 		responseData   func(data *harness.Data) *schema.EntityResponse
 	}
 
+	// validAuthToken - Generate a valid authentication token for this handler
+	validAuthToken := func() string {
+		authen, _ := auth.NewAuth(c, l)
+		token, _ := authen.EncodeJWT(&auth.Claims{
+			Roles:    []string{},
+			Identity: map[string]interface{}{},
+		})
+		return token
+	}
+
 	tests := []TestCase{
 		{
 			name: "GET - Get existing resource",
@@ -47,13 +57,8 @@ func TestEntityHandler(t *testing.T) {
 				return rnr.HandlerConfig[1]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
-				authen, _ := auth.NewAuth(c, l)
-				token, _ := authen.EncodeJWT(&auth.Claims{
-					Roles:    []string{},
-					Identity: map[string]interface{}{},
-				})
 				headers := map[string]string{
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + validAuthToken(),
 				}
 				return headers
 			},
@@ -91,13 +96,8 @@ func TestEntityHandler(t *testing.T) {
 				return rnr.HandlerConfig[1]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
-				authen, _ := auth.NewAuth(c, l)
-				token, _ := authen.EncodeJWT(&auth.Claims{
-					Roles:    []string{},
-					Identity: map[string]interface{}{},
-				})
 				headers := map[string]string{
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + validAuthToken(),
 				}
 				return headers
 			},
@@ -121,13 +121,8 @@ func TestEntityHandler(t *testing.T) {
 				return rnr.HandlerConfig[2]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
-				authen, _ := auth.NewAuth(c, l)
-				token, _ := authen.EncodeJWT(&auth.Claims{
-					Roles:    []string{},
-					Identity: map[string]interface{}{},
-				})
 				headers := map[string]string{
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + validAuthToken(),
 				}
 				return headers
 			},
@@ -147,13 +142,8 @@ func TestEntityHandler(t *testing.T) {
 				return rnr.HandlerConfig[3]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
-				authen, _ := auth.NewAuth(c, l)
-				token, _ := authen.EncodeJWT(&auth.Claims{
-					Roles:    []string{},
-					Identity: map[string]interface{}{},
-				})
 				headers := map[string]string{
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + validAuthToken(),
 				}
 				return headers
 			},
@@ -191,13 +181,8 @@ func TestEntityHandler(t *testing.T) {
 				return rnr.HandlerConfig[4]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
-				authen, _ := auth.NewAuth(c, l)
-				token, _ := authen.EncodeJWT(&auth.Claims{
-					Roles:    []string{},
-					Identity: map[string]interface{}{},
-				})
 				headers := map[string]string{
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + validAuthToken(),
 				}
 				return headers
 			},
@@ -247,13 +232,8 @@ func TestEntityHandler(t *testing.T) {
 				return rnr.HandlerConfig[4]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
-				authen, _ := auth.NewAuth(c, l)
-				token, _ := authen.EncodeJWT(&auth.Claims{
-					Roles:    []string{},
-					Identity: map[string]interface{}{},
-				})
 				headers := map[string]string{
-					"Authorization": "Bearer " + token,
+					"Authorization": "Bearer " + validAuthToken(),
 				}
 				return headers
 			},
