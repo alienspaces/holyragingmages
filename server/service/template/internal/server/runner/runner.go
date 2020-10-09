@@ -3,6 +3,7 @@ package runner
 import (
 	"net/http"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
@@ -35,20 +36,28 @@ func NewRunner() *Runner {
 
 	r.HandlerConfig = []server.HandlerConfig{
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/templates",
-			HandlerFunc:      r.GetTemplatesHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/templates",
+			HandlerFunc: r.GetTemplatesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Query templates.",
 			},
 		},
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/templates/:template_id",
-			HandlerFunc:      r.GetTemplatesHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/templates/:template_id",
+			HandlerFunc: r.GetTemplatesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Get a template.",
@@ -59,6 +68,9 @@ func NewRunner() *Runner {
 			Path:        "/api/templates",
 			HandlerFunc: r.PostTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "template",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -75,6 +87,9 @@ func NewRunner() *Runner {
 			Path:        "/api/templates/:template_id",
 			HandlerFunc: r.PostTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "template",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -91,6 +106,9 @@ func NewRunner() *Runner {
 			Path:        "/api/templates/:template_id",
 			HandlerFunc: r.PutTemplatesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "template",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{

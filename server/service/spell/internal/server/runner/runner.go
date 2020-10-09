@@ -3,6 +3,7 @@ package runner
 import (
 	"net/http"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
@@ -35,20 +36,28 @@ func NewRunner() *Runner {
 
 	r.HandlerConfig = []server.HandlerConfig{
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/spells",
-			HandlerFunc:      r.GetSpellsHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/spells",
+			HandlerFunc: r.GetSpellsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Query spells.",
 			},
 		},
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/spells/:spell_id",
-			HandlerFunc:      r.GetSpellsHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/spells/:spell_id",
+			HandlerFunc: r.GetSpellsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Get a spell.",
@@ -59,6 +68,9 @@ func NewRunner() *Runner {
 			Path:        "/api/spells",
 			HandlerFunc: r.PostSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "spell",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -75,6 +87,9 @@ func NewRunner() *Runner {
 			Path:        "/api/spells/:spell_id",
 			HandlerFunc: r.PostSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "spell",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -91,6 +106,9 @@ func NewRunner() *Runner {
 			Path:        "/api/spells/:spell_id",
 			HandlerFunc: r.PutSpellsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "spell",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{

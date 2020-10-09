@@ -13,6 +13,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/template/internal/harness"
@@ -29,13 +30,24 @@ func TestTemplateHandler(t *testing.T) {
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	type TestCase struct {
-		name          string
-		config        func(rnr *Runner) server.HandlerConfig
-		requestParams func(data *harness.Data) map[string]string
-		queryParams   func(data *harness.Data) map[string]string
-		requestData   func(data *harness.Data) *schema.TemplateRequest
-		responseCode  int
-		responseData  func(data *harness.Data) *schema.TemplateResponse
+		name           string
+		config         func(rnr *Runner) server.HandlerConfig
+		requestHeaders func(data *harness.Data) map[string]string
+		requestParams  func(data *harness.Data) map[string]string
+		queryParams    func(data *harness.Data) map[string]string
+		requestData    func(data *harness.Data) *schema.TemplateRequest
+		responseCode   int
+		responseData   func(data *harness.Data) *schema.TemplateResponse
+	}
+
+	// validAuthToken - Generate a valid authentication token for this handler
+	validAuthToken := func() string {
+		authen, _ := auth.NewAuth(c, l)
+		token, _ := authen.EncodeJWT(&auth.Claims{
+			Roles:    []string{},
+			Identity: map[string]interface{}{},
+		})
+		return token
 	}
 
 	tests := []TestCase{
@@ -43,6 +55,12 @@ func TestTemplateHandler(t *testing.T) {
 			name: "GET - Get existing",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(),
+				}
+				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -70,6 +88,12 @@ func TestTemplateHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
 			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(),
+				}
+				return headers
+			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
 					":template_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
@@ -86,6 +110,12 @@ func TestTemplateHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(),
+				}
+				return headers
+			},
 			requestData: func(data *harness.Data) *schema.TemplateRequest {
 				req := schema.TemplateRequest{
 					Data: schema.TemplateData{},
@@ -98,6 +128,12 @@ func TestTemplateHandler(t *testing.T) {
 			name: "POST - Create with ID",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[3]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(),
+				}
+				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -127,6 +163,12 @@ func TestTemplateHandler(t *testing.T) {
 			name: "PUT - Update existing",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[4]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(),
+				}
+				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
@@ -159,6 +201,12 @@ func TestTemplateHandler(t *testing.T) {
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[4]
 			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(),
+				}
+				return headers
+			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
 					":template_id": "17c19414-2d15-4d20-8fc3-36fc10341dc8",
@@ -177,6 +225,12 @@ func TestTemplateHandler(t *testing.T) {
 		},
 		{
 			name: "PUT - Update missing data",
+			requestHeaders: func(data *harness.Data) map[string]string {
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(),
+				}
+				return headers
+			},
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[3]
 			},
@@ -271,6 +325,16 @@ func TestTemplateHandler(t *testing.T) {
 			} else {
 				req, err = http.NewRequest(cfg.Method, requestPath, nil)
 				require.NoError(t, err, "NewRequest returns without error")
+			}
+
+			// request headers
+			requestHeaders := map[string]string{}
+			if tc.requestHeaders != nil {
+				requestHeaders = tc.requestHeaders(th.Data)
+			}
+
+			for headerKey, headerVal := range requestHeaders {
+				req.Header.Add(headerKey, headerVal)
 			}
 
 			// recorder

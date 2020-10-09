@@ -3,6 +3,7 @@ package runner
 import (
 	"net/http"
 
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
@@ -39,6 +40,9 @@ func NewRunner() *Runner {
 			Path:        "/api/items",
 			HandlerFunc: r.GetItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateQueryParams: []string{"name"},
 			},
 			DocumentationConfig: server.DocumentationConfig{
@@ -47,10 +51,14 @@ func NewRunner() *Runner {
 			},
 		},
 		{
-			Method:           http.MethodGet,
-			Path:             "/api/items/:item_id",
-			HandlerFunc:      r.GetItemsHandler,
-			MiddlewareConfig: server.MiddlewareConfig{},
+			Method:      http.MethodGet,
+			Path:        "/api/items/:item_id",
+			HandlerFunc: r.GetItemsHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Get an item.",
@@ -61,6 +69,9 @@ func NewRunner() *Runner {
 			Path:        "/api/items",
 			HandlerFunc: r.PostItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -77,6 +88,9 @@ func NewRunner() *Runner {
 			Path:        "/api/items/:item_id",
 			HandlerFunc: r.PostItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -93,6 +107,9 @@ func NewRunner() *Runner {
 			Path:        "/api/items/:item_id",
 			HandlerFunc: r.PutItemsHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
 				ValidateSchemaLocation: "item",
 				ValidateSchemaMain:     "main.schema.json",
 				ValidateSchemaReferences: []string{
