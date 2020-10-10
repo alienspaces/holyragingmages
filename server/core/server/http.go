@@ -70,7 +70,7 @@ func (rnr *Runner) Router(router *httprouter.Router) error {
 }
 
 // Middleware - default MiddlewareFunc, override this function for custom middleware
-func (rnr *Runner) Middleware(h Handle) (Handle, error) {
+func (rnr *Runner) Middleware(h HandlerFunc) (HandlerFunc, error) {
 
 	rnr.Log.Info("** Middleware **")
 
@@ -112,6 +112,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 			rnr.Log.Warn("Failed registering handler >%v<", err)
 			return nil, err
 		}
+
 		switch hc.Method {
 		case http.MethodGet:
 			r.GET(hc.Path, h)
@@ -144,7 +145,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 }
 
 // DefaultMiddleware - implements middlewares based on runner configuration
-func (rnr *Runner) DefaultMiddleware(path string, h Handle) (httprouter.Handle, error) {
+func (rnr *Runner) DefaultMiddleware(path string, h HandlerFunc) (httprouter.Handle, error) {
 
 	rnr.Log.Info("** DefaultMiddleware **")
 

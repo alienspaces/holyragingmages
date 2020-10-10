@@ -18,7 +18,7 @@ var schemaCache map[string]map[string]*gojsonschema.Schema
 var queryParamCache map[string]map[string][]string
 
 // Validate -
-func (rnr *Runner) Validate(path string, h Handle) (Handle, error) {
+func (rnr *Runner) Validate(path string, h HandlerFunc) (HandlerFunc, error) {
 
 	rnr.Log.Info("** Validate ** cache query param lists")
 

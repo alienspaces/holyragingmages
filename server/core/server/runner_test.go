@@ -152,7 +152,7 @@ func TestRunnerMiddleware(t *testing.T) {
 	require.NotNil(t, handle, "DefaultMiddleware returns a handle")
 
 	// test custom middleware
-	tr.MiddlewareFunc = func(h Handle) (Handle, error) {
+	tr.MiddlewareFunc = func(h HandlerFunc) (HandlerFunc, error) {
 		return nil, errors.New("Failed middleware")
 	}
 

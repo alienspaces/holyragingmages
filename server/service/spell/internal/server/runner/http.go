@@ -28,7 +28,7 @@ func (rnr *Runner) Router(r *httprouter.Router) error {
 }
 
 // Middleware -
-func (rnr *Runner) Middleware(h server.Handle) (server.Handle, error) {
+func (rnr *Runner) Middleware(h server.HandlerFunc) (server.HandlerFunc, error) {
 
 	rnr.Log.Info("** Spell Middleware **")
 

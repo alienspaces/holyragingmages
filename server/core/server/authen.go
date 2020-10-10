@@ -19,7 +19,7 @@ var authen *auth.Auth
 var authenCache map[string][]string
 
 // Authen -
-func (rnr *Runner) Authen(path string, h Handle) (Handle, error) {
+func (rnr *Runner) Authen(path string, h HandlerFunc) (HandlerFunc, error) {
 
 	var err error
 	if authen == nil {
@@ -44,9 +44,10 @@ func (rnr *Runner) Authen(path string, h Handle) (Handle, error) {
 
 		l.Info("** Authen ** Checking authen types")
 
-		// TODO: Source config from handler, parse JWT, set auth context and pass it
-		// down through the handler stack somehow. Another argument? Context on the
-		// request object? As long as it is common functions for access / checking.
+		// Authentication may add roles and identities to request context
+		ctx := r.Context()
+
+		// Authentication
 		if authTypes, ok := authenCache[path]; ok {
 			for _, authType := range authTypes {
 				switch authType {
@@ -69,8 +70,21 @@ func (rnr *Runner) Authen(path string, h Handle) (Handle, error) {
 						return
 					}
 
-					// TODO: Add claims to request?
 					l.Info("Have claims >%#v<", claims)
+
+					ctx, err = rnr.addRolesContext(ctx, claims.Roles)
+					if err != nil {
+						l.Warn("Failed adding roles context >%v<", err)
+						rnr.WriteUnauthorizedError(l, w, err)
+						return
+					}
+
+					ctx, err = rnr.addIdentityContext(ctx, claims.Identity)
+					if err != nil {
+						l.Warn("Failed adding identity context >%v<", err)
+						rnr.WriteUnauthorizedError(l, w, err)
+						return
+					}
 
 				default:
 					// Unsupported authentication configuration
@@ -82,7 +96,7 @@ func (rnr *Runner) Authen(path string, h Handle) (Handle, error) {
 			}
 		}
 
-		h(w, r, pp, qp, l, m)
+		h(w, r.WithContext(ctx), pp, qp, l, m)
 	}
 
 	return handle, nil

@@ -11,7 +11,7 @@ import (
 )
 
 // Correlation -
-func (rnr *Runner) Correlation(h Handle) (Handle, error) {
+func (rnr *Runner) Correlation(h HandlerFunc) (HandlerFunc, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, _ modeller.Modeller) {
 

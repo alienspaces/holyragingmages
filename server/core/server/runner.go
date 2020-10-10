@@ -31,6 +31,11 @@ const (
 	AuthTypeJWT string = "jwt"
 )
 
+var _ runnable.Runnable = &Runner{}
+
+// HandlerFunc - custom service handle
+type HandlerFunc func(w http.ResponseWriter, r *http.Request, pathParams httprouter.Params, queryParams map[string]interface{}, l logger.Logger, m modeller.Modeller)
+
 // Runner - implements the runnerer interface
 type Runner struct {
 	Config  configurer.Configurer
@@ -45,16 +50,12 @@ type Runner struct {
 	RunHTTPFunc    func(args map[string]interface{}) error
 	RunDaemonFunc  func(args map[string]interface{}) error
 	RouterFunc     func(router *httprouter.Router) error
-	MiddlewareFunc func(h Handle) (Handle, error)
-	HandlerFunc    func(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller)
-	PreparerFunc   func(l logger.Logger) (preparer.Preparer, error)
-	ModellerFunc   func(l logger.Logger) (modeller.Modeller, error)
+	MiddlewareFunc func(h HandlerFunc) (HandlerFunc, error)
+	// HandlerFunc    func(w http.ResponseWriter, r *http.Request, pathParams httprouter.Params, queryParams map[string]interface{}, l logger.Logger, m modeller.Modeller)
+	HandlerFunc  HandlerFunc
+	PreparerFunc func(l logger.Logger) (preparer.Preparer, error)
+	ModellerFunc func(l logger.Logger) (modeller.Modeller, error)
 }
-
-var _ runnable.Runnable = &Runner{}
-
-// Handle - custom service handle
-type Handle func(w http.ResponseWriter, r *http.Request, pathParams httprouter.Params, queryParams map[string]interface{}, l logger.Logger, m modeller.Modeller)
 
 // MiddlewareConfig - configuration for global default middleware
 type MiddlewareConfig struct {
