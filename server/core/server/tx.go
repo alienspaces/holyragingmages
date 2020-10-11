@@ -12,7 +12,7 @@ import (
 // TODO: Use Runner InitTx in this function
 
 // Tx -
-func (rnr *Runner) Tx(h HandlerFunc) (HandlerFunc, error) {
+func (rnr *Runner) Tx(hc HandlerConfig, h HandlerFunc) (HandlerFunc, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, _ modeller.Modeller) {
 

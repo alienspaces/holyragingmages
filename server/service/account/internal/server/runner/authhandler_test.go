@@ -109,7 +109,7 @@ func TestAuthHandler(t *testing.T) {
 			cfg := tc.config(rnr)
 
 			// handler
-			h, _ := rnr.DefaultMiddleware(cfg.Path, cfg.HandlerFunc)
+			h, _ := rnr.DefaultMiddleware(cfg, cfg.HandlerFunc)
 
 			// router
 			rtr := httprouter.New()

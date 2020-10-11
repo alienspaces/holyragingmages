@@ -3,11 +3,13 @@ module gitlab.com/alienspaces/holyragingmages/server/core/server
 go 1.15
 
 require (
+	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/rs/cors v1.7.0
 	github.com/stretchr/testify v1.6.1
 	github.com/xeipuuv/gojsonschema v1.2.0
+	
 	gitlab.com/alienspaces/holyragingmages/server/core/auth v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/config v1.0.0
 	gitlab.com/alienspaces/holyragingmages/server/core/log v1.0.0

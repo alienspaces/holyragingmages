@@ -94,7 +94,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 	r := httprouter.New()
 
 	// default index/healthz handler
-	h, err := rnr.DefaultMiddleware("/", rnr.HandlerFunc)
+	h, err := rnr.DefaultMiddleware(HandlerConfig{Path: "/"}, rnr.HandlerFunc)
 	if err != nil {
 		rnr.Log.Warn("Failed default middleware >%v<", err)
 		return nil, err
@@ -107,7 +107,7 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 
 		rnr.Log.Info("** Router ** method >%s< path >%s<", hc.Method, hc.Path)
 
-		h, err := rnr.DefaultMiddleware(hc.Path, hc.HandlerFunc)
+		h, err := rnr.DefaultMiddleware(hc, hc.HandlerFunc)
 		if err != nil {
 			rnr.Log.Warn("Failed registering handler >%v<", err)
 			return nil, err
@@ -145,40 +145,40 @@ func (rnr *Runner) DefaultRouter() (*httprouter.Router, error) {
 }
 
 // DefaultMiddleware - implements middlewares based on runner configuration
-func (rnr *Runner) DefaultMiddleware(path string, h HandlerFunc) (httprouter.Handle, error) {
+func (rnr *Runner) DefaultMiddleware(hc HandlerConfig, h HandlerFunc) (httprouter.Handle, error) {
 
 	rnr.Log.Info("** DefaultMiddleware **")
 
 	// tx
-	h, err := rnr.Tx(h)
+	h, err := rnr.Tx(hc, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding tx middleware >%v<", err)
 		return nil, err
 	}
 
 	// validate body data
-	h, err = rnr.Validate(path, h)
+	h, err = rnr.Validate(hc, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding validate middleware >%v<", err)
 		return nil, err
 	}
 
 	// request body data
-	h, err = rnr.Data(h)
+	h, err = rnr.Data(hc, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding data middleware >%v<", err)
 		return nil, err
 	}
 
 	// authz
-	h, err = rnr.Authz(path, h)
+	h, err = rnr.Authz(hc, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding authz middleware >%v<", err)
 		return nil, err
 	}
 
 	// authen
-	h, err = rnr.Authen(path, h)
+	h, err = rnr.Authen(hc, h)
 	if err != nil {
 		rnr.Log.Warn("Failed adding authen middleware >%v<", err)
 		return nil, err

@@ -18,7 +18,7 @@ var schemaCache map[string]map[string]*gojsonschema.Schema
 var queryParamCache map[string]map[string][]string
 
 // Validate -
-func (rnr *Runner) Validate(path string, h HandlerFunc) (HandlerFunc, error) {
+func (rnr *Runner) Validate(hc HandlerConfig, h HandlerFunc) (HandlerFunc, error) {
 
 	rnr.Log.Info("** Validate ** cache query param lists")
 
@@ -51,7 +51,7 @@ func (rnr *Runner) Validate(path string, h HandlerFunc) (HandlerFunc, error) {
 		l.Debug("** Validate ** request URI >%s< method >%s<", r.RequestURI, r.Method)
 
 		// validate query parameters
-		qp, err := rnr.validateQueryParameters(l, path, r)
+		qp, err := rnr.validateQueryParameters(l, hc.Path, r)
 		if err != nil {
 			rnr.WriteResponse(l, w, rnr.ValidationError(err))
 			return
@@ -67,7 +67,7 @@ func (rnr *Runner) Validate(path string, h HandlerFunc) (HandlerFunc, error) {
 		}
 
 		// schema for URI and method
-		s := schemaCache[path][r.Method]
+		s := schemaCache[hc.Path][r.Method]
 		if s == nil {
 			l.Debug("Not validating URI >%s< method >%s<", r.RequestURI, r.Method)
 

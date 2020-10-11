@@ -12,7 +12,7 @@ import (
 )
 
 // Data -
-func (rnr *Runner) Data(h HandlerFunc) (HandlerFunc, error) {
+func (rnr *Runner) Data(hc HandlerConfig, h HandlerFunc) (HandlerFunc, error) {
 
 	handle := func(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 

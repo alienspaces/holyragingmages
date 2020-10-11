@@ -10,7 +10,7 @@ import (
 )
 
 // Authz -
-func (rnr *Runner) Authz(path string, h HandlerFunc) (HandlerFunc, error) {
+func (rnr *Runner) Authz(hc HandlerConfig, h HandlerFunc) (HandlerFunc, error) {
 
 	// TODO: implement authorization via configuration
 	handle := func(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {

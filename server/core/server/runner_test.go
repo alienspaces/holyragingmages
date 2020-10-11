@@ -105,7 +105,7 @@ func TestRunnerRouter(t *testing.T) {
 
 	// test custom routes
 	tr.RouterFunc = func(router *httprouter.Router) error {
-		h, err := tr.DefaultMiddleware("/custom", tr.HandlerFunc)
+		h, err := tr.DefaultMiddleware(HandlerConfig{Path: "/custom"}, tr.HandlerFunc)
 		if err != nil {
 			return err
 		}
@@ -147,7 +147,7 @@ func TestRunnerMiddleware(t *testing.T) {
 	require.NoError(t, err, "Runner Init returns without error")
 
 	// test default middleware
-	handle, err := tr.DefaultMiddleware("/", tr.HandlerFunc)
+	handle, err := tr.DefaultMiddleware(HandlerConfig{Path: "/"}, tr.HandlerFunc)
 	require.NoError(t, err, "DefaultMiddleware returns without error")
 	require.NotNil(t, handle, "DefaultMiddleware returns a handle")
 
@@ -156,7 +156,7 @@ func TestRunnerMiddleware(t *testing.T) {
 		return nil, errors.New("Failed middleware")
 	}
 
-	handle, err = tr.DefaultMiddleware("/", tr.HandlerFunc)
+	handle, err = tr.DefaultMiddleware(HandlerConfig{Path: "/"}, tr.HandlerFunc)
 	require.Error(t, err, "DefaultMiddleware returns with error")
 	require.Nil(t, handle, "DefaultMiddleware returns nil")
 }
