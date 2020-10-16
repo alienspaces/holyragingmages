@@ -31,6 +31,7 @@ func (rnr *Runner) Authen(hc HandlerConfig, h HandlerFunc) (HandlerFunc, error) 
 		}
 	}
 
+	// Cache authen configuration
 	err = rnr.authenCacheConfig(hc)
 	if err != nil {
 		rnr.Log.Warn("Failed caching authen config >%v<", err)
@@ -61,19 +62,19 @@ func (rnr *Runner) handleAuthen(r *http.Request, l logger.Logger, m modeller.Mod
 	ctx := r.Context()
 
 	if authenCache == nil {
-		l.Warn("Authen not configured")
+		l.Info("Authen not configured")
 		return ctx, nil
 	}
 
 	authenMethods := authenCache[hc.Path]
 	if authenMethods == nil {
-		l.Warn("Authentication not configured for path >%s<", hc.Path)
+		l.Info("Authentication not configured for path >%s<", hc.Path)
 		return ctx, nil
 	}
 
 	authenTypes := authenMethods[hc.Method]
 	if authenTypes == nil {
-		l.Warn("Authentication not configured for path >%s< method >%s<", hc.Path, hc.Method)
+		l.Info("Authentication not configured for path >%s< method >%s<", hc.Path, hc.Method)
 		return ctx, nil
 	}
 

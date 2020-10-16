@@ -3,6 +3,7 @@ package runner
 import (
 	"net/http"
 
+	"gitlab.com/alienspaces/holyragingmages/server/constant"
 	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
@@ -61,6 +62,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
+				AuthRequiredIdentities: []string{
+					constant.AuthIdentityAccount,
+				},
+				AuthRequiredRoles: []string{
+					constant.AuthRoleDefault,
+				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
@@ -76,6 +83,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
+				AuthRequiredIdentities: []string{
+					constant.AuthIdentityAccount,
+				},
+				AuthRequiredRoles: []string{
+					constant.AuthRoleDefault,
+				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
@@ -90,6 +103,12 @@ func NewRunner() *Runner {
 			MiddlewareConfig: server.MiddlewareConfig{
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
+				},
+				AuthRequiredIdentities: []string{
+					constant.AuthIdentityAccount,
+				},
+				AuthRequiredRoles: []string{
+					constant.AuthRoleDefault,
 				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",
@@ -111,6 +130,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
+				AuthRequiredIdentities: []string{
+					constant.AuthIdentityAccount,
+				},
+				AuthRequiredRoles: []string{
+					constant.AuthRoleDefault,
+				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",
 				ValidateSchemaReferences: []string{
@@ -130,6 +155,12 @@ func NewRunner() *Runner {
 			MiddlewareConfig: server.MiddlewareConfig{
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
+				},
+				AuthRequiredIdentities: []string{
+					constant.AuthIdentityAccount,
+				},
+				AuthRequiredRoles: []string{
+					constant.AuthRoleDefault,
 				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",

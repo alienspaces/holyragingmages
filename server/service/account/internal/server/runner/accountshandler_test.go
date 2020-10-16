@@ -10,9 +10,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/brianvoe/gofakeit"
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
+	"gitlab.com/alienspaces/holyragingmages/server/constant"
 	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/schema"
@@ -45,8 +47,12 @@ func TestAccountHandler(t *testing.T) {
 	validAuthToken := func() string {
 		authen, _ := auth.NewAuth(c, l)
 		token, _ := authen.EncodeJWT(&auth.Claims{
-			Roles:    []string{},
-			Identity: map[string]interface{}{},
+			Roles: []string{
+				constant.AuthRoleDefault,
+			},
+			Identity: map[string]interface{}{
+				constant.AuthIdentityAccount: gofakeit.UUID(),
+			},
 		})
 		return token
 	}
