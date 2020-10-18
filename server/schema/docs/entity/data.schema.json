@@ -13,6 +13,12 @@
             "format": "uuid",
             "example": "a87feca8-d6f0-4794-98c7-037b30219520"
         },
+        "account_id": {
+            "description": "Account resource ID",
+            "type": "string",
+            "format": "uuid",
+            "example": "b0938b3d-563e-4054-b07f-522ae3dd376d"
+        },
         "name": {
             "description": "The name of this mage.",
             "type": "string",

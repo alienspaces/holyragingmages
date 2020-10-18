@@ -21,12 +21,19 @@ type DataConfig struct {
 
 // AccountConfig -
 type AccountConfig struct {
-	Record record.Account
+	Record            record.Account
+	AccountRoleConfig []AccountRoleConfig
+}
+
+// AccountRoleConfig -
+type AccountRoleConfig struct {
+	Record record.AccountRole
 }
 
 // Data -
 type Data struct {
-	AccountRecs []record.Account
+	AccountRecs     []record.Account
+	AccountRoleRecs []record.AccountRole
 }
 
 // NewTesting -
@@ -76,6 +83,15 @@ func (t *Testing) CreateData() error {
 			return err
 		}
 		t.Data.AccountRecs = append(t.Data.AccountRecs, accountRec)
+
+		for _, accountRoleConfig := range accountConfig.AccountRoleConfig {
+			accountRoleRec, err := t.createAccountRoleRec(accountRec, accountRoleConfig)
+			if err != nil {
+				t.Log.Warn("Failed creating account role record >%v<", err)
+				return err
+			}
+			t.Data.AccountRoleRecs = append(t.Data.AccountRoleRecs, accountRoleRec)
+		}
 	}
 
 	return nil
@@ -83,6 +99,21 @@ func (t *Testing) CreateData() error {
 
 // RemoveData -
 func (t *Testing) RemoveData() error {
+
+ACCOUNT_ROLE_RECS:
+	for {
+		if len(t.Data.AccountRoleRecs) == 0 {
+			break ACCOUNT_ROLE_RECS
+		}
+		rec := record.AccountRole{}
+		rec, t.Data.AccountRoleRecs = t.Data.AccountRoleRecs[0], t.Data.AccountRoleRecs[1:]
+
+		err := t.Model.(*model.Model).RemoveAccountRoleRec(rec.ID)
+		if err != nil {
+			t.Log.Warn("Failed removing account role record >%v<", err)
+			return err
+		}
+	}
 
 ACCOUNT_RECS:
 	for {

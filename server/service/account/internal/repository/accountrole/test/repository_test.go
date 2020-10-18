@@ -9,15 +9,21 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 
-	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/harness"
-	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/model"
-	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/record"
+	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/harness"
+	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/model"
+	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/record"
 )
 
 func TestCreateOne(t *testing.T) {
 
 	// harness
-	config := harness.DataConfig{}
+	config := harness.DataConfig{
+		AccountConfig: []harness.AccountConfig{
+			{
+				Record: record.Account{},
+			},
+		},
+	}
 
 	h, err := harness.NewTesting(config)
 	require.NoError(t, err, "NewTesting returns without error")
@@ -27,29 +33,28 @@ func TestCreateOne(t *testing.T) {
 
 	tests := []struct {
 		name string
-		rec  func() *record.Entity
+		rec  func(data *harness.Data) *record.AccountRole
 		err  bool
 	}{
 		{
 			name: "Without ID",
-			rec: func() *record.Entity {
-				accountID, _ := uuid.NewRandom()
-				return &record.Entity{
-					AccountID: accountID.String(),
+			rec: func(data *harness.Data) *record.AccountRole {
+				return &record.AccountRole{
+					AccountID: data.AccountRecs[0].ID,
+					Role:      record.AccountRoleDefault,
 				}
 			},
 			err: false,
 		},
 		{
 			name: "With ID",
-			rec: func() *record.Entity {
-				accountID, _ := uuid.NewRandom()
-				rec := &record.Entity{
-					AccountID: accountID.String(),
+			rec: func(data *harness.Data) *record.AccountRole {
+				rec := &record.AccountRole{
+					AccountID: data.AccountRecs[0].ID,
+					Role:      record.AccountRoleAdministrator,
 				}
 				id, _ := uuid.NewRandom()
 				rec.ID = id.String()
-
 				return rec
 			},
 			err: false,
@@ -75,10 +80,10 @@ func TestCreateOne(t *testing.T) {
 			require.NoError(t, err, "InitTx returns without error")
 
 			// repository
-			r := h.Model.(*model.Model).EntityRepository()
+			r := h.Model.(*model.Model).AccountRoleRepository()
 			require.NotNil(t, r, "Repository is not nil")
 
-			rec := tc.rec()
+			rec := tc.rec(h.Data)
 
 			err = r.CreateOne(rec)
 			if tc.err == true {
@@ -97,9 +102,14 @@ func TestGetOne(t *testing.T) {
 
 	// harness
 	config := harness.DataConfig{
-		EntityConfig: []harness.EntityConfig{
+		AccountConfig: []harness.AccountConfig{
 			{
-				Record: record.Entity{},
+				Record: record.Account{},
+				AccountRoleConfig: []harness.AccountRoleConfig{
+					{
+						Record: record.AccountRole{},
+					},
+				},
 			},
 		},
 	}
@@ -112,19 +122,19 @@ func TestGetOne(t *testing.T) {
 
 	tests := []struct {
 		name string
-		id   func() string
+		id   func(data *harness.Data) string
 		err  bool
 	}{
 		{
 			name: "With ID",
-			id: func() string {
-				return h.Data.EntityRecs[0].ID
+			id: func(data *harness.Data) string {
+				return h.Data.AccountRoleRecs[0].ID
 			},
 			err: false,
 		},
 		{
 			name: "Without ID",
-			id: func() string {
+			id: func(data *harness.Data) string {
 				return ""
 			},
 			err: true,
@@ -150,10 +160,10 @@ func TestGetOne(t *testing.T) {
 			require.NoError(t, err, "InitTx returns without error")
 
 			// repository
-			r := h.Model.(*model.Model).EntityRepository()
+			r := h.Model.(*model.Model).AccountRoleRepository()
 			require.NotNil(t, r, "Repository is not nil")
 
-			rec, err := r.GetOne(tc.id(), false)
+			rec, err := r.GetOne(tc.id(h.Data), false)
 			if tc.err == true {
 				require.Error(t, err, "GetOne returns error")
 				return
@@ -171,9 +181,14 @@ func TestUpdateOne(t *testing.T) {
 
 	// harness
 	config := harness.DataConfig{
-		EntityConfig: []harness.EntityConfig{
+		AccountConfig: []harness.AccountConfig{
 			{
-				Record: record.Entity{},
+				Record: record.Account{},
+				AccountRoleConfig: []harness.AccountRoleConfig{
+					{
+						Record: record.AccountRole{},
+					},
+				},
 			},
 		},
 	}
@@ -187,20 +202,20 @@ func TestUpdateOne(t *testing.T) {
 
 	tests := []struct {
 		name string
-		rec  func() record.Entity
+		rec  func(data *harness.Data) record.AccountRole
 		err  bool
 	}{
 		{
 			name: "With ID",
-			rec: func() record.Entity {
-				return h.Data.EntityRecs[0]
+			rec: func(data *harness.Data) record.AccountRole {
+				return data.AccountRoleRecs[0]
 			},
 			err: false,
 		},
 		{
 			name: "Without ID",
-			rec: func() record.Entity {
-				rec := h.Data.EntityRecs[0]
+			rec: func(data *harness.Data) record.AccountRole {
+				rec := data.AccountRoleRecs[0]
 				rec.ID = ""
 				return rec
 			},
@@ -227,10 +242,10 @@ func TestUpdateOne(t *testing.T) {
 			require.NoError(t, err, "InitTx returns without error")
 
 			// repository
-			r := h.Model.(*model.Model).EntityRepository()
+			r := h.Model.(*model.Model).AccountRoleRepository()
 			require.NotNil(t, r, "Repository is not nil")
 
-			rec := tc.rec()
+			rec := tc.rec(h.Data)
 
 			err := r.UpdateOne(&rec)
 			if tc.err == true {
@@ -249,9 +264,14 @@ func TestDeleteOne(t *testing.T) {
 
 	// harness
 	config := harness.DataConfig{
-		EntityConfig: []harness.EntityConfig{
+		AccountConfig: []harness.AccountConfig{
 			{
-				Record: record.Entity{},
+				Record: record.Account{},
+				AccountRoleConfig: []harness.AccountRoleConfig{
+					{
+						Record: record.AccountRole{},
+					},
+				},
 			},
 		},
 	}
@@ -264,19 +284,19 @@ func TestDeleteOne(t *testing.T) {
 
 	tests := []struct {
 		name string
-		id   func() string
+		id   func(data *harness.Data) string
 		err  bool
 	}{
 		{
 			name: "With ID",
-			id: func() string {
-				return h.Data.EntityRecs[0].ID
+			id: func(data *harness.Data) string {
+				return data.AccountRoleRecs[0].ID
 			},
 			err: false,
 		},
 		{
 			name: "Without ID",
-			id: func() string {
+			id: func(data *harness.Data) string {
 				return ""
 			},
 			err: true,
@@ -302,17 +322,17 @@ func TestDeleteOne(t *testing.T) {
 			require.NoError(t, err, "InitTx returns without error")
 
 			// repository
-			r := h.Model.(*model.Model).EntityRepository()
+			r := h.Model.(*model.Model).AccountRoleRepository()
 			require.NotNil(t, r, "Repository is not nil")
 
-			err := r.DeleteOne(tc.id())
+			err := r.DeleteOne(tc.id(h.Data))
 			if tc.err == true {
 				require.Error(t, err, "DeleteOne returns error")
 				return
 			}
 			require.NoError(t, err, "DeleteOne returns without error")
 
-			rec, err := r.GetOne(tc.id(), false)
+			rec, err := r.GetOne(tc.id(h.Data), false)
 			require.Error(t, err, "GetOne returns error")
 			require.Nil(t, rec, "GetOne does not return record")
 

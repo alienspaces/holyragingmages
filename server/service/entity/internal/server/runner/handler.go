@@ -204,6 +204,7 @@ func (rnr *Runner) PutEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 // EntityRequestDataToRecord -
 func (rnr *Runner) EntityRequestDataToRecord(data schema.EntityData, rec *record.Entity) error {
 
+	rec.AccountID = data.AccountID
 	rec.Name = data.Name
 	rec.Strength = data.Strength
 	rec.Dexterity = data.Dexterity
@@ -217,6 +218,7 @@ func (rnr *Runner) RecordToEntityResponseData(rec *record.Entity) (schema.Entity
 
 	data := schema.EntityData{
 		ID:               rec.ID,
+		AccountID:        rec.AccountID,
 		Name:             rec.Name,
 		Strength:         rec.Strength,
 		Dexterity:        rec.Dexterity,

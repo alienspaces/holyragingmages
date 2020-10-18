@@ -77,6 +77,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:               data.EntityRecs[0].ID,
+							AccountID:        data.EntityRecs[0].AccountID,
 							Name:             data.EntityRecs[0].Name,
 							Strength:         data.EntityRecs[0].Strength,
 							Dexterity:        data.EntityRecs[0].Dexterity,
@@ -129,7 +130,8 @@ func TestEntityHandler(t *testing.T) {
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
-						Name: "Veronica The Incredible",
+						AccountID: "5de1cd8d-e136-47b9-82cd-b42b2a0e13eb",
+						Name:      "Veronica The Incredible",
 					},
 				}
 				return &req
@@ -156,7 +158,8 @@ func TestEntityHandler(t *testing.T) {
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
-						Name: "Audrey The Amazing",
+						AccountID: "5de1cd8d-e136-47b9-82cd-b42b2a0e13eb",
+						Name:      "Audrey The Amazing",
 					},
 				}
 				return &req
@@ -167,6 +170,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:              "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+							AccountID:       "5de1cd8d-e136-47b9-82cd-b42b2a0e13eb",
 							Name:            "Audrey The Amazing",
 							AttributePoints: 32,
 						},
@@ -196,6 +200,7 @@ func TestEntityHandler(t *testing.T) {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
 						ID:               data.EntityRecs[0].ID,
+						AccountID:        data.EntityRecs[0].AccountID,
 						Name:             "Barricade Block",
 						Strength:         data.EntityRecs[0].Strength,
 						Dexterity:        data.EntityRecs[0].Dexterity,
@@ -213,6 +218,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:               data.EntityRecs[0].ID,
+							AccountID:        data.EntityRecs[0].AccountID,
 							Name:             "Barricade Block",
 							Strength:         data.EntityRecs[0].Strength,
 							Dexterity:        data.EntityRecs[0].Dexterity,
@@ -369,6 +375,7 @@ func TestEntityHandler(t *testing.T) {
 				// response data
 				if resData != nil {
 					require.Equal(t, resData.Data[0].ID, res.Data[0].ID, "ID equals expected")
+					require.Equal(t, resData.Data[0].AccountID, res.Data[0].AccountID, "AccountID equals expected")
 					require.Equal(t, resData.Data[0].Name, res.Data[0].Name, "Name equals expected")
 					require.Equal(t, resData.Data[0].Strength, res.Data[0].Strength, "Strength equals expected")
 					require.Equal(t, resData.Data[0].Dexterity, res.Data[0].Dexterity, "Dexterity equals expected")

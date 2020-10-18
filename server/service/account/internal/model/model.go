@@ -11,6 +11,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/storer"
 
 	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/repository/account"
+	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/repository/accountrole"
 )
 
 // Model -
@@ -43,13 +44,21 @@ func (m *Model) NewRepositories(p preparer.Preparer, tx *sqlx.Tx) ([]repositor.R
 
 	repositoryList := []repositor.Repositor{}
 
-	tr, err := account.NewRepository(m.Log, p, tx)
+	accountRepo, err := account.NewRepository(m.Log, p, tx)
 	if err != nil {
 		m.Log.Warn("Failed new account repository >%v<", err)
 		return nil, err
 	}
 
-	repositoryList = append(repositoryList, tr)
+	repositoryList = append(repositoryList, accountRepo)
+
+	accountRoleRepo, err := accountrole.NewRepository(m.Log, p, tx)
+	if err != nil {
+		m.Log.Warn("Failed new account role repository >%v<", err)
+		return nil, err
+	}
+
+	repositoryList = append(repositoryList, accountRoleRepo)
 
 	return repositoryList, nil
 }
@@ -64,4 +73,16 @@ func (m *Model) AccountRepository() *account.Repository {
 	}
 
 	return r.(*account.Repository)
+}
+
+// AccountRoleRepository -
+func (m *Model) AccountRoleRepository() *accountrole.Repository {
+
+	r := m.Repositories[accountrole.TableName]
+	if r == nil {
+		m.Log.Warn("Repository >%s< is nil", accountrole.TableName)
+		return nil
+	}
+
+	return r.(*accountrole.Repository)
 }

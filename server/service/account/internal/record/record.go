@@ -4,7 +4,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/core/repository"
 )
 
-// AccountProvider -
+// AccountProvider - Valid account providers
 const (
 	AccountProviderGoogle   string = "google"
 	AccountProviderApple    string = "apple"
@@ -20,4 +20,17 @@ type Account struct {
 	Email             string `db:"email"`
 	Provider          string `db:"provider"`
 	ProviderAccountID string `db:"provider_account_id"`
+}
+
+// AccountRole - Valid roles
+const (
+	AccountRoleDefault       string = "default"
+	AccountRoleAdministrator string = "administrator"
+)
+
+// AccountRole -
+type AccountRole struct {
+	repository.Record
+	AccountID string `db:"account_id"`
+	Role      string `db:"role"`
 }

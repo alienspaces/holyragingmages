@@ -106,16 +106,16 @@ func TestAuthenMiddlewareConfig(t *testing.T) {
 		for _, hc := range tr.HandlerConfig {
 
 			if tc.expectCachedConfig == true {
-				// Path and method cached
+				// Path cached
 				cachedPath, ok := authenCache[hc.Path]
 				require.True(t, ok, "Request path found in authen cache")
 				require.NotEmpty(t, cachedPath, "Cached path data is not empty")
+				// Method cached
 				cachedMethod, ok := cachedPath[hc.Method]
 				require.True(t, ok, "Request method found in authen cache")
 				require.NotEmpty(t, cachedMethod, "Cached method data is not empty")
 			} else {
-
-				// Path and method not cached
+				// Path not cached
 				cachedPath, ok := authenCache[hc.Path]
 				require.False(t, ok, "Request path found in authen cache")
 				require.Empty(t, cachedPath, "Cached path data is not empty")

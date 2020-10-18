@@ -11,7 +11,7 @@ func (t *Testing) createAccountRec(accountConfig AccountConfig) (record.Account,
 
 	rec := accountConfig.Record
 
-	t.Log.Info("Creating testing record >%#v<", rec)
+	t.Log.Info("Creating test account record >%#v<", rec)
 
 	// NOTE: Add default values for required properties here
 	if rec.Name == "" {
@@ -33,6 +33,27 @@ func (t *Testing) createAccountRec(accountConfig AccountConfig) (record.Account,
 	err := t.Model.(*model.Model).CreateAccountRec(&rec)
 	if err != nil {
 		t.Log.Warn("Failed creating testing account record >%v<", err)
+		return rec, err
+	}
+	return rec, nil
+}
+
+func (t *Testing) createAccountRoleRec(accountRec record.Account, accountRoleConfig AccountRoleConfig) (record.AccountRole, error) {
+
+	rec := accountRoleConfig.Record
+
+	t.Log.Info("Creating test account role record >%#v<", rec)
+
+	// NOTE: Add default values for required properties here
+	rec.AccountID = accountRec.ID
+
+	if rec.Role == "" {
+		rec.Role = record.AccountRoleDefault
+	}
+
+	err := t.Model.(*model.Model).CreateAccountRoleRec(&rec)
+	if err != nil {
+		t.Log.Warn("Failed creating testing account role record >%v<", err)
 		return rec, err
 	}
 	return rec, nil

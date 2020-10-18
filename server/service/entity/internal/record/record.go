@@ -7,6 +7,7 @@ import (
 // Entity -
 type Entity struct {
 	repository.Record
+	AccountID        string `db:"account_id"`
 	Name             string `db:"name"`
 	Strength         int    `db:"strength"`
 	Dexterity        int    `db:"dexterity"`

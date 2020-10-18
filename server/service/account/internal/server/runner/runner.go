@@ -62,11 +62,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
-				AuthRequiredIdentities: []string{
+				AuthRequireAllIdentities: []string{
 					constant.AuthIdentityAccount,
 				},
-				AuthRequiredRoles: []string{
+				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
+					constant.AuthRoleAdministrator,
 				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
@@ -83,11 +84,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
-				AuthRequiredIdentities: []string{
+				AuthRequireAllIdentities: []string{
 					constant.AuthIdentityAccount,
 				},
-				AuthRequiredRoles: []string{
+				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
+					constant.AuthRoleAdministrator,
 				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
@@ -104,11 +106,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
-				AuthRequiredIdentities: []string{
+				AuthRequireAllIdentities: []string{
 					constant.AuthIdentityAccount,
 				},
-				AuthRequiredRoles: []string{
+				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
+					constant.AuthRoleAdministrator,
 				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",
@@ -130,11 +133,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
-				AuthRequiredIdentities: []string{
+				AuthRequireAllIdentities: []string{
 					constant.AuthIdentityAccount,
 				},
-				AuthRequiredRoles: []string{
+				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
+					constant.AuthRoleAdministrator,
 				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",
@@ -156,11 +160,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
-				AuthRequiredIdentities: []string{
+				AuthRequireAllIdentities: []string{
 					constant.AuthIdentityAccount,
 				},
-				AuthRequiredRoles: []string{
+				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
+					constant.AuthRoleAdministrator,
 				},
 				ValidateSchemaLocation: "account",
 				ValidateSchemaMain:     "account-main.schema.json",

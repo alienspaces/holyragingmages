@@ -4,12 +4,8 @@
 
 ### Now
 
-* API authentication
-  * Add route to account/entity
-  * Claims to request context?
-* API authorization
-  * Configure required roles and identifiers per route
-  * Now we have a JWT, we need to use it to constrain resources
+* Modify entities API paths to include `:account_id`
+* When `:account_id` present in path enforce path `:account_id` on all entity resources
 
 ### Next
 

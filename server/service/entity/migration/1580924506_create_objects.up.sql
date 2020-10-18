@@ -1,6 +1,7 @@
 -- Entity
 CREATE TABLE "entity" (
   "id" UUID CONSTRAINT entity_pk PRIMARY KEY DEFAULT gen_random_uuid(),
+  "account_id" UUID NOT NULL, 
   "name" text NOT NULL,
   "strength" int NOT NULL DEFAULT 0,
   "dexterity" int NOT NULL DEFAULT 0,
@@ -8,17 +9,6 @@ CREATE TABLE "entity" (
   "attribute_points" int NOT NULL DEFAULT 0,
   "experience_points" bigint NOT NULL DEFAULT 0,
   "coins" bigint NOT NULL DEFAULT 0,
-  "created_at" timestamp NOT NULL DEFAULT (current_timestamp),
-  "updated_at" timestamp DEFAULT null,
-  "deleted_at" timestamp DEFAULT null
-);
-
--- Entity Instance
-CREATE TABLE "entity_instance" (
-  "id" UUID CONSTRAINT entity_instance_pk PRIMARY KEY DEFAULT gen_random_uuid(),
-  "entity_id" uuid NOT NULL,
-  "health_points" int NOT NULL DEFAULT 0,
-  "action_points" int NOT NULL DEFAULT 0,
   "created_at" timestamp NOT NULL DEFAULT (current_timestamp),
   "updated_at" timestamp DEFAULT null,
   "deleted_at" timestamp DEFAULT null
@@ -34,6 +24,10 @@ CREATE TABLE "entity_item" (
   "deleted_at" timestamp DEFAULT null
 );
 
+ALTER TABLE "entity_item" ADD CONSTRAINT "entity_item_entity_id_fk" FOREIGN KEY ("entity_id") REFERENCES "entity" ("id");
+
+COMMENT ON COLUMN "entity_item"."item_id" IS 'Remote "item" service reference';
+
 -- Entity Spell
 CREATE TABLE "entity_spell" (
   "id" UUID CONSTRAINT entity_spell_pk PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -44,18 +38,25 @@ CREATE TABLE "entity_spell" (
   "deleted_at" timestamp DEFAULT null
 );
 
-ALTER TABLE "entity_instance" ADD CONSTRAINT "entity_instance_entity_id_fk" FOREIGN KEY ("entity_id") REFERENCES "entity" ("id");
-
-ALTER TABLE "entity_item" ADD CONSTRAINT "entity_item_entity_id_fk" FOREIGN KEY ("entity_id") REFERENCES "entity" ("id");
-
 ALTER TABLE "entity_spell" ADD CONSTRAINT "entity_spell_entity_id_fk" FOREIGN KEY ("entity_id") REFERENCES "entity" ("id");
 
-CREATE UNIQUE INDEX ON "entity_instance" ("entity_id", "deleted_at");
+COMMENT ON COLUMN "entity_spell"."spell_id" IS 'Remote "spell" service reference';
+
+-- Entity Instance
+CREATE TABLE "entity_instance" (
+  "id" UUID CONSTRAINT entity_instance_pk PRIMARY KEY DEFAULT gen_random_uuid(),
+  "entity_id" uuid NOT NULL,
+  "health_points" int NOT NULL DEFAULT 0,
+  "action_points" int NOT NULL DEFAULT 0,
+  "created_at" timestamp NOT NULL DEFAULT (current_timestamp),
+  "updated_at" timestamp DEFAULT null,
+  "deleted_at" timestamp DEFAULT null
+);
+
+ALTER TABLE "entity_instance" ADD CONSTRAINT "entity_instance_entity_id_fk" FOREIGN KEY ("entity_id") REFERENCES "entity" ("id");
 
 COMMENT ON COLUMN "entity_instance"."health_points" IS 'Computed from attribute points';
 
 COMMENT ON COLUMN "entity_instance"."action_points" IS 'Computed from attribute points';
 
-COMMENT ON COLUMN "entity_item"."item_id" IS 'Remote "item" service reference';
 
-COMMENT ON COLUMN "entity_spell"."spell_id" IS 'Remote "spell" service reference';

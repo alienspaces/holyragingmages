@@ -62,10 +62,14 @@ type MiddlewareConfig struct {
 
 	// AuthTypes - What auth types are supported by this endpoint
 	AuthTypes []string
-	// AuthRequuiredRoles - What roles are required to access this endpoint
-	AuthRequiredRoles []string
-	// AuthRequiredIdentities - What identities are required to be defined to access this endpoint
-	AuthRequiredIdentities []string
+	// AuthRequireAllRoles - Required all of these roles to access this endpoint
+	AuthRequireAllRoles []string
+	// AuthRequireAnyRole - Required any of these roles to access this endpoint
+	AuthRequireAnyRole []string
+	// AuthRequireAllIdentities - Required all of these identities to be defined to access this endpoint
+	AuthRequireAllIdentities []string
+	// AuthRequireAnyIdentity - Required any of these identities to be defined to access this endpoint
+	AuthRequireAnyIdentity []string
 
 	// Validate Schema - JSON schema validation
 	ValidateSchemaLocation   string

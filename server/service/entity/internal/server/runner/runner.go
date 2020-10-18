@@ -30,6 +30,7 @@ func NewRunner() *Runner {
 	r.ModellerFunc = r.Modeller
 
 	r.HandlerConfig = []server.HandlerConfig{
+		// Administrator Role - AccountID not required
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/entities",
@@ -58,9 +59,10 @@ func NewRunner() *Runner {
 				Description: "Get an entity.",
 			},
 		},
+		// Default Role - AccountID required
 		{
 			Method:      http.MethodPost,
-			Path:        "/api/entities",
+			Path:        "/api/accounts/:account_id/entities",
 			HandlerFunc: r.PostEntitiesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				AuthTypes: []string{
