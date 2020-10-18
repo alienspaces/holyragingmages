@@ -57,14 +57,33 @@ type Runner struct {
 	ModellerFunc func(l logger.Logger) (modeller.Modeller, error)
 }
 
-// MiddlewareConfig - configuration for global default middleware
+// MiddlewareConfig provides configuration for middlewares.
+//
+// AuthTypes - Supported authentication types.
+//
+// AuthRequiredAllRoles - All of these roles must exist within the list of roles found in authenticated claims.
+//
+// AuthRequiredAnyRole - Any of these roles must exist within the list of roles found in authenticated claims.
+//
+// AuthRequiredAllIdentities - All of these identity keys must have a defined value within the list of identity keys found in authenticated claims.
+//
+// AuthRequiredAnyIdentity - Any of these identity keys must have a defined value within the list of identity keys found in authenticated claims.
+//
+// ValidateSchemaLocation - Location of JSON schemas for this endpoint relative to `APP_SERVER_SCHEMA_PATH`.
+//
+// ValidateSchemaMain - The name of the main JSON schema document to load for this endpoint.
+//
+// ValidateSchemaReferences - A list of additional JSON schema reference documents to load for this endpoint.
+//
+// ValidateQueryParams - A whitelist of allowed query parameters.
+//
 type MiddlewareConfig struct {
 
 	// AuthTypes - What auth types are supported by this endpoint
 	AuthTypes []string
-	// AuthRequireAllRoles - Required all of these roles to access this endpoint
+	// AuthRequireAllRoles - Require all of these roles to access this endpoint
 	AuthRequireAllRoles []string
-	// AuthRequireAnyRole - Required any of these roles to access this endpoint
+	// AuthRequireAnyRole - Require any of these roles to access this endpoint
 	AuthRequireAnyRole []string
 	// AuthRequireAllIdentities - Required all of these identities to be defined to access this endpoint
 	AuthRequireAllIdentities []string
