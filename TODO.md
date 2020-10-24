@@ -4,14 +4,12 @@
 
 ### Now
 
-* Modify entities API paths to include `:account_id`
-* When `:account_id` present in path enforce path `:account_id` on all entity resources
-
-### Next
-
 * Attribute points
   * All `attribute_points` should be fully allocated across attributes on mage creation
   * Sum of attributes points should never exceed `attribute_points` when updating attributes
+
+### Next
+
 * Mage items
   * Default items when a mage is created
   * Enhance mage API to equipped items
