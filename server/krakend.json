@@ -53,7 +53,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "GET",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8084"
                     ],
@@ -75,7 +79,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "POST",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8084"
                     ],
@@ -97,7 +105,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "GET",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8084"
                     ],
@@ -119,7 +131,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "POST",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8084"
                     ],
@@ -141,7 +157,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "PUT",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8084"
                     ],
@@ -163,7 +183,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "DELETE",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8084"
                     ],
@@ -172,7 +196,7 @@
             ]
         },
         {
-            "endpoint": "/api/entities",
+            "endpoint": "/api/accounts/{account_id}/entities",
             "headers_to_pass": [
                 "Authorization"
             ],
@@ -181,11 +205,15 @@
             "extra_config": {},
             "backend": [
                 {
-                    "url_pattern": "/api/entities",
+                    "url_pattern": "/api/accounts/{account_id}/entities",
                     "encoding": "json",
                     "sd": "static",
                     "method": "GET",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8085"
                     ],
@@ -194,7 +222,7 @@
             ]
         },
         {
-            "endpoint": "/api/entities",
+            "endpoint": "/api/accounts/{account_id}/entities",
             "headers_to_pass": [
                 "Authorization"
             ],
@@ -203,11 +231,15 @@
             "extra_config": {},
             "backend": [
                 {
-                    "url_pattern": "/api/entities",
+                    "url_pattern": "/api/accounts/{account_id}/entities",
                     "encoding": "json",
                     "sd": "static",
                     "method": "POST",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8085"
                     ],
@@ -216,7 +248,7 @@
             ]
         },
         {
-            "endpoint": "/api/entities/{entity_id}",
+            "endpoint": "/api/accounts/{account_id}/entities/{entity_id}",
             "headers_to_pass": [
                 "Authorization"
             ],
@@ -225,11 +257,15 @@
             "extra_config": {},
             "backend": [
                 {
-                    "url_pattern": "/api/entities/{entity_id}",
+                    "url_pattern": "/api/accounts/{account_id}/entities/{entity_id}",
                     "encoding": "json",
                     "sd": "static",
                     "method": "GET",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8085"
                     ],
@@ -238,7 +274,7 @@
             ]
         },
         {
-            "endpoint": "/api/entities/{entity_id}",
+            "endpoint": "/api/accounts/{account_id}/entities/{entity_id}",
             "headers_to_pass": [
                 "Authorization"
             ],
@@ -247,11 +283,15 @@
             "extra_config": {},
             "backend": [
                 {
-                    "url_pattern": "/api/entities/{entity_id}",
+                    "url_pattern": "/api/accounts/{account_id}/entities/{entity_id}",
                     "encoding": "json",
                     "sd": "static",
                     "method": "POST",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8085"
                     ],
@@ -260,7 +300,7 @@
             ]
         },
         {
-            "endpoint": "/api/entities/{entity_id}",
+            "endpoint": "/api/accounts/{account_id}/entities/{entity_id}",
             "headers_to_pass": [
                 "Authorization"
             ],
@@ -269,11 +309,15 @@
             "extra_config": {},
             "backend": [
                 {
-                    "url_pattern": "/api/entities/{entity_id}",
+                    "url_pattern": "/api/accounts/{account_id}/entities/{entity_id}",
                     "encoding": "json",
                     "sd": "static",
                     "method": "PUT",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8085"
                     ],
@@ -282,7 +326,7 @@
             ]
         },
         {
-            "endpoint": "/api/entities/{entity_id}",
+            "endpoint": "/api/accounts/{account_id}/entities/{entity_id}",
             "headers_to_pass": [
                 "Authorization"
             ],
@@ -291,11 +335,15 @@
             "extra_config": {},
             "backend": [
                 {
-                    "url_pattern": "/api/entities/{entity_id}",
+                    "url_pattern": "/api/accounts/{account_id}/entities/{entity_id}",
                     "encoding": "json",
                     "sd": "static",
                     "method": "DELETE",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8085"
                     ],
@@ -317,7 +365,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "POST",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8087"
                     ],
@@ -344,7 +396,11 @@
                     "encoding": "json",
                     "sd": "static",
                     "method": "GET",
-                    "extra_config": {},
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
                     "host": [
                         "http://172.17.0.1:8087"
                     ],

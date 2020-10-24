@@ -204,7 +204,7 @@ class MageListModel extends ChangeNotifier {
 
   UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);
 
-  void addMage(MageModel mage) {
+  void addMage(String accountId, MageModel mage) {
     // Logger
     final log = Logger('MageModel - addMage');
 
@@ -213,7 +213,8 @@ class MageListModel extends ChangeNotifier {
       throw 'Mage name must be set before adding a mage';
     }
 
-    Future<List<dynamic>> magesFuture = this.api.postEntity(mage.toJson());
+    Future<List<dynamic>> magesFuture =
+        this.api.postEntity(accountId, mage.toJson());
     magesFuture.then((magesData) {
       log.info('Post returned ${magesData.length} length');
       for (Map<String, dynamic> mageData in magesData) {
@@ -226,9 +227,9 @@ class MageListModel extends ChangeNotifier {
     });
   }
 
-  void refreshEntities() {
+  void refreshEntities(String accountId) {
     // Call on API to fetch mages
-    Future<List<dynamic>> magesFuture = this.api.getEntities();
+    Future<List<dynamic>> magesFuture = this.api.getEntities(accountId);
     magesFuture.then((magesData) {
       for (Map<String, dynamic> mageData in magesData) {
         var mage = MageModel.fromJson(mageData);

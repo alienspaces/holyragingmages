@@ -1,1 +1,1 @@
-final environment = {"apiUrl":"http://10.1.1.22:8082"};
+final environment = {"apiHost": "http://10.0.3.2:8082"};

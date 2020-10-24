@@ -30,7 +30,7 @@ class MageListWidget extends StatelessWidget {
     // No mages yet
     if (mages.length == 0) {
       log.info("Fetching mages");
-      mageListModel.refreshEntities();
+      mageListModel.refreshEntities(accountModel.id);
       return Text("No mages yet");
     }
 

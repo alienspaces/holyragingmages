@@ -12,6 +12,9 @@ class MageCreateButtonWidget extends StatelessWidget {
 
     log.info("Building");
 
+    // Account model
+    var accountModel = Provider.of<AccountModel>(context);
+
     // Mage model
     var mageModel = Provider.of<MageModel>(context);
     var mageListModel = Provider.of<MageListModel>(context);
@@ -30,7 +33,7 @@ class MageCreateButtonWidget extends StatelessWidget {
     }
 
     void _addMage() {
-      mageListModel.addMage(mageModel);
+      mageListModel.addMage(accountModel.id, mageModel);
       Navigator.pop(context);
     }
 

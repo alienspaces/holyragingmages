@@ -5,7 +5,7 @@ import 'dart:io';
 // USAGE: dart tool/generate_env.dart
 Future<void> main() async {
   final config = {
-    'apiUrl': Platform.environment['APP_API_URL'],
+    'apiHost': Platform.environment['APP_API_HOST'],
   };
 
   final filename = 'lib/env.dart';

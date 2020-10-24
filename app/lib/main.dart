@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:holyragingmages/screens/screens.dart';
 import 'package:holyragingmages/models/models.dart';
 
-// Stub...
 void main() {
   // Logging
   Logger.root.level = Level.INFO;

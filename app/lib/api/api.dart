@@ -8,7 +8,7 @@ class Api {
   // HTTP package
   Dio dio;
   // API host
-  static String apiUrl = environment['apiUrl'];
+  static String apiHost = environment['apiHost'];
   // API token
   String _apiToken;
 
@@ -35,7 +35,7 @@ class Api {
   Api._internal() {
     // Dio http client
     BaseOptions options = new BaseOptions(
-      baseUrl: apiUrl,
+      baseUrl: apiHost,
       headers: {
         "content-type": "application/json; charset=utf-8",
       },
@@ -62,9 +62,9 @@ class Api {
   }
 
   // getEntities returns a list of entities
-  Future<List<dynamic>> getEntities() async {
+  Future<List<dynamic>> getEntities(String accountId) async {
     Response response = await this.dio.get(
-      "/api/entities",
+      "/api/accounts/" + accountId + "/entities",
       queryParameters: {},
     );
 
@@ -76,9 +76,10 @@ class Api {
   }
 
   // postEntity creates a new entity
-  Future<List<dynamic>> postEntity(Map<String, dynamic> data) async {
+  Future<List<dynamic>> postEntity(
+      String accountId, Map<String, dynamic> data) async {
     Response response = await this.dio.post(
-          "/api/entities",
+          "/api/accounts/" + accountId + "/entities",
           data: data,
         );
 
