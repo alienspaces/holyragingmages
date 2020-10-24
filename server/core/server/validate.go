@@ -14,6 +14,9 @@ import (
 // schemaCache - path, method, schema
 var schemaCache map[string]map[string]*gojsonschema.Schema
 
+// pathParamCache - path, method, []string
+var pathParamCache map[string]map[string]map[string]ValidatePathParam
+
 // queryParamCache - path, method, []string
 var queryParamCache map[string]map[string][]string
 
@@ -23,35 +26,41 @@ func (rnr *Runner) Validate(hc HandlerConfig, h HandlerFunc) (HandlerFunc, error
 	rnr.Log.Info("** Validate ** cache query param lists")
 
 	// cache query parameter lists
-	if queryParamCache == nil {
-		for _, hc := range rnr.HandlerConfig {
-			err := rnr.cacheQueryParamList(hc)
-			if err != nil {
-				rnr.Log.Warn("Failed caching query param list >%v<", err)
-				return nil, err
-			}
-		}
+	err := rnr.validateCacheQueryParams(hc)
+	if err != nil {
+		rnr.Log.Warn("Failed caching query param list >%v<", err)
+		return nil, err
 	}
 
 	rnr.Log.Info("** Validate ** cache schemas")
 
 	// load configured schemas
-	if schemaCache == nil {
-		for _, hc := range rnr.HandlerConfig {
-			err := rnr.validateCacheSchemas(hc)
-			if err != nil {
-				rnr.Log.Warn("Failed loading schemas >%v<", err)
-				return nil, err
-			}
-		}
+	err = rnr.validateCacheSchemas(hc)
+	if err != nil {
+		rnr.Log.Warn("Failed loading schemas >%v<", err)
+		return nil, err
+	}
+
+	// cache path parameter validations
+	err = rnr.validateCachePathParams(hc)
+	if err != nil {
+		rnr.Log.Warn("Failed caching path param list >%v<", err)
+		return nil, err
 	}
 
 	handle := func(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
 		l.Debug("** Validate ** request URI >%s< method >%s<", r.RequestURI, r.Method)
 
+		// validate path parameters
+		err := rnr.validatePathParameters(l, hc.Path, r, pp)
+		if err != nil {
+			rnr.WriteResponse(l, w, rnr.ValidationError(err))
+			return
+		}
+
 		// validate query parameters
-		qp, err := rnr.validateQueryParameters(l, hc.Path, r)
+		qp, err = rnr.validateQueryParameters(l, hc.Path, r)
 		if err != nil {
 			rnr.WriteResponse(l, w, rnr.ValidationError(err))
 			return
@@ -127,21 +136,64 @@ func (rnr *Runner) Validate(hc HandlerConfig, h HandlerFunc) (HandlerFunc, error
 	return handle, nil
 }
 
-// validateQueryParameters - validate any provided parameters
+// validatePathParameters - validate path parameters
+func (rnr *Runner) validatePathParameters(l logger.Logger, path string, r *http.Request, pp httprouter.Params) error {
+
+	if len(pathParamCache) == 0 {
+		l.Debug("Handler method >%s< path >%s< not configured with path param validations", r.Method, path)
+		return nil
+	}
+
+	// Request context may be used to validate path parameter values
+	ctx := r.Context()
+
+	// Cached path parameter validation configuration
+	params := pathParamCache[path][r.Method]
+
+VALIDATE_PARAMS:
+	for pathParamName, pathParamConfig := range params {
+		// Provided path parameters
+		for _, pathParam := range pp {
+			if pathParam.Key == pathParamName {
+				if pathParamConfig.MatchIdentity {
+					identityValue, err := rnr.getContextIdentityValue(ctx, pathParam.Key)
+					if err != nil {
+						l.Warn("Failed getting context identity value >%s< >%v<", pathParam.Key, err)
+						return err
+					}
+					if identityValue != pathParam.Value {
+						msg := fmt.Sprintf("Mismatched path param value >%v< versus identity value >%v<", pathParam.Value, identityValue)
+						l.Warn(msg)
+						return fmt.Errorf(msg)
+					}
+					l.Info("Matched path param config name >%s< value >%v< with identity value >%v<", pathParamName, pathParam.Value, identityValue)
+					continue VALIDATE_PARAMS
+				}
+			}
+		}
+		msg := fmt.Sprintf("Path param name >%s< not found in params", pathParamName)
+		l.Warn(msg)
+		return fmt.Errorf(msg)
+	}
+
+	return nil
+}
+
+// validateQueryParameters - validate query parameters
 func (rnr *Runner) validateQueryParameters(l logger.Logger, path string, r *http.Request) (map[string]interface{}, error) {
 
 	if len(queryParamCache) == 0 {
-		l.Debug("Handler method >%s< path >%s< not configured with params list", r.Method, path)
+		l.Debug("Handler method >%s< path >%s< not configured with query params list", r.Method, path)
 		return nil, nil
 	}
 
-	// query parameters
+	// Query parameters
 	q := r.URL.Query()
 
-	// valid query parameters
+	// Valid query parameters
 	qp := map[string]interface{}{}
 
-	// allowed parameters
+	// Cached allowed query parameter names
 	params := queryParamCache[path][r.Method]
 
 	for paramName, paramValue := range q {
@@ -166,15 +218,36 @@ func (rnr *Runner) validateQueryParameters(l logger.Logger, path string, r *http
 	return qp, nil
 }
 
-// cacheQueryParamList -
-func (rnr *Runner) cacheQueryParamList(hc HandlerConfig) error {
+// validateCachePathParams -
+func (rnr *Runner) validateCachePathParams(hc HandlerConfig) error {
 
-	if len(hc.MiddlewareConfig.ValidateQueryParams) == 0 {
-		rnr.Log.Info("Handler method >%s< path >%s< not configured with params list", hc.Method, hc.Path)
+	if len(hc.MiddlewareConfig.ValidatePathParams) == 0 {
+		rnr.Log.Info("Handler method >%s< path >%s< not configured with path params list", hc.Method, hc.Path)
 		return nil
 	}
 
-	rnr.Log.Info("Handler method >%s< path >%s< has params list >%#v<", hc.Method, hc.Path, hc.MiddlewareConfig.ValidateQueryParams)
+	rnr.Log.Info("Handler method >%s< path >%s< has path param validations >%#v<", hc.Method, hc.Path, hc.MiddlewareConfig.ValidatePathParams)
+
+	if pathParamCache == nil {
+		pathParamCache = map[string]map[string]map[string]ValidatePathParam{}
+	}
+	if pathParamCache[hc.Path] == nil {
+		pathParamCache[hc.Path] = make(map[string]map[string]ValidatePathParam)
+	}
+	pathParamCache[hc.Path][hc.Method] = hc.MiddlewareConfig.ValidatePathParams
+
+	return nil
+}
+
+// validateCacheQueryParams -
+func (rnr *Runner) validateCacheQueryParams(hc HandlerConfig) error {
+
+	if len(hc.MiddlewareConfig.ValidateQueryParams) == 0 {
+		rnr.Log.Info("Handler method >%s< path >%s< not configured with query params list", hc.Method, hc.Path)
+		return nil
+	}
+
+	rnr.Log.Info("Handler method >%s< path >%s< has query params list >%#v<", hc.Method, hc.Path, hc.MiddlewareConfig.ValidateQueryParams)
 
 	if queryParamCache == nil {
 		queryParamCache = map[string]map[string][]string{}

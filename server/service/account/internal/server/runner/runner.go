@@ -53,6 +53,9 @@ func NewRunner() *Runner {
 				Description: "Authenticate OAuth provider token.",
 			},
 		},
+
+		// TODO: Provide different default and administrator account handlers constraining record access as appropriate
+
 		// 1 - Accounts - Get many
 		{
 			Method:      http.MethodGet,
@@ -63,7 +66,7 @@ func NewRunner() *Runner {
 					auth.AuthTypeJWT,
 				},
 				AuthRequireAllIdentities: []string{
-					constant.AuthIdentityAccount,
+					constant.AuthIdentityAccountID,
 				},
 				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
@@ -85,7 +88,7 @@ func NewRunner() *Runner {
 					auth.AuthTypeJWT,
 				},
 				AuthRequireAllIdentities: []string{
-					constant.AuthIdentityAccount,
+					constant.AuthIdentityAccountID,
 				},
 				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
@@ -107,7 +110,7 @@ func NewRunner() *Runner {
 					auth.AuthTypeJWT,
 				},
 				AuthRequireAllIdentities: []string{
-					constant.AuthIdentityAccount,
+					constant.AuthIdentityAccountID,
 				},
 				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
@@ -134,7 +137,7 @@ func NewRunner() *Runner {
 					auth.AuthTypeJWT,
 				},
 				AuthRequireAllIdentities: []string{
-					constant.AuthIdentityAccount,
+					constant.AuthIdentityAccountID,
 				},
 				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,
@@ -161,7 +164,7 @@ func NewRunner() *Runner {
 					auth.AuthTypeJWT,
 				},
 				AuthRequireAllIdentities: []string{
-					constant.AuthIdentityAccount,
+					constant.AuthIdentityAccountID,
 				},
 				AuthRequireAnyRole: []string{
 					constant.AuthRoleDefault,

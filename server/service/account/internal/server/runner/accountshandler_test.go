@@ -51,7 +51,7 @@ func TestAccountHandler(t *testing.T) {
 				constant.AuthRoleDefault,
 			},
 			Identity: map[string]interface{}{
-				constant.AuthIdentityAccount: gofakeit.UUID(),
+				constant.AuthIdentityAccountID: gofakeit.UUID(),
 			},
 		})
 		return token

@@ -12,5 +12,5 @@ const (
 
 // AuthIdentity -
 const (
-	AuthIdentityAccount string = "account"
+	AuthIdentityAccountID string = "account_id"
 )

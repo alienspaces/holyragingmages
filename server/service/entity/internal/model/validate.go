@@ -16,6 +16,9 @@ func (m *Model) ValidateEntityRec(rec *record.Entity) error {
 	}
 
 	// required fields
+	if rec.AccountID == "" {
+		return fmt.Errorf("AccountID is required")
+	}
 	if rec.Name == "" {
 		return fmt.Errorf("Name is required")
 	}

@@ -1,3 +1,4 @@
+
 -- Entity
 CREATE TABLE "entity" (
   "id" UUID CONSTRAINT entity_pk PRIMARY KEY DEFAULT gen_random_uuid(),

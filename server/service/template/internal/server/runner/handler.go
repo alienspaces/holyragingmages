@@ -20,9 +20,10 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 	var recs []*record.Template
 	var err error
 
+	// Path parameters
 	id := pp.ByName("template_id")
 
-	// single resource
+	// Single resource
 	if id != "" {
 
 		l.Info("Getting template record ID >%s<", id)
@@ -33,7 +34,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 			return
 		}
 
-		// resource not found
+		// Resource not found
 		if rec == nil {
 			rnr.WriteNotFoundError(l, w, id)
 			return
@@ -47,6 +48,7 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 		params := make(map[string]interface{})
 		for paramName, paramValue := range qp {
+			l.Info("Querying template records with param name >%s< value >%v<", paramName, paramValue)
 			params[paramName] = paramValue
 		}
 
@@ -57,11 +59,11 @@ func (rnr *Runner) GetTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		}
 	}
 
-	// assign response properties
+	// Assign response properties
 	data := []schema.TemplateData{}
 	for _, rec := range recs {
 
-		// response data
+		// Response data
 		responseData, err := rnr.RecordToTemplateResponseData(rec)
 		if err != nil {
 			rnr.WriteSystemError(l, w, err)
@@ -87,7 +89,7 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 
 	l.Info("** Post templates handler ** p >%#v< m >#%v<", pp, m)
 
-	// parameters
+	// Path parameters
 	id := pp.ByName("template_id")
 
 	req := schema.TemplateRequest{}
@@ -100,10 +102,10 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 
 	rec := record.Template{}
 
-	// assign request properties
+	// Assign request properties
 	rec.ID = id
 
-	// record data
+	// Record data
 	err = rnr.TemplateRequestDataToRecord(req.Data, &rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
@@ -116,14 +118,14 @@ func (rnr *Runner) PostTemplatesHandler(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	// response data
+	// Response data
 	responseData, err := rnr.RecordToTemplateResponseData(&rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
-	// assign response properties
+	// Assign response properties
 	res := schema.TemplateResponse{
 		Data: []schema.TemplateData{
 			responseData,
@@ -142,7 +144,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 
 	l.Info("** Put templates handler ** p >%#v< m >#%v<", pp, m)
 
-	// parameters
+	// Path parameters
 	id := pp.ByName("template_id")
 
 	l.Info("Updating resource ID >%s<", id)
@@ -153,7 +155,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		return
 	}
 
-	// resource not found
+	// Resource not found
 	if rec == nil {
 		rnr.WriteNotFoundError(l, w, id)
 		return
@@ -167,7 +169,7 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		return
 	}
 
-	// record data
+	// Record data
 	err = rnr.TemplateRequestDataToRecord(req.Data, rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
@@ -180,14 +182,14 @@ func (rnr *Runner) PutTemplatesHandler(w http.ResponseWriter, r *http.Request, p
 		return
 	}
 
-	// response data
+	// Response data
 	responseData, err := rnr.RecordToTemplateResponseData(rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
-	// assign response properties
+	// Assign response properties
 	res := schema.TemplateResponse{
 		Data: []schema.TemplateData{
 			responseData,

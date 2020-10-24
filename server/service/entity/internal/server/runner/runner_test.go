@@ -9,13 +9,19 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/record"
 )
 
+const (
+	testAccountID string = "5de1cd8d-e136-47b9-82cd-b42b2a0e13eb"
+)
+
 func NewTestHarness() (*harness.Testing, error) {
 
 	// harness
 	config := harness.DataConfig{
 		EntityConfig: []harness.EntityConfig{
 			{
-				Record: record.Entity{},
+				Record: record.Entity{
+					AccountID: testAccountID,
+				},
 			},
 		},
 	}

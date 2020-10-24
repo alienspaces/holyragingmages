@@ -75,6 +75,8 @@ type Runner struct {
 //
 // ValidateSchemaReferences - A list of additional JSON schema reference documents to load for this endpoint.
 //
+// ValidatePathParams - Rules for validating path parameters
+//
 // ValidateQueryParams - A whitelist of allowed query parameters.
 //
 type MiddlewareConfig struct {
@@ -95,6 +97,9 @@ type MiddlewareConfig struct {
 	ValidateSchemaMain       string
 	ValidateSchemaReferences []string
 
+	// ValidatePathParams - Rules for validating path parameters
+	ValidatePathParams map[string]ValidatePathParam
+
 	// ValidateQueryParams - A whitelist of allowed query parameters
 	ValidateQueryParams []string
 }
@@ -111,6 +116,11 @@ type HandlerConfig struct {
 	MiddlewareConfig MiddlewareConfig
 	// DocumentationConfig -
 	DocumentationConfig DocumentationConfig
+}
+
+// ValidatePathParam - Rules for validating a path parameter
+type ValidatePathParam struct {
+	MatchIdentity bool
 }
 
 // DocumentationConfig - Configuration describing how to document a route

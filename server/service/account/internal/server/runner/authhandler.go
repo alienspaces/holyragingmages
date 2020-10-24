@@ -50,7 +50,7 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 	}
 
 	identity := map[string]interface{}{
-		constant.AuthIdentityAccount: accountRec.ID,
+		constant.AuthIdentityAccountID: accountRec.ID,
 	}
 
 	claims := auth.Claims{

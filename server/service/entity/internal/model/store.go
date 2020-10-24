@@ -10,7 +10,7 @@ import (
 // GetEntityRecs -
 func (m *Model) GetEntityRecs(params map[string]interface{}, operators map[string]string, forUpdate bool) ([]*record.Entity, error) {
 
-	m.Log.Info("Getting mage records params >%s<", params)
+	m.Log.Info("Getting entity records params >%s<", params)
 
 	r := m.EntityRepository()
 
@@ -20,7 +20,7 @@ func (m *Model) GetEntityRecs(params map[string]interface{}, operators map[strin
 // GetEntityRec -
 func (m *Model) GetEntityRec(recID string, forUpdate bool) (*record.Entity, error) {
 
-	m.Log.Info("Getting mage rec ID >%s<", recID)
+	m.Log.Info("Getting entity rec ID >%s<", recID)
 
 	r := m.EntityRepository()
 
@@ -41,7 +41,7 @@ func (m *Model) GetEntityRec(recID string, forUpdate bool) (*record.Entity, erro
 // CreateEntityRec -
 func (m *Model) CreateEntityRec(rec *record.Entity) error {
 
-	m.Log.Info("Creating mage rec >%v<", rec)
+	m.Log.Info("Creating entity rec >%#v<", rec)
 
 	r := m.EntityRepository()
 
@@ -60,7 +60,7 @@ func (m *Model) CreateEntityRec(rec *record.Entity) error {
 // UpdateEntityRec -
 func (m *Model) UpdateEntityRec(rec *record.Entity) error {
 
-	m.Log.Info("Updating mage rec >%v<", rec)
+	m.Log.Info("Updating entity rec >%#v<", rec)
 
 	r := m.EntityRepository()
 
@@ -76,7 +76,7 @@ func (m *Model) UpdateEntityRec(rec *record.Entity) error {
 // DeleteEntityRec -
 func (m *Model) DeleteEntityRec(recID string) error {
 
-	m.Log.Info("Deleting mage rec ID >%s<", recID)
+	m.Log.Info("Deleting entity rec ID >%s<", recID)
 
 	r := m.EntityRepository()
 
@@ -97,7 +97,7 @@ func (m *Model) DeleteEntityRec(recID string) error {
 // RemoveEntityRec -
 func (m *Model) RemoveEntityRec(recID string) error {
 
-	m.Log.Info("Removing mage rec ID >%s<", recID)
+	m.Log.Info("Removing entity rec ID >%s<", recID)
 
 	r := m.EntityRepository()
 

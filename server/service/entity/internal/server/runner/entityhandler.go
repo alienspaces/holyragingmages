@@ -12,7 +12,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/record"
 )
 
-// GetEntitiesHandler -
+// GetEntitiesHandler - Admininstrator role only, account ID not required
 func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
 	l.Info("** Get entities handler ** p >%#v< m >%#v<", pp, m)
@@ -83,13 +83,96 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 	}
 }
 
-// PostEntitiesHandler -
-func (rnr *Runner) PostEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
+// GetAccountEntitiesHandler - Default or Administrator role, accountID required, account ID in path must match identity
+func (rnr *Runner) GetAccountEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
+
+	l.Info("** Get entities handler ** p >%#v< m >%#v<", pp, m)
+
+	var recs []*record.Entity
+	var err error
+
+	accountID := pp.ByName("account_id")
+	entityID := pp.ByName("entity_id")
+
+	// single resource
+	if accountID != "" && entityID != "" {
+
+		l.Info("Getting account ID >%s< entity ID >%s< record ", accountID, entityID)
+
+		rec, err := m.(*model.Model).GetEntityRec(entityID, false)
+		if err != nil {
+			rnr.WriteModelError(l, w, err)
+			return
+		}
+
+		// resource not found
+		if rec == nil {
+			l.Warn("Record entity ID >%s< not found", entityID)
+			rnr.WriteNotFoundError(l, w, entityID)
+			return
+		}
+
+		l.Info("Checking account ID >%s< of entity ID >%s< record ", accountID, entityID)
+		if rec.AccountID != accountID {
+			l.Warn("Record entity ID >%s< with account ID >%s< does not match requested account ID >%s<", entityID, rec.AccountID, accountID)
+			rnr.WriteNotFoundError(l, w, entityID)
+			return
+		}
+
+		// entity belongs to account
+		recs = append(recs, rec)
+
+	} else {
+
+		l.Info("Querying entity records")
+
+		// query parameters
+		params := make(map[string]interface{})
+		for paramName, paramValue := range qp {
+			params[paramName] = paramValue
+			l.Info("Querying entity records with param name >%s< value >%v<", paramName, paramValue)
+		}
+
+		recs, err = m.(*model.Model).GetEntityRecs(params, nil, false)
+		if err != nil {
+			rnr.WriteModelError(l, w, err)
+			return
+		}
+	}
+
+	// assign response properties
+	data := []schema.EntityData{}
+	for _, rec := range recs {
+
+		// response data
+		responseData, err := rnr.RecordToEntityResponseData(rec)
+		if err != nil {
+			rnr.WriteSystemError(l, w, err)
+			return
+		}
+
+		data = append(data, responseData)
+	}
+
+	res := schema.EntityResponse{
+		Data: data,
+	}
+
+	err = rnr.WriteResponse(l, w, res)
+	if err != nil {
+		l.Warn("Failed writing response >%v<", err)
+		return
+	}
+}
+
+// PostAccountEntitiesHandler -
+func (rnr *Runner) PostAccountEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
 	l.Info("** Post entities handler ** p >%#v< m >#%v<", pp, m)
 
-	// parameters
-	id := pp.ByName("entity_id")
+	// Path parameters
+	entityID := pp.ByName("entity_id")
+	accountID := pp.ByName("account_id")
 
 	req := schema.EntityRequest{}
 
@@ -101,10 +184,11 @@ func (rnr *Runner) PostEntitiesHandler(w http.ResponseWriter, r *http.Request, p
 
 	rec := record.Entity{}
 
-	// assign request properties
-	rec.ID = id
+	// Assign request properties
+	rec.ID = entityID
+	rec.AccountID = accountID
 
-	// record data
+	// Record data
 	err = rnr.EntityRequestDataToRecord(req.Data, &rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
@@ -117,14 +201,14 @@ func (rnr *Runner) PostEntitiesHandler(w http.ResponseWriter, r *http.Request, p
 		return
 	}
 
-	// response data
+	// Response data
 	responseData, err := rnr.RecordToEntityResponseData(&rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
-	// assign response properties
+	// Assign response properties
 	res := schema.EntityResponse{
 		Data: []schema.EntityData{
 			responseData,
@@ -138,24 +222,34 @@ func (rnr *Runner) PostEntitiesHandler(w http.ResponseWriter, r *http.Request, p
 	}
 }
 
-// PutEntitiesHandler -
-func (rnr *Runner) PutEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
+// PutAccountEntitiesHandler -
+func (rnr *Runner) PutAccountEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
 	l.Info("** Put entities handler ** p >%#v< m >#%v<", pp, m)
 
-	id := pp.ByName("entity_id")
+	entityID := pp.ByName("entity_id")
+	accountID := pp.ByName("account_id")
 
-	l.Info("Updating resource ID >%s<", id)
+	l.Info("Updating resource ID >%s<", entityID)
 
-	rec, err := m.(*model.Model).GetEntityRec(id, false)
+	rec, err := m.(*model.Model).GetEntityRec(entityID, false)
 	if err != nil {
 		rnr.WriteModelError(l, w, err)
 		return
 	}
 
-	// resource not found
+	// Resource not found
 	if rec == nil {
-		rnr.WriteNotFoundError(l, w, id)
+		rnr.WriteNotFoundError(l, w, entityID)
+		return
+	}
+
+	// Record account ID must match path paramter
+	l.Info("Checking account ID >%s< of entity ID >%s< record ", accountID, entityID)
+
+	if rec.AccountID != accountID {
+		l.Warn("Record entity ID >%s< with account ID >%s< does not match requested account ID >%s<", entityID, rec.AccountID, accountID)
+		rnr.WriteNotFoundError(l, w, entityID)
 		return
 	}
 
@@ -167,7 +261,7 @@ func (rnr *Runner) PutEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 		return
 	}
 
-	// record data
+	// Record data
 	err = rnr.EntityRequestDataToRecord(req.Data, rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
@@ -180,14 +274,14 @@ func (rnr *Runner) PutEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 		return
 	}
 
-	// response data
+	// Response data
 	responseData, err := rnr.RecordToEntityResponseData(rec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
-	// assign response properties
+	// Assign response properties
 	res := schema.EntityResponse{
 		Data: []schema.EntityData{
 			responseData,
@@ -204,7 +298,8 @@ func (rnr *Runner) PutEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 // EntityRequestDataToRecord -
 func (rnr *Runner) EntityRequestDataToRecord(data schema.EntityData, rec *record.Entity) error {
 
-	rec.AccountID = data.AccountID
+	// NOTE: AccountID is sourced from path parameters
+
 	rec.Name = data.Name
 	rec.Strength = data.Strength
 	rec.Dexterity = data.Dexterity

@@ -3,6 +3,8 @@ package runner
 import (
 	"net/http"
 
+	"gitlab.com/alienspaces/holyragingmages/server/constant"
+
 	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
@@ -30,7 +32,7 @@ func NewRunner() *Runner {
 	r.ModellerFunc = r.Modeller
 
 	r.HandlerConfig = []server.HandlerConfig{
-		// Administrator Role - AccountID not required
+		// 0 - Get any, Administrator role, account ID not required
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/entities",
@@ -39,12 +41,16 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
+				AuthRequireAllRoles: []string{
+					constant.AuthRoleAdministrator,
+				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Query entities.",
 			},
 		},
+		// 1 - Get with entity ID, Administrator role, account ID not required
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/entities/:entity_id",
@@ -53,20 +59,89 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
+				AuthRequireAllRoles: []string{
+					constant.AuthRoleAdministrator,
+				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,
 				Description: "Get an entity.",
 			},
 		},
-		// Default Role - AccountID required
+		// 2 - Get any, Default or Administrator role, accountID required, account ID in path must match identity
+		{
+			Method:      http.MethodGet,
+			Path:        "/api/accounts/:account_id/entities",
+			HandlerFunc: r.GetAccountEntitiesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+				AuthRequireAnyRole: []string{
+					constant.AuthRoleAdministrator,
+					constant.AuthRoleDefault,
+				},
+				AuthRequireAllIdentities: []string{
+					constant.AuthIdentityAccountID,
+				},
+				ValidatePathParams: map[string]server.ValidatePathParam{
+					"account_id": server.ValidatePathParam{
+						MatchIdentity: true,
+					},
+				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Query entities.",
+			},
+		},
+		// 3 - Get with entity ID, Default or Administrator role, accountID required, account ID in path must match identity
+		{
+			Method:      http.MethodGet,
+			Path:        "/api/accounts/:account_id/entities/:entity_id",
+			HandlerFunc: r.GetAccountEntitiesHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				AuthTypes: []string{
+					auth.AuthTypeJWT,
+				},
+				AuthRequireAnyRole: []string{
+					constant.AuthRoleAdministrator,
+					constant.AuthRoleDefault,
+				},
+				AuthRequireAllIdentities: []string{
+					constant.AuthIdentityAccountID,
+				},
+				ValidatePathParams: map[string]server.ValidatePathParam{
+					"account_id": server.ValidatePathParam{
+						MatchIdentity: true,
+					},
+				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Get an entity.",
+			},
+		},
+		// 4 - Post without entity ID, Default or Administrator role, accountID required, account ID in path must match identity
 		{
 			Method:      http.MethodPost,
 			Path:        "/api/accounts/:account_id/entities",
-			HandlerFunc: r.PostEntitiesHandler,
+			HandlerFunc: r.PostAccountEntitiesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
+				},
+				AuthRequireAnyRole: []string{
+					constant.AuthRoleAdministrator,
+					constant.AuthRoleDefault,
+				},
+				AuthRequireAllIdentities: []string{
+					constant.AuthIdentityAccountID,
+				},
+				ValidatePathParams: map[string]server.ValidatePathParam{
+					"account_id": server.ValidatePathParam{
+						MatchIdentity: true,
+					},
 				},
 				ValidateSchemaLocation: "entity",
 				ValidateSchemaMain:     "main.schema.json",
@@ -79,13 +154,26 @@ func NewRunner() *Runner {
 				Description: "Create an entity.",
 			},
 		},
+		// 5 - Post with entity ID, Default or Administrator role, accountID required, account ID in path must match identity
 		{
 			Method:      http.MethodPost,
-			Path:        "/api/entities/:entity_id",
-			HandlerFunc: r.PostEntitiesHandler,
+			Path:        "/api/accounts/:account_id/entities/:entity_id",
+			HandlerFunc: r.PostAccountEntitiesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
+				},
+				AuthRequireAnyRole: []string{
+					constant.AuthRoleAdministrator,
+					constant.AuthRoleDefault,
+				},
+				AuthRequireAllIdentities: []string{
+					constant.AuthIdentityAccountID,
+				},
+				ValidatePathParams: map[string]server.ValidatePathParam{
+					"account_id": server.ValidatePathParam{
+						MatchIdentity: true,
+					},
 				},
 				ValidateSchemaLocation: "entity",
 				ValidateSchemaMain:     "main.schema.json",
@@ -98,13 +186,26 @@ func NewRunner() *Runner {
 				Description: "Create an entity.",
 			},
 		},
+		// 6 - Put with entity ID, Default or Administrator role, accountID required, account ID in path must match identity
 		{
 			Method:      http.MethodPut,
-			Path:        "/api/entities/:entity_id",
-			HandlerFunc: r.PutEntitiesHandler,
+			Path:        "/api/accounts/:account_id/entities/:entity_id",
+			HandlerFunc: r.PutAccountEntitiesHandler,
 			MiddlewareConfig: server.MiddlewareConfig{
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
+				},
+				AuthRequireAnyRole: []string{
+					constant.AuthRoleAdministrator,
+					constant.AuthRoleDefault,
+				},
+				AuthRequireAllIdentities: []string{
+					constant.AuthIdentityAccountID,
+				},
+				ValidatePathParams: map[string]server.ValidatePathParam{
+					"account_id": server.ValidatePathParam{
+						MatchIdentity: true,
+					},
 				},
 				ValidateSchemaLocation: "entity",
 				ValidateSchemaMain:     "main.schema.json",
@@ -117,6 +218,7 @@ func NewRunner() *Runner {
 				Description: "Update a entity.",
 			},
 		},
+		// 6 - Documentation
 		{
 			Method:      http.MethodGet,
 			Path:        "/api",

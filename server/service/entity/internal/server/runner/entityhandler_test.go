@@ -13,6 +13,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
+	"gitlab.com/alienspaces/holyragingmages/server/constant"
 	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
 	"gitlab.com/alienspaces/holyragingmages/server/schema"
@@ -41,24 +42,28 @@ func TestEntityHandler(t *testing.T) {
 	}
 
 	// validAuthToken - Generate a valid authentication token for this handler
-	validAuthToken := func() string {
+	validAuthToken := func(roles []string, identity map[string]interface{}) string {
 		authen, _ := auth.NewAuth(c, l)
 		token, _ := authen.EncodeJWT(&auth.Claims{
-			Roles:    []string{},
-			Identity: map[string]interface{}{},
+			Roles:    roles,
+			Identity: identity,
 		})
 		return token
 	}
 
 	tests := []TestCase{
 		{
-			name: "GET - Get existing resource",
+			name: "GET - Get existing resource, admin role, no identity",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
+				roles := []string{
+					constant.AuthRoleAdministrator,
+				}
+				identity := map[string]interface{}{}
 				headers := map[string]string{
-					"Authorization": "Bearer " + validAuthToken(),
+					"Authorization": "Bearer " + validAuthToken(roles, identity),
 				}
 				return headers
 			},
@@ -92,13 +97,17 @@ func TestEntityHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "GET - Get missing resource",
+			name: "GET - Get missing resource, admin role, no identity",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[1]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
+				roles := []string{
+					constant.AuthRoleAdministrator,
+				}
+				identity := map[string]interface{}{}
 				headers := map[string]string{
-					"Authorization": "Bearer " + validAuthToken(),
+					"Authorization": "Bearer " + validAuthToken(roles, identity),
 				}
 				return headers
 			},
@@ -117,21 +126,32 @@ func TestEntityHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "POST - Create without ID",
+			name: "POST - Create without entity ID, default role, account identity matches",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[2]
+				return rnr.HandlerConfig[4]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
+				roles := []string{
+					constant.AuthRoleDefault,
+				}
+				identity := map[string]interface{}{
+					"account_id": data.EntityRecs[0].AccountID,
+				}
 				headers := map[string]string{
-					"Authorization": "Bearer " + validAuthToken(),
+					"Authorization": "Bearer " + validAuthToken(roles, identity),
 				}
 				return headers
+			},
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":account_id": data.EntityRecs[0].AccountID,
+				}
+				return params
 			},
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
-						AccountID: "5de1cd8d-e136-47b9-82cd-b42b2a0e13eb",
-						Name:      "Veronica The Incredible",
+						Name: "Veronica The Incredible",
 					},
 				}
 				return &req
@@ -139,27 +159,33 @@ func TestEntityHandler(t *testing.T) {
 			responseCode: http.StatusOK,
 		},
 		{
-			name: "POST - Create with ID",
+			name: "POST - Create with ID, default role, account identity matches",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[3]
+				return rnr.HandlerConfig[5]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
+				roles := []string{
+					constant.AuthRoleDefault,
+				}
+				identity := map[string]interface{}{
+					"account_id": data.EntityRecs[0].AccountID,
+				}
 				headers := map[string]string{
-					"Authorization": "Bearer " + validAuthToken(),
+					"Authorization": "Bearer " + validAuthToken(roles, identity),
 				}
 				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":entity_id": "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+					":account_id": data.EntityRecs[0].AccountID,
+					":entity_id":  "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
 				}
 				return params
 			},
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
-						AccountID: "5de1cd8d-e136-47b9-82cd-b42b2a0e13eb",
-						Name:      "Audrey The Amazing",
+						Name: "Audrey The Amazing",
 					},
 				}
 				return &req
@@ -170,7 +196,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:              "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
-							AccountID:       "5de1cd8d-e136-47b9-82cd-b42b2a0e13eb",
+							AccountID:       data.EntityRecs[0].AccountID,
 							Name:            "Audrey The Amazing",
 							AttributePoints: 32,
 						},
@@ -180,19 +206,26 @@ func TestEntityHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "PUT - Update basic resource",
+			name: "PUT - Update with ID, default role, account identity matches",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[4]
+				return rnr.HandlerConfig[6]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
+				roles := []string{
+					constant.AuthRoleDefault,
+				}
+				identity := map[string]interface{}{
+					"account_id": data.EntityRecs[0].AccountID,
+				}
 				headers := map[string]string{
-					"Authorization": "Bearer " + validAuthToken(),
+					"Authorization": "Bearer " + validAuthToken(roles, identity),
 				}
 				return headers
 			},
 			requestParams: func(data *harness.Data) map[string]string {
 				params := map[string]string{
-					":entity_id": data.EntityRecs[0].ID,
+					":account_id": data.EntityRecs[0].AccountID,
+					":entity_id":  data.EntityRecs[0].ID,
 				}
 				return params
 			},
@@ -233,15 +266,28 @@ func TestEntityHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "PUT - Missing data",
+			name: "PUT - Update with ID, default role, account identity matches, missing data",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[4]
+				return rnr.HandlerConfig[6]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
+				roles := []string{
+					constant.AuthRoleDefault,
+				}
+				identity := map[string]interface{}{
+					"account_id": data.EntityRecs[0].AccountID,
+				}
 				headers := map[string]string{
-					"Authorization": "Bearer " + validAuthToken(),
+					"Authorization": "Bearer " + validAuthToken(roles, identity),
 				}
 				return headers
+			},
+			requestParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					":account_id": data.EntityRecs[0].AccountID,
+					":entity_id":  data.EntityRecs[0].ID,
+				}
+				return params
 			},
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				return nil
@@ -320,8 +366,9 @@ func TestEntityHandler(t *testing.T) {
 					t.Logf("Adding parameter key >%s< param >%s<", paramKey, paramValue)
 					requestPath = fmt.Sprintf("%s%s=%s", requestPath, paramKey, url.QueryEscape(paramValue))
 				}
-				t.Logf("Resulting requestPath >%s<", requestPath)
 			}
+
+			t.Logf("Resulting requestPath >%s<", requestPath)
 
 			// request data
 			reqData := tc.requestData(th.Data)
