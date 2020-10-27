@@ -1,15 +1,12 @@
-import 'dart:collection';
 import 'package:logging/logging.dart';
 import 'package:flutter/foundation.dart';
-
-import '../api/api.dart';
 
 // Constants
 const int initialAttributeValue = 10;
 const int initialAttributePoints = 40;
 
-/// MageModel encapsulates a mages data and methods
-class MageModel extends ChangeNotifier {
+/// Mage encapsulates a mages data and methods
+class Mage extends ChangeNotifier {
   // Properties
   String id;
   String _name;
@@ -20,15 +17,15 @@ class MageModel extends ChangeNotifier {
   int experiencePoints;
   int coins;
 
-  MageModel() {
+  Mage() {
     this.initModel();
   }
 
-  factory MageModel.fromJson(Map<String, dynamic> json) {
+  factory Mage.fromJson(Map<String, dynamic> json) {
     // Logger
-    final log = Logger('MageModel - fromJson');
+    final log = Logger('Mage - fromJson');
 
-    var mage = new MageModel();
+    var mage = new Mage();
 
     log.info('Creating mage from $json');
 
@@ -52,7 +49,7 @@ class MageModel extends ChangeNotifier {
 
   Map<String, dynamic> toJson() {
     // Logger
-    final log = Logger('MageModel - toJson');
+    final log = Logger('Mage - toJson');
 
     Map<String, dynamic> json = {};
 
@@ -86,7 +83,7 @@ class MageModel extends ChangeNotifier {
 
   set strength(int value) {
     // Logger
-    final log = Logger('MageModel - strength');
+    final log = Logger('Mage - strength');
 
     if (this._attributePoints == null) {
       throw 'Mage points must be set before adjusting attributes';
@@ -118,7 +115,7 @@ class MageModel extends ChangeNotifier {
 
   set dexterity(int value) {
     // Logger
-    final log = Logger('MageModel - dexterity');
+    final log = Logger('Mage - dexterity');
 
     if (this._attributePoints == null) {
       throw 'Mage points must be set before adjusting attributes';
@@ -148,7 +145,7 @@ class MageModel extends ChangeNotifier {
 
   set intelligence(int value) {
     // Logger
-    final log = Logger('MageModel - intelligence');
+    final log = Logger('Mage - intelligence');
 
     if (this._attributePoints == null) {
       throw 'Mage points must be set before adjusting attributes';
@@ -192,57 +189,5 @@ class MageModel extends ChangeNotifier {
       this.experiencePoints = 0;
       this.coins = 0;
     }
-  }
-}
-
-// MageListModel contains a collection of MagesModels and provides access
-// to server API's for managing mages
-class MageListModel extends ChangeNotifier {
-  final List<MageModel> _mages = [];
-  // api
-  final Api api = new Api();
-
-  UnmodifiableListView<MageModel> get mages => UnmodifiableListView(_mages);
-
-  void addMage(String accountId, MageModel mage) {
-    // Logger
-    final log = Logger('MageModel - addMage');
-
-    // Validate required
-    if (mage.name == null) {
-      throw 'Mage name must be set before adding a mage';
-    }
-
-    Future<List<dynamic>> magesFuture =
-        this.api.postEntity(accountId, mage.toJson());
-    magesFuture.then((magesData) {
-      log.info('Post returned ${magesData.length} length');
-      for (Map<String, dynamic> mageData in magesData) {
-        log.info('Post has mage data $mageData');
-        var mage = MageModel.fromJson(mageData);
-        _mages.add(mage);
-      }
-      // Notify listeners
-      notifyListeners();
-    });
-  }
-
-  void refreshEntities(String accountId) {
-    // Call on API to fetch mages
-    Future<List<dynamic>> magesFuture = this.api.getEntities(accountId);
-    magesFuture.then((magesData) {
-      for (Map<String, dynamic> mageData in magesData) {
-        var mage = MageModel.fromJson(mageData);
-        _mages.add(mage);
-      }
-      // Notify listeners
-      notifyListeners();
-    });
-  }
-
-  void removeMages() {
-    _mages.clear();
-    // This call tells the widgets that are listening to this model to rebuild.
-    notifyListeners();
   }
 }

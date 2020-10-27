@@ -5,8 +5,7 @@
 ### Now
 
 * Attribute points
-  * All `attribute_points` should be fully allocated across attributes on mage creation
-  * Sum of attributes points should never exceed `attribute_points` when updating attributes
+  * Sum of attributes points should never exceed `attribute_points` when updating or creating a mage
 
 ### Next
 

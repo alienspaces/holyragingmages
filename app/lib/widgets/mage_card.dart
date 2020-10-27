@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import '../models/models.dart';
 
 class MageCard extends StatelessWidget {
-  final MageModel mage;
+  final Mage mage;
 
   MageCard(this.mage);
 
@@ -127,13 +127,28 @@ class MageCard extends StatelessWidget {
         ),
         Container(
           alignment: Alignment.center,
-          child: FlatButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/mage_play');
-            },
-            color: Colors.green,
-            disabledColor: Colors.grey,
-            child: Text("Play"),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/mage_play');
+                },
+                color: Colors.grey,
+                disabledColor: Colors.grey,
+                minWidth: 14,
+                child: Text("Delete"),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/mage_play');
+                },
+                color: Colors.green,
+                disabledColor: Colors.grey,
+                minWidth: 14,
+                child: Text("Play"),
+              ),
+            ],
           ),
         ),
       ],

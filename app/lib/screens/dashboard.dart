@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
@@ -15,20 +14,18 @@ class DashboardScreen extends StatelessWidget {
     log.info("Building");
 
     // Account model
-    var accountModel = Provider.of<AccountModel>(context);
+    var accountModel = Provider.of<Account>(context);
 
     // Mage list model
-    var mageListModel = Provider.of<MageListModel>(context);
+    var mageListModel = Provider.of<MageCollection>(context);
 
     if (accountModel.id != null) {
       // Current user
       log.info('Current user id ${accountModel.id ?? ''}');
       log.info('Current user name ${accountModel.name ?? ''}');
       log.info('Current user email ${accountModel.email ?? ''}');
-      log.info(
-          'Current user provider id ${accountModel.providerAccountId ?? ''}');
-      log.info(
-          'Current user provider token ${accountModel.providerToken ?? ''}');
+      log.info('Current user provider id ${accountModel.providerAccountId ?? ''}');
+      log.info('Current user provider token ${accountModel.providerToken ?? ''}');
 
       return Scaffold(
         appBar: AppBar(
@@ -37,8 +34,9 @@ class DashboardScreen extends StatelessWidget {
             RaisedButton(
               child: const Text('SIGN OUT'),
               onPressed: () {
-                accountModel.handleSignOut();
-                mageListModel.removeMages();
+                accountModel.handleSignOut().then((_) {
+                  mageListModel.clearMages();
+                });
               },
             ),
           ],
@@ -49,9 +47,12 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/mage_create');
-          },
+          onPressed: mageListModel.count() >= 4
+              ? null
+              : () {
+                  Navigator.pushNamed(context, '/mage_create');
+                },
+          child: Icon(Icons.add),
         ),
       );
     } else {
@@ -59,10 +60,8 @@ class DashboardScreen extends StatelessWidget {
       log.info('Current user id ${accountModel.id ?? ''}');
       log.info('Current user name ${accountModel.name ?? ''}');
       log.info('Current user email ${accountModel.email ?? ''}');
-      log.info(
-          'Current user provider id ${accountModel.providerAccountId ?? ''}');
-      log.info(
-          'Current user provider token ${accountModel.providerToken ?? ''}');
+      log.info('Current user provider id ${accountModel.providerAccountId ?? ''}');
+      log.info('Current user provider token ${accountModel.providerToken ?? ''}');
 
       return Scaffold(
         appBar: AppBar(

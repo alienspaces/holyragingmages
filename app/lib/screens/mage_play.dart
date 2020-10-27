@@ -12,8 +12,8 @@ class MagePlayScreen extends StatelessWidget {
 
     log.info("Building");
 
-    return ChangeNotifierProvider<MageModel>(
-      create: (context) => MageModel(),
+    return ChangeNotifierProvider<Mage>(
+      create: (context) => Mage(),
       child: Scaffold(
         appBar: AppBar(
           title: Text('Mage Play'),

@@ -1,3 +1,4 @@
 // barrel file to include all models
-export 'mage.dart';
 export 'account.dart';
+export 'mage.dart';
+export 'mage_collection.dart';

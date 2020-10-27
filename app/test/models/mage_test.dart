@@ -12,7 +12,7 @@ void main() {
   });
 
   test('New mage defaults', () {
-    var mage = new MageModel();
+    var mage = new Mage();
 
     expect(mage.attributePoints, 10, reason: 'Points equals expected value');
     expect(mage.strength, 10, reason: 'Strength equals expected value');
@@ -21,7 +21,7 @@ void main() {
   });
 
   test('Adjusting strength', () {
-    var mage = new MageModel();
+    var mage = new Mage();
 
     mage.strength = 12;
 
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('Adjusting dexterity', () {
-    var mage = new MageModel();
+    var mage = new Mage();
 
     mage.dexterity = 12;
 
@@ -47,7 +47,7 @@ void main() {
   });
 
   test('Adjusting intelligence', () {
-    var mage = new MageModel();
+    var mage = new Mage();
 
     mage.intelligence = 12;
 
@@ -67,7 +67,7 @@ void main() {
       "intelligence": 12,
     };
 
-    var mage = MageModel.fromJson(mageJson);
+    var mage = Mage.fromJson(mageJson);
 
     expect(mage.attributePoints, 4, reason: 'Points equals expected value');
     expect(mage.strength, 12, reason: 'Strength equals expected value');

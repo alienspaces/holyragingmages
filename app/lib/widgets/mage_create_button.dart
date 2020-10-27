@@ -13,11 +13,11 @@ class MageCreateButtonWidget extends StatelessWidget {
     log.info("Building");
 
     // Account model
-    var accountModel = Provider.of<AccountModel>(context);
+    var accountModel = Provider.of<Account>(context);
 
     // Mage model
-    var mageModel = Provider.of<MageModel>(context);
-    var mageListModel = Provider.of<MageListModel>(context);
+    var mageModel = Provider.of<Mage>(context);
+    var mageListModel = Provider.of<MageCollection>(context);
 
     bool _createEnabled() {
       if (mageModel.name == null || mageModel.name.length == 0) {

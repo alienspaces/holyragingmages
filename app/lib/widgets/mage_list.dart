@@ -14,10 +14,10 @@ class MageListWidget extends StatelessWidget {
     log.info("Building");
 
     // Account model
-    var accountModel = Provider.of<AccountModel>(context);
+    var accountModel = Provider.of<Account>(context);
 
     // Mage list model
-    var mageListModel = Provider.of<MageListModel>(context);
+    var mageListModel = Provider.of<MageCollection>(context);
 
     if (accountModel.id == null) {
       log.info("Account is null");
@@ -30,7 +30,7 @@ class MageListWidget extends StatelessWidget {
     // No mages yet
     if (mages.length == 0) {
       log.info("Fetching mages");
-      mageListModel.refreshEntities(accountModel.id);
+      mageListModel.refreshMages(accountModel.id);
       return Text("No mages yet");
     }
 

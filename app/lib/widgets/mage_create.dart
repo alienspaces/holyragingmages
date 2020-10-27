@@ -16,7 +16,7 @@ class MageCreateWidget extends StatelessWidget {
     log.info("Building");
 
     // Mage models
-    var mageModel = Provider.of<MageModel>(context);
+    var mageModel = Provider.of<Mage>(context);
 
     void _incrementStrength() {
       mageModel.strength++;

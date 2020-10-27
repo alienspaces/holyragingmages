@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../api/api.dart';
 
-class AccountModel extends ChangeNotifier {
+class Account extends ChangeNotifier {
   // Provider
   String provider;
   String providerAccountId;
@@ -30,13 +30,13 @@ class AccountModel extends ChangeNotifier {
     ],
   );
 
-  AccountModel() {
+  Account() {
     this.initModel();
   }
 
   Future<void> handleGoogleSignIn() async {
     // Logger
-    final log = Logger('AccountModel - handleGoogleSignIn');
+    final log = Logger('Account - handleGoogleSignIn');
     try {
       log.info('Signing in');
       await _googleSignIn.signIn();
@@ -48,7 +48,7 @@ class AccountModel extends ChangeNotifier {
   // Generic sign out handles whichever provider initially used
   Future<void> handleSignOut() async {
     // Logger
-    final log = Logger('AccountModel - handleSignOut');
+    final log = Logger('Account - handleSignOut');
 
     // Signed in with Google
     if (this._googleAccount != null) {
@@ -73,7 +73,7 @@ class AccountModel extends ChangeNotifier {
 
   void verifyAccount(GoogleSignInAccount account) async {
     // Logger
-    final log = Logger('AccountModel - verifyAccount');
+    final log = Logger('Account - verifyAccount');
     // Account has changed however could mean the user has logged out
     log.info('Account changed $account');
 
@@ -132,7 +132,7 @@ class AccountModel extends ChangeNotifier {
 
   void initModel() {
     // Logger
-    // final log = Logger('AccountModel - initModel');
+    // final log = Logger('Account - initModel');
 
     _googleSignIn.onCurrentUserChanged.listen(this.verifyAccount);
 
