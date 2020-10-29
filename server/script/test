@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-GO_VERSION=go1.15.2
+GO_VERSION=go1.15.3
 if [ $(command -v gvm) ]; then
     source  ~/.gvm/scripts/gvm
     echo "Using ${GO_VERSION}"
