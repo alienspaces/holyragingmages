@@ -38,14 +38,14 @@ class MageCollection extends ChangeNotifier {
   }
 
   // addMage - Adds a new mage to the list
-  void addMage(String accountId, Mage mage) {
+  Future<Mage> addMage(String accountId, Mage mage) async {
     // Logger
     final log = Logger('Mage - addMage');
 
     // Maximum allowed
     if (this.count() >= 4) {
       log.warning('Cannot add mage, mage list length ${this.count()}');
-      return;
+      return null;
     }
 
     // Validate required
@@ -53,20 +53,24 @@ class MageCollection extends ChangeNotifier {
       throw 'Mage name must be set before adding a mage';
     }
 
-    Future<List<dynamic>> magesFuture = this.api.postEntity(accountId, mage.toJson());
+    List<dynamic> magesData;
+    try {
+      magesData = await this.api.postEntity(accountId, mage.toJson());
+    } catch (e) {
+      log.warning('Failed adding mage $e');
+      return null;
+    }
 
-    magesFuture.then((magesData) {
-      log.info('Post returned ${magesData.length} length');
+    for (Map<String, dynamic> mageData in magesData) {
+      log.info('Post has mage data $mageData');
+      mage = Mage.fromJson(mageData);
+      this._mages.add(mage);
+    }
 
-      for (Map<String, dynamic> mageData in magesData) {
-        log.info('Post has mage data $mageData');
-        var mage = Mage.fromJson(mageData);
-        this._mages.add(mage);
-      }
+    // Notify listeners
+    notifyListeners();
 
-      // Notify listeners
-      notifyListeners();
-    });
+    return mage;
   }
 
   void refreshMages(String accountId) {

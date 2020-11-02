@@ -18,7 +18,7 @@ class MageCreateScreen extends StatelessWidget {
       create: (context) => Mage(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Mage Create'),
+          title: Text('Create Mage'),
         ),
         body: Container(
           child: Center(

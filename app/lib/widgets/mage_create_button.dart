@@ -25,15 +25,14 @@ class MageCreateButtonWidget extends StatelessWidget {
         return false;
       }
       if (mageModel.attributePoints != 0) {
-        log.info(
-            'Mage points ${mageModel.attributePoints} are unspent, create disabled');
+        log.info('Mage points ${mageModel.attributePoints} are unspent, create disabled');
         return false;
       }
       return true;
     }
 
-    void _addMage() {
-      mageListModel.addMage(accountModel.id, mageModel);
+    void _addMage() async {
+      mageModel = await mageListModel.addMage(accountModel.id, mageModel);
       Navigator.pop(context);
     }
 
