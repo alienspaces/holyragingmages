@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
-import '../models/models.dart';
-import '../widgets/mage_list.dart';
+// Application packages
+import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/widgets/mage_list.dart';
 
 class DashboardScreen extends StatelessWidget {
   // Display the sign in page if we do not have an account
@@ -35,7 +36,7 @@ class DashboardScreen extends StatelessWidget {
               child: const Text('SIGN OUT'),
               onPressed: () {
                 accountModel.handleSignOut().then((_) {
-                  mageListModel.clearMages();
+                  mageListModel.clear();
                 });
               },
             ),

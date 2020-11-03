@@ -2,28 +2,34 @@ import 'dart:collection';
 import 'package:logging/logging.dart';
 import 'package:flutter/foundation.dart';
 
-import '../api/api.dart';
-import 'mage.dart';
+// Application packages
+import 'package:holyragingmages/api/api.dart';
+import 'package:holyragingmages/models/mage.dart';
+import 'package:holyragingmages/fault.dart';
 
-// MageCollection contains a collection of MagesModels and provides access
-// to server API's for managing mages
+enum ModelState { initial, processing, done }
+
+// MageCollection contains a collection of mages
 class MageCollection extends ChangeNotifier {
   // Singleton instance
   static MageCollection _instance;
 
-  // _mages - Internal list of mages
+  // Model state
+  ModelState _state = ModelState.initial;
+
+  // Model errors
+  Fault _fault;
+  Fault get fault => _fault;
+  void _setFault(Fault fault) {
+    _fault = fault;
+    notifyListeners();
+  }
+
+  // Mage list
   final List<Mage> _mages = [];
 
-  // api - Backend interface
-  final Api api = new Api();
-
-  // mages - Returns a list of mages
-  UnmodifiableListView<Mage> get mages => UnmodifiableListView(_mages);
-
-  // count - Returns the count of mages
-  int count() {
-    return _mages.length;
-  }
+  // Backend API
+  final Api _api = new Api();
 
   // Singleton
   factory MageCollection() {
@@ -34,59 +40,55 @@ class MageCollection extends ChangeNotifier {
   }
 
   MageCollection._internal() {
-    _mages.clear();
+    this._mages.clear();
   }
 
-  // addMage - Adds a new mage to the list
-  Future<Mage> addMage(String accountId, Mage mage) async {
-    // Logger
-    final log = Logger('Mage - addMage');
+  // Mage list getter
+  UnmodifiableListView<Mage> get mages => UnmodifiableListView(_mages);
 
-    // Maximum allowed
-    if (this.count() >= 4) {
-      log.warning('Cannot add mage, mage list length ${this.count()}');
-      return null;
-    }
+  // Model state getter
+  ModelState get state => _state;
 
-    // Validate required
-    if (mage.name == null) {
-      throw 'Mage name must be set before adding a mage';
-    }
+  void _setState(ModelState state) {
+    _state = state;
+    notifyListeners();
+  }
 
+  // Count mages
+  int count() {
+    return this._mages.length;
+  }
+
+  // Load mages
+  void load(String accountId) async {
+    // Processing
+    _setState(ModelState.processing);
+
+    // Call on API to fetch mages
     List<dynamic> magesData;
     try {
-      magesData = await this.api.postEntity(accountId, mage.toJson());
+      magesData = await this._api.getEntities(accountId);
     } catch (e) {
-      log.warning('Failed adding mage $e');
-      return null;
+      _setFault(Fault(e.toString()));
     }
 
+    // Clear mages first
+    this.clear();
+
     for (Map<String, dynamic> mageData in magesData) {
-      log.info('Post has mage data $mageData');
-      mage = Mage.fromJson(mageData);
+      var mage = Mage.fromJson(mageData);
       this._mages.add(mage);
     }
 
+    // Processing
+    _setState(ModelState.done);
+
     // Notify listeners
     notifyListeners();
-
-    return mage;
   }
 
-  void refreshMages(String accountId) {
-    // Call on API to fetch mages
-    Future<List<dynamic>> magesFuture = this.api.getEntities(accountId);
-    magesFuture.then((magesData) {
-      for (Map<String, dynamic> mageData in magesData) {
-        var mage = Mage.fromJson(mageData);
-        this._mages.add(mage);
-      }
-      // Notify listeners
-      notifyListeners();
-    });
-  }
-
-  void clearMages() {
+  // Clear mages
+  void clear() {
     // Logger
     final log = Logger('Mage - clearMages');
 

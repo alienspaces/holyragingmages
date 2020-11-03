@@ -3,7 +3,8 @@ import 'package:logging/logging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../api/api.dart';
+// Application packages
+import 'package:holyragingmages/api/api.dart';
 
 class Account extends ChangeNotifier {
   // Provider

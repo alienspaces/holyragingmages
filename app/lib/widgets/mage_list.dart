@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
-import '../models/models.dart';
-import 'mage_card.dart';
+// Application packages
+import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/widgets/mage_card.dart';
 
 class MageListWidget extends StatelessWidget {
   @override
@@ -17,7 +18,7 @@ class MageListWidget extends StatelessWidget {
     var accountModel = Provider.of<Account>(context);
 
     // Mage list model
-    var mageListModel = Provider.of<MageCollection>(context);
+    var mageCollectionModel = Provider.of<MageCollection>(context);
 
     if (accountModel.id == null) {
       log.info("Account is null");
@@ -25,12 +26,12 @@ class MageListWidget extends StatelessWidget {
     }
 
     // List of mages
-    var mages = mageListModel.mages;
+    var mages = mageCollectionModel.mages;
 
     // No mages yet
     if (mages.length == 0) {
       log.info("Fetching mages");
-      mageListModel.refreshMages(accountModel.id);
+      mageCollectionModel.load(accountModel.id);
       return Text("No mages yet");
     }
 

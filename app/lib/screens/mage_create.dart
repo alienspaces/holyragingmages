@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
-import '../models/models.dart';
-import '../widgets/mage_create.dart';
-import '../widgets/mage_create_button.dart';
+// Application packages
+import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/widgets/mage_create.dart';
+import 'package:holyragingmages/widgets/mage_create_button.dart';
 
 class MageCreateScreen extends StatelessWidget {
   @override

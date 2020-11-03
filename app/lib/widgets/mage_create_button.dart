@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
-import '../models/models.dart';
+// Application packages
+import 'package:holyragingmages/models/models.dart';
 
 class MageCreateButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageCreateScreen - build');
+    final log = Logger('MageCreateButtonWidget - build');
 
     log.info("Building");
 
@@ -17,7 +18,7 @@ class MageCreateButtonWidget extends StatelessWidget {
 
     // Mage model
     var mageModel = Provider.of<Mage>(context);
-    var mageListModel = Provider.of<MageCollection>(context);
+    var mageCollectionModel = Provider.of<MageCollection>(context);
 
     bool _createEnabled() {
       if (mageModel.name == null || mageModel.name.length == 0) {
@@ -31,8 +32,9 @@ class MageCreateButtonWidget extends StatelessWidget {
       return true;
     }
 
-    void _addMage() async {
-      mageModel = await mageListModel.addMage(accountModel.id, mageModel);
+    void _addMage() {
+      mageModel.save();
+      mageCollectionModel.load(accountModel.id);
       Navigator.pop(context);
     }
 

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
-import '../models/models.dart';
-
-import 'mage_create_attribute.dart';
-import 'mage_create_name.dart';
+// Application packages
+import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/widgets/mage_create_attribute.dart';
+import 'package:holyragingmages/widgets/mage_create_name.dart';
 
 class MageCreateWidget extends StatelessWidget {
   @override

@@ -1,14 +1,21 @@
 import 'package:logging/logging.dart';
 import 'package:flutter/foundation.dart';
 
+// Application packages
+import 'package:holyragingmages/api/api.dart';
+
 // Constants
 const int initialAttributeValue = 10;
 const int initialAttributePoints = 40;
 
 /// Mage encapsulates a mages data and methods
 class Mage extends ChangeNotifier {
+  // Backend API
+  final Api _api = new Api();
+
   // Properties
   String id;
+  String accountId;
   String _name;
   int _strength;
   int _dexterity;
@@ -29,22 +36,27 @@ class Mage extends ChangeNotifier {
 
     log.info('Creating mage from $json');
 
-    mage.id = json['id'];
-    mage.name = json['name'];
-    // Points is "at least" the sum of the current attributes. Anything beyond
-    // that are available to distribute.
-    mage.attributePoints = json['attribute_points'] != null
-        ? json['attribute_points']
-        : initialAttributePoints;
-    mage.strength = json['strength'];
-    mage.dexterity = json['dexterity'];
-    mage.intelligence = json['intelligence'];
-
-    mage.experiencePoints =
-        json['experiencePoints'] != null ? json['experiencePoints'] : 0;
-    mage.coins = json['coins'];
+    mage.updateFromJson(json);
 
     return mage;
+  }
+
+  void updateFromJson(Map<String, dynamic> json) {
+    this.id = json['id'];
+    this.accountId = json['account_id'];
+    this.name = json['name'];
+
+    // Attribute points are "at least" the sum of the current attributes. Anything beyond
+    // that are available to distribute.
+    this.attributePoints =
+        json['attribute_points'] != null ? json['attribute_points'] : initialAttributePoints;
+
+    this.strength = json['strength'];
+    this.dexterity = json['dexterity'];
+    this.intelligence = json['intelligence'];
+
+    this.experiencePoints = json['experiencePoints'] != null ? json['experiencePoints'] : 0;
+    this.coins = json['coins'];
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +66,8 @@ class Mage extends ChangeNotifier {
     Map<String, dynamic> json = {};
 
     json["data"] = {
+      "id": this.id,
+      "account_id": this.accountId,
       "name": this.name,
       "strength": this.strength,
       "dexterity": this.dexterity,
@@ -89,11 +103,9 @@ class Mage extends ChangeNotifier {
       throw 'Mage points must be set before adjusting attributes';
     }
 
-    var difference =
-        this._strength != null ? this._strength - value : 0 - value;
+    var difference = this._strength != null ? this._strength - value : 0 - value;
 
-    var available = this._attributePoints -
-        (this._strength + this._dexterity + this._intelligence);
+    var available = this._attributePoints - (this._strength + this._dexterity + this._intelligence);
 
     log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
@@ -122,8 +134,7 @@ class Mage extends ChangeNotifier {
     }
 
     var difference = this._dexterity - value;
-    var available = this._attributePoints -
-        (this._strength + this._dexterity + this._intelligence);
+    var available = this._attributePoints - (this._strength + this._dexterity + this._intelligence);
 
     log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
@@ -152,8 +163,7 @@ class Mage extends ChangeNotifier {
     }
 
     var difference = this._intelligence - value;
-    var available = this._attributePoints -
-        (this._strength + this._dexterity + this._intelligence);
+    var available = this._attributePoints - (this._strength + this._dexterity + this._intelligence);
 
     log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
@@ -170,8 +180,7 @@ class Mage extends ChangeNotifier {
   }
 
   int get attributePoints {
-    var available = this._attributePoints -
-        (this._strength + this._dexterity + this._intelligence);
+    var available = this._attributePoints - (this._strength + this._dexterity + this._intelligence);
     return available;
   }
 
@@ -189,5 +198,29 @@ class Mage extends ChangeNotifier {
       this.experiencePoints = 0;
       this.coins = 0;
     }
+  }
+
+  // Save this mage to the server
+  void save() async {
+    // Logger
+    final log = Logger('Mage - addMage');
+
+    List<dynamic> magesData;
+    try {
+      magesData = await this._api.postEntity(this.accountId, this.toJson());
+    } catch (e) {
+      log.warning('Failed adding mage $e');
+      return;
+    }
+
+    for (Map<String, dynamic> mageData in magesData) {
+      log.info('Post has mage data $mageData');
+      this.updateFromJson(mageData);
+    }
+
+    // Notify listeners
+    notifyListeners();
+
+    return;
   }
 }

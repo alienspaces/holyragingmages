@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
-import '../models/models.dart';
+// Application packages
+import 'package:holyragingmages/models/models.dart';
 
 class MagePlayScreen extends StatelessWidget {
   @override

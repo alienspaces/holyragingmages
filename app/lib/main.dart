@@ -3,7 +3,8 @@ import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
-import 'package:holyragingmages/screens/screens.dart';
+// Application packages
+import 'package:holyragingmages/router.dart';
 import 'package:holyragingmages/models/models.dart';
 
 void main() {
@@ -33,11 +34,12 @@ class HolyRagingMages extends StatelessWidget {
       ],
       child: MaterialApp(
         initialRoute: '/',
-        routes: {
-          '/': (context) => DashboardScreen(),
-          '/mage_create': (context) => MageCreateScreen(),
-          '/mage_play': (context) => MagePlayScreen(),
-        },
+        onGenerateRoute: RouteGenerator.generateRoute,
+        // routes: {
+        //   '/': (context) => DashboardScreen(),
+        //   '/mage_create': (context) => MageCreateScreen(),
+        //   '/mage_play': (context) => MagePlayScreen(),
+        // },
       ),
     );
   }
