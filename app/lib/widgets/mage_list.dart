@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
@@ -6,7 +7,43 @@ import 'package:logging/logging.dart';
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/mage_card.dart';
 
-class MageListWidget extends StatelessWidget {
+class MageListWidget extends StatefulWidget {
+  @override
+  _MageListWidgetState createState() => _MageListWidgetState();
+}
+
+class _MageListWidgetState extends State<MageListWidget> {
+  // Loading state
+  ModelState _loadingState = ModelState.initial;
+
+  @override
+  void initState() {
+    // Logger
+    final log = Logger('_MageListWidgetState - initState');
+
+    log.info("Initialising");
+
+    // Account model
+    var accountModel = Provider.of<Account>(context, listen: false);
+
+    // Mage list model
+    var mageCollectionModel = Provider.of<MageCollection>(context, listen: false);
+
+    if (mageCollectionModel.canLoad()) {
+      setState(() {
+        _loadingState = ModelState.processing;
+      });
+      log.info("Fetching mages");
+      mageCollectionModel.load(accountModel.id).then((FutureOr<void> v) {
+        setState(() {
+          _loadingState = ModelState.done;
+        });
+      });
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Logger
@@ -14,25 +51,16 @@ class MageListWidget extends StatelessWidget {
 
     log.info("Building");
 
-    // Account model
-    var accountModel = Provider.of<Account>(context);
-
     // Mage list model
     var mageCollectionModel = Provider.of<MageCollection>(context);
-
-    if (accountModel.id == null) {
-      log.info("Account is null");
-      return Text("Not signed in");
-    }
 
     // List of mages
     var mages = mageCollectionModel.mages;
 
-    // No mages yet
-    if (mages.length == 0) {
-      log.info("Fetching mages");
-      mageCollectionModel.load(accountModel.id);
-      return Text("No mages yet");
+    if (_loadingState == ModelState.processing) {
+      return Container(
+        child: Text('Loading'),
+      );
     }
 
     // Calculate aspect ratio so we can have 4 mages

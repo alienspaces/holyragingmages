@@ -35,11 +35,6 @@ class HolyRagingMages extends StatelessWidget {
       child: MaterialApp(
         initialRoute: '/',
         onGenerateRoute: RouteGenerator.generateRoute,
-        // routes: {
-        //   '/': (context) => DashboardScreen(),
-        //   '/mage_create': (context) => MageCreateScreen(),
-        //   '/mage_play': (context) => MagePlayScreen(),
-        // },
       ),
     );
   }

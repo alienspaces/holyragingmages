@@ -18,7 +18,7 @@ class DashboardScreen extends StatelessWidget {
     var accountModel = Provider.of<Account>(context);
 
     // Mage list model
-    var mageListModel = Provider.of<MageCollection>(context);
+    // var mageListModel = Provider.of<MageCollection>(context);
 
     if (accountModel.id != null) {
       // Current user
@@ -36,7 +36,7 @@ class DashboardScreen extends StatelessWidget {
               child: const Text('SIGN OUT'),
               onPressed: () {
                 accountModel.handleSignOut().then((_) {
-                  mageListModel.clear();
+                  // mageListModel.clear();
                 });
               },
             ),
@@ -48,11 +48,12 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: mageListModel.count() >= 4
-              ? null
-              : () {
-                  Navigator.pushNamed(context, '/mage_create');
-                },
+          onPressed: null,
+          // onPressed: mageListModel.count() >= 4
+          //     ? null
+          //     : () {
+          //         Navigator.pushNamed(context, '/mage_create');
+          //       },
           child: Icon(Icons.add),
         ),
       );

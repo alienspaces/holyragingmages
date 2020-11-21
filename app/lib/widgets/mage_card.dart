@@ -29,15 +29,6 @@ class MageCard extends StatelessWidget {
                 backgroundImage: AssetImage("assets/avatars/2.jpg"),
               ),
             ),
-            // Familliar avatar
-            Container(
-              alignment: Alignment.bottomRight,
-              padding: EdgeInsets.only(top: 60),
-              child: CircleAvatar(
-                maxRadius: 20.0,
-                backgroundImage: AssetImage("assets/avatars/2.jpg"),
-              ),
-            ),
           ],
         ),
         // Mage name

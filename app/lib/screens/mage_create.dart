@@ -15,19 +15,25 @@ class MageCreateScreen extends StatelessWidget {
 
     log.info("Building");
 
-    return ChangeNotifierProvider<Mage>(
-      create: (context) => Mage(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Create Mage'),
-        ),
-        body: Container(
-          child: Center(
-            child: MageCreateWidget(),
+    return WillPopScope(
+      onWillPop: () {
+        log.info('Popping');
+        return Future.value(true);
+      },
+      child: ChangeNotifierProvider<Mage>(
+        create: (context) => Mage(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('Create Mage'),
           ),
+          body: Container(
+            child: Center(
+              child: MageCreateWidget(),
+            ),
+          ),
+          floatingActionButton: MageCreateButtonWidget(),
+          resizeToAvoidBottomInset: false,
         ),
-        floatingActionButton: MageCreateButtonWidget(),
-        resizeToAvoidBottomInset: false,
       ),
     );
   }

@@ -9,13 +9,14 @@ class RouteGenerator {
     // Logger
     final log = Logger('RouteGenerator - generateRoute');
 
+    // Arguments
     final args = settings.arguments;
 
     log.info('Routing with args $args');
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (context) => DashboardScreen());
+        return MaterialPageRoute(builder: (context) => DashboardScreen(), maintainState: false);
       case '/mage_create':
         return MaterialPageRoute(builder: (context) => MageCreateScreen());
       case '/mage_play':

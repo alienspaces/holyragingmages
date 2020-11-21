@@ -11,47 +11,22 @@ enum ModelState { initial, processing, done }
 
 // MageCollection contains a collection of mages
 class MageCollection extends ChangeNotifier {
-  // Singleton instance
-  static MageCollection _instance;
-
-  // Model state
-  ModelState _state = ModelState.initial;
-
-  // Model errors
-  Fault _fault;
-  Fault get fault => _fault;
-  void _setFault(Fault fault) {
-    _fault = fault;
-    notifyListeners();
-  }
-
-  // Mage list
+  // Mages
   final List<Mage> _mages = [];
-
-  // Backend API
-  final Api _api = new Api();
-
-  // Singleton
-  factory MageCollection() {
-    if (_instance == null) {
-      _instance = MageCollection._internal();
-    }
-    return _instance;
-  }
-
-  MageCollection._internal() {
-    this._mages.clear();
-  }
-
-  // Mage list getter
   UnmodifiableListView<Mage> get mages => UnmodifiableListView(_mages);
 
-  // Model state getter
-  ModelState get state => _state;
+  // API
+  final Api _api = new Api();
 
-  void _setState(ModelState state) {
-    _state = state;
-    notifyListeners();
+  // Faults
+  Fault fault;
+
+  // State
+  ModelState state = ModelState.initial;
+
+  // Constructor
+  MageCollection() {
+    this._mages.clear();
   }
 
   // Count mages
@@ -59,32 +34,47 @@ class MageCollection extends ChangeNotifier {
     return this._mages.length;
   }
 
+  bool canLoad() {
+    if (state == ModelState.processing) {
+      return false;
+    }
+    return true;
+  }
+
   // Load mages
-  void load(String accountId) async {
-    // Processing
-    _setState(ModelState.processing);
+  Future<void> load(String accountId) async {
+    // Logger
+    final log = Logger('Mage - load');
 
-    // Call on API to fetch mages
-    List<dynamic> magesData;
-    try {
-      magesData = await this._api.getEntities(accountId);
-    } catch (e) {
-      _setFault(Fault(e.toString()));
-    }
+    log.info('Loading mages');
 
-    // Clear mages first
-    this.clear();
+    state = ModelState.processing;
 
-    for (Map<String, dynamic> mageData in magesData) {
-      var mage = Mage.fromJson(mageData);
-      this._mages.add(mage);
-    }
+    // Get entities
+    this._api.getEntities(accountId).then((List<dynamic> entitiesData) {
+      log.info('Adding mages');
 
-    // Processing
-    _setState(ModelState.done);
+      // Clear mages
+      this._mages.clear();
 
-    // Notify listeners
-    notifyListeners();
+      // Add mages
+      for (Map<String, dynamic> entityData in entitiesData) {
+        var entity = Mage.fromJson(entityData);
+        this._mages.add(entity);
+      }
+
+      // Done
+      state = ModelState.done;
+
+      // Notify listeners
+      notifyListeners();
+    }).catchError((e) {
+      // Fault
+      fault = Fault(e.toString());
+
+      // Notify listeners
+      notifyListeners();
+    });
   }
 
   // Clear mages
