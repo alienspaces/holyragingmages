@@ -26,7 +26,7 @@ class _MageListWidgetState extends State<MageListWidget> {
     // Account model
     var accountModel = Provider.of<Account>(context, listen: false);
 
-    // Mage list model
+    // Mage collection model
     var mageCollectionModel = Provider.of<MageCollection>(context, listen: false);
 
     if (mageCollectionModel.canLoad()) {

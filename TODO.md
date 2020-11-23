@@ -5,9 +5,8 @@
 ### Now
 
 * UI clean up
-  * All "model" functions should potentially raise or return an error
-  * Generic spinner solution for model actions with API calls such as adding a mage
-  * Get rid of familliar for now
+  * JWT token time out should log out
+  * Mage list not refreshing, review model functionality
   
 * Attribute points
   * Sum of attributes points should never exceed `attribute_points` when updating or creating a mage

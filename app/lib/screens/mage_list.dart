@@ -6,11 +6,11 @@ import 'package:logging/logging.dart';
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/mage_list.dart';
 
-class DashboardScreen extends StatelessWidget {
+class MageListScreen extends StatelessWidget {
   // Display the sign in page if we do not have an account
   Widget _buildBody(BuildContext context) {
     // Logger
-    final log = Logger('DashboardScreen - _buildBody');
+    final log = Logger('MageListScreen - _buildBody');
 
     log.info("Building");
 
@@ -18,7 +18,7 @@ class DashboardScreen extends StatelessWidget {
     var accountModel = Provider.of<Account>(context);
 
     // Mage list model
-    // var mageListModel = Provider.of<MageCollection>(context);
+    var mageListModel = Provider.of<MageCollection>(context);
 
     if (accountModel.id != null) {
       // Current user
@@ -48,12 +48,12 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: null,
-          // onPressed: mageListModel.count() >= 4
-          //     ? null
-          //     : () {
-          //         Navigator.pushNamed(context, '/mage_create');
-          //       },
+          // onPressed: null,
+          onPressed: mageListModel.count() >= 4
+              ? null
+              : () {
+                  Navigator.pushNamed(context, '/mage_create');
+                },
           child: Icon(Icons.add),
         ),
       );

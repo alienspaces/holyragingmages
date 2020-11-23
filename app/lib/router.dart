@@ -16,7 +16,7 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (context) => DashboardScreen(), maintainState: false);
+        return MaterialPageRoute(builder: (context) => MageListScreen(), maintainState: false);
       case '/mage_create':
         return MaterialPageRoute(builder: (context) => MageCreateScreen());
       case '/mage_play':
