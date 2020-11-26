@@ -35,9 +35,13 @@ class MageCollection extends ChangeNotifier {
   }
 
   bool canLoad() {
+    // Logger
+    final log = Logger('Mage - canLoad');
     if (state == ModelState.processing) {
+      log.info('State is $state, cannot load');
       return false;
     }
+    log.info('Can load');
     return true;
   }
 
@@ -71,6 +75,9 @@ class MageCollection extends ChangeNotifier {
     }).catchError((e) {
       // Fault
       fault = Fault(e.toString());
+
+      // Done
+      state = ModelState.done;
 
       // Notify listeners
       notifyListeners();

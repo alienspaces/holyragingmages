@@ -30,10 +30,10 @@ class _MageListWidgetState extends State<MageListWidget> {
     var mageCollectionModel = Provider.of<MageCollection>(context, listen: false);
 
     if (mageCollectionModel.canLoad()) {
+      log.info("Fetching mages");
       setState(() {
         _loadingState = ModelState.processing;
       });
-      log.info("Fetching mages");
       mageCollectionModel.load(accountModel.id).then((FutureOr<void> v) {
         setState(() {
           _loadingState = ModelState.done;
@@ -45,9 +45,19 @@ class _MageListWidgetState extends State<MageListWidget> {
   }
 
   @override
+  void didChangeDependencies() {
+    // Logger
+    final log = Logger('_MageListWidgetState - didChangeDependencies');
+
+    log.info("Changed dependencies");
+
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageListWidget - build');
+    final log = Logger('_MageListWidgetState - build');
 
     log.info("Building");
 

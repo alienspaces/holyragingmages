@@ -36,7 +36,7 @@ class MageListScreen extends StatelessWidget {
               child: const Text('SIGN OUT'),
               onPressed: () {
                 accountModel.handleSignOut().then((_) {
-                  // mageListModel.clear();
+                  mageListModel.clear();
                 });
               },
             ),
@@ -48,7 +48,6 @@ class MageListScreen extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          // onPressed: null,
           onPressed: mageListModel.count() >= 4
               ? null
               : () {
