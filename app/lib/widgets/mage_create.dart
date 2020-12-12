@@ -16,10 +16,10 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
   @override
   void initState() {
     // Account model
-    var accountModel = Provider.of<Account>(context);
+    var accountModel = Provider.of<Account>(context, listen: false);
 
     // Mage model
-    var mageModel = Provider.of<Mage>(context);
+    var mageModel = Provider.of<Mage>(context, listen: false);
 
     mageModel.clear();
     mageModel.accountId = accountModel.id;
@@ -87,7 +87,7 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           ),
           Expanded(
             flex: 5,
-            child: Text(mageModel.attributePoints.toString()),
+            child: Text("${mageModel.availableAttributePoints()}"),
           ),
         ]),
         // Strength
@@ -96,8 +96,8 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           value: mageModel.strength,
           incrementValue: _incrementStrength,
           decrementValue: _decrementStrength,
-          incrementEnabled: mageModel.attributePoints > 0,
-          decrementEnabled: mageModel.strength > 10,
+          incrementEnabled: mageModel.availableAttributePoints() > 0,
+          decrementEnabled: mageModel.strength > initialAttributePoints,
         ),
         // Dexterity
         MageCreateAttributeWidget(
@@ -105,8 +105,8 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           value: mageModel.dexterity,
           incrementValue: _incrementDexterity,
           decrementValue: _decrementDexterity,
-          incrementEnabled: mageModel.attributePoints > 0,
-          decrementEnabled: mageModel.dexterity > 10,
+          incrementEnabled: mageModel.availableAttributePoints() > 0,
+          decrementEnabled: mageModel.dexterity > initialAttributePoints,
         ),
         // Intelligence
         MageCreateAttributeWidget(
@@ -114,8 +114,8 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           value: mageModel.intelligence,
           incrementValue: _incrementIntelligence,
           decrementValue: _decrementIntelligence,
-          incrementEnabled: mageModel.attributePoints > 0,
-          decrementEnabled: mageModel.intelligence > 10,
+          incrementEnabled: mageModel.availableAttributePoints() > 0,
+          decrementEnabled: mageModel.intelligence > initialAttributePoints,
         ),
       ],
     );
