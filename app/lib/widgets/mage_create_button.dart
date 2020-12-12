@@ -32,14 +32,22 @@ class MageCreateButtonWidget extends StatelessWidget {
       return true;
     }
 
-    void _addMage() {
-      mageModel.save();
-      mageCollectionModel.load(accountModel.id);
-      Navigator.pop(context);
+    void _saveMage() {
+      // Logger
+      final log = Logger('MageCreateButtonWidget - _saveMage');
+
+      log.info('Saving mage');
+      mageModel.save().then((t) {
+        log.info('Mage saved, reloading mage collection');
+        mageCollectionModel.load(accountModel.id).then((t) {
+          log.info('Mage collection reloaded, popping navigation');
+          Navigator.pop(context);
+        });
+      });
     }
 
     return FloatingActionButton(
-      onPressed: _createEnabled() ? _addMage : null,
+      onPressed: _createEnabled() ? _saveMage : null,
       disabledElevation: 0.0,
     );
   }

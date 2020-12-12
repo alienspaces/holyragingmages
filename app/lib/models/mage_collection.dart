@@ -11,12 +11,12 @@ enum ModelState { initial, processing, done }
 
 // MageCollection contains a collection of mages
 class MageCollection extends ChangeNotifier {
+  // Api
+  final Api api;
+
   // Mages
   final List<Mage> _mages = [];
   UnmodifiableListView<Mage> get mages => UnmodifiableListView(_mages);
-
-  // API
-  final Api _api = new Api();
 
   // Faults
   Fault fault;
@@ -25,7 +25,7 @@ class MageCollection extends ChangeNotifier {
   ModelState state = ModelState.initial;
 
   // Constructor
-  MageCollection() {
+  MageCollection({Key key, this.api}) {
     this._mages.clear();
   }
 
@@ -55,7 +55,7 @@ class MageCollection extends ChangeNotifier {
     state = ModelState.processing;
 
     // Get entities
-    this._api.getEntities(accountId).then((List<dynamic> entitiesData) {
+    this.api.getEntities(accountId).then((List<dynamic> entitiesData) {
       log.info('Adding mages');
 
       // Clear mages
@@ -63,7 +63,7 @@ class MageCollection extends ChangeNotifier {
 
       // Add mages
       for (Map<String, dynamic> entityData in entitiesData) {
-        var entity = Mage.fromJson(entityData);
+        var entity = Mage.fromJson(api, entityData);
         this._mages.add(entity);
       }
 

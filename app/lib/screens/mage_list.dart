@@ -3,12 +3,22 @@ import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 
 // Application packages
+import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/mage_list.dart';
 
 class MageListScreen extends StatelessWidget {
+  final Api api;
+
+  MageListScreen({Key key, this.api}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return buildBody(context);
+  }
+
   // Display the sign in page if we do not have an account
-  Widget _buildBody(BuildContext context) {
+  Widget buildBody(BuildContext context) {
     // Logger
     final log = Logger('MageListScreen - _buildBody');
 
@@ -82,10 +92,5 @@ class MageListScreen extends StatelessWidget {
         ),
       );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _buildBody(context);
   }
 }

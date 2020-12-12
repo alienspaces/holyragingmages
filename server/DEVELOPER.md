@@ -75,7 +75,7 @@ Stop all services
 
 ## Upgrading Go Version
 
-* Install `gvm get go1.X.X && gvm user go1.X.X --default`
-* Update all `~/server/service/*/build/docker/Dockerfile` configurations
-* Update `~/server/script` scripts
-* Update `~/.gitlab-ci.yml`
+* Install `gvm install go1.X.X && gvm use go1.X.X --default`
+* Update all `./server/service/*/build/docker/Dockerfile` configurations
+* Update `./server/script` scripts
+* Update `./.gitlab-ci.yml`

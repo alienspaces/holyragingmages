@@ -10,8 +10,8 @@ const int initialAttributePoints = 40;
 
 /// Mage encapsulates a mages data and methods
 class Mage extends ChangeNotifier {
-  // Backend API
-  final Api _api = new Api();
+  // Api
+  final Api api;
 
   // Properties
   String id;
@@ -24,15 +24,24 @@ class Mage extends ChangeNotifier {
   int experiencePoints;
   int coins;
 
-  Mage() {
-    this.initModel();
+  // Constructor
+  Mage({Key key, this.api}) {
+    // When not given an ID we can assume this is a newly created mage
+    if (this.id == null) {
+      this._attributePoints = initialAttributePoints;
+      this._strength = initialAttributeValue;
+      this._dexterity = initialAttributeValue;
+      this._intelligence = initialAttributeValue;
+      this.experiencePoints = 0;
+      this.coins = 0;
+    }
   }
 
-  factory Mage.fromJson(Map<String, dynamic> json) {
+  factory Mage.fromJson(Api api, Map<String, dynamic> json) {
     // Logger
     final log = Logger('Mage - fromJson');
 
-    var mage = new Mage();
+    var mage = new Mage(api: api);
 
     log.info('Creating mage from $json');
 
@@ -188,26 +197,34 @@ class Mage extends ChangeNotifier {
     this._attributePoints = value;
   }
 
-  void initModel() {
-    // When not given an ID we can assume this is a newly created mage
-    if (this.id == null) {
-      this._attributePoints = initialAttributePoints;
-      this._strength = initialAttributeValue;
-      this._dexterity = initialAttributeValue;
-      this._intelligence = initialAttributeValue;
-      this.experiencePoints = 0;
-      this.coins = 0;
-    }
+  // Clear all attributes from this mage
+  void clear() {
+    this.id = null;
+    this.accountId = null;
+    this._name = null;
+    this._strength = null;
+    this._dexterity = null;
+    this._intelligence = null;
+    this._attributePoints = null;
+    this.experiencePoints = null;
+    this.coins = null;
   }
 
   // Save this mage to the server
-  void save() async {
+  Future<void> save() async {
     // Logger
-    final log = Logger('Mage - addMage');
+    final log = Logger('Mage - save');
+
+    Map<String, dynamic> saveMage = this.toJson();
+
+    log.info('Saving mage account ID ${this.accountId} Mage $saveMage');
 
     List<dynamic> magesData;
     try {
-      magesData = await this._api.postEntity(this.accountId, this.toJson());
+      magesData = await api.postEntity(
+        this.accountId,
+        saveMage,
+      );
     } catch (e) {
       log.warning('Failed adding mage $e');
       return;

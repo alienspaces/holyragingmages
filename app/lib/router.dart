@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 // Application packages
+import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/screens/screens.dart';
 
 class RouteGenerator {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
+  final Api api;
+
+  RouteGenerator({Key key, this.api});
+
+  Route<dynamic> generateRoute(RouteSettings settings) {
     // Logger
     final log = Logger('RouteGenerator - generateRoute');
 
@@ -16,17 +21,18 @@ class RouteGenerator {
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (context) => MageListScreen(), maintainState: false);
+        return MaterialPageRoute(
+            builder: (context) => MageListScreen(api: api), maintainState: false);
       case '/mage_create':
-        return MaterialPageRoute(builder: (context) => MageCreateScreen());
+        return MaterialPageRoute(builder: (context) => MageCreateScreen(api: api));
       case '/mage_play':
-        return MaterialPageRoute(builder: (context) => MagePlayScreen());
+        return MaterialPageRoute(builder: (context) => MagePlayScreen(api: api));
       default:
         return _errorRoute();
     }
   }
 
-  static Route<dynamic> _errorRoute() {
+  Route<dynamic> _errorRoute() {
     return MaterialPageRoute(builder: (context) {
       return Scaffold(
         appBar: AppBar(

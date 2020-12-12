@@ -20,7 +20,7 @@ test-app:
 
 test-server:
   stage: test
-  image: golang:1.15.3-alpine3.12
+  image: golang:1.15.6-alpine3.12
   variables:
     POSTGRES_DB: hrm
     POSTGRES_USER: hrm-user

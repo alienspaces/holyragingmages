@@ -7,6 +7,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:holyragingmages/api/api.dart';
 
 class Account extends ChangeNotifier {
+  // Api
+  final Api api;
+
   // Provider
   String provider;
   String providerAccountId;
@@ -16,9 +19,6 @@ class Account extends ChangeNotifier {
   String id;
   String email;
   String name;
-
-  // Api
-  final Api api = new Api();
 
   // Provider specific account types
   GoogleSignInAccount _googleAccount;
@@ -31,7 +31,8 @@ class Account extends ChangeNotifier {
     ],
   );
 
-  Account() {
+  // Constructor
+  Account({Key key, this.api}) {
     this.initModel();
   }
 

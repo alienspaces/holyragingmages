@@ -7,7 +7,31 @@ import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/mage_create_attribute.dart';
 import 'package:holyragingmages/widgets/mage_create_name.dart';
 
-class MageCreateWidget extends StatelessWidget {
+class MageCreateWidget extends StatefulWidget {
+  @override
+  _MageCreateWidgetState createState() => _MageCreateWidgetState();
+}
+
+class _MageCreateWidgetState extends State<MageCreateWidget> {
+  @override
+  void initState() {
+    // Account model
+    var accountModel = Provider.of<Account>(context);
+
+    // Mage model
+    var mageModel = Provider.of<Mage>(context);
+
+    mageModel.clear();
+    mageModel.accountId = accountModel.id;
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Logger

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 // Application packages
 import 'package:holyragingmages/router.dart';
 import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/api/api.dart';
 
 void main() {
   // Logging
@@ -16,6 +17,12 @@ void main() {
 
   runApp(HolyRagingMages());
 }
+
+// Api
+Api api = ApiImpl();
+
+// Routing
+RouteGenerator router = RouteGenerator(api: api);
 
 class HolyRagingMages extends StatelessWidget {
   @override
@@ -29,12 +36,13 @@ class HolyRagingMages extends StatelessWidget {
     return MultiProvider(
       // Global providers
       providers: [
-        ChangeNotifierProvider(create: (context) => Account()),
-        ChangeNotifierProvider(create: (context) => MageCollection()),
+        ChangeNotifierProvider(create: (context) => Account(api: api)),
+        ChangeNotifierProvider(create: (context) => Mage(api: api)),
+        ChangeNotifierProvider(create: (context) => MageCollection(api: api)),
       ],
       child: MaterialApp(
         initialRoute: '/',
-        onGenerateRoute: RouteGenerator.generateRoute,
+        onGenerateRoute: router.generateRoute,
       ),
     );
   }

@@ -1,18 +1,22 @@
 import 'package:test/test.dart';
 import 'package:logging/logging.dart';
 
+// Application packages
+import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/mage.dart';
 
 void main() {
   // Logging
   Logger.root.level = Level.INFO;
   Logger.root.onRecord.listen((record) {
-    print(
-        '${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
+    print('${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
   });
 
+  // Api
+  Api api = ApiMock();
+
   test('New mage defaults', () {
-    var mage = new Mage();
+    var mage = new Mage(api: api);
 
     expect(mage.attributePoints, 10, reason: 'Points equals expected value');
     expect(mage.strength, 10, reason: 'Strength equals expected value');
@@ -21,7 +25,7 @@ void main() {
   });
 
   test('Adjusting strength', () {
-    var mage = new Mage();
+    var mage = new Mage(api: api);
 
     mage.strength = 12;
 
@@ -34,7 +38,7 @@ void main() {
   });
 
   test('Adjusting dexterity', () {
-    var mage = new Mage();
+    var mage = new Mage(api: api);
 
     mage.dexterity = 12;
 
@@ -47,7 +51,7 @@ void main() {
   });
 
   test('Adjusting intelligence', () {
-    var mage = new Mage();
+    var mage = new Mage(api: api);
 
     mage.intelligence = 12;
 
@@ -67,7 +71,7 @@ void main() {
       "intelligence": 12,
     };
 
-    var mage = Mage.fromJson(mageJson);
+    var mage = Mage.fromJson(api, mageJson);
 
     expect(mage.attributePoints, 4, reason: 'Points equals expected value');
     expect(mage.strength, 12, reason: 'Strength equals expected value');
