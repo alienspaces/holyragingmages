@@ -8,7 +8,7 @@ class ApiImpl implements Api {
   // HTTP package
   Dio dio;
   // API host
-  static String apiHost = environment['apiHost'];
+  static String apiHost = environment['apiHost'] ?? '';
   // API token
   String _apiToken;
 

@@ -7,90 +7,103 @@ import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/mage_list.dart';
 
-class MageListScreen extends StatelessWidget {
+enum MageListScreenState { ready, processing }
+
+class MageListScreen extends StatefulWidget {
   final Api api;
 
   MageListScreen({Key key, this.api}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return buildBody(context);
+  _MageListScreenState createState() => _MageListScreenState();
+}
+
+class _MageListScreenState extends State<MageListScreen> {
+  // Screen state
+  MageListScreenState state = MageListScreenState.ready;
+
+  // Handle sign out then reroute
+  void handleSignOut() {
+    // Logger
+    final log = Logger('MageListScreen - handleSignOut');
+
+    // State - processing
+    setState(() {
+      state = MageListScreenState.processing;
+    });
+
+    // Account model
+    var accountModel = Provider.of<Account>(context, listen: false);
+
+    // Account
+    log.fine('Account id ${accountModel.id ?? ''}');
+    log.fine('Account name ${accountModel.name ?? ''}');
+    log.fine('Account email ${accountModel.email ?? ''}');
+    log.fine('Account provider id ${accountModel.providerAccountId ?? ''}');
+    log.fine('Account provider token ${accountModel.providerToken ?? ''}');
+
+    // Mage list model
+    var mageListModel = Provider.of<MageCollection>(context, listen: false);
+
+    accountModel.handleGoogleSignOut().then((_) {
+      log.info('Account signed out, routing..');
+
+      // Clear mages
+      mageListModel.clear();
+
+      // Reroute
+      Navigator.of(context).pushReplacementNamed('/');
+
+      // State - ready
+      setState(() {
+        state = MageListScreenState.ready;
+      });
+    });
   }
 
-  // Display the sign in page if we do not have an account
-  Widget buildBody(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageListScreen - _buildBody');
+    final log = Logger('MageListScreen - build');
 
     log.info("Building");
 
-    // Account model
-    var accountModel = Provider.of<Account>(context);
+    // Processing
+    if (state == MageListScreenState.processing) {
+      return Scaffold(
+        body: Container(
+          alignment: Alignment.center,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     // Mage list model
     var mageListModel = Provider.of<MageCollection>(context);
 
-    if (accountModel.id != null) {
-      // Current user
-      log.info('Current user id ${accountModel.id ?? ''}');
-      log.info('Current user name ${accountModel.name ?? ''}');
-      log.info('Current user email ${accountModel.email ?? ''}');
-      log.info('Current user provider id ${accountModel.providerAccountId ?? ''}');
-      log.info('Current user provider token ${accountModel.providerToken ?? ''}');
-
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Mages'),
-          actions: <Widget>[
-            RaisedButton(
-              child: const Text('SIGN OUT'),
-              onPressed: () {
-                accountModel.handleSignOut().then((_) {
-                  mageListModel.clear();
-                });
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Mages'),
+        actions: <Widget>[
+          RaisedButton(
+            child: const Text('SIGN OUT'),
+            onPressed: handleSignOut,
+          ),
+        ],
+      ),
+      body: Container(
+        child: Center(
+          child: MageListWidget(),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: mageListModel.count() >= 4
+            ? null
+            : () {
+                Navigator.pushNamed(context, '/mage_create');
               },
-            ),
-          ],
-        ),
-        body: Container(
-          child: Center(
-            child: MageListWidget(),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: mageListModel.count() >= 4
-              ? null
-              : () {
-                  Navigator.pushNamed(context, '/mage_create');
-                },
-          child: Icon(Icons.add),
-        ),
-      );
-    } else {
-      // Account model
-      log.info('Current user id ${accountModel.id ?? ''}');
-      log.info('Current user name ${accountModel.name ?? ''}');
-      log.info('Current user email ${accountModel.email ?? ''}');
-      log.info('Current user provider id ${accountModel.providerAccountId ?? ''}');
-      log.info('Current user provider token ${accountModel.providerToken ?? ''}');
-
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Sign In'),
-        ),
-        body: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              const Text("You are not currently signed in."),
-              RaisedButton(
-                child: const Text('SIGN IN'),
-                onPressed: accountModel.handleGoogleSignIn,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+        child: Icon(Icons.add),
+      ),
+    );
   }
 }

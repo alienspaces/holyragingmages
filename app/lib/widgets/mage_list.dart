@@ -19,7 +19,7 @@ class _MageListWidgetState extends State<MageListWidget> {
   @override
   void initState() {
     // Logger
-    final log = Logger('_MageListWidgetState - initState');
+    final log = Logger('MageListWidget - initState');
 
     log.info("Initialising");
 
@@ -45,19 +45,9 @@ class _MageListWidgetState extends State<MageListWidget> {
   }
 
   @override
-  void didChangeDependencies() {
-    // Logger
-    final log = Logger('_MageListWidgetState - didChangeDependencies');
-
-    log.info("Changed dependencies");
-
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('_MageListWidgetState - build');
+    final log = Logger('MageListWidget - build');
 
     log.info("Building");
 
@@ -68,8 +58,9 @@ class _MageListWidgetState extends State<MageListWidget> {
     var mages = mageCollectionModel.mages;
 
     if (_loadingState == ModelState.processing) {
+      log.info("Processing");
       return Container(
-        child: Text('Loading'),
+        child: Text('......'),
       );
     }
 

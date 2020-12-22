@@ -1,4 +1,6 @@
 // import 'dart:collection';
+// import 'dart:ffi';
+
 import 'package:logging/logging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -20,9 +22,6 @@ class Account extends ChangeNotifier {
   String email;
   String name;
 
-  // Provider specific account types
-  GoogleSignInAccount _googleAccount;
-
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
@@ -33,55 +32,40 @@ class Account extends ChangeNotifier {
 
   // Constructor
   Account({Key key, this.api}) {
-    this.initModel();
+    // Logger
+    final log = Logger('Account - constructor');
+    log.info('Constructing new account');
   }
 
   Future<void> handleGoogleSignIn() async {
     // Logger
     final log = Logger('Account - handleGoogleSignIn');
-    try {
+    return Future(() async {
       log.info('Signing in');
-      await _googleSignIn.signIn();
-    } catch (error) {
-      log.warning('Error signing in $error');
-    }
+      GoogleSignInAccount account = await _googleSignIn.signIn();
+      return await signInAccount(account);
+    });
   }
 
   // Generic sign out handles whichever provider initially used
-  Future<void> handleSignOut() async {
+  Future<void> handleGoogleSignOut() async {
     // Logger
     final log = Logger('Account - handleSignOut');
 
-    // Signed in with Google
-    if (this._googleAccount != null) {
+    return Future(() async {
       log.info('Signing out');
-      _googleSignIn.disconnect().then((value) {
-        log.info('Signed out $value');
-
-        this._googleAccount = null;
-        this.provider = null;
-        this.providerAccountId = null;
-        this.providerToken = null;
-        this.id = null;
-        this.name = null;
-        this.email = null;
-
-        // Notify
-        notifyListeners();
-      });
-    }
-    return null;
+      GoogleSignInAccount account = await _googleSignIn.disconnect();
+      return await signOutAccount(account);
+    });
   }
 
-  void verifyAccount(GoogleSignInAccount account) async {
+  Future<void> signInAccount(GoogleSignInAccount account) async {
     // Logger
-    final log = Logger('Account - verifyAccount');
-    // Account has changed however could mean the user has logged out
-    log.info('Account changed $account');
+    final log = Logger('Account - signInAccount');
 
-    if (account != null) {
+    return Future(() async {
+      log.info('Signing into account');
       // Provider
-      this._googleAccount = account;
       this.provider = 'google';
       this.providerToken = null;
       this.providerAccountId = account.id;
@@ -115,8 +99,17 @@ class Account extends ChangeNotifier {
         // Set API token to use from now on
         this.api.apiToken = accountData['token'];
       }
-    } else {
-      this._googleAccount = null;
+
+      log.info('Signed in');
+    });
+  }
+
+  Future<void> signOutAccount(GoogleSignInAccount account) async {
+    // Logger
+    final log = Logger('Account - signOutAccount');
+
+    return Future(() {
+      log.info('Signing out of account');
       this.provider = null;
       this.providerToken = null;
       this.providerAccountId = null;
@@ -124,25 +117,8 @@ class Account extends ChangeNotifier {
       this.id = null;
       this.email = null;
       this.name = null;
-    }
 
-    // Notify
-    notifyListeners();
-
-    return;
-  }
-
-  void initModel() {
-    // Logger
-    // final log = Logger('Account - initModel');
-
-    _googleSignIn.onCurrentUserChanged.listen(this.verifyAccount);
-
-    // try {
-    //   log.info('Signing in silently');
-    //   _googleSignIn.signInSilently(suppressErrors: true);
-    // } catch (error) {
-    //   log.warning('Error signing in silently $error');
-    // }
+      log.info('Signed out');
+    });
   }
 }

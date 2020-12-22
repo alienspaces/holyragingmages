@@ -117,32 +117,6 @@ class MageCard extends StatelessWidget {
             ),
           ],
         ),
-        Container(
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/mage_play');
-                },
-                color: Colors.grey,
-                disabledColor: Colors.grey,
-                minWidth: 14,
-                child: Text("Delete"),
-              ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/mage_play');
-                },
-                color: Colors.green,
-                disabledColor: Colors.grey,
-                minWidth: 14,
-                child: Text("Play"),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

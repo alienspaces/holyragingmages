@@ -43,7 +43,7 @@ class Mage extends ChangeNotifier {
 
     var mage = new Mage(api: api);
 
-    log.info('Creating mage from $json');
+    log.fine('Creating mage from $json');
 
     mage.updateFromJson(json);
 
@@ -103,7 +103,7 @@ class Mage extends ChangeNotifier {
 
     Map<String, dynamic> json = {"data": data};
 
-    log.info('Returning json $json');
+    log.fine('Returning json $json');
 
     return json;
   }
@@ -133,17 +133,17 @@ class Mage extends ChangeNotifier {
 
     var available = this.attributePoints - (this._strength + this._dexterity + this._intelligence);
 
-    log.info(
+    log.fine(
         'Adjust value $value current ${this._strength} difference $difference available $available');
 
     if (available + difference >= 0) {
-      log.info('Setting strength to $value');
+      log.fine('Setting strength to $value');
       this._strength = value;
       notifyListeners();
       return;
     }
 
-    log.info('Leaving strength as ${this._strength}');
+    log.fine('Leaving strength as ${this._strength}');
     return;
   }
 
@@ -162,17 +162,17 @@ class Mage extends ChangeNotifier {
     var difference = this._dexterity - value;
     var available = this.attributePoints - (this._strength + this._dexterity + this._intelligence);
 
-    log.info(
+    log.fine(
         'Adjust value $value current ${this._strength} difference $difference available $available');
 
     if (available + difference >= 0) {
-      log.info('Setting dexterity to $value');
+      log.fine('Setting dexterity to $value');
       this._dexterity = value;
       notifyListeners();
       return;
     }
 
-    log.info('Leaving dexterity as ${this._dexterity}');
+    log.fine('Leaving dexterity as ${this._dexterity}');
     return;
   }
 
@@ -191,17 +191,17 @@ class Mage extends ChangeNotifier {
     var difference = this._intelligence - value;
     var available = this.attributePoints - (this._strength + this._dexterity + this._intelligence);
 
-    log.info(
+    log.fine(
         'Adjust value $value current ${this._strength} difference $difference available $available');
 
     if (available + difference >= 0) {
-      log.info('Setting intelligence to $value');
+      log.fine('Setting intelligence to $value');
       this._intelligence = value;
       notifyListeners();
       return;
     }
 
-    log.info('Leaving intelligence as ${this._intelligence}');
+    log.fine('Leaving intelligence as ${this._intelligence}');
     return;
   }
 
@@ -230,7 +230,7 @@ class Mage extends ChangeNotifier {
 
     Map<String, dynamic> saveMage = this.toJson();
 
-    log.info('Saving mage account ID ${this.accountId} Mage $saveMage');
+    log.fine('Saving mage account ID ${this.accountId} Mage $saveMage');
 
     List<dynamic> magesData;
     try {
@@ -244,7 +244,7 @@ class Mage extends ChangeNotifier {
     }
 
     for (Map<String, dynamic> mageData in magesData) {
-      log.info('Post has mage data $mageData');
+      log.fine('Post has mage data $mageData');
       this.updateFromJson(mageData);
     }
 
