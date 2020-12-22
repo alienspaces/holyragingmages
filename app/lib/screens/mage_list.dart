@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 // Application packages
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/screens/processing.dart';
 import 'package:holyragingmages/widgets/mage_list.dart';
 
 enum MageListScreenState { ready, processing }
@@ -70,12 +71,7 @@ class _MageListScreenState extends State<MageListScreen> {
 
     // Processing
     if (state == MageListScreenState.processing) {
-      return Scaffold(
-        body: Container(
-          alignment: Alignment.center,
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return ProcessingScreen();
     }
 
     // Mage list model

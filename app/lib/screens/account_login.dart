@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 // Application packages
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/screens/processing.dart';
 
 enum AccountLoginScreenState { ready, processing }
 
@@ -63,12 +64,7 @@ class _AccountLoginScreenState extends State<AccountLoginScreen> {
 
     // Processing
     if (state == AccountLoginScreenState.processing) {
-      return Scaffold(
-        body: Container(
-          alignment: Alignment.center,
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return ProcessingScreen();
     }
 
     // Ready

@@ -55,9 +55,54 @@ class RouteGenerator {
       }
     }
 
-    return MaterialPageRoute(
-      builder: (context) {
+    Widget resolveTransition(BuildContext context, RouteSettings settings,
+        Animation<double> animation, Animation<double> anotherAnimation, Widget child) {
+      // Fade transition
+      Widget fadeTransition(Widget child) {
+        animation = CurvedAnimation(curve: Curves.easeInOut, parent: animation);
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      }
+
+      // Slide transition
+      Widget slideTransition(Widget child) {
+        animation = CurvedAnimation(curve: Curves.easeInOut, parent: animation);
+        return SlideTransition(
+          position: Tween(begin: Offset(-1.0, 0.0), end: Offset(0.0, 0.0)).animate(animation),
+          child: child,
+        );
+      }
+
+      switch (settings.name) {
+        case '/':
+          log.fine('Returning account login screen');
+          return fadeTransition(child);
+        case '/mage_list':
+          log.fine('Returning mage list screen');
+          return fadeTransition(child);
+        case '/mage_create':
+          log.fine('Returning mage create screen');
+          return slideTransition(child);
+        case '/mage_play':
+          log.fine('Returning mage play screen');
+          return slideTransition(child);
+        case '/mage_train':
+          log.fine('Returning mage train screen');
+          return slideTransition(child);
+        default:
+          return slideTransition(child);
+      }
+    }
+
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, anotherAnimation) {
         return resolveRoute(context, settings);
+      },
+      transitionDuration: Duration(milliseconds: 500),
+      transitionsBuilder: (context, animation, anotherAnimation, child) {
+        return resolveTransition(context, settings, animation, anotherAnimation, child);
       },
     );
   }
