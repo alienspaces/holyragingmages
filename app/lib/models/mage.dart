@@ -205,7 +205,7 @@ class Mage extends ChangeNotifier {
     return;
   }
 
-  int availableAttributePoints() {
+  int get availableAttributePoints {
     var available = this.attributePoints - (this._strength + this._dexterity + this._intelligence);
     return available;
   }

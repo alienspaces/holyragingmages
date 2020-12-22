@@ -25,7 +25,7 @@ class MageCreateButtonWidget extends StatelessWidget {
         log.info('Mage name is null or empty, create disabled');
         return false;
       }
-      if (mageModel.availableAttributePoints() != 0) {
+      if (mageModel.availableAttributePoints != 0) {
         log.info('Mage points ${mageModel.attributePoints} are unspent, create disabled');
         return false;
       }

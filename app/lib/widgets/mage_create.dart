@@ -87,7 +87,7 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           ),
           Expanded(
             flex: 5,
-            child: Text("${mageModel.availableAttributePoints()}"),
+            child: Text("${mageModel.availableAttributePoints}"),
           ),
         ]),
         // Strength
@@ -96,7 +96,7 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           value: mageModel.strength,
           incrementValue: _incrementStrength,
           decrementValue: _decrementStrength,
-          incrementEnabled: mageModel.availableAttributePoints() > 0,
+          incrementEnabled: mageModel.availableAttributePoints > 0,
           decrementEnabled: mageModel.strength > initialAttributePoints,
         ),
         // Dexterity
@@ -105,7 +105,7 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           value: mageModel.dexterity,
           incrementValue: _incrementDexterity,
           decrementValue: _decrementDexterity,
-          incrementEnabled: mageModel.availableAttributePoints() > 0,
+          incrementEnabled: mageModel.availableAttributePoints > 0,
           decrementEnabled: mageModel.dexterity > initialAttributePoints,
         ),
         // Intelligence
@@ -114,7 +114,7 @@ class _MageCreateWidgetState extends State<MageCreateWidget> {
           value: mageModel.intelligence,
           incrementValue: _incrementIntelligence,
           decrementValue: _decrementIntelligence,
-          incrementEnabled: mageModel.availableAttributePoints() > 0,
+          incrementEnabled: mageModel.availableAttributePoints > 0,
           decrementEnabled: mageModel.intelligence > initialAttributePoints,
         ),
       ],
