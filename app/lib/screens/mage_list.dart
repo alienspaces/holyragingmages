@@ -74,9 +74,6 @@ class _MageListScreenState extends State<MageListScreen> {
       return ProcessingScreen();
     }
 
-    // Mage list model
-    var mageListModel = Provider.of<MageCollection>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Mages'),
@@ -91,14 +88,6 @@ class _MageListScreenState extends State<MageListScreen> {
         child: Center(
           child: MageListWidget(),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: mageListModel.count() >= 4
-            ? null
-            : () {
-                Navigator.pushNamed(context, '/mage_create');
-              },
-        child: Icon(Icons.add),
       ),
     );
   }

@@ -5,7 +5,8 @@ import 'package:logging/logging.dart';
 
 // Application packages
 import 'package:holyragingmages/models/models.dart';
-import 'package:holyragingmages/widgets/mage_card.dart';
+import 'package:holyragingmages/widgets/mage_card_basic.dart';
+import 'package:holyragingmages/widgets/mage_card_new.dart';
 
 class MageListWidget extends StatefulWidget {
   @override
@@ -66,8 +67,32 @@ class _MageListWidgetState extends State<MageListWidget> {
 
     // Calculate aspect ratio so we can have 4 mages
     var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 50) / 2;
+    final double itemHeight = (size.height - kToolbarHeight - 50) / 3;
     final double itemWidth = size.width / 2;
+
+    Widget generateCard(int index) {
+      // Margin
+      EdgeInsetsGeometry cardMargin = EdgeInsets.all(10.0);
+      // Padding
+      EdgeInsetsGeometry cardPadding = EdgeInsets.all(10.0);
+
+      if (index < mages.length) {
+        return Container(
+          margin: cardMargin,
+          padding: cardPadding,
+          alignment: Alignment.center,
+          child: MageCardBasic(mages[index]),
+        );
+      }
+
+      return Container(
+        color: Colors.blue[300],
+        margin: cardMargin,
+        padding: cardPadding,
+        alignment: Alignment.center,
+        child: MageCardNew(),
+      );
+    }
 
     // Have mages
     return GridView.count(
@@ -76,11 +101,8 @@ class _MageListWidgetState extends State<MageListWidget> {
       mainAxisSpacing: 4,
       childAspectRatio: (itemWidth / itemHeight),
       children: List.generate(
-        mages.length,
-        (index) => Container(
-          padding: EdgeInsets.all(10.0),
-          child: MageCard(mages[index]),
-        ),
+        6,
+        (index) => generateCard(index),
       ),
     );
   }

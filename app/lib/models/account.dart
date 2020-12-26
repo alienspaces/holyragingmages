@@ -42,7 +42,19 @@ class Account extends ChangeNotifier {
     final log = Logger('Account - handleGoogleSignIn');
     return Future(() async {
       log.info('Signing in');
-      GoogleSignInAccount account = await _googleSignIn.signIn();
+      int errCount = 0;
+      GoogleSignInAccount account;
+      while (errCount < 6) {
+        try {
+          account = await _googleSignIn.signIn();
+        } catch (e) {
+          log.warning('Error count >$errCount<: Google sign in error ${e.toString()}');
+          errCount++;
+          await Future.delayed(Duration(seconds: errCount), null);
+          continue;
+        }
+        break;
+      }
       return await signInAccount(account);
     });
   }
