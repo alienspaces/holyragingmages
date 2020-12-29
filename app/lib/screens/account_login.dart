@@ -22,6 +22,11 @@ class _AccountLoginScreenState extends State<AccountLoginScreen> {
   // Screen state
   AccountLoginScreenState state = AccountLoginScreenState.ready;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   // Handle sign in then reroute
   void handleSignIn() {
     // Logger
@@ -39,8 +44,6 @@ class _AccountLoginScreenState extends State<AccountLoginScreen> {
     log.fine('Account id ${accountModel.id ?? ''}');
     log.fine('Account name ${accountModel.name ?? ''}');
     log.fine('Account email ${accountModel.email ?? ''}');
-    log.fine('Account provider id ${accountModel.providerAccountId ?? ''}');
-    log.fine('Account provider token ${accountModel.providerToken ?? ''}');
 
     accountModel.handleGoogleSignIn().then((_) {
       log.info('Account signed in, routing..');

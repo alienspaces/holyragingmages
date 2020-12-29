@@ -1,27 +1,43 @@
-// import 'dart:collection';
-// import 'dart:ffi';
-
-import 'package:logging/logging.dart';
+import 'dart:io';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logging/logging.dart';
 
 // Application packages
 import 'package:holyragingmages/api/api.dart';
+
+// Account Provider Type
+enum AccountProviderType { local, google }
+
+// Account Provider
+class AccountProvider {
+  AccountProviderType type;
+  String accountId;
+  String token;
+
+  AccountProvider({this.type, this.accountId, this.token});
+}
 
 class Account extends ChangeNotifier {
   // Api
   final Api api;
 
-  // Provider
-  String provider;
-  String providerAccountId;
-  String providerToken;
+  // Device
+  bool isAndroid;
+  bool isIOS;
+  bool isWeb;
 
   // Account
   String id;
   String email;
   String name;
 
+  // Local
+  String localId;
+
+  // Google Sign In
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
@@ -35,11 +51,62 @@ class Account extends ChangeNotifier {
     // Logger
     final log = Logger('Account - constructor');
     log.info('Constructing new account');
+
+    initialise();
+  }
+
+  void initialise() {
+    // Logger
+    final log = Logger('Account - initialise');
+
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (kIsWeb) {
+      deviceInfo.webBrowserInfo.then((WebBrowserInfo webBrowserInfo) {
+        log.info('Running on web: ${webBrowserInfo.userAgent}');
+        isWeb = true;
+      });
+    } else if (Platform.isAndroid) {
+      deviceInfo.androidInfo.then((AndroidDeviceInfo androidInfo) {
+        log.info('Running on Android: ${androidInfo.model}');
+        isAndroid = true;
+      });
+    } else if (Platform.isIOS) {
+      deviceInfo.iosInfo.then((IosDeviceInfo iosInfo) {
+        log.info('Running on IOS: ${iosInfo.utsname.machine}');
+        isIOS = true;
+      });
+    } else {
+      log.warning('Unsupported device');
+    }
+  }
+
+  Future<void> handleAnonymousSignIn() async {
+    // Logger
+    final log = Logger('Account - handleAnonymousSignIn');
+
+    // Provider
+    AccountProvider provider = AccountProvider(
+      type: AccountProviderType.local,
+      accountId: Uuid().v4(),
+    );
+
+    return Future(() async {
+      log.info('Signing in');
+
+      return await signInAccount(provider);
+    });
   }
 
   Future<void> handleGoogleSignIn() async {
     // Logger
     final log = Logger('Account - handleGoogleSignIn');
+
+    // Provider
+    AccountProvider provider = AccountProvider(
+      type: AccountProviderType.google,
+    );
+
     return Future(() async {
       log.info('Signing in');
       int errCount = 0;
@@ -55,7 +122,13 @@ class Account extends ChangeNotifier {
         }
         break;
       }
-      return await signInAccount(account);
+      // Provider token
+      GoogleSignInAuthentication auth = await account.authentication;
+
+      provider.accountId = account.id;
+      provider.token = auth.accessToken;
+
+      return await signInAccount(provider);
     });
   }
 
@@ -66,40 +139,36 @@ class Account extends ChangeNotifier {
 
     return Future(() async {
       log.info('Signing out');
+
       GoogleSignInAccount account = await _googleSignIn.disconnect();
-      return await signOutAccount(account);
+
+      log.info('Account ${account.toString()}');
+
+      return await signOutAccount();
     });
   }
 
-  Future<void> signInAccount(GoogleSignInAccount account) async {
+  Future<void> signInAccount(AccountProvider provider) async {
     // Logger
     final log = Logger('Account - signInAccount');
 
     return Future(() async {
       log.info('Signing into account');
-      // Provider
-      this.provider = 'google';
-      this.providerToken = null;
-      this.providerAccountId = account.id;
 
-      // Provider token
-      GoogleSignInAuthentication auth = await account.authentication;
+      log.info('Signed in provider ${provider.type.toString()}');
+      log.info('Signed in providerAccountId ${provider.accountId}');
+      log.info('Signed in providerToken ${provider.token}');
 
-      this.providerToken = auth.accessToken;
-
-      log.info('Signed in provider ${this.provider}');
-      log.info('Signed in providerAccountId ${this.providerAccountId}');
-      log.info('Signed in providerToken ${this.providerToken}');
-
-      // JWT for additional API calls
+      // Auth data
       Map<String, dynamic> data = {
         "data": {
-          "provider": "google",
-          "provider_account_id": this.providerAccountId,
-          "provider_token": this.providerToken,
+          "provider": provider.toString().substring(provider.toString().indexOf('.') + 1),
+          "provider_account_id": provider.accountId,
+          "provider_token": provider.token,
         },
       };
 
+      // Auth post
       List<dynamic> accountsData = await this.api.postAuth(data);
       log.info('Post returned ${accountsData.length} length');
       for (Map<String, dynamic> accountData in accountsData) {
@@ -116,15 +185,12 @@ class Account extends ChangeNotifier {
     });
   }
 
-  Future<void> signOutAccount(GoogleSignInAccount account) async {
+  Future<void> signOutAccount() async {
     // Logger
     final log = Logger('Account - signOutAccount');
 
     return Future(() {
       log.info('Signing out of account');
-      this.provider = null;
-      this.providerToken = null;
-      this.providerAccountId = null;
 
       this.id = null;
       this.email = null;
