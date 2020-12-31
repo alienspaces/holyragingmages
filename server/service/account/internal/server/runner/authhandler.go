@@ -26,7 +26,7 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 		return
 	}
 
-	accountRec, err := m.(*model.Model).VerifyProviderToken(model.AuthData{
+	accountRec, err := m.(*model.Model).VerifyAuth(model.AuthData{
 		Provider:          req.Data.Provider,
 		ProviderAccountID: req.Data.ProviderAccountID,
 		ProviderToken:     req.Data.ProviderToken,

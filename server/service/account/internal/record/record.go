@@ -6,11 +6,12 @@ import (
 
 // AccountProvider - Valid account providers
 const (
-	AccountProviderGoogle   string = "google"
-	AccountProviderApple    string = "apple"
-	AccountProviderFacebook string = "facebook"
-	AccountProviderTwitter  string = "twitter"
-	AccountProviderGithub   string = "github"
+	AccountProviderAnonymous string = "anonymous"
+	AccountProviderApple     string = "apple"
+	AccountProviderFacebook  string = "facebook"
+	AccountProviderGithub    string = "github"
+	AccountProviderGoogle    string = "google"
+	AccountProviderTwitter   string = "twitter"
 )
 
 // Account -

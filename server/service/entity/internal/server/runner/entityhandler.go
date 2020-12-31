@@ -127,7 +127,9 @@ func (rnr *Runner) GetAccountEntitiesHandler(w http.ResponseWriter, r *http.Requ
 		l.Info("Querying entity records")
 
 		// query parameters
-		params := make(map[string]interface{})
+		params := map[string]interface{}{
+			"account_id": accountID,
+		}
 		for paramName, paramValue := range qp {
 			params[paramName] = paramValue
 			l.Info("Querying entity records with param name >%s< value >%v<", paramName, paramValue)

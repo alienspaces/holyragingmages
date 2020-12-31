@@ -25,8 +25,8 @@ type VerifiedData struct {
 	Email  string
 }
 
-// VerifyProviderToken - verifies an authentication token from a provider and returns a local account record
-func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
+// VerifyAuth - verifies an authentication token from a provider and returns a local account record
+func (m *Model) VerifyAuth(data AuthData) (*record.Account, error) {
 
 	var verifiedAccountID string
 	var verifiedAccountEmail string
@@ -35,13 +35,7 @@ func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
 
 	// Check required
 	if data.Provider == "" {
-		msg := "AuthData missing Provider, cannot VerifyProviderToken"
-		m.Log.Warn(msg)
-		return nil, fmt.Errorf(msg)
-	}
-
-	if data.ProviderToken == "" {
-		msg := "AuthData missing ProviderToken, cannot VerifyProviderToken"
+		msg := "AuthData missing Provider, cannot Verify"
 		m.Log.Warn(msg)
 		return nil, fmt.Errorf(msg)
 	}
@@ -51,7 +45,27 @@ func (m *Model) VerifyProviderToken(data AuthData) (*record.Account, error) {
 	m.Log.Info("Verifying token    >%s<", data.ProviderToken)
 
 	switch data.Provider {
+	case record.AccountProviderAnonymous:
+		// Anonymous verification requires an account ID only
+		if data.ProviderAccountID == "" {
+			msg := "Missing ProviderAccountID, cannot verify anonymous authen"
+			m.Log.Warn(msg)
+			return nil, fmt.Errorf(msg)
+		}
+		verifiedAccountID = data.ProviderAccountID
 	case record.AccountProviderGoogle:
+		// Google verification with server to server token verification
+		if data.ProviderAccountID == "" {
+			msg := "Missing ProviderAccountID, cannot verify Google authen"
+			m.Log.Warn(msg)
+			return nil, fmt.Errorf(msg)
+		}
+		if data.ProviderToken == "" {
+			msg := "AuthData missing ProviderToken, cannot verify Google authen"
+			m.Log.Warn(msg)
+			return nil, fmt.Errorf(msg)
+		}
+
 		verifiedData, err := m.VerifyAuthTokenFunc(record.AccountProviderGoogle, data.ProviderToken)
 		if err != nil {
 			m.Log.Warn("Failed VerifyAuthTokenFunc >%v<", err)
@@ -133,7 +147,8 @@ func (m *Model) verifyAuthToken(provider, token string) (*VerifiedData, error) {
 
 	verifiedData := &VerifiedData{}
 
-	if provider == record.AccountProviderGoogle {
+	switch provider {
+	case record.AccountProviderGoogle:
 
 		// API key
 		apiKey := m.Config.Get("APP_SERVER_GOOGLE_API_KEY")
@@ -156,6 +171,9 @@ func (m *Model) verifyAuthToken(provider, token string) (*VerifiedData, error) {
 		}
 		verifiedData.UserID = tokenInfo.UserId
 		verifiedData.Email = tokenInfo.Email
+	default:
+		// Unsupported
+		return nil, fmt.Errorf("Unsupported provider >%s<", provider)
 	}
 
 	return verifiedData, nil

@@ -7,18 +7,18 @@
     "additionalProperties": false,
     "required": [
         "provider",
-        "provider_account_id",
-        "provider_token"
+        "provider_account_id"
     ],
     "properties": {
         "provider": {
             "description": "OAuth provider",
             "enum": [
-                "google",
+                "anonymous",
                 "apple",
                 "facebook",
-                "twitter",
-                "github"
+                "github",
+                "google",
+                "twitter"
             ]
         },
         "provider_account_id": {

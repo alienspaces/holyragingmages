@@ -1,15 +1,16 @@
 import 'dart:io';
-import 'package:uuid/uuid.dart';
-import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logging/logging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 // Application packages
 import 'package:holyragingmages/api/api.dart';
 
 // Account Provider Type
-enum AccountProviderType { local, google }
+enum AccountProviderType { anonymous, google }
 
 // Account Provider
 class AccountProvider {
@@ -34,8 +35,8 @@ class Account extends ChangeNotifier {
   String email;
   String name;
 
-  // Local
-  String localId;
+  // Provider
+  AccountProviderType accountProviderType;
 
   // Google Sign In
   GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -85,15 +86,23 @@ class Account extends ChangeNotifier {
     // Logger
     final log = Logger('Account - handleAnonymousSignIn');
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Locally stored account ID
+    String accountId = (prefs.getString('accountId') ?? Uuid().v4());
+    await prefs.setString('accountId', accountId);
+
     // Provider
+    accountProviderType = AccountProviderType.anonymous;
+
     AccountProvider provider = AccountProvider(
-      type: AccountProviderType.local,
-      accountId: Uuid().v4(),
+      type: accountProviderType,
+      accountId: accountId,
+      token: "", // Empty token for anonymous
     );
 
     return Future(() async {
       log.info('Signing in');
-
       return await signInAccount(provider);
     });
   }
@@ -103,14 +112,18 @@ class Account extends ChangeNotifier {
     final log = Logger('Account - handleGoogleSignIn');
 
     // Provider
+    accountProviderType = AccountProviderType.google;
+
     AccountProvider provider = AccountProvider(
-      type: AccountProviderType.google,
+      type: accountProviderType,
     );
 
     return Future(() async {
       log.info('Signing in');
+
       int errCount = 0;
       GoogleSignInAccount account;
+
       while (errCount < 6) {
         try {
           account = await _googleSignIn.signIn();
@@ -122,6 +135,7 @@ class Account extends ChangeNotifier {
         }
         break;
       }
+
       // Provider token
       GoogleSignInAuthentication auth = await account.authentication;
 
@@ -133,16 +147,17 @@ class Account extends ChangeNotifier {
   }
 
   // Generic sign out handles whichever provider initially used
-  Future<void> handleGoogleSignOut() async {
+  Future<void> handleSignOut() async {
     // Logger
     final log = Logger('Account - handleSignOut');
 
     return Future(() async {
       log.info('Signing out');
 
-      GoogleSignInAccount account = await _googleSignIn.disconnect();
-
-      log.info('Account ${account.toString()}');
+      if (accountProviderType == AccountProviderType.google) {
+        GoogleSignInAccount account = await _googleSignIn.disconnect();
+        log.info('Signed out of Google account ${account.toString()}');
+      }
 
       return await signOutAccount();
     });
@@ -162,7 +177,7 @@ class Account extends ChangeNotifier {
       // Auth data
       Map<String, dynamic> data = {
         "data": {
-          "provider": provider.toString().substring(provider.toString().indexOf('.') + 1),
+          "provider": provider.type.toString().substring(provider.type.toString().indexOf('.') + 1),
           "provider_account_id": provider.accountId,
           "provider_token": provider.token,
         },

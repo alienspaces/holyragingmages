@@ -25,11 +25,12 @@
         "provider": {
             "description": "OAuth provider",
             "enum": [
-                "google",
+                "anonymous",
                 "apple",
                 "facebook",
-                "twitter",
-                "github"
+                "github",
+                "google",
+                "twitter"
             ]
         },
         "provider_account_id": {

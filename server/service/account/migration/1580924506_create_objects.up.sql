@@ -1,10 +1,11 @@
 -- type account provider 
 CREATE TYPE "provider" AS ENUM (
-  'google',
+  'anonymous',
   'apple',
   'facebook',
-  'twitter',
-  'github'
+  'github',
+  'google',
+  'twitter'
 );
 
 -- type account role

@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/screens/processing.dart';
+import 'package:holyragingmages/widgets/account_signout.dart';
 import 'package:holyragingmages/widgets/mage_list.dart';
 
 enum MageListScreenState { ready, processing }
@@ -44,7 +45,7 @@ class _MageListScreenState extends State<MageListScreen> {
     // Mage list model
     var mageListModel = Provider.of<MageCollection>(context, listen: false);
 
-    accountModel.handleGoogleSignOut().then((_) {
+    accountModel.handleSignOut().then((_) {
       log.info('Account signed out, routing..');
 
       // Clear mages
@@ -76,9 +77,8 @@ class _MageListScreenState extends State<MageListScreen> {
       appBar: AppBar(
         title: Text('Mages'),
         actions: <Widget>[
-          RaisedButton(
-            child: const Text('SIGN OUT'),
-            onPressed: handleSignOut,
+          AccountSignOutWidget(
+            signOutCallback: handleSignOut,
           ),
         ],
       ),
