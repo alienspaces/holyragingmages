@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:provider/provider.dart';
 
-typedef UpdateValueCallback = void Function(String value);
+// Application packages
+import 'package:holyragingmages/models/models.dart';
 
 class MageCreateNameWidget extends StatefulWidget {
-  final String value;
-  final UpdateValueCallback updateValue;
-
   MageCreateNameWidget({
     Key key,
-    this.value,
-    this.updateValue,
   }) : super(key: key);
 
   @override
@@ -22,10 +19,12 @@ class MageCreateNameWidgetState extends State<MageCreateNameWidget> {
 
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.value);
+    _controller = TextEditingController();
     _controller.addListener(() {
+      // Mage models
+      var mageModel = Provider.of<Mage>(context, listen: false);
       final text = _controller.text;
-      widget.updateValue(text);
+      mageModel.name = text;
     });
   }
 
