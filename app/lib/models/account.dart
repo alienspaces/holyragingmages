@@ -188,10 +188,12 @@ class Account extends ChangeNotifier {
       log.info('Post returned ${accountsData.length} length');
       for (Map<String, dynamic> accountData in accountsData) {
         log.info('Post has account data $accountData');
+
         // Account
         this.id = accountData['account_id'];
         this.name = accountData['account_name'];
         this.email = accountData['account_email'];
+
         // Set API token to use from now on
         this.api.apiToken = accountData['token'];
       }

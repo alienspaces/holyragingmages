@@ -28,6 +28,13 @@ class ApiMock implements Api {
     });
   }
 
+  // refreshAuth creates a new entity
+  Future<List<dynamic>> refreshAuth(Map<String, dynamic> data) async {
+    return Future.delayed(Duration(microseconds: 1), () {
+      return Future.value();
+    });
+  }
+
   // getEntities returns a list of entities
   Future<List<dynamic>> getEntities(String accountId) async {
     return Future.delayed(Duration(microseconds: 1), () {

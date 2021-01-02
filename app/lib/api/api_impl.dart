@@ -53,6 +53,24 @@ class ApiImpl implements Api {
     return response.data["data"];
   }
 
+  // refreshAuth creates a new entity
+  Future<List<dynamic>> refreshAuth(Map<String, dynamic> data) async {
+    Response response = await this.dio.post(
+          "/api/auth-refresh",
+          data: data,
+        );
+
+    if (response.data == null) {
+      return null;
+    }
+
+    if (response.data == null) {
+      return null;
+    }
+
+    return response.data["data"];
+  }
+
   // getEntities returns a list of entities
   Future<List<dynamic>> getEntities(String accountId) async {
     Response response = await this.dio.get(
