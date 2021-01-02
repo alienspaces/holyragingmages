@@ -77,15 +77,15 @@ func TestVerifyAuth(t *testing.T) {
 
 			data := tc.data()
 
-			rec, err := h.Model.(*model.Model).VerifyAuth(data)
+			rec, err := h.Model.(*model.Model).AuthVerify(data)
 			if tc.err == true {
-				require.Error(t, err, "VerifyAuth returns error")
+				require.Error(t, err, "AuthVerify returns error")
 				return
 			}
-			require.NoError(t, err, "VerifyAuth returns without error")
-			require.NotEmpty(t, rec.Provider, "VerifyAuth returns record with Provider")
-			require.NotEmpty(t, rec.ProviderAccountID, "VerifyAuth returns record with ProviderAccountID")
-			require.NotEmpty(t, rec.CreatedAt, "VerifyAuth returns record with CreatedAt")
+			require.NoError(t, err, "AuthVerify returns without error")
+			require.NotEmpty(t, rec.Provider, "AuthVerify returns record with Provider")
+			require.NotEmpty(t, rec.ProviderAccountID, "AuthVerify returns record with ProviderAccountID")
+			require.NotEmpty(t, rec.CreatedAt, "AuthVerify returns record with CreatedAt")
 		}()
 	}
 }
