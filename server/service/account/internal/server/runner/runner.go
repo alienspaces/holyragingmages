@@ -53,10 +53,27 @@ func NewRunner() *Runner {
 				Description: "Authenticate OAuth provider token.",
 			},
 		},
+		// 1 - Refresh Authentication
+		{
+			Method:      http.MethodPost,
+			Path:        "/api/auth-refresh",
+			HandlerFunc: r.PostAuthRefreshHandler,
+			MiddlewareConfig: server.MiddlewareConfig{
+				ValidateSchemaLocation: "authrefresh",
+				ValidateSchemaMain:     "main.schema.json",
+				ValidateSchemaReferences: []string{
+					"data.schema.json",
+				},
+			},
+			DocumentationConfig: server.DocumentationConfig{
+				Document:    true,
+				Description: "Refresh authentication token.",
+			},
+		},
 
 		// TODO: Provide different default and administrator account handlers constraining record access as appropriate
 
-		// 1 - Accounts - Get many
+		// 2 - Accounts - Get many
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/accounts",
@@ -78,7 +95,7 @@ func NewRunner() *Runner {
 				Description: "Query accounts.",
 			},
 		},
-		// 2 - Accounts - Get one
+		// 3 - Accounts - Get one
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/accounts/:account_id",
@@ -100,7 +117,7 @@ func NewRunner() *Runner {
 				Description: "Get an account.",
 			},
 		},
-		// 3 - Accounts - Create one without ID
+		// 4 - Accounts - Create one without ID
 		{
 			Method:      http.MethodPost,
 			Path:        "/api/accounts",
@@ -127,7 +144,7 @@ func NewRunner() *Runner {
 				Description: "Create a account.",
 			},
 		},
-		// 4 - Accounts - Create one with ID
+		// 5 - Accounts - Create one with ID
 		{
 			Method:      http.MethodPost,
 			Path:        "/api/accounts/:account_id",
@@ -154,7 +171,7 @@ func NewRunner() *Runner {
 				Description: "Create a account.",
 			},
 		},
-		// 5 - Accounts - Update one
+		// 6 - Accounts - Update one
 		{
 			Method:      http.MethodPut,
 			Path:        "/api/accounts/:account_id",
@@ -181,7 +198,7 @@ func NewRunner() *Runner {
 				Description: "Update a account.",
 			},
 		},
-		// 6 - Documentation
+		// 7 - Documentation
 		{
 			Method:           http.MethodGet,
 			Path:             "/api",

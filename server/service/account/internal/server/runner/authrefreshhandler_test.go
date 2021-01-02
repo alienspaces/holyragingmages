@@ -13,15 +13,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
+	"gitlab.com/alienspaces/holyragingmages/server/constant"
+	"gitlab.com/alienspaces/holyragingmages/server/core/auth"
 	"gitlab.com/alienspaces/holyragingmages/server/core/server"
-	"gitlab.com/alienspaces/holyragingmages/server/core/type/logger"
-	"gitlab.com/alienspaces/holyragingmages/server/core/type/modeller"
 	"gitlab.com/alienspaces/holyragingmages/server/schema"
 	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/harness"
-	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/model"
 )
 
-func TestAuthHandler(t *testing.T) {
+func TestAuthRefreshHandler(t *testing.T) {
 
 	// Test harness
 	th, err := NewTestHarness()
@@ -32,43 +31,69 @@ func TestAuthHandler(t *testing.T) {
 	require.NoError(t, err, "NewDefaultDependencies returns without error")
 
 	type TestCase struct {
-		name                string
-		authVerifyTokenFunc func(provider, token string) (*model.VerifiedData, error)
-		config              func(rnr *Runner) server.HandlerConfig
-		requestParams       func(data *harness.Data) map[string]string
-		queryParams         func(data *harness.Data) map[string]string
-		requestData         func(data *harness.Data) *schema.AuthRequest
-		responseCode        int
-		responseData        func(data *harness.Data) *schema.AuthResponse
+		name          string
+		config        func(rnr *Runner) server.HandlerConfig
+		requestParams func(data *harness.Data) map[string]string
+		queryParams   func(data *harness.Data) map[string]string
+		requestData   func(data *harness.Data) *schema.AuthRefreshRequest
+		responseCode  int
+		responseData  func(data *harness.Data) *schema.AuthRefreshResponse
+	}
+
+	getToken := func(data *harness.Data) (string, error) {
+
+		a, err := auth.NewAuth(c, l)
+		if err != nil {
+			return "", err
+		}
+
+		// TODO: Expand on account roles
+		roles := []string{
+			constant.AuthRoleDefault,
+		}
+
+		identity := map[string]interface{}{
+			constant.AuthIdentityAccountID: data.AccountRecs[0].ID,
+		}
+
+		claims := auth.Claims{
+			Roles:    roles,
+			Identity: identity,
+		}
+
+		tokenString, err := a.EncodeJWT(&claims)
+		if err != nil {
+			return "", err
+		}
+
+		return tokenString, nil
 	}
 
 	tests := []TestCase{
-		// Auth
+		// Refresh Auth
 		{
-			name: "POST - Verify fails",
-			authVerifyTokenFunc: func(provider, token string) (*model.VerifiedData, error) {
-				return nil, nil
-			},
+			name: "POST - Refresh succeeds",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[0]
+				return rnr.HandlerConfig[1]
 			},
-			requestData: func(data *harness.Data) *schema.AuthRequest {
-				res := schema.AuthRequest{
-					Data: schema.AuthData{
-						Provider:          data.AccountRecs[0].Provider,
-						ProviderToken:     "eafee2f1-ae38-4289-8163-63407bb9ff17",
-						ProviderAccountID: data.AccountRecs[0].ProviderAccountID,
+			requestData: func(data *harness.Data) *schema.AuthRefreshRequest {
+
+				token, _ := getToken(data)
+				res := schema.AuthRefreshRequest{
+					Data: schema.AuthRefreshData{
+						Token: token,
 					},
 				}
 				return &res
 			},
-			responseCode: http.StatusUnauthorized,
-			responseData: func(data *harness.Data) *schema.AuthResponse {
-				res := schema.AuthResponse{
-					Data: []schema.AuthData{
+			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *schema.AuthRefreshResponse {
+				res := schema.AuthRefreshResponse{
+					Data: []schema.AuthRefreshData{
 						{
-							Provider:          data.AccountRecs[0].Provider,
-							ProviderAccountID: data.AccountRecs[0].ProviderAccountID,
+							AccountID:    data.AccountRecs[0].ID,
+							AccountEmail: data.AccountRecs[0].Email,
+							AccountName:  data.AccountRecs[0].Name,
 						},
 					},
 				}
@@ -83,17 +108,6 @@ func TestAuthHandler(t *testing.T) {
 
 		func() {
 			rnr := NewRunner()
-
-			// Override modeller and token verification function
-			rnr.ModellerFunc = func(l logger.Logger) (modeller.Modeller, error) {
-				m, err := model.NewModel(rnr.Config, l, rnr.Store)
-				if err != nil {
-					l.Warn("Failed new model >%v<", err)
-					return nil, err
-				}
-				m.AuthVerifyTokenFunc = tc.authVerifyTokenFunc
-				return m, nil
-			}
 
 			err = rnr.Init(c, l, s)
 			require.NoError(t, err, "Runner init returns without error")
@@ -183,12 +197,12 @@ func TestAuthHandler(t *testing.T) {
 			// test status
 			require.Equalf(t, tc.responseCode, rec.Code, "%s - Response code equals expected", tc.name)
 
-			res := schema.AuthResponse{}
+			res := schema.AuthRefreshResponse{}
 			err = json.NewDecoder(rec.Body).Decode(&res)
 			require.NoError(t, err, "Decode returns without error")
 
 			// response data
-			var resData *schema.AuthResponse
+			var resData *schema.AuthRefreshResponse
 			if tc.responseData != nil {
 				resData = tc.responseData(th.Data)
 			}
@@ -198,8 +212,10 @@ func TestAuthHandler(t *testing.T) {
 
 				// response data
 				if resData != nil {
-					require.Equal(t, resData.Data[0].Provider, res.Data[0].Provider, "Provider equals expected")
-					require.Equal(t, resData.Data[0].ProviderAccountID, res.Data[0].ProviderAccountID, "ProviderAccountID equals expected")
+					require.NotEmpty(t, res.Data[0].Token, "Token is not empty")
+					require.Equal(t, resData.Data[0].AccountID, res.Data[0].AccountID, "AccountID equals expected")
+					require.Equal(t, resData.Data[0].AccountEmail, res.Data[0].AccountEmail, "AccountEmail equals expected")
+					require.Equal(t, resData.Data[0].AccountName, res.Data[0].AccountName, "AccountName equals expected")
 				}
 
 				// record timestamps

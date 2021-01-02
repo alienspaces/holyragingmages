@@ -13,12 +13,12 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/service/account/internal/model"
 )
 
-// PostAuthHandler -
-func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
+// PostAuthRefreshHandler -
+func (rnr *Runner) PostAuthRefreshHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
-	l.Info("** Post auth handler ** p >%#v< m >#%v<", pp, m)
+	l.Info("** Post auth refresh handler ** p >%#v< m >#%v<", pp, m)
 
-	req := schema.AuthRequest{}
+	req := schema.AuthRefreshRequest{}
 
 	err := rnr.ReadRequest(l, r, &req)
 	if err != nil {
@@ -26,12 +26,8 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 		return
 	}
 
-	accountRec, err := m.(*model.Model).AuthVerify(model.AuthData{
-		Provider:          req.Data.Provider,
-		ProviderAccountID: req.Data.ProviderAccountID,
-		ProviderToken:     req.Data.ProviderToken,
-		AccountEmail:      req.Data.AccountEmail,
-		AccountName:       req.Data.AccountName,
+	accountRec, err := m.(*model.Model).AuthVerifyToken(model.AuthTokenData{
+		Token: req.Data.Token,
 	})
 	if err != nil {
 		rnr.WriteUnauthorizedError(l, w, err)
@@ -65,18 +61,15 @@ func (rnr *Runner) PostAuthHandler(w http.ResponseWriter, r *http.Request, pp ht
 	}
 
 	// assign response properties
-	res := schema.AuthResponse{
-		Data: []schema.AuthData{
+	res := schema.AuthRefreshResponse{
+		Data: []schema.AuthRefreshData{
 			{
-				Provider:          req.Data.Provider,
-				ProviderAccountID: req.Data.ProviderAccountID,
-				ProviderToken:     req.Data.ProviderToken,
-				AccountID:         accountRec.ID,
-				AccountName:       accountRec.Name,
-				AccountEmail:      accountRec.Email,
-				Token:             tokenString,
-				CreatedAt:         accountRec.CreatedAt,
-				UpdatedAt:         accountRec.UpdatedAt.Time,
+				AccountID:    accountRec.ID,
+				AccountName:  accountRec.Name,
+				AccountEmail: accountRec.Email,
+				Token:        tokenString,
+				CreatedAt:    accountRec.CreatedAt,
+				UpdatedAt:    accountRec.UpdatedAt.Time,
 			},
 		},
 	}

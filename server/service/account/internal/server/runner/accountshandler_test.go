@@ -62,7 +62,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "GET - Get existing",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[2]
+				return rnr.HandlerConfig[3]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
 				headers := map[string]string{
@@ -98,7 +98,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "GET - Get non-existant",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[2]
+				return rnr.HandlerConfig[3]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
 				headers := map[string]string{
@@ -120,7 +120,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "POST - Create without ID",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[3]
+				return rnr.HandlerConfig[4]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
 				headers := map[string]string{
@@ -144,7 +144,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "POST - Create with ID",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[4]
+				return rnr.HandlerConfig[5]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
 				headers := map[string]string{
@@ -188,7 +188,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "PUT - Update existing",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[5]
+				return rnr.HandlerConfig[6]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
 				headers := map[string]string{
@@ -233,7 +233,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "PUT - Update non-existing",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[5]
+				return rnr.HandlerConfig[6]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
 				headers := map[string]string{
@@ -260,7 +260,7 @@ func TestAccountHandler(t *testing.T) {
 		{
 			name: "PUT - Update missing data",
 			config: func(rnr *Runner) server.HandlerConfig {
-				return rnr.HandlerConfig[5]
+				return rnr.HandlerConfig[6]
 			},
 			requestHeaders: func(data *harness.Data) map[string]string {
 				headers := map[string]string{

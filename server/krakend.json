@@ -378,6 +378,32 @@
             ]
         },
         {
+            "endpoint": "/api/auth-refresh",
+            "headers_to_pass": [
+                "Authorization"
+            ],
+            "method": "POST",
+            "output_encoding": "json",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api/auth-refresh",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "POST",
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
+                    "host": [
+                        "http://172.17.0.1:8087"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
             "endpoint": "/api/accounts",
             "headers_to_pass": [
                 "Authorization"
