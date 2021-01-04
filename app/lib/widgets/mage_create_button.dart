@@ -49,6 +49,7 @@ class MageCreateButtonWidget extends StatelessWidget {
     return FloatingActionButton(
       onPressed: _createEnabled() ? _saveMage : null,
       disabledElevation: 0.0,
+      child: Icon(Icons.done),
     );
   }
 }

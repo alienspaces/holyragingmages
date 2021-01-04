@@ -20,8 +20,7 @@ class MageCreateAttributeWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  MageCreateAttributeWidgetState createState() =>
-      new MageCreateAttributeWidgetState();
+  MageCreateAttributeWidgetState createState() => new MageCreateAttributeWidgetState();
 }
 
 class MageCreateAttributeWidgetState extends State<MageCreateAttributeWidget> {
@@ -38,27 +37,33 @@ class MageCreateAttributeWidgetState extends State<MageCreateAttributeWidget> {
           child: Text(widget.name),
         ),
         Expanded(
-          flex: 2,
-          child: Align(
+          flex: 1,
+          child: Container(
             alignment: Alignment.centerLeft,
             child: FlatButton(
+              padding: EdgeInsets.only(right: 0),
+              color: Colors.blue,
+              disabledColor: Colors.blue[100],
               onPressed: widget.decrementEnabled ? widget.decrementValue : null,
               child: Icon(Icons.arrow_back),
             ),
           ),
         ),
         Expanded(
-          flex: 2,
-          child: Align(
+          flex: 1,
+          child: Container(
             alignment: Alignment.center,
             child: Text(widget.value.toString()),
           ),
         ),
         Expanded(
-          flex: 2,
-          child: Align(
-            alignment: Alignment.centerLeft,
+          flex: 1,
+          child: Container(
+            alignment: Alignment.centerRight,
             child: FlatButton(
+              padding: EdgeInsets.only(right: 0),
+              color: Colors.blue,
+              disabledColor: Colors.blue[100],
               onPressed: widget.incrementEnabled ? widget.incrementValue : null,
               child: Icon(Icons.arrow_forward),
             ),

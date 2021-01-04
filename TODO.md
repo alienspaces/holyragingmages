@@ -4,30 +4,36 @@
 
 ### Now
 
-* UI clean up
-  * JWT token time out should log out
-  * Mage list not refreshing, review model functionality
-  
-* Attribute points
-  * Sum of attributes points should never exceed `attribute_points` when updating or creating a mage
+* UI
+  * Choose mage
+    * Preset attributes, items and spells
+  * Fight behaviour
+    * Defensive <-> Aggressive
 
 ### Next
 
-* Mage items
-  * Default items when a mage is created
-  * Enhance mage API to equipped items
-  * Update mage card UI to show equipped items
-  * Provide ability to click on item in UI to show details
-* Mage spells
-  * Default spells when a mage is created
-  * Enhance mage API to include equipped spells
-  * Update mage card UI to show equipped spells
-  * Provide ability to click on spell in UI to show details
+* UI
+  * Choose familliar
+* Entity Service
+  * Add `entity.type` field
+    * Player Character
+    * Starter Character
+    * Non-Player Character
+    * Familliar
+  * Possibly normalise `entity.account_id` out into `account` as it can be nullable
 
-### Future
+### Notes
 
-* Server - make upgrading Go version a bit easier
-* Server - make handler unit tests cleaning up POST data correctly
+* Favourite spell
+* Favourite item
+* Arenas
+  * Training - No penalty, no reward
+  * Beginner - Lose 1 item, minor experience when you win
+  * Intermediate - Lose 2 items, better experience when you win, minor experience when you lose
+  * Advanced - Lose all items, great experience when you win, minor experience when you lose
+* Backup items to replace items lost in arena
+* Store
+* Train
 
 ## License
 

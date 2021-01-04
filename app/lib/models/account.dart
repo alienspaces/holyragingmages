@@ -202,6 +202,28 @@ class Account extends ChangeNotifier {
     });
   }
 
+  void refreshAccountToken() {
+    // Logger
+    final log = Logger('Account - refreshAccountToken');
+
+    // Auth data
+    Map<String, dynamic> data = {
+      "data": {
+        "token": api.apiToken,
+      },
+    };
+
+    api.refreshAuth(data).then((accountsData) {
+      log.info('Post returned ${accountsData.length} length');
+      for (Map<String, dynamic> accountData in accountsData) {
+        log.info('Post has account data $accountData');
+
+        // Set API token to use from now on
+        api.apiToken = accountData['token'];
+      }
+    });
+  }
+
   Future<void> signOutAccount() async {
     // Logger
     final log = Logger('Account - signOutAccount');

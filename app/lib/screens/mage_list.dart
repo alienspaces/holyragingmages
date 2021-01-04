@@ -34,28 +34,13 @@ class _MageListScreenState extends State<MageListScreen> {
     // Logger
     final log = Logger('MageListScreen - initState');
 
-    // TODO: Implement in account model..
+    // Account model
+    var accountModel = Provider.of<Account>(context, listen: false);
 
     // Refresh API token
     timer = new Timer.periodic(refreshTokenDuration, (Timer timer) {
-      log.info('Refreshing token ${widget.api.apiToken}');
-
-      // Auth data
-      Map<String, dynamic> data = {
-        "data": {
-          "token": widget.api.apiToken,
-        },
-      };
-
-      widget.api.refreshAuth(data).then((accountsData) {
-        log.info('Post returned ${accountsData.length} length');
-        for (Map<String, dynamic> accountData in accountsData) {
-          log.info('Post has account data $accountData');
-
-          // Set API token to use from now on
-          widget.api.apiToken = accountData['token'];
-        }
-      });
+      log.info('Refreshing token..');
+      accountModel.refreshAccountToken();
     });
 
     super.initState();

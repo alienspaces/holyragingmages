@@ -61,16 +61,19 @@ class _MageCreateAttributesWidgetState extends State<MageCreateAttributesWidget>
       mageModel.intelligence--;
     }
 
+    // Styling
+    EdgeInsetsGeometry padding = EdgeInsets.fromLTRB(0, 5, 0, 5);
+
     return Column(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+          padding: padding,
           alignment: Alignment.center,
           child: Text('Points Remaining: ${mageModel.availableAttributePoints}'),
         ),
         // Strength
         Container(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+          padding: padding,
           child: MageCreateAttributeWidget(
             name: 'Strength',
             value: mageModel.strength,
@@ -82,7 +85,7 @@ class _MageCreateAttributesWidgetState extends State<MageCreateAttributesWidget>
         ),
         // Dexterity
         Container(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+          padding: padding,
           child: MageCreateAttributeWidget(
             name: 'Dexterity',
             value: mageModel.dexterity,
@@ -94,7 +97,7 @@ class _MageCreateAttributesWidgetState extends State<MageCreateAttributesWidget>
         ),
         // Intelligence
         Container(
-          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+          padding: padding,
           child: MageCreateAttributeWidget(
             name: 'Intelligence',
             value: mageModel.intelligence,

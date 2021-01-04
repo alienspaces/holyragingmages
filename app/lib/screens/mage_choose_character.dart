@@ -5,21 +5,19 @@ import 'package:provider/provider.dart';
 // Application packages
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
-import 'package:holyragingmages/widgets/mage_create_attributes.dart';
-import 'package:holyragingmages/widgets/mage_create_avatar.dart';
-import 'package:holyragingmages/widgets/mage_create_button.dart';
-import 'package:holyragingmages/widgets/mage_create_name.dart';
+import 'package:holyragingmages/widgets/mage_choose_character_list.dart';
+import 'package:holyragingmages/widgets/mage_choose_character_button.dart';
 
-class MageCreateScreen extends StatefulWidget {
+class MageChooseCharacterScreen extends StatefulWidget {
   final Api api;
 
-  MageCreateScreen({Key key, this.api}) : super(key: key);
+  MageChooseCharacterScreen({Key key, this.api}) : super(key: key);
 
   @override
-  _MageCreateScreenState createState() => _MageCreateScreenState();
+  _MageChooseCharacterScreenState createState() => _MageChooseCharacterScreenState();
 }
 
-class _MageCreateScreenState extends State<MageCreateScreen> {
+class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
   @override
   void initState() {
     // Account model
@@ -42,7 +40,7 @@ class _MageCreateScreenState extends State<MageCreateScreen> {
   @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageCreateScreen - build');
+    final log = Logger('MageChooseCharacterScreen - build');
 
     log.info("Building");
 
@@ -51,27 +49,23 @@ class _MageCreateScreenState extends State<MageCreateScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Mage'),
+        title: Text('Choose Character'),
       ),
       body: Container(
+        padding: padding,
         child: Column(
           children: <Widget>[
             Container(
-              padding: padding,
-              child: MageCreateAvatarWidget(),
+              child: Expanded(
+                child: MageChooseCharacterListWidget(),
+              ),
             ),
             Container(
-              padding: padding,
-              child: MageCreateNameWidget(),
-            ),
-            Container(
-              padding: padding,
-              child: MageCreateAttributesWidget(),
+              child: MageChooseCharacterButtonWidget(),
             ),
           ],
         ),
       ),
-      floatingActionButton: MageCreateButtonWidget(),
       resizeToAvoidBottomInset: false,
     );
   }

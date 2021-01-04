@@ -40,6 +40,12 @@ class RouteGenerator {
         case '/mage_create':
           log.fine('Returning mage create screen');
           return MageCreateScreen(api: api);
+        case '/mage_choose_character':
+          log.fine('Returning mage choose character screen');
+          return MageChooseCharacterScreen(api: api);
+        case '/mage_choose_familliar':
+          log.fine('Returning mage choose familliar screen');
+          return MageChooseFamilliarScreen(api: api);
         case '/mage_play':
           log.fine('Returning mage play screen');
           return MagePlayScreen(api: api);
@@ -83,6 +89,12 @@ class RouteGenerator {
           log.fine('Returning mage list screen');
           return fadeTransition(child);
         case '/mage_create':
+          log.fine('Returning mage create screen');
+          return slideTransition(child);
+        case '/mage_choose_character':
+          log.fine('Returning mage create screen');
+          return slideTransition(child);
+        case '/mage_choose_familliar':
           log.fine('Returning mage create screen');
           return slideTransition(child);
         case '/mage_play':
