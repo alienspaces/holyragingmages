@@ -18,13 +18,14 @@
                 "DELETE",
                 "OPTIONS"
             ],
-            "allow_credentials": true,
+            "allow_credentials": false,
             "allow_headers": [
-                "Authorization"
+                "Authorization",
+                "Content-Type"
             ]
         },
         "github_com/devopsfaith/krakend-gologging": {
-            "level": "ERROR",
+            "level": "DEBUG",
             "prefix": "[KRAKEND]",
             "syslog": false,
             "stdout": true,

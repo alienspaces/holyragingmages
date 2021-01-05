@@ -36,7 +36,7 @@ class ApiImpl implements Api {
     dio = new Dio(options);
 
     // Logging
-    dio.interceptors.add(LogInterceptor(responseBody: false));
+    dio.interceptors.add(LogInterceptor(responseBody: true));
   }
 
   // postAuth creates a new entity

@@ -4,5 +4,5 @@
 source ${BASH_SOURCE%/*}/stop-krakend || exit $?
 
 # check krakend
-docker run --name hrm-krakend -p 8080:8080 -v "${PWD}:/etc/krakend/" devopsfaith/krakend:1.1 check -d -c krakend.json
+docker run --name hrm-krakend -p 8082:8080 -v "${PWD}:/etc/krakend/" devopsfaith/krakend:1.1 check -d -c krakend.json
 
