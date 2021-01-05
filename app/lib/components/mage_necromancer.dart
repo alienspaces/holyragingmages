@@ -7,7 +7,7 @@ import 'package:holyragingmages/components/mage.dart';
 class MageNecromancer extends Mage {
   MageNecromancer({ProcessingGame game, double startX, startY, endX, endY})
       : super(game: game, startX: startX, startY: startY, endX: endX, endY: endY) {
-    mageSprite = Sprite('necromancer/casting/Necromancer_01_Casting Spells_000.png');
+    mageSprite = Sprite('necromancer/casting/Casting_000.png');
     flipHorizontally = true;
   }
 }

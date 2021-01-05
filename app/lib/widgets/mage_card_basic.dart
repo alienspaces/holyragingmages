@@ -24,10 +24,10 @@ class MageCardBasic extends StatelessWidget {
             // Mage avatar
             Container(
               alignment: Alignment.topCenter,
-              child: CircleAvatar(
-                maxRadius: 50.0,
-                backgroundImage: AssetImage("assets/avatars/2.jpg"),
-              ),
+              // child: CircleAvatar(
+              //   maxRadius: 50.0,
+              //   backgroundImage: AssetImage("assets/avatars/2.jpg"),
+              // ),
             ),
           ],
         ),

@@ -49,7 +49,7 @@ class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Character'),
+        title: Text('Choose Your Mage'),
       ),
       body: Container(
         padding: padding,

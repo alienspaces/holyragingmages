@@ -5,38 +5,63 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 // Application packages
 // import 'package:holyragingmages/models/models.dart';
+import 'package:holyragingmages/widgets/mage_animated.dart';
 
 class CharacterChoice {
   String description;
   int strength;
   int dexterity;
   int intelligence;
+  String imagePath;
+  int imageCount;
   ImageProvider avatarImage;
 
-  CharacterChoice(
-      {this.description, this.strength, this.dexterity, this.intelligence, this.avatarImage});
+  CharacterChoice({
+    this.description,
+    this.strength,
+    this.dexterity,
+    this.intelligence,
+    this.imagePath,
+    this.imageCount,
+    this.avatarImage,
+  });
 }
 
 List<CharacterChoice> characterChoices = [
   CharacterChoice(
-    description: 'Armoured Mage',
+    description: 'Dark Armoured',
     strength: 18,
     dexterity: 10,
     intelligence: 10,
+    imagePath: 'assets/images/dark-knight/idle/Idle_',
+    imageCount: 11,
     avatarImage: AssetImage("assets/avatars/1.jpg"),
   ),
   CharacterChoice(
-    description: 'Rogue Mage',
-    strength: 10,
-    dexterity: 18,
+    description: 'Druid',
+    strength: 14,
+    dexterity: 14,
     intelligence: 10,
+    imagePath: 'assets/images/druid/idle/Idle_',
+    imageCount: 11,
     avatarImage: AssetImage("assets/avatars/2.jpg"),
   ),
   CharacterChoice(
-    description: 'Fire Mage',
+    description: 'Fairy',
     strength: 10,
+    dexterity: 14,
+    intelligence: 14,
+    imagePath: 'assets/images/fairy/idle/Idle_',
+    imageCount: 11,
+    avatarImage: AssetImage("assets/avatars/3.jpg"),
+  ),
+  CharacterChoice(
+    description: 'Necromancer',
+    strength: 14,
     dexterity: 10,
-    intelligence: 18,
+    intelligence: 14,
+    imagePath: 'assets/images/necromancer/idle/Idle_',
+    imageCount: 11,
     avatarImage: AssetImage("assets/avatars/3.jpg"),
   ),
 ];
@@ -89,7 +114,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
     log.info("Building");
 
     // Build mage
-    Widget buildMageCard(int index) {
+    Widget buildMageCard(int idx) {
       return Container(
         // width: 450,
         color: Colors.grey[400],
@@ -97,15 +122,20 @@ class MageChooseCharacterListWidget extends StatelessWidget {
           // Description
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Text('${characterChoices[index].description}'),
+            child: Text('${characterChoices[idx].description}'),
           ),
           // Avatar
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: CircleAvatar(
-              maxRadius: 60.0,
-              backgroundImage: characterChoices[index].avatarImage,
+            height: 150,
+            child: MageAnimatedWidget(
+              imageCount: characterChoices[idx].imageCount,
+              imagePath: characterChoices[idx].imagePath,
             ),
+            // child: CircleAvatar(
+            //   maxRadius: 60.0,
+            //   backgroundImage: characterChoices[idx].avatarImage,
+            // ),
           ),
           // Strength
           Container(
@@ -118,8 +148,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, characterChoices[index].strength),
-                      color: calculateFillColour(context, characterChoices[index].strength),
+                      width: calculateFillWidth(context, characterChoices[idx].strength),
+                      color: calculateFillColour(context, characterChoices[idx].strength),
                       child: Text('Strength'),
                     ),
                   ),
@@ -128,7 +158,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${characterChoices[index].strength}'),
+                    child: Text('${characterChoices[idx].strength}'),
                   ),
                 ),
               ],
@@ -145,8 +175,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, characterChoices[index].dexterity),
-                      color: calculateFillColour(context, characterChoices[index].dexterity),
+                      width: calculateFillWidth(context, characterChoices[idx].dexterity),
+                      color: calculateFillColour(context, characterChoices[idx].dexterity),
                       child: Text('Dexterity'),
                     ),
                   ),
@@ -155,7 +185,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${characterChoices[index].dexterity}'),
+                    child: Text('${characterChoices[idx].dexterity}'),
                   ),
                 ),
               ],
@@ -172,8 +202,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, characterChoices[index].intelligence),
-                      color: calculateFillColour(context, characterChoices[index].intelligence),
+                      width: calculateFillWidth(context, characterChoices[idx].intelligence),
+                      color: calculateFillColour(context, characterChoices[idx].intelligence),
                       child: Text('Intelligence'),
                     ),
                   ),
@@ -182,7 +212,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${characterChoices[index].intelligence}'),
+                    child: Text('${characterChoices[idx].intelligence}'),
                   ),
                 ),
               ],
@@ -203,8 +233,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
         enlargeCenterPage: true,
         scrollDirection: Axis.horizontal,
       ),
-      itemBuilder: (BuildContext context, int index) => Container(
-        child: buildMageCard(index),
+      itemBuilder: (BuildContext context, int idx) => Container(
+        child: buildMageCard(idx),
       ),
     );
   }
