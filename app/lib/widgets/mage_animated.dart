@@ -26,29 +26,48 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
     // Logger
     final log = Logger('MageAnimatedWidget - initState');
 
-    for (int idx = 0; idx <= widget.imageCount; idx++) {
-      String imagePath = "${widget.imagePath}${idx.toString().padLeft(3, '0')}.png";
-      log.info('Adding image path $imagePath');
-      Image image = Image(image: AssetImage(imagePath));
-      log.info('Added ${image.toString()}');
-      imageList.add(image);
+    if (imageList.length == 0) {
+      for (int idx = 0; idx <= widget.imageCount; idx++) {
+        String imagePath = "${widget.imagePath}${idx.toString().padLeft(3, '0')}.png";
+        log.info('Adding image path $imagePath');
+        Image image = Image(image: AssetImage(imagePath));
+        log.info('Added ${image.toString()}');
+        imageList.add(image);
+      }
     }
-
-    timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      setState(() {
-        currentIdx++;
-        if (currentIdx == widget.imageCount) {
-          currentIdx = 0;
-        }
-      });
-    });
 
     super.initState();
   }
 
   @override
+  void didChangeDependencies() {
+    // Pre-cache images
+    for (var idx = 0; idx <= widget.imageCount; idx++) {
+      precacheImage(imageList[idx].image, context);
+    }
+
+    // Change image periodically
+    if (timer == null && mounted) {
+      timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+        setState(() {
+          currentIdx++;
+          if (currentIdx == widget.imageCount) {
+            currentIdx = 0;
+          }
+        });
+      });
+    }
+
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
-    timer.cancel();
+    // Cancel timer
+    if (timer != null) {
+      timer.cancel();
+    }
+
     super.dispose();
   }
 
