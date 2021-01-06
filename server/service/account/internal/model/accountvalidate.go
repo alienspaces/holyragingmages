@@ -18,12 +18,7 @@ func (m *Model) ValidateAccountRec(rec *record.Account) error {
 			return fmt.Errorf(msg)
 		}
 	case record.AccountProviderGoogle:
-		// We require a provider account ID, name and email to create a Google local account
-		if rec.Name == "" {
-			msg := "Missing Name, cannot create a Google account"
-			m.Log.Warn(msg)
-			return fmt.Errorf(msg)
-		}
+		// We require a provider account ID and email to create a Google local account
 		if rec.Email == "" {
 			msg := "Missing Email, cannot create a Google account"
 			m.Log.Warn(msg)
