@@ -1,6 +1,6 @@
 # Holy Raging Mages - Server
 
-Server application for the [Holy Raging Mages](https://holyragingmages.com]) game.
+Server application for the [Holy Raging Mages](https://holyragingmages.com) game.
 
 ## Start
 
@@ -10,11 +10,11 @@ Start all services
 ./script/start
 ```
 
-[http://localhost:8082/entity/api](http://localhost:8082/entity/api)
+## API Documentation
 
-[http://localhost:8082/spell/api](http://localhost:8082/spell/api)
-
-[http://localhost:8082/item/api](http://localhost:8082/item/api)
+* [Account](http://localhost:8082/accounts/documentation)
+* [Entities](http://localhost:8082/entities/documentation)
+* [Spells](http://localhost:8082/spells/documentation)
 
 ## Stop
 
@@ -31,7 +31,6 @@ Server
 * Separate domain oriented services
   * Go
   * Postgres
-  * K8s
 * Account creation with OAuth/third party providers only
 
 ```plantuml
@@ -49,4 +48,4 @@ left to right direction
 
 ## License
 
-COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com
+COPYRIGHT 2021 ALIENSPACES alienspaces@gmail.com

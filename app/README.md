@@ -4,4 +4,4 @@ Cross platform client application for the [Holy Raging Mages](https://holyraging
 
 ## License
 
-COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com
+COPYRIGHT 2021 ALIENSPACES alienspaces@gmail.com

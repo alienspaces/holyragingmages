@@ -73,4 +73,4 @@ This setting can be adjusted for the mage and the familliar independently.
 
 ## License
 
-COPYRIGHT 2020 ALIENSPACES alienspaces@gmail.com
+COPYRIGHT 2021 ALIENSPACES alienspaces@gmail.com

@@ -220,14 +220,10 @@ func NewRunner() *Runner {
 		},
 		// 6 - Documentation
 		{
-			Method:      http.MethodGet,
-			Path:        "/api",
-			HandlerFunc: r.GetDocumentationHandler,
-			MiddlewareConfig: server.MiddlewareConfig{
-				AuthTypes: []string{
-					auth.AuthTypeJWT,
-				},
-			},
+			Method:           http.MethodGet,
+			Path:             "/api",
+			HandlerFunc:      r.GetDocumentationHandler,
+			MiddlewareConfig: server.MiddlewareConfig{},
 		},
 	}
 

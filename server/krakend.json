@@ -41,6 +41,29 @@
     "name": "HolyRagingMages",
     "endpoints": [
         {
+            "endpoint": "/spells/documentation",
+            "method": "GET",
+            "output_encoding": "no-op",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api",
+                    "encoding": "no-op",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
+                    "host": [
+                        "http://172.17.0.1:8084"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
             "endpoint": "/api/spells",
             "headers_to_pass": [
                 "Authorization"
@@ -197,6 +220,29 @@
             ]
         },
         {
+            "endpoint": "/entities/documentation",
+            "method": "GET",
+            "output_encoding": "no-op",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api",
+                    "encoding": "no-op",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
+                    "host": [
+                        "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
             "endpoint": "/api/accounts/{account_id}/entities",
             "headers_to_pass": [
                 "Authorization"
@@ -347,6 +393,29 @@
                     },
                     "host": [
                         "http://172.17.0.1:8085"
+                    ],
+                    "disable_host_sanitize": true
+                }
+            ]
+        },
+        {
+            "endpoint": "/accounts/documentation",
+            "method": "GET",
+            "output_encoding": "no-op",
+            "extra_config": {},
+            "backend": [
+                {
+                    "url_pattern": "/api",
+                    "encoding": "no-op",
+                    "sd": "static",
+                    "method": "GET",
+                    "extra_config": {
+                        "github.com/devopsfaith/krakend/http": {
+                            "return_error_details": "error"
+                        }
+                    },
+                    "host": [
+                        "http://172.17.0.1:8087"
                     ],
                     "disable_host_sanitize": true
                 }
