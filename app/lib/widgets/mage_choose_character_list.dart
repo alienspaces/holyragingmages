@@ -7,7 +7,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 // import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/mage_animated.dart';
 
-class CharacterChoice {
+// TODO: Store starter character on server with items, spells
+class MageTemplate {
   String description;
   int strength;
   int dexterity;
@@ -16,7 +17,7 @@ class CharacterChoice {
   int imageCount;
   ImageProvider avatarImage;
 
-  CharacterChoice({
+  MageTemplate({
     this.description,
     this.strength,
     this.dexterity,
@@ -27,8 +28,8 @@ class CharacterChoice {
   });
 }
 
-List<CharacterChoice> characterChoices = [
-  CharacterChoice(
+List<MageTemplate> mageTemplates = [
+  MageTemplate(
     description: 'Dark Armoured',
     strength: 18,
     dexterity: 10,
@@ -37,7 +38,7 @@ List<CharacterChoice> characterChoices = [
     imageCount: 11,
     avatarImage: AssetImage("assets/avatars/1.jpg"),
   ),
-  CharacterChoice(
+  MageTemplate(
     description: 'Druid',
     strength: 14,
     dexterity: 14,
@@ -46,7 +47,7 @@ List<CharacterChoice> characterChoices = [
     imageCount: 11,
     avatarImage: AssetImage("assets/avatars/2.jpg"),
   ),
-  CharacterChoice(
+  MageTemplate(
     description: 'Fairy',
     strength: 10,
     dexterity: 14,
@@ -55,7 +56,7 @@ List<CharacterChoice> characterChoices = [
     imageCount: 11,
     avatarImage: AssetImage("assets/avatars/3.jpg"),
   ),
-  CharacterChoice(
+  MageTemplate(
     description: 'Necromancer',
     strength: 14,
     dexterity: 10,
@@ -74,14 +75,14 @@ class MageChooseCharacterListWidget extends StatelessWidget {
 
     double parentWidth = MediaQuery.of(context).size.width;
 
-    log.warning('Parent width         $parentWidth');
-    log.warning('Attribute value      $attributeValue');
+    log.finer('Parent width         $parentWidth');
+    log.finer('Attribute value      $attributeValue');
 
     int attributePercentage = ((attributeValue / 20) * 100).toInt();
-    log.warning('Attribute percentage $attributePercentage');
+    log.finer('Attribute percentage $attributePercentage');
 
     double childWidth = ((attributePercentage / 130) * parentWidth);
-    log.warning('Child width          $childWidth');
+    log.finer('Child width          $childWidth');
 
     return childWidth;
   }
@@ -93,14 +94,14 @@ class MageChooseCharacterListWidget extends StatelessWidget {
 
     double parentWidth = MediaQuery.of(context).size.width;
 
-    log.warning('Parent width         $parentWidth');
-    log.warning('Attribute value      $attributeValue');
+    log.finer('Parent width         $parentWidth');
+    log.finer('Attribute value      $attributeValue');
 
     int attributePercentage = ((attributeValue / 20) * 100).toInt();
-    log.warning('Attribute percentage $attributePercentage');
+    log.finer('Attribute percentage $attributePercentage');
 
     int shadeOffset = ((attributePercentage / 100) * 255).toInt();
-    log.warning('Shade offset         $shadeOffset');
+    log.finer('Shade offset         $shadeOffset');
 
     return Color.fromARGB(
         255, (200 - shadeOffset / 2).toInt(), (200 - shadeOffset / 4).toInt(), 255 - shadeOffset);
@@ -113,6 +114,13 @@ class MageChooseCharacterListWidget extends StatelessWidget {
 
     log.info("Building");
 
+    void onPageChangedHandler(int pageIdx, CarouselPageChangedReason reason) {
+      // Logger
+      final log = Logger('MageChooseCharacterListWidget - onScrolledHandler');
+
+      log.info("Page idx $pageIdx reason $reason");
+    }
+
     // Build mage
     Widget buildMageCard(int idx) {
       return Container(
@@ -122,20 +130,16 @@ class MageChooseCharacterListWidget extends StatelessWidget {
           // Description
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Text('${characterChoices[idx].description}'),
+            child: Text('${mageTemplates[idx].description}'),
           ),
           // Avatar
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
             height: 150,
             child: MageAnimatedWidget(
-              imageCount: characterChoices[idx].imageCount,
-              imagePath: characterChoices[idx].imagePath,
+              imageCount: mageTemplates[idx].imageCount,
+              imagePath: mageTemplates[idx].imagePath,
             ),
-            // child: CircleAvatar(
-            //   maxRadius: 60.0,
-            //   backgroundImage: characterChoices[idx].avatarImage,
-            // ),
           ),
           // Strength
           Container(
@@ -148,8 +152,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, characterChoices[idx].strength),
-                      color: calculateFillColour(context, characterChoices[idx].strength),
+                      width: calculateFillWidth(context, mageTemplates[idx].strength),
+                      color: calculateFillColour(context, mageTemplates[idx].strength),
                       child: Text('Strength'),
                     ),
                   ),
@@ -158,7 +162,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${characterChoices[idx].strength}'),
+                    child: Text('${mageTemplates[idx].strength}'),
                   ),
                 ),
               ],
@@ -175,8 +179,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, characterChoices[idx].dexterity),
-                      color: calculateFillColour(context, characterChoices[idx].dexterity),
+                      width: calculateFillWidth(context, mageTemplates[idx].dexterity),
+                      color: calculateFillColour(context, mageTemplates[idx].dexterity),
                       child: Text('Dexterity'),
                     ),
                   ),
@@ -185,7 +189,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${characterChoices[idx].dexterity}'),
+                    child: Text('${mageTemplates[idx].dexterity}'),
                   ),
                 ),
               ],
@@ -202,8 +206,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, characterChoices[idx].intelligence),
-                      color: calculateFillColour(context, characterChoices[idx].intelligence),
+                      width: calculateFillWidth(context, mageTemplates[idx].intelligence),
+                      color: calculateFillColour(context, mageTemplates[idx].intelligence),
                       child: Text('Intelligence'),
                     ),
                   ),
@@ -212,7 +216,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${characterChoices[idx].intelligence}'),
+                    child: Text('${mageTemplates[idx].intelligence}'),
                   ),
                 ),
               ],
@@ -223,7 +227,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
     }
 
     return CarouselSlider.builder(
-      itemCount: characterChoices.length,
+      itemCount: mageTemplates.length,
       options: CarouselOptions(
         height: 400,
         aspectRatio: 16 / 9,
@@ -232,6 +236,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
         enableInfiniteScroll: true,
         enlargeCenterPage: true,
         scrollDirection: Axis.horizontal,
+        onPageChanged: onPageChangedHandler,
       ),
       itemBuilder: (BuildContext context, int idx) => Container(
         child: buildMageCard(idx),

@@ -29,9 +29,9 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
     if (imageList.length == 0) {
       for (int idx = 0; idx <= widget.imageCount; idx++) {
         String imagePath = "${widget.imagePath}${idx.toString().padLeft(3, '0')}.png";
-        log.info('Adding image path $imagePath');
+        log.finer('Adding image path $imagePath');
         Image image = Image(image: AssetImage(imagePath));
-        log.info('Added ${image.toString()}');
+        log.finer('Added ${image.toString()}');
         imageList.add(image);
       }
     }
