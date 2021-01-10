@@ -15,32 +15,37 @@ func (rnr *Runner) LoadTestData(c *cli.Context) error {
 
 	// harness
 	config := harness.DataConfig{
-		EntityConfig: []harness.EntityConfig{
-			// Maize
+		AccountEntityConfig: []harness.AccountEntityConfig{
 			{
-				Record: record.Entity{
-					Record: repository.Record{
-						ID: "1d3f8d0b-b7b3-4569-a099-8f1b6e2a2c71",
+				Record: record.AccountEntity{},
+				EntityConfig: []harness.EntityConfig{
+					// Maize
+					{
+						Record: record.Entity{
+							Record: repository.Record{
+								ID: "1d3f8d0b-b7b3-4569-a099-8f1b6e2a2c71",
+							},
+							Name: "Maize",
+						},
 					},
-					Name: "Maize",
-				},
-			},
-			// Veronica
-			{
-				Record: record.Entity{
-					Record: repository.Record{
-						ID: "6992c452-dadf-47fd-99fa-64287b44e475",
+					// Veronica
+					{
+						Record: record.Entity{
+							Record: repository.Record{
+								ID: "6992c452-dadf-47fd-99fa-64287b44e475",
+							},
+							Name: "Veronica",
+						},
 					},
-					Name: "Veronica",
-				},
-			},
-			// Audrey
-			{
-				Record: record.Entity{
-					Record: repository.Record{
-						ID: "cf0371e6-10e3-4594-a3fb-fd8253cccf2a",
+					// Audrey
+					{
+						Record: record.Entity{
+							Record: repository.Record{
+								ID: "cf0371e6-10e3-4594-a3fb-fd8253cccf2a",
+							},
+							Name: "Audrey",
+						},
 					},
-					Name: "Audrey",
 				},
 			},
 		},

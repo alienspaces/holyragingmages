@@ -16,6 +16,13 @@ type Testing struct {
 
 // DataConfig -
 type DataConfig struct {
+	EntityConfig        []EntityConfig
+	AccountEntityConfig []AccountEntityConfig
+}
+
+// AccountEntityConfig -
+type AccountEntityConfig struct {
+	Record       record.AccountEntity
 	EntityConfig []EntityConfig
 }
 
@@ -26,7 +33,8 @@ type EntityConfig struct {
 
 // Data -
 type Data struct {
-	EntityRecs []record.Entity
+	EntityRecs        []record.Entity
+	AccountEntityRecs []record.AccountEntity
 }
 
 // NewTesting -
@@ -68,14 +76,46 @@ func (t *Testing) Modeller() (modeller.Modeller, error) {
 // CreateData - Custom data
 func (t *Testing) CreateData() error {
 
-	for _, mageConfig := range t.DataConfig.EntityConfig {
+	// Account entity with entity records
+	for _, accountEntityConfig := range t.DataConfig.AccountEntityConfig {
 
-		mageRec, err := t.createEntityRec(mageConfig)
+		// NOTE: For an account entity record to be created there must
+		// be at least one entity record created.
+		if len(accountEntityConfig.EntityConfig) == 0 {
+			accountEntityConfig.EntityConfig = []EntityConfig{
+				{
+					Record: record.Entity{},
+				},
+			}
+		}
+
+		for _, entityConfig := range accountEntityConfig.EntityConfig {
+
+			entityRec, err := t.createEntityRec(entityConfig)
+			if err != nil {
+				t.Log.Warn("Failed creating entity record >%v<", err)
+				return err
+			}
+			t.Data.EntityRecs = append(t.Data.EntityRecs, entityRec)
+
+			accountEntityRec, err := t.createAccountEntityRec(entityRec, accountEntityConfig)
+			if err != nil {
+				t.Log.Warn("Failed creating account entity record >%v<", err)
+				return err
+			}
+			t.Data.AccountEntityRecs = append(t.Data.AccountEntityRecs, accountEntityRec)
+		}
+	}
+
+	// Stand alone entity records
+	for _, entityConfig := range t.DataConfig.EntityConfig {
+
+		entityRec, err := t.createEntityRec(entityConfig)
 		if err != nil {
-			t.Log.Warn("Failed creating mage record >%v<", err)
+			t.Log.Warn("Failed creating entity record >%v<", err)
 			return err
 		}
-		t.Data.EntityRecs = append(t.Data.EntityRecs, mageRec)
+		t.Data.EntityRecs = append(t.Data.EntityRecs, entityRec)
 	}
 
 	return nil
@@ -84,17 +124,32 @@ func (t *Testing) CreateData() error {
 // RemoveData -
 func (t *Testing) RemoveData() error {
 
-MAGE_RECS:
+ACCOUNT_RECS:
+	for {
+		if len(t.Data.AccountEntityRecs) == 0 {
+			break ACCOUNT_RECS
+		}
+		rec := record.AccountEntity{}
+		rec, t.Data.AccountEntityRecs = t.Data.AccountEntityRecs[0], t.Data.AccountEntityRecs[1:]
+
+		err := t.Model.(*model.Model).RemoveAccountEntityRec(rec.ID)
+		if err != nil {
+			t.Log.Warn("Failed removing account entity record >%v<", err)
+			return err
+		}
+	}
+
+ENTITY_RECS:
 	for {
 		if len(t.Data.EntityRecs) == 0 {
-			break MAGE_RECS
+			break ENTITY_RECS
 		}
 		rec := record.Entity{}
 		rec, t.Data.EntityRecs = t.Data.EntityRecs[0], t.Data.EntityRecs[1:]
 
 		err := t.Model.(*model.Model).RemoveEntityRec(rec.ID)
 		if err != nil {
-			t.Log.Warn("Failed removing mage record >%v<", err)
+			t.Log.Warn("Failed removing entity record >%v<", err)
 			return err
 		}
 	}

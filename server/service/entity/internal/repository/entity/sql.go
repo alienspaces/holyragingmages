@@ -3,7 +3,7 @@ package entity
 var createOneSQL = `
 INSERT INTO entity (
 	id,
-	account_id,
+	entity_type,
 	name,
 	strength,
 	dexterity,
@@ -14,7 +14,7 @@ INSERT INTO entity (
 	created_at
 ) VALUES (
 	:id,
-	:account_id,
+	:entity_type,
 	:name,
 	:strength,
 	:dexterity,
@@ -30,7 +30,7 @@ RETURNING *
 var updateOneSQL = `
 UPDATE entity SET
 	id                = :id,
-	account_id        = :account_id,
+	entity_type       = :entity_type,      
     name              = :name,
     strength          = :strength,
     dexterity         = :dexterity,

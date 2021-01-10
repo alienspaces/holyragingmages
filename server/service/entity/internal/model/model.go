@@ -10,6 +10,7 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/repositor"
 	"gitlab.com/alienspaces/holyragingmages/server/core/type/storer"
 
+	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/repository/accountentity"
 	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/repository/entity"
 )
 
@@ -43,13 +44,21 @@ func (m *Model) NewRepositories(p preparer.Preparer, tx *sqlx.Tx) ([]repositor.R
 
 	repositoryList := []repositor.Repositor{}
 
-	tr, err := entity.NewRepository(m.Log, p, tx)
+	entityRepo, err := entity.NewRepository(m.Log, p, tx)
 	if err != nil {
-		m.Log.Warn("Failed new mage repository >%v<", err)
+		m.Log.Warn("Failed new entity repository >%v<", err)
 		return nil, err
 	}
 
-	repositoryList = append(repositoryList, tr)
+	repositoryList = append(repositoryList, entityRepo)
+
+	accountEntityRepo, err := accountentity.NewRepository(m.Log, p, tx)
+	if err != nil {
+		m.Log.Warn("Failed new account entity repository >%v<", err)
+		return nil, err
+	}
+
+	repositoryList = append(repositoryList, accountEntityRepo)
 
 	return repositoryList, nil
 }
@@ -64,4 +73,16 @@ func (m *Model) EntityRepository() *entity.Repository {
 	}
 
 	return r.(*entity.Repository)
+}
+
+// AccountEntityRepository -
+func (m *Model) AccountEntityRepository() *accountentity.Repository {
+
+	r := m.Repositories[accountentity.TableName]
+	if r == nil {
+		m.Log.Warn("Repository >%s< is nil", entity.TableName)
+		return nil
+	}
+
+	return r.(*accountentity.Repository)
 }

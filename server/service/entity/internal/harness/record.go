@@ -8,25 +8,46 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/record"
 )
 
-func (t *Testing) createEntityRec(mageConfig EntityConfig) (record.Entity, error) {
+func (t *Testing) createEntityRec(entityConfig EntityConfig) (record.Entity, error) {
 
-	rec := mageConfig.Record
+	entityRec := entityConfig.Record
 
-	// Required properties
-	if rec.AccountID == "" {
-		accountID, _ := uuid.NewRandom()
-		rec.AccountID = accountID.String()
-	}
-	if rec.Name == "" {
-		rec.Name = gofakeit.Name()
+	if entityRec.EntityType == "" {
+		entityRec.EntityType = record.EntityTypePlayerCharacter
 	}
 
-	t.Log.Info("Creating testing record >%#v<", rec)
+	if entityRec.Name == "" {
+		entityRec.Name = gofakeit.Name()
+	}
 
-	err := t.Model.(*model.Model).CreateEntityRec(&rec)
+	t.Log.Info("Creating entity testing record >%#v<", entityRec)
+
+	err := t.Model.(*model.Model).CreateEntityRec(&entityRec)
 	if err != nil {
-		t.Log.Warn("Failed creating testing mage record >%v<", err)
-		return rec, err
+		t.Log.Warn("Failed creating testing entity record >%v<", err)
+		return entityRec, err
 	}
-	return rec, nil
+
+	return entityRec, nil
+}
+
+func (t *Testing) createAccountEntityRec(entityRec record.Entity, accountEntityConfig AccountEntityConfig) (record.AccountEntity, error) {
+
+	accountEntityRec := accountEntityConfig.Record
+
+	t.Log.Info("Creating account entity testing record >%#v<", accountEntityRec)
+
+	if accountEntityRec.AccountID == "" {
+		accountID, _ := uuid.NewRandom()
+		accountEntityRec.AccountID = accountID.String()
+	}
+	accountEntityRec.EntityID = entityRec.ID
+
+	err := t.Model.(*model.Model).CreateAccountEntityRec(&accountEntityRec)
+	if err != nil {
+		t.Log.Warn("Failed creating testing account entity record >%v<", err)
+		return accountEntityRec, err
+	}
+
+	return accountEntityRec, nil
 }

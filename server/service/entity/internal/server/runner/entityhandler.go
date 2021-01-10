@@ -17,7 +17,8 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 
 	l.Info("** Get entities handler ** p >%#v< m >%#v<", pp, m)
 
-	var recs []*record.Entity
+	var entityRecs []*record.Entity
+
 	var err error
 
 	id := pp.ByName("entity_id")
@@ -39,7 +40,7 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 			return
 		}
 
-		recs = append(recs, rec)
+		entityRecs = append(entityRecs, rec)
 
 	} else {
 
@@ -51,7 +52,7 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 			params[paramName] = paramValue
 		}
 
-		recs, err = m.(*model.Model).GetEntityRecs(params, nil, false)
+		entityRecs, err = m.(*model.Model).GetEntityRecs(params, nil, false)
 		if err != nil {
 			rnr.WriteModelError(l, w, err)
 			return
@@ -60,10 +61,23 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 
 	// assign response properties
 	data := []schema.EntityData{}
-	for _, rec := range recs {
+	for _, entityRec := range entityRecs {
+
+		// Get associated account entity record if it exists
+		accountEntityRecs, err := m.(*model.Model).GetAccountEntityRecs(
+			map[string]interface{}{
+				"entity_id": entityRec.ID,
+			},
+			nil, false,
+		)
+
+		var accountEntityRec *record.AccountEntity
+		if len(accountEntityRecs) == 1 {
+			accountEntityRec = accountEntityRecs[0]
+		}
 
 		// response data
-		responseData, err := rnr.RecordToEntityResponseData(rec)
+		responseData, err := rnr.RecordToEntityResponseData(accountEntityRec, entityRec)
 		if err != nil {
 			rnr.WriteSystemError(l, w, err)
 			return
@@ -88,7 +102,9 @@ func (rnr *Runner) GetAccountEntitiesHandler(w http.ResponseWriter, r *http.Requ
 
 	l.Info("** Get entities handler ** p >%#v< m >%#v<", pp, m)
 
-	var recs []*record.Entity
+	var entityRecs []*record.Entity
+	var accountEntityRecs []*record.AccountEntity
+
 	var err error
 
 	accountID := pp.ByName("account_id")
@@ -99,55 +115,86 @@ func (rnr *Runner) GetAccountEntitiesHandler(w http.ResponseWriter, r *http.Requ
 
 		l.Info("Getting account ID >%s< entity ID >%s< record ", accountID, entityID)
 
-		rec, err := m.(*model.Model).GetEntityRec(entityID, false)
+		accountEntityRecs, err := m.(*model.Model).GetAccountEntityRecs(
+			map[string]interface{}{
+				"account_id": accountID,
+				"entity_id":  entityID,
+			},
+			nil, false)
 		if err != nil {
 			rnr.WriteModelError(l, w, err)
 			return
 		}
 
 		// resource not found
-		if rec == nil {
-			l.Warn("Record entity ID >%s< not found", entityID)
+		if len(accountEntityRecs) == 0 {
+			l.Warn("Record account ID >%s< entity ID >%s< not found", accountID, entityID)
 			rnr.WriteNotFoundError(l, w, entityID)
 			return
 		}
 
-		l.Info("Checking account ID >%s< of entity ID >%s< record ", accountID, entityID)
-		if rec.AccountID != accountID {
-			l.Warn("Record entity ID >%s< with account ID >%s< does not match requested account ID >%s<", entityID, rec.AccountID, accountID)
-			rnr.WriteNotFoundError(l, w, entityID)
+		accountEntityRec := accountEntityRecs[0]
+
+		entityRec, err := m.(*model.Model).GetEntityRec(entityID, false)
+		if err != nil {
+			rnr.WriteModelError(l, w, err)
 			return
 		}
 
-		// entity belongs to account
-		recs = append(recs, rec)
+		// Entity records
+		entityRecs = append(entityRecs, entityRec)
+
+		// Account entity records
+		accountEntityRecs = append(accountEntityRecs, accountEntityRec)
 
 	} else {
 
 		l.Info("Querying entity records")
 
 		// query parameters
-		params := map[string]interface{}{
-			"account_id": accountID,
-		}
+		params := make(map[string]interface{})
 		for paramName, paramValue := range qp {
 			params[paramName] = paramValue
-			l.Info("Querying entity records with param name >%s< value >%v<", paramName, paramValue)
 		}
 
-		recs, err = m.(*model.Model).GetEntityRecs(params, nil, false)
+		queryEntityRecs, err := m.(*model.Model).GetEntityRecs(params, nil, false)
 		if err != nil {
 			rnr.WriteModelError(l, w, err)
 			return
+		}
+
+		for _, entityRec := range queryEntityRecs {
+
+			// query parameters
+			params := map[string]interface{}{
+				"entity_id":  entityRec.ID,
+				"account_id": accountID,
+			}
+
+			queryAccountEntityRecs, err := m.(*model.Model).GetAccountEntityRecs(params, nil, false)
+			if err != nil {
+				rnr.WriteModelError(l, w, err)
+				return
+			}
+
+			if len(queryAccountEntityRecs) == 1 {
+				// Entity records
+				entityRecs = append(entityRecs, entityRec)
+
+				// Account entity records
+				accountEntityRecs = append(accountEntityRecs, queryAccountEntityRecs[0])
+			}
 		}
 	}
 
 	// assign response properties
 	data := []schema.EntityData{}
-	for _, rec := range recs {
+	for idx, entityRec := range entityRecs {
+
+		accountEntityRec := accountEntityRecs[idx]
 
 		// response data
-		responseData, err := rnr.RecordToEntityResponseData(rec)
+		responseData, err := rnr.RecordToEntityResponseData(accountEntityRec, entityRec)
 		if err != nil {
 			rnr.WriteSystemError(l, w, err)
 			return
@@ -184,27 +231,43 @@ func (rnr *Runner) PostAccountEntitiesHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	rec := record.Entity{}
+	entityRec := record.Entity{}
 
 	// Assign request properties
-	rec.ID = entityID
-	rec.AccountID = accountID
+	entityRec.ID = entityID
 
 	// Record data
-	err = rnr.EntityRequestDataToRecord(req.Data, &rec)
+	err = rnr.EntityRequestDataToRecord(req.Data, &entityRec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
-	err = m.(*model.Model).CreateEntityRec(&rec)
+	// Default entity type to player character
+	if entityRec.EntityType == "" {
+		l.Info("Defaulting entity type to >%s<", record.EntityTypePlayerCharacter)
+		entityRec.EntityType = record.EntityTypePlayerCharacter
+	}
+
+	err = m.(*model.Model).CreateEntityRec(&entityRec)
+	if err != nil {
+		rnr.WriteModelError(l, w, err)
+		return
+	}
+
+	accountEntityRec := record.AccountEntity{
+		EntityID:  entityRec.ID,
+		AccountID: accountID,
+	}
+
+	err = m.(*model.Model).CreateAccountEntityRec(&accountEntityRec)
 	if err != nil {
 		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// Response data
-	responseData, err := rnr.RecordToEntityResponseData(&rec)
+	responseData, err := rnr.RecordToEntityResponseData(&accountEntityRec, &entityRec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
@@ -232,25 +295,39 @@ func (rnr *Runner) PutAccountEntitiesHandler(w http.ResponseWriter, r *http.Requ
 	entityID := pp.ByName("entity_id")
 	accountID := pp.ByName("account_id")
 
-	l.Info("Updating resource ID >%s<", entityID)
+	l.Info("Updating resource account ID >%s< entity ID >%s<", accountID, entityID)
 
-	rec, err := m.(*model.Model).GetEntityRec(entityID, false)
+	// Account entity record
+	l.Info("Getting account ID >%s< entity ID >%s< record ", accountID, entityID)
+
+	accountEntityRecs, err := m.(*model.Model).GetAccountEntityRecs(
+		map[string]interface{}{
+			"account_id": accountID,
+			"entity_id":  entityID,
+		},
+		nil, false)
+	if err != nil {
+		rnr.WriteModelError(l, w, err)
+		return
+	}
+
+	// resource not found
+	if len(accountEntityRecs) == 0 {
+		l.Warn("Record account ID >%s< entity ID >%s< not found", accountID, entityID)
+		rnr.WriteNotFoundError(l, w, entityID)
+		return
+	}
+
+	accountEntityRec := accountEntityRecs[0]
+
+	entityRec, err := m.(*model.Model).GetEntityRec(entityID, false)
 	if err != nil {
 		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// Resource not found
-	if rec == nil {
-		rnr.WriteNotFoundError(l, w, entityID)
-		return
-	}
-
-	// Record account ID must match path paramter
-	l.Info("Checking account ID >%s< of entity ID >%s< record ", accountID, entityID)
-
-	if rec.AccountID != accountID {
-		l.Warn("Record entity ID >%s< with account ID >%s< does not match requested account ID >%s<", entityID, rec.AccountID, accountID)
+	if entityRec == nil {
 		rnr.WriteNotFoundError(l, w, entityID)
 		return
 	}
@@ -264,20 +341,20 @@ func (rnr *Runner) PutAccountEntitiesHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Record data
-	err = rnr.EntityRequestDataToRecord(req.Data, rec)
+	err = rnr.EntityRequestDataToRecord(req.Data, entityRec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
 	}
 
-	err = m.(*model.Model).UpdateEntityRec(rec)
+	err = m.(*model.Model).UpdateEntityRec(entityRec)
 	if err != nil {
 		rnr.WriteModelError(l, w, err)
 		return
 	}
 
 	// Response data
-	responseData, err := rnr.RecordToEntityResponseData(rec)
+	responseData, err := rnr.RecordToEntityResponseData(accountEntityRec, entityRec)
 	if err != nil {
 		rnr.WriteSystemError(l, w, err)
 		return
@@ -311,20 +388,20 @@ func (rnr *Runner) EntityRequestDataToRecord(data schema.EntityData, rec *record
 }
 
 // RecordToEntityResponseData -
-func (rnr *Runner) RecordToEntityResponseData(rec *record.Entity) (schema.EntityData, error) {
+func (rnr *Runner) RecordToEntityResponseData(accountEntityRec *record.AccountEntity, entityRec *record.Entity) (schema.EntityData, error) {
 
 	data := schema.EntityData{
-		ID:               rec.ID,
-		AccountID:        rec.AccountID,
-		Name:             rec.Name,
-		Strength:         rec.Strength,
-		Dexterity:        rec.Dexterity,
-		Intelligence:     rec.Intelligence,
-		AttributePoints:  rec.AttributePoints,
-		ExperiencePoints: rec.ExperiencePoints,
-		Coins:            rec.Coins,
-		CreatedAt:        rec.CreatedAt,
-		UpdatedAt:        rec.UpdatedAt.Time,
+		ID:               entityRec.ID,
+		AccountID:        accountEntityRec.AccountID,
+		Name:             entityRec.Name,
+		Strength:         entityRec.Strength,
+		Dexterity:        entityRec.Dexterity,
+		Intelligence:     entityRec.Intelligence,
+		AttributePoints:  entityRec.AttributePoints,
+		ExperiencePoints: entityRec.ExperiencePoints,
+		Coins:            entityRec.Coins,
+		CreatedAt:        entityRec.CreatedAt,
+		UpdatedAt:        entityRec.UpdatedAt.Time,
 	}
 
 	return data, nil

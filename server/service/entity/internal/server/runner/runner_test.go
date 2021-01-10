@@ -17,10 +17,13 @@ func NewTestHarness() (*harness.Testing, error) {
 
 	// harness
 	config := harness.DataConfig{
-		EntityConfig: []harness.EntityConfig{
+		AccountEntityConfig: []harness.AccountEntityConfig{
 			{
-				Record: record.Entity{
-					AccountID: testAccountID,
+				Record: record.AccountEntity{},
+				EntityConfig: []harness.EntityConfig{
+					{
+						Record: record.Entity{},
+					},
 				},
 			},
 		},

@@ -4,23 +4,23 @@
 
 ### Now
 
-* UI
-  * Choose mage
-    * Preset attributes, items and spells
-  * Fight behaviour
-    * Defensive <-> Aggressive
+* Entity Service
+  * Create a set of `starter` character types
+  * Create a set of `familliar` types
+* Item Service
+  * Initial items for starter characters
+* Spell Service
+  * Initial spells for starter characters
 
 ### Next
 
 * UI
+  * Choose mage
+    * Fetch `starter` character list from server
+  * Fight behaviour
+    * Defensive <-> Aggressive
   * Choose familliar
-* Entity Service
-  * Add `entity.type` field
-    * Player Character
-    * Starter Character
-    * Non-Player Character
-    * Familliar
-  * Possibly normalise `entity.account_id` out into `account` as it can be nullable
+  * Save `player` character
 
 ### Notes
 
