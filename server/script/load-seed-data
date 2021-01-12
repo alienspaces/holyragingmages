@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Environment
+source ${BASH_SOURCE%/*}/environment || exit $?
+
+# NOTE: Add new services here
+SERVICES=(entity spell item account)
+
+for SERVICE in "${SERVICES[@]}"; do
+
+    # Reset APP_SERVER_PORT as each service should define
+    # a unique server port in their local env
+    export APP_SERVER_PORT=""
+
+    cd "service/${SERVICE}"
+
+    echo
+    echo "** Loading ${SERVICE} service test data"
+    echo
+
+    # Environment
+    source ../../${BASH_SOURCE%/*}/environment || exit $?
+
+    go run ./cmd/cli load-seed-data || exit $?
+
+    cd -
+
+done

@@ -24,16 +24,22 @@ func NewRunner() *Runner {
 	r.App = &cli.App{
 		Commands: []*cli.Command{
 			{
-				Name:    "test",
-				Aliases: []string{"t"},
-				Usage:   "Runs the test command",
-				Action:  r.TestCommand,
-			},
-			{
 				Name:    "load-test-data",
 				Aliases: []string{"l"},
 				Usage:   "Load a set of test data",
 				Action:  r.LoadTestData,
+			},
+			{
+				Name:    "load-seed-data",
+				Aliases: []string{"s"},
+				Usage:   "Load production seed data",
+				Action:  r.LoadSeedData,
+			},
+			{
+				Name:    "test",
+				Aliases: []string{"t"},
+				Usage:   "Runs the test command",
+				Action:  r.TestCommand,
 			},
 		},
 	}

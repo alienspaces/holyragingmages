@@ -30,6 +30,12 @@ func NewRunner() *Runner {
 				Action:  r.LoadTestData,
 			},
 			{
+				Name:    "load-seed-data",
+				Aliases: []string{"s"},
+				Usage:   "Load production seed data",
+				Action:  r.LoadSeedData,
+			},
+			{
 				Name:    "test",
 				Aliases: []string{"t"},
 				Usage:   "Runs the test command",

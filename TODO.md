@@ -22,6 +22,13 @@
   * Choose familliar
   * Save `player` character
 
+### Bugs
+
+* Authentication
+  * UI
+    * Log out with message when failed token refresh
+    * Log out with message when network not available
+
 ### Notes
 
 * Favourite spell
