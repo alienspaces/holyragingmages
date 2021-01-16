@@ -13,7 +13,7 @@ func (t *Testing) createEntityRec(entityConfig EntityConfig) (record.Entity, err
 	entityRec := entityConfig.Record
 
 	if entityRec.EntityType == "" {
-		entityRec.EntityType = record.EntityTypePlayerCharacter
+		entityRec.EntityType = record.EntityTypePlayerMage
 	}
 
 	if entityRec.Name == "" {

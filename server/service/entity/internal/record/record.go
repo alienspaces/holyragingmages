@@ -6,10 +6,12 @@ import (
 
 // EntityType -
 const (
-	EntityTypeFamilliar          string = "familliar"
-	EntityTypeNonPlayerCharacter string = "non-player"
-	EntityTypePlayerCharacter    string = "player"
-	EntityTypeStarterCharacter   string = "starter"
+	EntityTypeMage             string = "mage"
+	EntityTypeFamilliar        string = "familliar"
+	EntityTypePlayerMage       string = "player-mage"
+	EntityTypePlayerFamilliar  string = "player-familliar"
+	EntityTypeStarterMage      string = "starter-mage"
+	EntityTypeStarterFamilliar string = "starter-familliar"
 )
 
 // Entity -

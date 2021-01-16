@@ -27,6 +27,13 @@ func NewTestHarness() (*harness.Testing, error) {
 				},
 			},
 		},
+		EntityConfig: []harness.EntityConfig{
+			{
+				Record: record.Entity{
+					EntityType: record.EntityTypeStarterMage,
+				},
+			},
+		},
 	}
 
 	h, err := harness.NewTesting(config)

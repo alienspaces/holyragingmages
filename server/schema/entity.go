@@ -19,6 +19,7 @@ type EntityRequest struct {
 // EntityData -
 type EntityData struct {
 	ID               string    `json:"id,omitempty"`
+	EntityType       string    `json:"entity_type,omitempty"`
 	AccountID        string    `json:"account_id,omitempty"`
 	Name             string    `json:"name"`
 	Strength         int       `json:"strength"`

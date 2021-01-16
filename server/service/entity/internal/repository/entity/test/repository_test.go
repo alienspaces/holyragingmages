@@ -34,7 +34,7 @@ func TestCreateOne(t *testing.T) {
 			name: "Without ID",
 			rec: func(data *harness.Data) *record.Entity {
 				return &record.Entity{
-					EntityType: record.EntityTypeNonPlayerCharacter,
+					EntityType: record.EntityTypeMage,
 				}
 			},
 			err: false,
@@ -43,7 +43,7 @@ func TestCreateOne(t *testing.T) {
 			name: "With ID",
 			rec: func(data *harness.Data) *record.Entity {
 				rec := &record.Entity{
-					EntityType: record.EntityTypeNonPlayerCharacter,
+					EntityType: record.EntityTypeMage,
 				}
 				id, _ := uuid.NewRandom()
 				rec.ID = id.String()

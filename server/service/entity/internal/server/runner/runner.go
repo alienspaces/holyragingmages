@@ -32,7 +32,7 @@ func NewRunner() *Runner {
 	r.ModellerFunc = r.Modeller
 
 	r.HandlerConfig = []server.HandlerConfig{
-		// 0 - Get any, Administrator role, account ID not required
+		// 0 - Get any, Administrator role or Default role, account ID not required
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/entities",
@@ -41,8 +41,12 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
-				AuthRequireAllRoles: []string{
+				AuthRequireAnyRole: []string{
 					constant.AuthRoleAdministrator,
+					constant.AuthRoleDefault,
+				},
+				ValidateQueryParams: []string{
+					"entity_type",
 				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
@@ -50,7 +54,7 @@ func NewRunner() *Runner {
 				Description: "Query entities.",
 			},
 		},
-		// 1 - Get with entity ID, Administrator role, account ID not required
+		// 1 - Get with entity ID, Administrator role or Default role, account ID not required
 		{
 			Method:      http.MethodGet,
 			Path:        "/api/entities/:entity_id",
@@ -59,8 +63,9 @@ func NewRunner() *Runner {
 				AuthTypes: []string{
 					auth.AuthTypeJWT,
 				},
-				AuthRequireAllRoles: []string{
+				AuthRequireAnyRole: []string{
 					constant.AuthRoleAdministrator,
+					constant.AuthRoleDefault,
 				},
 			},
 			DocumentationConfig: server.DocumentationConfig{

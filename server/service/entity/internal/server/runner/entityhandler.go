@@ -12,7 +12,9 @@ import (
 	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/record"
 )
 
-// GetEntitiesHandler - Admininstrator role only, account ID not required
+// GetEntitiesHandler -
+// Admininstrator or default role
+// No restrictions on entity types
 func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
 	l.Info("** Get entities handler ** p >%#v< m >%#v<", pp, m)
@@ -97,7 +99,11 @@ func (rnr *Runner) GetEntitiesHandler(w http.ResponseWriter, r *http.Request, pp
 	}
 }
 
-// GetAccountEntitiesHandler - Default or Administrator role, accountID required, account ID in path must match identity
+// GetAccountEntitiesHandler -
+// - Administrator or default role
+// - Account ID required
+// - Account ID in path must match identity
+// - Restricted to entity types `player-mage` and `player-familliar`
 func (rnr *Runner) GetAccountEntitiesHandler(w http.ResponseWriter, r *http.Request, pp httprouter.Params, qp map[string]interface{}, l logger.Logger, m modeller.Modeller) {
 
 	l.Info("** Get entities handler ** p >%#v< m >%#v<", pp, m)
@@ -245,8 +251,8 @@ func (rnr *Runner) PostAccountEntitiesHandler(w http.ResponseWriter, r *http.Req
 
 	// Default entity type to player character
 	if entityRec.EntityType == "" {
-		l.Info("Defaulting entity type to >%s<", record.EntityTypePlayerCharacter)
-		entityRec.EntityType = record.EntityTypePlayerCharacter
+		l.Info("Defaulting entity type to >%s<", record.EntityTypePlayerMage)
+		entityRec.EntityType = record.EntityTypePlayerMage
 	}
 
 	err = m.(*model.Model).CreateEntityRec(&entityRec)
@@ -392,7 +398,7 @@ func (rnr *Runner) RecordToEntityResponseData(accountEntityRec *record.AccountEn
 
 	data := schema.EntityData{
 		ID:               entityRec.ID,
-		AccountID:        accountEntityRec.AccountID,
+		EntityType:       entityRec.EntityType,
 		Name:             entityRec.Name,
 		Strength:         entityRec.Strength,
 		Dexterity:        entityRec.Dexterity,
@@ -402,6 +408,10 @@ func (rnr *Runner) RecordToEntityResponseData(accountEntityRec *record.AccountEn
 		Coins:            entityRec.Coins,
 		CreatedAt:        entityRec.CreatedAt,
 		UpdatedAt:        entityRec.UpdatedAt.Time,
+	}
+
+	if entityRec.EntityType == record.EntityTypePlayerMage && accountEntityRec != nil {
+		data.AccountID = accountEntityRec.AccountID
 	}
 
 	return data, nil

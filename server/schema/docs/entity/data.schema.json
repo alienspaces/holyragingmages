@@ -13,6 +13,10 @@
             "format": "uuid",
             "example": "a87feca8-d6f0-4794-98c7-037b30219520"
         },
+        "entity_type": {
+            "description": "Type of entity, starter, familliar, non-player, player",
+            "type": "string"
+        },
         "account_id": {
             "description": "Account resource ID",
             "type": "string",

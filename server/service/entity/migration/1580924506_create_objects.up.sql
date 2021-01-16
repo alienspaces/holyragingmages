@@ -1,10 +1,12 @@
 
 -- Entity Type
 CREATE TYPE "entity_type" AS ENUM (
+  'mage',
   'familliar',
-  'non-player',
-  'player',
-  'starter'
+  'player-mage',
+  'player-familliar',
+  'starter-mage',
+  'starter-familliar'
 );
 
 -- Entity

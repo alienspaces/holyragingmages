@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 
+	"gitlab.com/alienspaces/holyragingmages/server/service/entity/internal/record"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/stretchr/testify/require"
 
@@ -82,6 +84,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:               data.EntityRecs[0].ID,
+							EntityType:       data.EntityRecs[0].EntityType,
 							AccountID:        data.AccountEntityRecs[0].AccountID,
 							Name:             data.EntityRecs[0].Name,
 							Strength:         data.EntityRecs[0].Strength,
@@ -90,6 +93,50 @@ func TestEntityHandler(t *testing.T) {
 							AttributePoints:  data.EntityRecs[0].AttributePoints,
 							ExperiencePoints: data.EntityRecs[0].ExperiencePoints,
 							Coins:            data.EntityRecs[0].Coins,
+						},
+					},
+				}
+				return &res
+			},
+		},
+		{
+			name: "GET - Get entity type 'starter', default role, account identity",
+			config: func(rnr *Runner) server.HandlerConfig {
+				return rnr.HandlerConfig[0]
+			},
+			requestHeaders: func(data *harness.Data) map[string]string {
+				roles := []string{
+					constant.AuthRoleDefault,
+				}
+				identity := map[string]interface{}{}
+				headers := map[string]string{
+					"Authorization": "Bearer " + validAuthToken(roles, identity),
+				}
+				return headers
+			},
+			queryParams: func(data *harness.Data) map[string]string {
+				params := map[string]string{
+					"entity_type": record.EntityTypeStarterMage,
+				}
+				return params
+			},
+			requestData: func(data *harness.Data) *schema.EntityRequest {
+				return nil
+			},
+			responseCode: http.StatusOK,
+			responseData: func(data *harness.Data) *schema.EntityResponse {
+				res := schema.EntityResponse{
+					Data: []schema.EntityData{
+						{
+							ID:               data.EntityRecs[1].ID,
+							EntityType:       data.EntityRecs[1].EntityType,
+							Name:             data.EntityRecs[1].Name,
+							Strength:         data.EntityRecs[1].Strength,
+							Dexterity:        data.EntityRecs[1].Dexterity,
+							Intelligence:     data.EntityRecs[1].Intelligence,
+							AttributePoints:  data.EntityRecs[1].AttributePoints,
+							ExperiencePoints: data.EntityRecs[1].ExperiencePoints,
+							Coins:            data.EntityRecs[1].Coins,
 						},
 					},
 				}
@@ -126,7 +173,7 @@ func TestEntityHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "GET - Get existing resource, default role, no identity",
+			name: "GET - Get existing resource, default role, account identity matches",
 			config: func(rnr *Runner) server.HandlerConfig {
 				return rnr.HandlerConfig[2]
 			},
@@ -158,6 +205,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:               data.AccountEntityRecs[0].EntityID,
+							EntityType:       data.EntityRecs[0].EntityType,
 							AccountID:        data.AccountEntityRecs[0].AccountID,
 							Name:             data.EntityRecs[0].Name,
 							Strength:         data.EntityRecs[0].Strength,
@@ -243,6 +291,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:              "e3a9e0f8-ce9c-477b-8b93-cf4da03af4c9",
+							EntityType:      record.EntityTypePlayerMage,
 							AccountID:       data.AccountEntityRecs[0].AccountID,
 							Name:            "Audrey The Amazing",
 							AttributePoints: 32,
@@ -280,6 +329,7 @@ func TestEntityHandler(t *testing.T) {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
 						ID:               data.AccountEntityRecs[0].EntityID,
+						EntityType:       data.EntityRecs[0].EntityType,
 						AccountID:        data.AccountEntityRecs[0].AccountID,
 						Name:             "Barricade Block",
 						Strength:         data.EntityRecs[0].Strength,
@@ -298,6 +348,7 @@ func TestEntityHandler(t *testing.T) {
 					Data: []schema.EntityData{
 						{
 							ID:               data.AccountEntityRecs[0].EntityID,
+							EntityType:       data.EntityRecs[0].EntityType,
 							AccountID:        data.AccountEntityRecs[0].AccountID,
 							Name:             "Barricade Block",
 							Strength:         data.EntityRecs[0].Strength,
@@ -469,7 +520,10 @@ func TestEntityHandler(t *testing.T) {
 				// response data
 				if resData != nil {
 					require.Equal(t, resData.Data[0].ID, res.Data[0].ID, "ID equals expected")
-					require.Equal(t, resData.Data[0].AccountID, res.Data[0].AccountID, "AccountID equals expected")
+					require.Equal(t, resData.Data[0].EntityType, res.Data[0].EntityType, "EntityType equals expected")
+					if resData.Data[0].EntityType == record.EntityTypePlayerMage {
+						require.Equal(t, resData.Data[0].AccountID, res.Data[0].AccountID, "AccountID equals expected")
+					}
 					require.Equal(t, resData.Data[0].Name, res.Data[0].Name, "Name equals expected")
 					require.Equal(t, resData.Data[0].Strength, res.Data[0].Strength, "Strength equals expected")
 					require.Equal(t, resData.Data[0].Dexterity, res.Data[0].Dexterity, "Dexterity equals expected")
