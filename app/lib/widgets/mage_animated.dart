@@ -29,7 +29,7 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
     final log = Logger('MageAnimatedWidget - initState');
 
     String imagePath =
-        'assets/images/${widget.mageAvatar}/${widget.mageAction}/${widget.mageAction}';
+        'assets/images/mages/${widget.mageAvatar}/${widget.mageAction}/${widget.mageAction}';
 
     if (imageList.length == 0) {
       for (int idx = 0; idx <= widget.imageCount; idx++) {
