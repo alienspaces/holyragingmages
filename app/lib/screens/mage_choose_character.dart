@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,16 @@ class MageChooseCharacterScreen extends StatefulWidget {
 }
 
 class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
+  // Loading state
+  ModelState _loadingState = ModelState.initial;
+
   @override
   void initState() {
+    // Logger
+    final log = Logger('MageChooseCharacterScreen - initState');
+
+    log.info("Initialising");
+
     // Account model
     var accountModel = Provider.of<Account>(context, listen: false);
 
@@ -28,6 +37,21 @@ class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
 
     mageModel.clear();
     mageModel.accountId = accountModel.id;
+
+    // Starter mage collection model
+    var mageStarterCollectionModel = Provider.of<StarterMageCollection>(context, listen: false);
+
+    if (mageStarterCollectionModel.canLoad()) {
+      log.info("Fetching starter mages");
+      setState(() {
+        _loadingState = ModelState.processing;
+      });
+      mageStarterCollectionModel.load().then((FutureOr<void> v) {
+        setState(() {
+          _loadingState = ModelState.done;
+        });
+      });
+    }
 
     super.initState();
   }
@@ -44,6 +68,16 @@ class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
 
     log.info("Building");
 
+    if (_loadingState == ModelState.processing) {
+      log.info("Processing");
+      return Container(
+        child: Text('......'),
+      );
+    }
+
+    // Starter mage collection model
+    var mageStarterCollectionModel = Provider.of<StarterMageCollection>(context, listen: true);
+
     // Styling
     EdgeInsetsGeometry padding = EdgeInsets.fromLTRB(15, 10, 15, 10);
 
@@ -57,7 +91,9 @@ class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
           children: <Widget>[
             Container(
               child: Expanded(
-                child: MageChooseCharacterListWidget(),
+                child: MageChooseCharacterListWidget(
+                  starterMageList: mageStarterCollectionModel.mages,
+                ),
               ),
             ),
             Container(

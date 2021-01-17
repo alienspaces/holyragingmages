@@ -14,11 +14,20 @@ const (
 	EntityTypeStarterFamilliar string = "starter-familliar"
 )
 
+// Avatar
+const (
+	EntityAvatarDarkArmoured string = "dark-armoured"
+	EntityAvatarDruid        string = "druid"
+	EntityAvatarFairy        string = "fairy"
+	EntityAvatarNecromancer  string = "necromancer"
+)
+
 // Entity -
 type Entity struct {
 	repository.Record
 	EntityType       string `db:"entity_type"`
 	Name             string `db:"name"`
+	Avatar           string `db:"avatar"`
 	Strength         int    `db:"strength"`
 	Dexterity        int    `db:"dexterity"`
 	Intelligence     int    `db:"intelligence"`

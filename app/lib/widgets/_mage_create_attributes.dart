@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 // Application packages
 import 'package:holyragingmages/models/models.dart';
-import 'package:holyragingmages/widgets/mage_create_attribute.dart';
+import 'package:holyragingmages/widgets/_mage_create_attribute.dart';
 
 class MageCreateAttributesWidget extends StatefulWidget {
   @override

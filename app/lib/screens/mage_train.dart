@@ -3,8 +3,6 @@ import 'package:logging/logging.dart';
 
 // Application packages
 import 'package:holyragingmages/api/api.dart';
-import 'package:holyragingmages/widgets/mage_create_attributes.dart';
-import 'package:holyragingmages/widgets/mage_create_button.dart';
 
 class MageTrainScreen extends StatelessWidget {
   final Api api;
@@ -22,13 +20,7 @@ class MageTrainScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Create Mage'),
       ),
-      body: Container(
-        child: Center(
-          child: MageCreateAttributesWidget(),
-        ),
-      ),
-      floatingActionButton: MageCreateButtonWidget(),
-      resizeToAvoidBottomInset: false,
+      body: Container(),
     );
   }
 }

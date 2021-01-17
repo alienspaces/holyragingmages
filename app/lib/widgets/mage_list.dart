@@ -28,7 +28,7 @@ class _MageListWidgetState extends State<MageListWidget> {
     var accountModel = Provider.of<Account>(context, listen: false);
 
     // Mage collection model
-    var mageCollectionModel = Provider.of<MageCollection>(context, listen: false);
+    var mageCollectionModel = Provider.of<PlayerMageCollection>(context, listen: false);
 
     if (mageCollectionModel.canLoad()) {
       log.info("Fetching mages");
@@ -53,7 +53,7 @@ class _MageListWidgetState extends State<MageListWidget> {
     log.info("Building");
 
     // Mage list model
-    var mageCollectionModel = Provider.of<MageCollection>(context);
+    var mageCollectionModel = Provider.of<PlayerMageCollection>(context);
 
     // List of mages
     var mages = mageCollectionModel.mages;

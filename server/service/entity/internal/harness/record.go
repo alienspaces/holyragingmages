@@ -19,6 +19,9 @@ func (t *Testing) createEntityRec(entityConfig EntityConfig) (record.Entity, err
 	if entityRec.Name == "" {
 		entityRec.Name = gofakeit.Name()
 	}
+	if entityRec.Avatar == "" {
+		entityRec.Avatar = record.EntityAvatarDruid
+	}
 
 	t.Log.Info("Creating entity testing record >%#v<", entityRec)
 

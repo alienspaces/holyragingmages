@@ -18,7 +18,7 @@ class MageCreateButtonWidget extends StatelessWidget {
 
     // Mage model
     var mageModel = Provider.of<Mage>(context);
-    var mageCollectionModel = Provider.of<MageCollection>(context);
+    var mageCollectionModel = Provider.of<PlayerMageCollection>(context);
 
     bool _createEnabled() {
       if (mageModel.name == null || mageModel.name.length == 0) {

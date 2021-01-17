@@ -22,6 +22,7 @@ type EntityData struct {
 	EntityType       string    `json:"entity_type,omitempty"`
 	AccountID        string    `json:"account_id,omitempty"`
 	Name             string    `json:"name"`
+	Avatar           string    `json:"avatar"`
 	Strength         int       `json:"strength"`
 	Dexterity        int       `json:"dexterity"`
 	Intelligence     int       `json:"intelligence"`

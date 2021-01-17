@@ -94,6 +94,9 @@ func NewRunner() *Runner {
 						MatchIdentity: true,
 					},
 				},
+				ValidateQueryParams: []string{
+					"entity_type",
+				},
 			},
 			DocumentationConfig: server.DocumentationConfig{
 				Document:    true,

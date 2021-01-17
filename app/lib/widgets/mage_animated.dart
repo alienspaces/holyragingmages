@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 class MageAnimatedWidget extends StatefulWidget {
-  final String imagePath;
+  final String mageAvatar;
+  final String mageAction;
   final int imageCount;
 
   MageAnimatedWidget({
     Key key,
-    this.imagePath,
+    this.mageAvatar,
+    this.mageAction,
     this.imageCount,
   }) : super(key: key);
 
@@ -26,11 +28,14 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
     // Logger
     final log = Logger('MageAnimatedWidget - initState');
 
+    String imagePath =
+        'assets/images/${widget.mageAvatar}/${widget.mageAction}/${widget.mageAction}';
+
     if (imageList.length == 0) {
       for (int idx = 0; idx <= widget.imageCount; idx++) {
-        String imagePath = "${widget.imagePath}${idx.toString().padLeft(3, '0')}.png";
-        log.finer('Adding image path $imagePath');
-        Image image = Image(image: AssetImage(imagePath));
+        String assetName = "${imagePath}_${idx.toString().padLeft(3, '0')}.png";
+        log.finer('Adding image assetName $assetName');
+        Image image = Image(image: AssetImage(assetName));
         log.finer('Added ${image.toString()}');
         imageList.add(image);
       }

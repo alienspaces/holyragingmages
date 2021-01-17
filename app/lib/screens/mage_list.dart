@@ -71,7 +71,7 @@ class _MageListScreenState extends State<MageListScreen> {
     log.fine('Account email ${accountModel.email ?? ''}');
 
     // Mage list model
-    var mageListModel = Provider.of<MageCollection>(context, listen: false);
+    var mageListModel = Provider.of<PlayerMageCollection>(context, listen: false);
 
     accountModel.handleSignOut().then((_) {
       log.info('Account signed out, routing..');

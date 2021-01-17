@@ -19,8 +19,9 @@ func (rnr *Runner) LoadSeedData(c *cli.Context) error {
 			// Dark Armoured
 			{
 				Record: record.Entity{
-					EntityType:   record.EntityTypeMage,
+					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Dark Armoured",
+					Avatar:       record.EntityAvatarDarkArmoured,
 					Strength:     18,
 					Dexterity:    10,
 					Intelligence: 10,
@@ -30,8 +31,9 @@ func (rnr *Runner) LoadSeedData(c *cli.Context) error {
 			// Druid
 			{
 				Record: record.Entity{
-					EntityType:   record.EntityTypeMage,
+					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Druid",
+					Avatar:       record.EntityAvatarDruid,
 					Strength:     14,
 					Dexterity:    14,
 					Intelligence: 10,
@@ -41,8 +43,9 @@ func (rnr *Runner) LoadSeedData(c *cli.Context) error {
 			// Fairy
 			{
 				Record: record.Entity{
-					EntityType:   record.EntityTypeMage,
+					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Fairy",
+					Avatar:       record.EntityAvatarFairy,
 					Strength:     10,
 					Dexterity:    14,
 					Intelligence: 14,
@@ -52,8 +55,9 @@ func (rnr *Runner) LoadSeedData(c *cli.Context) error {
 			// Necromancer
 			{
 				Record: record.Entity{
-					EntityType:   record.EntityTypeMage,
+					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Necromancer",
+					Avatar:       record.EntityAvatarNecromancer,
 					Strength:     14,
 					Dexterity:    10,
 					Intelligence: 14,

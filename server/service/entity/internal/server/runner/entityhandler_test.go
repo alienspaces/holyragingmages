@@ -87,6 +87,7 @@ func TestEntityHandler(t *testing.T) {
 							EntityType:       data.EntityRecs[0].EntityType,
 							AccountID:        data.AccountEntityRecs[0].AccountID,
 							Name:             data.EntityRecs[0].Name,
+							Avatar:           data.EntityRecs[0].Avatar,
 							Strength:         data.EntityRecs[0].Strength,
 							Dexterity:        data.EntityRecs[0].Dexterity,
 							Intelligence:     data.EntityRecs[0].Intelligence,
@@ -131,6 +132,7 @@ func TestEntityHandler(t *testing.T) {
 							ID:               data.EntityRecs[1].ID,
 							EntityType:       data.EntityRecs[1].EntityType,
 							Name:             data.EntityRecs[1].Name,
+							Avatar:           data.EntityRecs[1].Avatar,
 							Strength:         data.EntityRecs[1].Strength,
 							Dexterity:        data.EntityRecs[1].Dexterity,
 							Intelligence:     data.EntityRecs[1].Intelligence,
@@ -208,6 +210,7 @@ func TestEntityHandler(t *testing.T) {
 							EntityType:       data.EntityRecs[0].EntityType,
 							AccountID:        data.AccountEntityRecs[0].AccountID,
 							Name:             data.EntityRecs[0].Name,
+							Avatar:           data.EntityRecs[0].Avatar,
 							Strength:         data.EntityRecs[0].Strength,
 							Dexterity:        data.EntityRecs[0].Dexterity,
 							Intelligence:     data.EntityRecs[0].Intelligence,
@@ -246,7 +249,8 @@ func TestEntityHandler(t *testing.T) {
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
-						Name: "Veronica The Incredible",
+						Name:   "Veronica The Incredible",
+						Avatar: record.EntityAvatarFairy,
 					},
 				}
 				return &req
@@ -280,7 +284,8 @@ func TestEntityHandler(t *testing.T) {
 			requestData: func(data *harness.Data) *schema.EntityRequest {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
-						Name: "Audrey The Amazing",
+						Name:   "Audrey The Amazing",
+						Avatar: record.EntityAvatarDarkArmoured,
 					},
 				}
 				return &req
@@ -294,6 +299,7 @@ func TestEntityHandler(t *testing.T) {
 							EntityType:      record.EntityTypePlayerMage,
 							AccountID:       data.AccountEntityRecs[0].AccountID,
 							Name:            "Audrey The Amazing",
+							Avatar:          record.EntityAvatarDarkArmoured,
 							AttributePoints: 32,
 						},
 					},
@@ -332,6 +338,7 @@ func TestEntityHandler(t *testing.T) {
 						EntityType:       data.EntityRecs[0].EntityType,
 						AccountID:        data.AccountEntityRecs[0].AccountID,
 						Name:             "Barricade Block",
+						Avatar:           data.EntityRecs[0].Avatar,
 						Strength:         data.EntityRecs[0].Strength,
 						Dexterity:        data.EntityRecs[0].Dexterity,
 						Intelligence:     data.EntityRecs[0].Intelligence,
@@ -351,6 +358,7 @@ func TestEntityHandler(t *testing.T) {
 							EntityType:       data.EntityRecs[0].EntityType,
 							AccountID:        data.AccountEntityRecs[0].AccountID,
 							Name:             "Barricade Block",
+							Avatar:           data.EntityRecs[0].Avatar,
 							Strength:         data.EntityRecs[0].Strength,
 							Dexterity:        data.EntityRecs[0].Dexterity,
 							Intelligence:     data.EntityRecs[0].Intelligence,

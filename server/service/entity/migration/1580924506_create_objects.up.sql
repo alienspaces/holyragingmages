@@ -14,6 +14,7 @@ CREATE TABLE "entity" (
   "id"                uuid CONSTRAINT entity_pk PRIMARY KEY DEFAULT gen_random_uuid(),
   "entity_type"       entity_type NOT NULL,
   "name"              text NOT NULL,
+  "avatar"            text NOT NULL,
   "strength"          int NOT NULL DEFAULT 0,
   "dexterity"         int NOT NULL DEFAULT 0,
   "intelligence"      int NOT NULL DEFAULT 0,

@@ -30,6 +30,10 @@
             "maxLength": 100,
             "example": "Lord Thoril Lightouch the Sorcerer"
         },
+        "avatar": {
+            "description": "The avatar to use for this mage.",
+            "type": "string"
+        },
         "strength": {
             "description": "The strength attribute determines physical health and can restrict what items can be used.",
             "type": "integer",

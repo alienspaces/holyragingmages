@@ -3,14 +3,13 @@ import 'package:logging/logging.dart';
 import 'package:flutter/foundation.dart';
 
 // Application packages
+import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/mage.dart';
 import 'package:holyragingmages/fault.dart';
 
-enum ModelState { initial, processing, done }
-
-// MageCollection contains a collection of mages
-class MageCollection extends ChangeNotifier {
+// PlayerMageCollection contains a collection of mages
+class PlayerMageCollection extends ChangeNotifier {
   // Api
   final Api api;
 
@@ -25,7 +24,7 @@ class MageCollection extends ChangeNotifier {
   ModelState state = ModelState.initial;
 
   // Constructor
-  MageCollection({Key key, this.api}) {
+  PlayerMageCollection({Key key, this.api}) {
     this._mages.clear();
   }
 

@@ -4,6 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:holyragingmages/env.dart';
 import 'package:holyragingmages/api/api.dart';
 
+const String EntityTypeStarterMage = "starter-mage";
+const String EntityTypePlayerMage = "player-mage";
+const String EntityTypeStarterFamilliar = "starter-familliar";
+const String EntityTypePlayerFamilliar = "player-familliar";
+const String EntityTypeMage = "mage";
+const String EntityTypeFamilliar = "familliar";
+
 class ApiImpl implements Api {
   // HTTP package
   Dio dio;
@@ -72,11 +79,40 @@ class ApiImpl implements Api {
   }
 
   // getEntities returns a list of entities
-  Future<List<dynamic>> getEntities(String accountId) async {
+  Future<List<dynamic>> getEntities(String accountId, {String type}) async {
+    Response response;
+
+    Map<String, dynamic> queryParameters = {};
+    if (type != null) {
+      queryParameters["entity_type"] = type;
+    }
+
+    // Account assigned entities
+    if (accountId != null) {
+      response = await this.dio.get(
+            "/api/accounts/" + accountId + "/entities",
+            queryParameters: queryParameters,
+          );
+    } else {
+      // Global entities
+      response = await this.dio.get(
+            "/api/entities",
+            queryParameters: queryParameters,
+          );
+    }
+
+    if (response.data == null) {
+      return null;
+    }
+
+    return response.data["data"];
+  }
+
+  // getEntity returns a specific entity
+  Future<List<dynamic>> getEntity(String entityId) async {
     Response response = await this.dio.get(
-      "/api/accounts/" + accountId + "/entities",
-      queryParameters: {},
-    );
+          "/api/entities/" + entityId,
+        );
 
     if (response.data == null) {
       return null;

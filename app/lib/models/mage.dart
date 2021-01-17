@@ -16,7 +16,8 @@ class Mage extends ChangeNotifier {
   // Properties
   String id;
   String accountId;
-  String _name;
+  String name;
+  String avatar;
   int _strength;
   int _dexterity;
   int _intelligence;
@@ -43,9 +44,20 @@ class Mage extends ChangeNotifier {
 
     var mage = new Mage(api: api);
 
-    log.fine('Creating mage from $json');
+    log.info('Creating mage from $json');
 
     mage.updateFromJson(json);
+
+    log.info('- id ${mage.id}');
+    log.info('- accountId ${mage.accountId}');
+    log.info('- name ${mage.name}');
+    log.info('- avatar ${mage.avatar}');
+    log.info('- attributePoints ${mage.attributePoints}');
+    log.info('- strength ${mage.strength}');
+    log.info('- dexterity ${mage.dexterity}');
+    log.info('- intelligence ${mage.intelligence}');
+    log.info('- experiencePoints ${mage.experiencePoints}');
+    log.info('- coins ${mage.coins}');
 
     return mage;
   }
@@ -54,15 +66,16 @@ class Mage extends ChangeNotifier {
     this.id = json['id'];
     this.accountId = json['account_id'];
     this.name = json['name'];
+    this.avatar = json['avatar'];
 
     // Attribute points are "at least" the sum of the current attributes. Anything beyond
     // that are available to distribute.
     this.attributePoints =
         json['attribute_points'] != null ? json['attribute_points'] : initialAttributePoints;
 
-    this.strength = json['strength'];
-    this.dexterity = json['dexterity'];
-    this.intelligence = json['intelligence'];
+    this._strength = json['strength'];
+    this._dexterity = json['dexterity'];
+    this._intelligence = json['intelligence'];
 
     this.experiencePoints = json['experiencePoints'] != null ? json['experiencePoints'] : 0;
     this.coins = json['coins'];
@@ -81,6 +94,9 @@ class Mage extends ChangeNotifier {
     }
     if (this.name != null) {
       data["name"] = this.name;
+    }
+    if (this.avatar != null) {
+      data["avatar"] = this.avatar;
     }
     if (this.strength != null) {
       data["strength"] = this.strength;
@@ -103,18 +119,9 @@ class Mage extends ChangeNotifier {
 
     Map<String, dynamic> json = {"data": data};
 
-    log.fine('Returning json $json');
+    log.info('Returning json $json');
 
     return json;
-  }
-
-  String get name {
-    return this._name;
-  }
-
-  set name(String value) {
-    this._name = value;
-    notifyListeners();
   }
 
   int get strength {
@@ -133,17 +140,17 @@ class Mage extends ChangeNotifier {
 
     var available = this.attributePoints - (this._strength + this._dexterity + this._intelligence);
 
-    log.fine(
+    log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
 
     if (available + difference >= 0) {
-      log.fine('Setting strength to $value');
+      log.info('Setting strength to $value');
       this._strength = value;
       notifyListeners();
       return;
     }
 
-    log.fine('Leaving strength as ${this._strength}');
+    log.info('Leaving strength as ${this._strength}');
     return;
   }
 
@@ -162,17 +169,17 @@ class Mage extends ChangeNotifier {
     var difference = this._dexterity - value;
     var available = this.attributePoints - (this._strength + this._dexterity + this._intelligence);
 
-    log.fine(
+    log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
 
     if (available + difference >= 0) {
-      log.fine('Setting dexterity to $value');
+      log.info('Setting dexterity to $value');
       this._dexterity = value;
       notifyListeners();
       return;
     }
 
-    log.fine('Leaving dexterity as ${this._dexterity}');
+    log.info('Leaving dexterity as ${this._dexterity}');
     return;
   }
 
@@ -191,17 +198,17 @@ class Mage extends ChangeNotifier {
     var difference = this._intelligence - value;
     var available = this.attributePoints - (this._strength + this._dexterity + this._intelligence);
 
-    log.fine(
+    log.info(
         'Adjust value $value current ${this._strength} difference $difference available $available');
 
     if (available + difference >= 0) {
-      log.fine('Setting intelligence to $value');
+      log.info('Setting intelligence to $value');
       this._intelligence = value;
       notifyListeners();
       return;
     }
 
-    log.fine('Leaving intelligence as ${this._intelligence}');
+    log.info('Leaving intelligence as ${this._intelligence}');
     return;
   }
 
@@ -214,7 +221,8 @@ class Mage extends ChangeNotifier {
   void clear() {
     this.id = null;
     this.accountId = null;
-    this._name = null;
+    this.name = null;
+    this.avatar = null;
     this._strength = initialAttributeValue;
     this._dexterity = initialAttributeValue;
     this._intelligence = initialAttributeValue;
@@ -230,7 +238,7 @@ class Mage extends ChangeNotifier {
 
     Map<String, dynamic> saveMage = this.toJson();
 
-    log.fine('Saving mage account ID ${this.accountId} Mage $saveMage');
+    log.info('Saving mage account ID ${this.accountId} Mage $saveMage');
 
     List<dynamic> magesData;
     try {
@@ -244,7 +252,7 @@ class Mage extends ChangeNotifier {
     }
 
     for (Map<String, dynamic> mageData in magesData) {
-      log.fine('Post has mage data $mageData');
+      log.info('Post has mage data $mageData');
       this.updateFromJson(mageData);
     }
 

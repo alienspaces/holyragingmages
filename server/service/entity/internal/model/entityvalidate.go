@@ -22,6 +22,9 @@ func (m *Model) ValidateEntityRec(rec *record.Entity) error {
 	if rec.Name == "" {
 		return fmt.Errorf("Name is required")
 	}
+	if rec.Avatar == "" {
+		return fmt.Errorf("Avatar is required")
+	}
 
 	return nil
 }

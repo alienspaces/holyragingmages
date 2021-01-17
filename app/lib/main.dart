@@ -38,7 +38,9 @@ class HolyRagingMages extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => Account(api: api)),
         ChangeNotifierProvider(create: (context) => Mage(api: api)),
-        ChangeNotifierProvider(create: (context) => MageCollection(api: api)),
+        ChangeNotifierProvider(create: (context) => PlayerMageCollection(api: api)),
+        ChangeNotifierProvider(create: (context) => StarterMageCollection(api: api)),
+        ChangeNotifierProvider(create: (context) => StarterFamilliarCollection(api: api)),
       ],
       child: MaterialApp(
         initialRoute: '/',

@@ -1,6 +1,8 @@
 // Application packages
 import 'package:holyragingmages/api/api.dart';
 
+// TODO: Update mock API for testing
+
 class ApiMock implements Api {
   // API token
   String _apiToken;
@@ -36,7 +38,19 @@ class ApiMock implements Api {
   }
 
   // getEntities returns a list of entities
-  Future<List<dynamic>> getEntities(String accountId) async {
+  Future<List<dynamic>> getEntities(String accountId, {String type}) async {
+    return Future.delayed(Duration(microseconds: 1), () {
+      List<dynamic> responseData = [
+        {
+          "blah": 1,
+        },
+      ];
+      return responseData;
+    });
+  }
+
+  // getEntity returns a specific entity
+  Future<List<dynamic>> getEntity(String entityId) async {
     return Future.delayed(Duration(microseconds: 1), () {
       List<dynamic> responseData = [
         {

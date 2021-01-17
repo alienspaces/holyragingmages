@@ -386,6 +386,7 @@ func (rnr *Runner) EntityRequestDataToRecord(data schema.EntityData, rec *record
 	// NOTE: AccountID is sourced from path parameters
 
 	rec.Name = data.Name
+	rec.Avatar = data.Avatar
 	rec.Strength = data.Strength
 	rec.Dexterity = data.Dexterity
 	rec.Intelligence = data.Intelligence
@@ -400,6 +401,7 @@ func (rnr *Runner) RecordToEntityResponseData(accountEntityRec *record.AccountEn
 		ID:               entityRec.ID,
 		EntityType:       entityRec.EntityType,
 		Name:             entityRec.Name,
+		Avatar:           entityRec.Avatar,
 		Strength:         entityRec.Strength,
 		Dexterity:        entityRec.Dexterity,
 		Intelligence:     entityRec.Intelligence,
@@ -410,7 +412,9 @@ func (rnr *Runner) RecordToEntityResponseData(accountEntityRec *record.AccountEn
 		UpdatedAt:        entityRec.UpdatedAt.Time,
 	}
 
-	if entityRec.EntityType == record.EntityTypePlayerMage && accountEntityRec != nil {
+	// Add account ID when entity type is player mage or player familliar
+	if (entityRec.EntityType == record.EntityTypePlayerMage ||
+		entityRec.EntityType == record.EntityTypePlayerFamilliar) && accountEntityRec != nil {
 		data.AccountID = accountEntityRec.AccountID
 	}
 

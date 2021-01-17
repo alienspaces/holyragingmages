@@ -5,10 +5,10 @@ import 'package:provider/provider.dart';
 // Application packages
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
-import 'package:holyragingmages/widgets/mage_create_attributes.dart';
-import 'package:holyragingmages/widgets/mage_create_avatar.dart';
-import 'package:holyragingmages/widgets/mage_create_button.dart';
-import 'package:holyragingmages/widgets/mage_create_name.dart';
+import 'package:holyragingmages/widgets/_mage_create_attributes.dart';
+import 'package:holyragingmages/widgets/_mage_create_avatar.dart';
+import 'package:holyragingmages/widgets/_mage_create_button.dart';
+import 'package:holyragingmages/widgets/_mage_create_name.dart';
 
 class MageCreateScreen extends StatefulWidget {
   final Api api;

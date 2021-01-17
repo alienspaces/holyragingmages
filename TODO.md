@@ -5,22 +5,22 @@
 ### Now
 
 * Entity Service
-  * Create a set of `starter` character types
-  * Create a set of `familliar` types
+  * Create a set of `mage` and `familliar` entity types
+  * Allow default role to get `starter` and `familliar` entity types from `/api/entities`
 * Item Service
-  * Initial items for starter characters
+  * Initial items for `mage` entities
 * Spell Service
-  * Initial spells for starter characters
+  * Initial spells for `mage` entities
 
 ### Next
 
 * UI
   * Choose mage
-    * Fetch `starter` character list from server
+    * Fetch `mage` entity list from server
   * Fight behaviour
     * Defensive <-> Aggressive
-  * Choose familliar
-  * Save `player` character
+  * Choose `familliar` entity
+  * Save `player` entity
 
 ### Bugs
 

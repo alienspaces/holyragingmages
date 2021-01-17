@@ -2,6 +2,7 @@
 .env.local
 .env.production
 note/*
+NOTES.md
 **/*.yml-e
 
 server/service/template/template
