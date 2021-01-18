@@ -35,7 +35,7 @@ class StarterMageCollection extends ChangeNotifier {
 
   bool canLoad() {
     // Logger
-    final log = Logger('Mage - canLoad');
+    final log = Logger('StarterMageCollection - canLoad');
     if (state == ModelState.processing) {
       log.info('State is $state, cannot load');
       return false;
@@ -47,7 +47,7 @@ class StarterMageCollection extends ChangeNotifier {
   // Load mages
   Future<void> load() async {
     // Logger
-    final log = Logger('Mage - load');
+    final log = Logger('StarterMageCollection - load');
 
     log.info('Loading mages');
 
@@ -86,7 +86,7 @@ class StarterMageCollection extends ChangeNotifier {
   // Clear mages
   void clear() {
     // Logger
-    final log = Logger('Mage - clearMages');
+    final log = Logger('StarterMageCollection - clearMages');
 
     log.info('Clearing mages');
 

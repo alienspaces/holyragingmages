@@ -5,18 +5,18 @@ import 'package:logging/logging.dart';
 // Application packages
 // import 'package:holyragingmages/models/models.dart';
 
-class MageChooseFamilliarButtonWidget extends StatelessWidget {
+class ChooseMageButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageChooseFamilliarButtonWidget - build');
+    final log = Logger('ChooseMageButtonWidget - build');
 
     log.info("Building");
 
     return Container(
       child: FlatButton(
         onPressed: null,
-        child: Text('Done'),
+        child: Text('Next'),
       ),
     );
   }

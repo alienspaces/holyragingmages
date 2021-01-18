@@ -35,7 +35,7 @@ class StarterFamilliarCollection extends ChangeNotifier {
 
   bool canLoad() {
     // Logger
-    final log = Logger('Mage - canLoad');
+    final log = Logger('StarterFamilliarCollection - canLoad');
     if (state == ModelState.processing) {
       log.info('State is $state, cannot load');
       return false;
@@ -45,17 +45,17 @@ class StarterFamilliarCollection extends ChangeNotifier {
   }
 
   // Load mages
-  Future<void> load(String accountId) async {
+  Future<void> load() async {
     // Logger
-    final log = Logger('Mage - load');
+    final log = Logger('StarterFamilliarCollection - load');
 
-    log.info('Loading mages');
+    log.info('Loading familliars');
 
     state = ModelState.processing;
 
     // Get entities
     this.api.getEntities(null, type: EntityTypeStarterFamilliar).then((List<dynamic> entitiesData) {
-      log.info('Adding mages');
+      log.info('Adding familliars');
 
       // Clear mages
       this._mages.clear();
@@ -86,7 +86,7 @@ class StarterFamilliarCollection extends ChangeNotifier {
   // Clear mages
   void clear() {
     // Logger
-    final log = Logger('Mage - clearMages');
+    final log = Logger('StarterFamilliarCollection - clearMages');
 
     log.info('Clearing mages');
 

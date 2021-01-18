@@ -6,26 +6,26 @@ import 'package:provider/provider.dart';
 // Application packages
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
-import 'package:holyragingmages/widgets/mage_choose_character_list.dart';
-import 'package:holyragingmages/widgets/mage_choose_character_button.dart';
+import 'package:holyragingmages/widgets/choose_mage_list.dart';
+import 'package:holyragingmages/widgets/choose_mage_button.dart';
 
-class MageChooseCharacterScreen extends StatefulWidget {
+class ChooseMageScreen extends StatefulWidget {
   final Api api;
 
-  MageChooseCharacterScreen({Key key, this.api}) : super(key: key);
+  ChooseMageScreen({Key key, this.api}) : super(key: key);
 
   @override
-  _MageChooseCharacterScreenState createState() => _MageChooseCharacterScreenState();
+  _ChooseMageScreenState createState() => _ChooseMageScreenState();
 }
 
-class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
+class _ChooseMageScreenState extends State<ChooseMageScreen> {
   // Loading state
   ModelState _loadingState = ModelState.initial;
 
   @override
   void initState() {
     // Logger
-    final log = Logger('MageChooseCharacterScreen - initState');
+    final log = Logger('ChooseMageScreen - initState');
 
     log.info("Initialising");
 
@@ -61,22 +61,29 @@ class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
     super.dispose();
   }
 
+  void chooseMage({Mage mage}) {
+    // Logger
+    final log = Logger('ChooseMageScreen - chooseMage');
+
+    log.info('Chose mage name ${mage.id} ${mage.name}');
+  }
+
   @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageChooseCharacterScreen - build');
+    final log = Logger('ChooseMageScreen - build');
 
     log.info("Building");
 
-    if (_loadingState == ModelState.processing) {
+    // Starter mage collection model
+    var mageStarterCollectionModel = Provider.of<StarterMageCollection>(context, listen: true);
+
+    if (_loadingState == ModelState.processing || mageStarterCollectionModel.mages.isEmpty) {
       log.info("Processing");
       return Container(
         child: Text('......'),
       );
     }
-
-    // Starter mage collection model
-    var mageStarterCollectionModel = Provider.of<StarterMageCollection>(context, listen: true);
 
     // Styling
     EdgeInsetsGeometry padding = EdgeInsets.fromLTRB(15, 10, 15, 10);
@@ -91,13 +98,14 @@ class _MageChooseCharacterScreenState extends State<MageChooseCharacterScreen> {
           children: <Widget>[
             Container(
               child: Expanded(
-                child: MageChooseCharacterListWidget(
+                child: ChooseMageListWidget(
                   starterMageList: mageStarterCollectionModel.mages,
+                  chooseMageCallback: chooseMage,
                 ),
               ),
             ),
             Container(
-              child: MageChooseCharacterButtonWidget(),
+              child: ChooseMageButtonWidget(),
             ),
           ],
         ),

@@ -39,10 +39,10 @@ class RouteGenerator {
           return MageListScreen(api: api);
         case '/mage_choose_character':
           log.fine('Returning mage choose character screen');
-          return MageChooseCharacterScreen(api: api);
+          return ChooseMageScreen(api: api);
         case '/mage_choose_familliar':
           log.fine('Returning mage choose familliar screen');
-          return MageChooseFamilliarScreen(api: api);
+          return ChooseFamilliarScreen(api: api);
         case '/mage_play':
           log.fine('Returning mage play screen');
           return MagePlayScreen(api: api);

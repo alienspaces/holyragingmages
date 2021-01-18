@@ -1,10 +1,16 @@
 .env
 .env.local
 .env.production
-note/*
-NOTES.md
 **/*.yml-e
 
+# Notes
+note/*
+NOTES.md
+
+# Random
+app/rename-asset.sh
+
+# Binaries
 server/service/template/template
 server/service/template/hrm-template-server
 server/service/template/hrm-template-cli

@@ -81,7 +81,7 @@ class _MageListWidgetState extends State<MageListWidget> {
           margin: cardMargin,
           padding: cardPadding,
           alignment: Alignment.center,
-          child: MageCardBasic(mages[index]),
+          child: MageCardBasic(mage: mages[index]),
         );
       }
 

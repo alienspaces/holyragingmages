@@ -250,7 +250,7 @@ func TestEntityHandler(t *testing.T) {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
 						Name:   "Veronica The Incredible",
-						Avatar: record.EntityAvatarFairy,
+						Avatar: record.MageAvatarRedFairy,
 					},
 				}
 				return &req
@@ -285,7 +285,7 @@ func TestEntityHandler(t *testing.T) {
 				req := schema.EntityRequest{
 					Data: schema.EntityData{
 						Name:   "Audrey The Amazing",
-						Avatar: record.EntityAvatarDarkArmoured,
+						Avatar: record.MageAvatarDarkArmoured,
 					},
 				}
 				return &req
@@ -299,7 +299,7 @@ func TestEntityHandler(t *testing.T) {
 							EntityType:      record.EntityTypePlayerMage,
 							AccountID:       data.AccountEntityRecs[0].AccountID,
 							Name:            "Audrey The Amazing",
-							Avatar:          record.EntityAvatarDarkArmoured,
+							Avatar:          record.MageAvatarDarkArmoured,
 							AttributePoints: 32,
 						},
 					},

@@ -16,52 +16,141 @@ func (rnr *Runner) LoadSeedData(c *cli.Context) error {
 	config := harness.DataConfig{
 
 		EntityConfig: []harness.EntityConfig{
-			// Dark Armoured
+			// Mage - Dark Armoured
 			{
 				Record: record.Entity{
 					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Dark Armoured",
-					Avatar:       record.EntityAvatarDarkArmoured,
-					Strength:     18,
-					Dexterity:    10,
+					Avatar:       record.MageAvatarDarkArmoured,
+					Strength:     16,
+					Dexterity:    12,
 					Intelligence: 10,
 					Coins:        50,
 				},
 			},
-			// Druid
+			// Mage - Red Stripe Druid
 			{
 				Record: record.Entity{
 					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Druid",
-					Avatar:       record.EntityAvatarDruid,
+					Avatar:       record.MageAvatarRedStripeDruid,
 					Strength:     14,
 					Dexterity:    14,
 					Intelligence: 10,
 					Coins:        50,
 				},
 			},
-			// Fairy
+			// Mage - Red Fairy
 			{
 				Record: record.Entity{
 					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Fairy",
-					Avatar:       record.EntityAvatarFairy,
+					Avatar:       record.MageAvatarRedFairy,
 					Strength:     10,
 					Dexterity:    14,
 					Intelligence: 14,
 					Coins:        50,
 				},
 			},
-			// Necromancer
+			// Mage - Red Stripe Necromancer
 			{
 				Record: record.Entity{
 					EntityType:   record.EntityTypeStarterMage,
 					Name:         "Necromancer",
-					Avatar:       record.EntityAvatarNecromancer,
+					Avatar:       record.MageAvatarRedStripeNecromancer,
 					Strength:     14,
 					Dexterity:    10,
 					Intelligence: 14,
 					Coins:        50,
+				},
+			},
+			// Mage - Green Elven
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterMage,
+					Name:         "Elven",
+					Avatar:       record.MageAvatarGreenElven,
+					Strength:     12,
+					Dexterity:    14,
+					Intelligence: 12,
+					Coins:        50,
+				},
+			},
+			// Familliar - Brown Cyclops Bat
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterFamilliar,
+					Name:         "Brown Cyclops Bat",
+					Avatar:       record.FamilliarAvatarBrownCyclopsBat,
+					Strength:     10,
+					Dexterity:    10,
+					Intelligence: 10,
+				},
+			},
+			// Familliar - Brown Yeti
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterFamilliar,
+					Name:         "Brown Yeti",
+					Avatar:       record.FamilliarAvatarBrownYeti,
+					Strength:     10,
+					Dexterity:    10,
+					Intelligence: 10,
+				},
+			},
+			// Familliar - Green Tribble
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterFamilliar,
+					Name:         "Green Tribble",
+					Avatar:       record.FamilliarAvatarGreenTribble,
+					Strength:     10,
+					Dexterity:    10,
+					Intelligence: 10,
+				},
+			},
+			// Familliar - Grey Cyclops
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterFamilliar,
+					Name:         "Grey Cyclops",
+					Avatar:       record.FamilliarAvatarGreyCyclops,
+					Strength:     10,
+					Dexterity:    10,
+					Intelligence: 10,
+				},
+			},
+			// Familliar - Orange Spotted Tribble
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterFamilliar,
+					Name:         "Orange Spotten Tribble",
+					Avatar:       record.FamilliarAvatarOrangeSpottedTribble,
+					Strength:     10,
+					Dexterity:    10,
+					Intelligence: 10,
+				},
+			},
+			// Familliar - Purple Bat
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterFamilliar,
+					Name:         "Purple Bat",
+					Avatar:       record.FamilliarAvatarPurpleBat,
+					Strength:     10,
+					Dexterity:    10,
+					Intelligence: 10,
+				},
+			},
+			// Familliar - Purple Minotaur
+			{
+				Record: record.Entity{
+					EntityType:   record.EntityTypeStarterFamilliar,
+					Name:         "Purple Minotaur",
+					Avatar:       record.FamilliarAvatarPurpleMinotaur,
+					Strength:     10,
+					Dexterity:    10,
+					Intelligence: 10,
 				},
 			},
 		},

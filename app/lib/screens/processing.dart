@@ -25,8 +25,8 @@ class ProcessingGame extends Game {
     log.fine("Initialising");
 
     await Flame.images.loadAll(<String>[
-      'druid/casting/Casting_000.png',
-      'necromancer/casting/Casting_000.png',
+      'druid/casting/casting_000.png',
+      'necromancer/casting/casting_000.png',
     ]);
     resize(await Flame.util.initialDimensions());
   }

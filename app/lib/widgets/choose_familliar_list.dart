@@ -4,16 +4,18 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 // Application packages
 import 'package:holyragingmages/models/models.dart';
-import 'package:holyragingmages/widgets/mage_animated.dart';
+import 'package:holyragingmages/widgets/familliar_animated.dart';
 
-class MageChooseCharacterListWidget extends StatelessWidget {
-  final List<Mage> starterMageList;
+class ChooseFamilliarListWidget extends StatelessWidget {
+  final Function chooseFamilliarCallback;
+  final List<Mage> starterFamilliarList;
 
-  MageChooseCharacterListWidget({Key key, this.starterMageList}) : super(key: key);
+  ChooseFamilliarListWidget({Key key, this.starterFamilliarList, this.chooseFamilliarCallback})
+      : super(key: key);
 
   double calculateFillWidth(BuildContext context, int attributeValue) {
     // Logger
-    final log = Logger('MageChooseCharacterListWidget - calculateFillWidth');
+    final log = Logger('ChooseFamilliarListWidget - calculateFillWidth');
 
     double parentWidth = MediaQuery.of(context).size.width;
 
@@ -31,7 +33,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
 
   Color calculateFillColour(BuildContext context, int attributeValue) {
     // Logger
-    final log = Logger('MageChooseCharacterListWidget - calculateFillWidth');
+    final log = Logger('ChooseFamilliarListWidget - calculateFillWidth');
 
     double parentWidth = MediaQuery.of(context).size.width;
 
@@ -51,13 +53,13 @@ class MageChooseCharacterListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageChooseCharacterListWidget - build');
+    final log = Logger('ChooseFamilliarListWidget - build');
 
     log.info("Building");
 
     void onPageChangedHandler(int pageIdx, CarouselPageChangedReason reason) {
       // Logger
-      final log = Logger('MageChooseCharacterListWidget - onScrolledHandler');
+      final log = Logger('ChooseFamilliarListWidget - onScrolledHandler');
 
       log.info("Page idx $pageIdx reason $reason");
     }
@@ -71,15 +73,15 @@ class MageChooseCharacterListWidget extends StatelessWidget {
           // Description
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Text('${starterMageList[idx].name}'),
+            child: Text('${starterFamilliarList[idx].name}'),
           ),
           // Avatar
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
             height: 150,
-            child: MageAnimatedWidget(
-              mageAvatar: starterMageList[idx].avatar,
-              mageAction: 'idle',
+            child: FamilliarAnimatedWidget(
+              familliarAvatar: starterFamilliarList[idx].avatar,
+              familliarAction: 'idle',
               imageCount: 11,
             ),
           ),
@@ -94,8 +96,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, starterMageList[idx].strength),
-                      color: calculateFillColour(context, starterMageList[idx].strength),
+                      width: calculateFillWidth(context, starterFamilliarList[idx].strength),
+                      color: calculateFillColour(context, starterFamilliarList[idx].strength),
                       child: Text('Strength'),
                     ),
                   ),
@@ -104,7 +106,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${starterMageList[idx].strength}'),
+                    child: Text('${starterFamilliarList[idx].strength}'),
                   ),
                 ),
               ],
@@ -121,8 +123,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, starterMageList[idx].dexterity),
-                      color: calculateFillColour(context, starterMageList[idx].dexterity),
+                      width: calculateFillWidth(context, starterFamilliarList[idx].dexterity),
+                      color: calculateFillColour(context, starterFamilliarList[idx].dexterity),
                       child: Text('Dexterity'),
                     ),
                   ),
@@ -131,7 +133,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${starterMageList[idx].dexterity}'),
+                    child: Text('${starterFamilliarList[idx].dexterity}'),
                   ),
                 ),
               ],
@@ -148,8 +150,8 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
                     child: Container(
                       padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, starterMageList[idx].intelligence),
-                      color: calculateFillColour(context, starterMageList[idx].intelligence),
+                      width: calculateFillWidth(context, starterFamilliarList[idx].intelligence),
+                      color: calculateFillColour(context, starterFamilliarList[idx].intelligence),
                       child: Text('Intelligence'),
                     ),
                   ),
@@ -158,7 +160,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${starterMageList[idx].intelligence}'),
+                    child: Text('${starterFamilliarList[idx].intelligence}'),
                   ),
                 ),
               ],
@@ -169,7 +171,7 @@ class MageChooseCharacterListWidget extends StatelessWidget {
     }
 
     return CarouselSlider.builder(
-      itemCount: starterMageList.length,
+      itemCount: starterFamilliarList.length,
       options: CarouselOptions(
         height: 400,
         aspectRatio: 16 / 9,

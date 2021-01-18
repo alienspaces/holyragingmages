@@ -20,7 +20,7 @@ func (t *Testing) createEntityRec(entityConfig EntityConfig) (record.Entity, err
 		entityRec.Name = gofakeit.Name()
 	}
 	if entityRec.Avatar == "" {
-		entityRec.Avatar = record.EntityAvatarDruid
+		entityRec.Avatar = record.MageAvatarRedStripeDruid
 	}
 
 	t.Log.Info("Creating entity testing record >%#v<", entityRec)

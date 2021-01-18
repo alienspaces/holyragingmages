@@ -14,12 +14,24 @@ const (
 	EntityTypeStarterFamilliar string = "starter-familliar"
 )
 
-// Avatar
+// MageAvatar -
 const (
-	EntityAvatarDarkArmoured string = "dark-armoured"
-	EntityAvatarDruid        string = "druid"
-	EntityAvatarFairy        string = "fairy"
-	EntityAvatarNecromancer  string = "necromancer"
+	MageAvatarDarkArmoured         string = "dark-armoured"
+	MageAvatarRedStripeDruid       string = "red-stripe-druid"
+	MageAvatarRedFairy             string = "red-fairy"
+	MageAvatarRedStripeNecromancer string = "red-stripe-necromancer"
+	MageAvatarGreenElven           string = "green-elven"
+)
+
+// FamilliarAvatar -
+const (
+	FamilliarAvatarBrownCyclopsBat      string = "brown-cyclops-bat"
+	FamilliarAvatarBrownYeti            string = "brown-yeti"
+	FamilliarAvatarGreenTribble         string = "green-tribble"
+	FamilliarAvatarGreyCyclops          string = "grey-cyclops"
+	FamilliarAvatarOrangeSpottedTribble string = "orange-spotted-tribble"
+	FamilliarAvatarPurpleBat            string = "purple-bat"
+	FamilliarAvatarPurpleMinotaur       string = "purple-minotaur"
 )
 
 // Entity -
