@@ -26,6 +26,11 @@ class ChooseMageListWidget extends StatelessWidget {
       log.info("Page idx $pageIdx reason $reason");
     }
 
+    // TODO: Pass mage animation action to MageCard
+    // - Provide animation start and end callbacks so
+    // a caller widget can update its own state when
+    // an animation starts and finishes.
+
     // Build mage
     Widget buildMageCard(int idx) {
       return MageCardBasic(mage: starterMageList[idx]);
@@ -48,11 +53,17 @@ class ChooseMageListWidget extends StatelessWidget {
         child: Column(
           children: <Widget>[
             buildMageCard(idx),
-            Container(
-              child: FlatButton(
-                onPressed: () => chooseMageCallback(mage: starterMageList[idx]),
-                color: Colors.orange,
-                child: Text('Choose'),
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () => chooseMageCallback(mage: starterMageList[idx]),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.yellow[600],
+                    onPrimary: Colors.black,
+                  ),
+                  child: Text('Choose'),
+                ),
               ),
             ),
           ],
