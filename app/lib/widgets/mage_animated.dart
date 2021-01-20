@@ -2,9 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
+enum MageAction { idle, casting }
+
+const Map<MageAction, String> actionImageMap = {
+  MageAction.idle: 'idle',
+  MageAction.casting: 'casting',
+};
+
 class MageAnimatedWidget extends StatefulWidget {
   final String mageAvatar;
-  final String mageAction;
+  final MageAction mageAction;
   final int imageCount;
 
   MageAnimatedWidget({
@@ -19,8 +26,13 @@ class MageAnimatedWidget extends StatefulWidget {
 }
 
 class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
-  List<Image> imageList = [];
+  // Map of mage action to images
+  Map<MageAction, List<Image>> actionImageList = {};
+  // Current mage action to animate
+  MageAction mageAction;
+  // Current index of image to display
   int currentIdx = 0;
+  // Timer used to manage animation
   Timer timer;
 
   @override
@@ -28,28 +40,59 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
     // Logger
     final log = Logger('MageAnimatedWidget - initState');
 
-    String imagePath =
-        'assets/images/mages/${widget.mageAvatar}/${widget.mageAction}/${widget.mageAction}';
+    log.info('Initialising - with mage action ${widget.mageAction}');
 
-    if (imageList.length == 0) {
-      for (int idx = 0; idx <= widget.imageCount; idx++) {
-        String assetName = "${imagePath}_${idx.toString().padLeft(3, '0')}.png";
-        log.finer('Adding image assetName $assetName');
-        Image image = Image(image: AssetImage(assetName));
-        log.finer('Added ${image.toString()}');
-        imageList.add(image);
-      }
-    }
+    mageAction = widget.mageAction;
+
+    loadImages();
 
     super.initState();
   }
 
+  void loadImages() {
+    // Logger
+    final log = Logger('MageAnimatedWidget - loadImages');
+
+    log.info('Loading images...');
+
+    // Initialise action image list
+    actionImageList = {};
+
+    for (var mageAction in [MageAction.idle, MageAction.casting]) {
+      // Initialise action image list
+      actionImageList[mageAction] = [];
+
+      String imageName = actionImageMap[mageAction];
+      String imagePath = 'assets/images/mages/${widget.mageAvatar}/$imageName/$imageName';
+
+      for (int idx = 0; idx <= widget.imageCount; idx++) {
+        String assetName = "${imagePath}_${idx.toString().padLeft(3, '0')}.png";
+        log.info('Adding image assetName $assetName');
+        Image image = Image(image: AssetImage(assetName));
+        log.info('Added ${image.toString()}');
+        actionImageList[mageAction].add(image);
+      }
+    }
+  }
+
+  void cacheImages() {
+    // Pre-cache images
+    for (var mageAction in [MageAction.idle, MageAction.casting]) {
+      for (var idx = 0; idx <= widget.imageCount; idx++) {
+        precacheImage(actionImageList[mageAction][idx].image, context);
+      }
+    }
+  }
+
   @override
   void didChangeDependencies() {
+    // Logger
+    final log = Logger('MageAnimatedWidget - didChangeDependencies');
+
+    log.info('Caching mage ${actionImageMap[mageAction]}');
+
     // Pre-cache images
-    for (var idx = 0; idx <= widget.imageCount; idx++) {
-      precacheImage(imageList[idx].image, context);
-    }
+    cacheImages();
 
     // Change image periodically
     if (timer == null && mounted) {
@@ -81,10 +124,15 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
     // Logger
     final log = Logger('MageAnimatedWidget - build');
 
-    log.finer("Building");
+    if (mageAction != widget.mageAction) {
+      log.info("Mage action changed - ${actionImageMap[widget.mageAction]}");
+      setState(() {
+        mageAction = widget.mageAction;
+      });
+    }
 
     return Container(
-      child: imageList[currentIdx],
+      child: actionImageList[mageAction][currentIdx],
     );
   }
 }

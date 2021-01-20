@@ -7,15 +7,16 @@ import 'package:holyragingmages/widgets/mage_animated.dart';
 
 class MageCardBasic extends StatelessWidget {
   final Mage mage;
+  final MageAction mageAction;
 
-  MageCardBasic({this.mage});
+  MageCardBasic({this.mage, this.mageAction = MageAction.idle});
 
   @override
   Widget build(BuildContext context) {
     // Logger
-    final log = Logger('MageListWidget - build');
+    final log = Logger('MageCardBasic - build');
 
-    log.info("Building");
+    log.info("Building - with mage action >$mageAction<");
 
     double calculateFillWidth(BuildContext context, int attributeValue) {
       // Logger
@@ -67,7 +68,7 @@ class MageCardBasic extends StatelessWidget {
           height: 150,
           child: MageAnimatedWidget(
             mageAvatar: mage.avatar,
-            mageAction: 'idle',
+            mageAction: mageAction,
             imageCount: 11,
           ),
         ),

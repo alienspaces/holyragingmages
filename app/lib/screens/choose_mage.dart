@@ -65,7 +65,7 @@ class _ChooseMageScreenState extends State<ChooseMageScreen> {
     // Logger
     final log = Logger('ChooseMageScreen - chooseMage');
 
-    log.info('Chose mage name ${mage.id} ${mage.name}');
+    log.info('Choose mage name ${mage.id} ${mage.name}');
   }
 
   @override
