@@ -62,10 +62,10 @@ class _ChooseMageListWidgetState extends State<ChooseMageListWidget> {
     void chooseMage(int idx) {
       // Change mage to casting action
       setState(() {
-        mageActionMap[widget.starterMageList[idx].name] = MageAction.casting;
+        mageActionMap[widget.starterMageList[idx].name] = MageAction.attack;
       });
 
-      Timer(Duration(seconds: 3), () {
+      Timer(Duration(milliseconds: 1300), () {
         setState(() {
           mageActionMap[widget.starterMageList[idx].name] = MageAction.idle;
         });
@@ -89,7 +89,8 @@ class _ChooseMageListWidgetState extends State<ChooseMageListWidget> {
       options: CarouselOptions(
         height: 400,
         aspectRatio: 16 / 9,
-        viewportFraction: 0.8,
+        // viewportFraction: 0.8,
+        viewportFraction: .7,
         initialPage: 0,
         enableInfiniteScroll: true,
         enlargeCenterPage: true,

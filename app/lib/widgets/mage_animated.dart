@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
-enum MageAction { idle, casting }
+enum MageAction { idle, attack }
 
 const Map<MageAction, String> actionImageMap = {
   MageAction.idle: 'idle',
-  MageAction.casting: 'casting',
+  MageAction.attack: 'attack',
 };
 
 class MageAnimatedWidget extends StatefulWidget {
@@ -58,7 +58,7 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
     // Initialise action image list
     actionImageList = {};
 
-    for (var mageAction in [MageAction.idle, MageAction.casting]) {
+    for (var mageAction in [MageAction.idle, MageAction.attack]) {
       // Initialise action image list
       actionImageList[mageAction] = [];
 
@@ -68,7 +68,8 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
       for (int idx = 0; idx <= widget.imageCount; idx++) {
         String assetName = "${imagePath}_${idx.toString().padLeft(3, '0')}.png";
         log.info('Adding image assetName $assetName');
-        Image image = Image(image: AssetImage(assetName));
+        Key imageKey = Key('${widget.mageAvatar}-$imageName-$idx');
+        Image image = Image(key: imageKey, image: AssetImage(assetName));
         log.info('Added ${image.toString()}');
         actionImageList[mageAction].add(image);
       }
@@ -77,7 +78,7 @@ class MageAnimatedWidgetState extends State<MageAnimatedWidget> {
 
   void cacheImages() {
     // Pre-cache images
-    for (var mageAction in [MageAction.idle, MageAction.casting]) {
+    for (var mageAction in [MageAction.idle, MageAction.attack]) {
       for (var idx = 0; idx <= widget.imageCount; idx++) {
         precacheImage(actionImageList[mageAction][idx].image, context);
       }

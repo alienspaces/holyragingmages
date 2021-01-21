@@ -97,18 +97,18 @@ flutter:
     - assets/images/mages/red-stripe-necromancer/idle/idle_009.png
     - assets/images/mages/red-stripe-necromancer/idle/idle_010.png
     - assets/images/mages/red-stripe-necromancer/idle/idle_011.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_000.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_001.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_002.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_003.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_004.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_005.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_006.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_007.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_008.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_009.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_010.png
-    - assets/images/mages/red-stripe-necromancer/casting/casting_011.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_000.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_001.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_002.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_003.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_004.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_005.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_006.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_007.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_008.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_009.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_010.png
+    - assets/images/mages/red-stripe-necromancer/attack/attack_011.png
     # Mage - Red Stripe Druid
     - assets/images/mages/red-stripe-druid/idle/idle_000.png
     - assets/images/mages/red-stripe-druid/idle/idle_001.png
@@ -122,18 +122,18 @@ flutter:
     - assets/images/mages/red-stripe-druid/idle/idle_009.png
     - assets/images/mages/red-stripe-druid/idle/idle_010.png
     - assets/images/mages/red-stripe-druid/idle/idle_011.png
-    - assets/images/mages/red-stripe-druid/casting/casting_000.png
-    - assets/images/mages/red-stripe-druid/casting/casting_001.png
-    - assets/images/mages/red-stripe-druid/casting/casting_002.png
-    - assets/images/mages/red-stripe-druid/casting/casting_003.png
-    - assets/images/mages/red-stripe-druid/casting/casting_004.png
-    - assets/images/mages/red-stripe-druid/casting/casting_005.png
-    - assets/images/mages/red-stripe-druid/casting/casting_006.png
-    - assets/images/mages/red-stripe-druid/casting/casting_007.png
-    - assets/images/mages/red-stripe-druid/casting/casting_008.png
-    - assets/images/mages/red-stripe-druid/casting/casting_009.png
-    - assets/images/mages/red-stripe-druid/casting/casting_010.png
-    - assets/images/mages/red-stripe-druid/casting/casting_011.png
+    - assets/images/mages/red-stripe-druid/attack/attack_000.png
+    - assets/images/mages/red-stripe-druid/attack/attack_001.png
+    - assets/images/mages/red-stripe-druid/attack/attack_002.png
+    - assets/images/mages/red-stripe-druid/attack/attack_003.png
+    - assets/images/mages/red-stripe-druid/attack/attack_004.png
+    - assets/images/mages/red-stripe-druid/attack/attack_005.png
+    - assets/images/mages/red-stripe-druid/attack/attack_006.png
+    - assets/images/mages/red-stripe-druid/attack/attack_007.png
+    - assets/images/mages/red-stripe-druid/attack/attack_008.png
+    - assets/images/mages/red-stripe-druid/attack/attack_009.png
+    - assets/images/mages/red-stripe-druid/attack/attack_010.png
+    - assets/images/mages/red-stripe-druid/attack/attack_011.png
     # Mage - Red Fairy
     - assets/images/mages/red-fairy/idle/idle_000.png
     - assets/images/mages/red-fairy/idle/idle_001.png
@@ -147,18 +147,18 @@ flutter:
     - assets/images/mages/red-fairy/idle/idle_009.png
     - assets/images/mages/red-fairy/idle/idle_010.png
     - assets/images/mages/red-fairy/idle/idle_011.png
-    - assets/images/mages/red-fairy/casting/casting_000.png
-    - assets/images/mages/red-fairy/casting/casting_001.png
-    - assets/images/mages/red-fairy/casting/casting_002.png
-    - assets/images/mages/red-fairy/casting/casting_003.png
-    - assets/images/mages/red-fairy/casting/casting_004.png
-    - assets/images/mages/red-fairy/casting/casting_005.png
-    - assets/images/mages/red-fairy/casting/casting_006.png
-    - assets/images/mages/red-fairy/casting/casting_007.png
-    - assets/images/mages/red-fairy/casting/casting_008.png
-    - assets/images/mages/red-fairy/casting/casting_009.png
-    - assets/images/mages/red-fairy/casting/casting_010.png
-    - assets/images/mages/red-fairy/casting/casting_011.png
+    - assets/images/mages/red-fairy/attack/attack_000.png
+    - assets/images/mages/red-fairy/attack/attack_001.png
+    - assets/images/mages/red-fairy/attack/attack_002.png
+    - assets/images/mages/red-fairy/attack/attack_003.png
+    - assets/images/mages/red-fairy/attack/attack_004.png
+    - assets/images/mages/red-fairy/attack/attack_005.png
+    - assets/images/mages/red-fairy/attack/attack_006.png
+    - assets/images/mages/red-fairy/attack/attack_007.png
+    - assets/images/mages/red-fairy/attack/attack_008.png
+    - assets/images/mages/red-fairy/attack/attack_009.png
+    - assets/images/mages/red-fairy/attack/attack_010.png
+    - assets/images/mages/red-fairy/attack/attack_011.png
     # Mage - Dark Armoured
     - assets/images/mages/dark-armoured/idle/idle_000.png
     - assets/images/mages/dark-armoured/idle/idle_001.png
@@ -172,18 +172,18 @@ flutter:
     - assets/images/mages/dark-armoured/idle/idle_009.png
     - assets/images/mages/dark-armoured/idle/idle_010.png
     - assets/images/mages/dark-armoured/idle/idle_011.png
-    - assets/images/mages/dark-armoured/attacking/attacking_000.png
-    - assets/images/mages/dark-armoured/attacking/attacking_001.png
-    - assets/images/mages/dark-armoured/attacking/attacking_002.png
-    - assets/images/mages/dark-armoured/attacking/attacking_003.png
-    - assets/images/mages/dark-armoured/attacking/attacking_004.png
-    - assets/images/mages/dark-armoured/attacking/attacking_005.png
-    - assets/images/mages/dark-armoured/attacking/attacking_006.png
-    - assets/images/mages/dark-armoured/attacking/attacking_007.png
-    - assets/images/mages/dark-armoured/attacking/attacking_008.png
-    - assets/images/mages/dark-armoured/attacking/attacking_009.png
-    - assets/images/mages/dark-armoured/attacking/attacking_010.png
-    - assets/images/mages/dark-armoured/attacking/attacking_011.png
+    - assets/images/mages/dark-armoured/attack/attack_000.png
+    - assets/images/mages/dark-armoured/attack/attack_001.png
+    - assets/images/mages/dark-armoured/attack/attack_002.png
+    - assets/images/mages/dark-armoured/attack/attack_003.png
+    - assets/images/mages/dark-armoured/attack/attack_004.png
+    - assets/images/mages/dark-armoured/attack/attack_005.png
+    - assets/images/mages/dark-armoured/attack/attack_006.png
+    - assets/images/mages/dark-armoured/attack/attack_007.png
+    - assets/images/mages/dark-armoured/attack/attack_008.png
+    - assets/images/mages/dark-armoured/attack/attack_009.png
+    - assets/images/mages/dark-armoured/attack/attack_010.png
+    - assets/images/mages/dark-armoured/attack/attack_011.png
     # Mage - Green Elven
     - assets/images/mages/green-elven/idle/idle_000.png
     - assets/images/mages/green-elven/idle/idle_001.png
@@ -197,6 +197,18 @@ flutter:
     - assets/images/mages/green-elven/idle/idle_009.png
     - assets/images/mages/green-elven/idle/idle_010.png
     - assets/images/mages/green-elven/idle/idle_011.png
+    - assets/images/mages/green-elven/attack/attack_000.png
+    - assets/images/mages/green-elven/attack/attack_001.png
+    - assets/images/mages/green-elven/attack/attack_002.png
+    - assets/images/mages/green-elven/attack/attack_003.png
+    - assets/images/mages/green-elven/attack/attack_004.png
+    - assets/images/mages/green-elven/attack/attack_005.png
+    - assets/images/mages/green-elven/attack/attack_006.png
+    - assets/images/mages/green-elven/attack/attack_007.png
+    - assets/images/mages/green-elven/attack/attack_008.png
+    - assets/images/mages/green-elven/attack/attack_009.png
+    - assets/images/mages/green-elven/attack/attack_010.png
+    - assets/images/mages/green-elven/attack/attack_011.png
     # Familliar - Brown Cyclops
     - assets/images/familliars/brown-cyclops-bat/idle/idle_000.png
     - assets/images/familliars/brown-cyclops-bat/idle/idle_001.png
