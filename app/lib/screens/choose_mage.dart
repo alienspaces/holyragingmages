@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/choose_mage_list.dart';
-import 'package:holyragingmages/widgets/choose_mage_button.dart';
 
 class ChooseMageScreen extends StatefulWidget {
   final Api api;
@@ -46,6 +45,8 @@ class _ChooseMageScreenState extends State<ChooseMageScreen> {
       setState(() {
         _loadingState = ModelState.processing;
       });
+
+      // Load starter mages
       mageStarterCollectionModel.load().then((FutureOr<void> v) {
         setState(() {
           _loadingState = ModelState.done;
@@ -66,6 +67,17 @@ class _ChooseMageScreenState extends State<ChooseMageScreen> {
     final log = Logger('ChooseMageScreen - chooseMage');
 
     log.info('Choose mage name ${mage.id} ${mage.name}');
+
+    // Mage model
+    var mageModel = Provider.of<Mage>(context, listen: false);
+
+    // Copy starter mage into mage
+    mageModel.copyFrom(mage);
+
+    log.info('Navigating to choose familliar');
+
+    // Navigate to choosing familliar
+    Navigator.of(context).pushNamed('/choose-familliar');
   }
 
   @override
@@ -103,9 +115,6 @@ class _ChooseMageScreenState extends State<ChooseMageScreen> {
                   chooseMageCallback: chooseMage,
                 ),
               ),
-            ),
-            Container(
-              child: ChooseMageButtonWidget(),
             ),
           ],
         ),

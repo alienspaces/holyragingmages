@@ -21,6 +21,7 @@
     * Defensive <-> Aggressive
   * Choose `familliar` entity
   * Save `player` entity
+  * Load / cache images at app startup
 
 ### Bugs
 

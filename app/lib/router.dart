@@ -37,16 +37,16 @@ class RouteGenerator {
         case '/mage_list':
           log.fine('Returning mage list screen');
           return MageListScreen(api: api);
-        case '/mage_choose_character':
+        case '/choose-mage':
           log.fine('Returning mage choose character screen');
           return ChooseMageScreen(api: api);
-        case '/mage_choose_familliar':
+        case '/choose-familliar':
           log.fine('Returning mage choose familliar screen');
           return ChooseFamilliarScreen(api: api);
-        case '/mage_play':
+        case '/mage-play':
           log.fine('Returning mage play screen');
           return MagePlayScreen(api: api);
-        case '/mage_train':
+        case '/mage-train':
           log.fine('Returning mage train screen');
           return MageTrainScreen(api: api);
         default:

@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:holyragingmages/api/api.dart';
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/choose_familliar_list.dart';
-import 'package:holyragingmages/widgets/choose_familliar_button.dart';
 
 class ChooseFamilliarScreen extends StatefulWidget {
   final Api api;
@@ -32,21 +31,23 @@ class _ChooseFamilliarScreenState extends State<ChooseFamilliarScreen> {
     // Account model
     var accountModel = Provider.of<Account>(context, listen: false);
 
-    // Mage model
-    var mageModel = Provider.of<Mage>(context, listen: false);
+    // Familliar model
+    var familliarModel = Provider.of<Familliar>(context, listen: false);
 
-    mageModel.clear();
-    mageModel.accountId = accountModel.id;
+    familliarModel.clear();
+    familliarModel.accountId = accountModel.id;
 
-    // Starter mage collection model
+    // Starter familliar collection model
     var familliarStarterCollectionModel =
         Provider.of<StarterFamilliarCollection>(context, listen: false);
 
     if (familliarStarterCollectionModel.canLoad()) {
-      log.info("Fetching starter mages");
+      log.info("Fetching starter familliars");
       setState(() {
         _loadingState = ModelState.processing;
       });
+
+      // Load starter familliars
       familliarStarterCollectionModel.load().then((FutureOr<void> v) {
         setState(() {
           _loadingState = ModelState.done;
@@ -62,6 +63,22 @@ class _ChooseFamilliarScreenState extends State<ChooseFamilliarScreen> {
     super.dispose();
   }
 
+  void chooseFamilliar({Familliar familliar}) {
+    // Logger
+    final log = Logger('ChooseFamilliarScreen - chooseFamilliar');
+
+    log.info('Choose familliar name ${familliar.id} ${familliar.name}');
+
+    // Familliar model
+    var familliarModel = Provider.of<Familliar>(context, listen: false);
+
+    // Copy starter familliar into familliar
+    familliarModel.copyFrom(familliar);
+
+    // Navigate to choosing familliar
+    Navigator.of(context).pushNamed('/choose-familliar');
+  }
+
   @override
   Widget build(BuildContext context) {
     // Logger
@@ -69,22 +86,24 @@ class _ChooseFamilliarScreenState extends State<ChooseFamilliarScreen> {
 
     log.info("Building");
 
-    if (_loadingState == ModelState.processing) {
+    // Starter familliar collection model
+    var familliarStarterCollectionModel =
+        Provider.of<StarterFamilliarCollection>(context, listen: true);
+
+    if (_loadingState == ModelState.processing ||
+        familliarStarterCollectionModel.familliars.isEmpty) {
       log.info("Processing");
       return Container(
         child: Text('......'),
       );
     }
 
-    // Starter mage collection model
-    var familliarStarterCollectionModel = Provider.of<StarterMageCollection>(context, listen: true);
-
     // Styling
     EdgeInsetsGeometry padding = EdgeInsets.fromLTRB(15, 10, 15, 10);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Your Mage'),
+        title: Text('Choose Your Familliar'),
       ),
       body: Container(
         padding: padding,
@@ -93,12 +112,10 @@ class _ChooseFamilliarScreenState extends State<ChooseFamilliarScreen> {
             Container(
               child: Expanded(
                 child: ChooseFamilliarListWidget(
-                  starterFamilliarList: familliarStarterCollectionModel.mages,
+                  starterFamilliarList: familliarStarterCollectionModel.familliars,
+                  chooseFamilliarCallback: chooseFamilliar,
                 ),
               ),
-            ),
-            Container(
-              child: ChooseFamilliarButtonWidget(),
             ),
           ],
         ),

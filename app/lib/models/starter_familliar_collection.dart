@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 // Application packages
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/api/api.dart';
-import 'package:holyragingmages/models/mage.dart';
+import 'package:holyragingmages/models/familliar.dart';
 import 'package:holyragingmages/fault.dart';
 
 // StarterFamilliarCollection contains a collection of mages
@@ -13,9 +13,9 @@ class StarterFamilliarCollection extends ChangeNotifier {
   // Api
   final Api api;
 
-  // Mages
-  final List<Mage> _mages = [];
-  UnmodifiableListView<Mage> get mages => UnmodifiableListView(_mages);
+  // Familliars
+  final List<Familliar> _familliars = [];
+  UnmodifiableListView<Familliar> get familliars => UnmodifiableListView(_familliars);
 
   // Faults
   Fault fault;
@@ -25,12 +25,12 @@ class StarterFamilliarCollection extends ChangeNotifier {
 
   // Constructor
   StarterFamilliarCollection({Key key, this.api}) {
-    this._mages.clear();
+    this._familliars.clear();
   }
 
-  // Count mages
+  // Count familliar
   int count() {
-    return this._mages.length;
+    return this._familliars.length;
   }
 
   bool canLoad() {
@@ -44,7 +44,7 @@ class StarterFamilliarCollection extends ChangeNotifier {
     return true;
   }
 
-  // Load mages
+  // Load familliar
   Future<void> load() async {
     // Logger
     final log = Logger('StarterFamilliarCollection - load');
@@ -57,13 +57,13 @@ class StarterFamilliarCollection extends ChangeNotifier {
     this.api.getEntities(null, type: EntityTypeStarterFamilliar).then((List<dynamic> entitiesData) {
       log.info('Adding familliars');
 
-      // Clear mages
-      this._mages.clear();
+      // Clear familliar
+      this._familliars.clear();
 
-      // Add mages
+      // Add familliar
       for (Map<String, dynamic> entityData in entitiesData) {
-        var entity = Mage.fromJson(api, entityData);
-        this._mages.add(entity);
+        var entity = Familliar.fromJson(api, entityData);
+        this._familliars.add(entity);
       }
 
       // Done
@@ -83,16 +83,16 @@ class StarterFamilliarCollection extends ChangeNotifier {
     });
   }
 
-  // Clear mages
+  // Clear familliar
   void clear() {
     // Logger
-    final log = Logger('StarterFamilliarCollection - clearMages');
+    final log = Logger('StarterFamilliarCollection - clearFamilliars');
 
-    log.info('Clearing mages');
+    log.info('Clearing familliar');
 
-    this._mages.clear();
+    this._familliars.clear();
 
-    log.info('Mages cleared ${this.count()}');
+    log.info('Familliars cleared ${this.count()}');
 
     notifyListeners();
   }

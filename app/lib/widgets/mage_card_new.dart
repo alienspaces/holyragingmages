@@ -15,7 +15,7 @@ class MageCardNew extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, '/mage_choose_character');
+        Navigator.pushNamed(context, '/choose-mage');
       },
       child: Container(
         alignment: Alignment.center,

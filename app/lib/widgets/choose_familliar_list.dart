@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -5,49 +6,35 @@ import 'package:carousel_slider/carousel_slider.dart';
 // Application packages
 import 'package:holyragingmages/models/models.dart';
 import 'package:holyragingmages/widgets/familliar_animated.dart';
+import 'package:holyragingmages/widgets/familliar_card_basic.dart';
 
-class ChooseFamilliarListWidget extends StatelessWidget {
-  final Function chooseFamilliarCallback;
-  final List<Mage> starterFamilliarList;
+class ChooseFamilliarListWidget extends StatefulWidget {
+  final Function({Familliar familliar}) chooseFamilliarCallback;
+  final List<Familliar> starterFamilliarList;
 
   ChooseFamilliarListWidget({Key key, this.starterFamilliarList, this.chooseFamilliarCallback})
       : super(key: key);
 
-  double calculateFillWidth(BuildContext context, int attributeValue) {
+  @override
+  _ChooseFamilliarListWidgetState createState() => _ChooseFamilliarListWidgetState();
+}
+
+class _ChooseFamilliarListWidgetState extends State<ChooseFamilliarListWidget> {
+  FamilliarAction familliarAction = FamilliarAction.idle;
+  Map<String, FamilliarAction> familliarActionMap = {};
+
+  @override
+  void initState() {
     // Logger
-    final log = Logger('ChooseFamilliarListWidget - calculateFillWidth');
+    final log = Logger('ChooseFamilliarListWidget - initState');
 
-    double parentWidth = MediaQuery.of(context).size.width;
+    log.info('Initialising');
 
-    log.finer('Parent width         $parentWidth');
-    log.finer('Attribute value      $attributeValue');
+    for (var familliar in widget.starterFamilliarList) {
+      familliarActionMap[familliar.name] = FamilliarAction.idle;
+    }
 
-    int attributePercentage = ((attributeValue / 20) * 100).toInt();
-    log.finer('Attribute percentage $attributePercentage');
-
-    double childWidth = ((attributePercentage / 130) * parentWidth);
-    log.finer('Child width          $childWidth');
-
-    return childWidth;
-  }
-
-  Color calculateFillColour(BuildContext context, int attributeValue) {
-    // Logger
-    final log = Logger('ChooseFamilliarListWidget - calculateFillWidth');
-
-    double parentWidth = MediaQuery.of(context).size.width;
-
-    log.finer('Parent width         $parentWidth');
-    log.finer('Attribute value      $attributeValue');
-
-    int attributePercentage = ((attributeValue / 20) * 100).toInt();
-    log.finer('Attribute percentage $attributePercentage');
-
-    int shadeOffset = ((attributePercentage / 100) * 255).toInt();
-    log.finer('Shade offset         $shadeOffset');
-
-    return Color.fromARGB(
-        255, (200 - shadeOffset / 2).toInt(), (200 - shadeOffset / 4).toInt(), 255 - shadeOffset);
+    super.initState();
   }
 
   @override
@@ -57,125 +44,54 @@ class ChooseFamilliarListWidget extends StatelessWidget {
 
     log.info("Building");
 
+    // TODO:
+    // - Maintain familliarAction per start familliar so all
+    // cards are not animating at once..
+    // - Change 'casting' to attacking? Make sure all familliars
+    // have multiple sets of images
+    // - Provide animation start and end callbacks so
+    // a caller widget can update its own state when
+    // an animation starts and finishes.
+
     void onPageChangedHandler(int pageIdx, CarouselPageChangedReason reason) {
       // Logger
-      final log = Logger('ChooseFamilliarListWidget - onScrolledHandler');
+      final log = Logger('ChooseFamilliarListWidget - onPageChangedHandler');
 
       log.info("Page idx $pageIdx reason $reason");
     }
 
-    // Build mage
-    Widget buildMageCard(int idx) {
-      return Container(
-        // width: 450,
-        color: Colors.grey[400],
-        child: Column(children: <Widget>[
-          // Description
-          Container(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Text('${starterFamilliarList[idx].name}'),
-          ),
-          // Avatar
-          Container(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            height: 150,
-            child: FamilliarAnimatedWidget(
-              familliarAvatar: starterFamilliarList[idx].avatar,
-              familliarAction: 'idle',
-              imageCount: 11,
-            ),
-          ),
-          // Strength
-          Container(
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 6,
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
-                    child: Container(
-                      padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, starterFamilliarList[idx].strength),
-                      color: calculateFillColour(context, starterFamilliarList[idx].strength),
-                      child: Text('Strength'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${starterFamilliarList[idx].strength}'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Dexterity
-          Container(
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 6,
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
-                    child: Container(
-                      padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, starterFamilliarList[idx].dexterity),
-                      color: calculateFillColour(context, starterFamilliarList[idx].dexterity),
-                      child: Text('Dexterity'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${starterFamilliarList[idx].dexterity}'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Intelligence
-          Container(
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 6,
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 2),
-                    child: Container(
-                      padding: EdgeInsets.all(3),
-                      width: calculateFillWidth(context, starterFamilliarList[idx].intelligence),
-                      color: calculateFillColour(context, starterFamilliarList[idx].intelligence),
-                      child: Text('Intelligence'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: Text('${starterFamilliarList[idx].intelligence}'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ]),
+    void chooseFamilliar(int idx) {
+      // Change familliar to casting action
+      setState(() {
+        familliarActionMap[widget.starterFamilliarList[idx].name] = FamilliarAction.attack;
+      });
+
+      Timer(Duration(milliseconds: 1300), () {
+        setState(() {
+          familliarActionMap[widget.starterFamilliarList[idx].name] = FamilliarAction.idle;
+        });
+
+        widget.chooseFamilliarCallback(familliar: widget.starterFamilliarList[idx]);
+      });
+    }
+
+    // Build familliar
+    Widget buildFamilliarCard(int idx) {
+      log.info(
+          'Building familliar card with familliar name >${widget.starterFamilliarList[idx].name}< action >$familliarAction<');
+      return FamilliarCardBasic(
+        familliar: widget.starterFamilliarList[idx],
+        familliarAction: familliarActionMap[widget.starterFamilliarList[idx].name],
       );
     }
 
     return CarouselSlider.builder(
-      itemCount: starterFamilliarList.length,
+      itemCount: widget.starterFamilliarList.length,
       options: CarouselOptions(
         height: 400,
         aspectRatio: 16 / 9,
-        viewportFraction: 0.8,
+        // viewportFraction: 0.8,
+        viewportFraction: .7,
         initialPage: 0,
         enableInfiniteScroll: true,
         enlargeCenterPage: true,
@@ -183,7 +99,25 @@ class ChooseFamilliarListWidget extends StatelessWidget {
         onPageChanged: onPageChangedHandler,
       ),
       itemBuilder: (BuildContext context, int idx) => Container(
-        child: buildMageCard(idx),
+        color: Colors.grey[400],
+        child: Column(
+          children: <Widget>[
+            buildFamilliarCard(idx),
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  onPressed: () => chooseFamilliar(idx),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.yellow[600],
+                    onPrimary: Colors.black,
+                  ),
+                  child: Text('Choose'),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
