@@ -4,19 +4,19 @@
 
 ### Now
 
-* Entity Service
-  * Create a set of `mage` and `familliar` entity types
-  * Allow default role to get `starter` and `familliar` entity types from `/api/entities`
+* Add familliar fight actions
 * Item Service
   * Initial items for `mage` entities
 * Spell Service
   * Initial spells for `mage` entities
+* Add mage proficiencies
 
 ### Next
 
 * UI
   * Choose mage
     * Fetch `mage` entity list from server
+    * Starter mages come with proficiencies already chosen
   * Choose `familliar` entity
   * Fight behaviour
     * Defensive <-> Aggressive <-> Supportive
