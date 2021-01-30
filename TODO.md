@@ -17,9 +17,10 @@
 * UI
   * Choose mage
     * Fetch `mage` entity list from server
-  * Fight behaviour
-    * Defensive <-> Aggressive
   * Choose `familliar` entity
+  * Fight behaviour
+    * Defensive <-> Aggressive <-> Supportive
+  * Favourite spell
   * Save `player` entity
   * Load / cache images at app startup
 

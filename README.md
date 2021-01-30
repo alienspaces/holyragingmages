@@ -33,9 +33,9 @@ You can:
   * Strength
   * Dexterity
   * Intelligence
-* Money is earned for being victorious in battle and can be spent purchasing new weapons or armour, training in new spells or a new familliar.
+* Money is earned for being victorious in battle and can be spent purchasing new weapons or armour, training in new spells or adopting a new familliar.
 * All familliars
-  * Have a single offensive, defensive or regenerative spell
+  * Have a single offensive, defensive or supportive spell
   * Cannot change the spells or items they come with
   * Cannot level up
 
@@ -135,7 +135,7 @@ A proficiency in a weapon, armour or spell type lowers the ability requirements 
 
 Players do not control turn by turn what actions their mage or familliar do.
 
-Instead a player will be able to determine how their mage and familliar fight by adjusting how offensive, defensive or regenerative their actions should be.
+Instead a player will be able to decide how their mage and familliar fight by adjusting how offensive, defensive or supportive their actions should be.
 
 This setting can be adjusted for the mage and the familliar independently.
 
